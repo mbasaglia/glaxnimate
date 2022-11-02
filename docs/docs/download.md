@@ -79,6 +79,8 @@ Or from the command line:
 
     sudo dpkg -i  glaxnimate.deb
 
+Note that the deb package has a dependency to python3.10.
+
 ## Windows Zip
 
 Extract the zip and execute the file at the top level `glaxnimate.vbs`.
