@@ -18,7 +18,7 @@ namespace glaxnimate::io::rive {
 
 namespace detail {
 
-inline const QVariant& noop(const QVariant& v) { return v; }
+inline const QVariant& noop(const QVariant& v, model::FrameTime) { return v; }
 
 } // namespace name
 
@@ -148,31 +148,15 @@ private:
         }
         else if ( auto shape = element->cast<model::Rect>() )
         {
-            auto object = shape_object(TypeId::Rectangle, element, parent_id);
-            write_position(object, shape->position, id);
-            write_property(object, "width", shape->size, id,
-                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
-            );
-            write_property(object, "height", shape->size, id,
-                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().height()); }
-            );
-            write_property(object, "cornerRadiusTL", shape->rounded, id, &detail::noop);
-            write_property(object, "cornerRadiusTR", shape->rounded, id, &detail::noop);
-            write_property(object, "cornerRadiusBL", shape->rounded, id, &detail::noop);
-            write_property(object, "cornerRadiusBR", shape->rounded, id, &detail::noop);
-            serializer.write_object(object);
+            write_rect(shape, id, parent_id);
         }
         else if ( auto shape = element->cast<model::Ellipse>() )
         {
-            auto object = shape_object(TypeId::Ellipse, element, parent_id);
-            write_position(object, shape->position, id);
-            write_property(object, "width", shape->size, id,
-                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
-            );
-            write_property(object, "height", shape->size, id,
-                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().height()); }
-            );
-            serializer.write_object(object);
+            write_ellipse(shape, id, parent_id);
+        }
+        else if ( auto shape = element->cast<model::PolyStar>() )
+        {
+            write_polystar(shape, id, parent_id);
         }
         else if ( auto shape = element->cast<model::Fill>() )
         {
@@ -191,11 +175,98 @@ private:
             serializer.write_object(object);
             write_styler(shape, id);
         }
-        /// \todo polystar path image precomplayer
+        else if ( auto shape = element->cast<model::Image>() )
+        {
+            auto object = shape_object(TypeId::Image, element, parent_id);
+            write_transform(object, shape->transform.get(), id, shape->local_bounding_rect(0));
+            auto asset_id = object_ids.find(shape->image.get());
+            if ( asset_id != object_ids.end() )
+                object.set("assetId", asset_id->second);
+            serializer.write_object(object);
+        }
+        else if ( auto shape = element->cast<model::PreCompLayer>() )
+        {
+            write_precomp_layer(shape, id, parent_id);
+        }
+        /// \todo path
         else
         {
             serializer.write_object(shape_object(TypeId::Shape, element, parent_id));
         }
+    }
+
+    void write_rect(model::Rect* shape, Identifier id, Identifier parent_id)
+    {
+        auto object = shape_object(TypeId::Rectangle, shape, parent_id);
+        write_position(object, shape->position, id);
+        write_property(object, "width", shape->size, id,
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().width()); }
+        );
+        write_property(object, "height", shape->size, id,
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().height()); }
+        );
+        write_property(object, "cornerRadiusTL", shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusTR", shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusBL", shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusBR", shape->rounded, id, &detail::noop);
+        serializer.write_object(object);
+    }
+
+    void write_ellipse(model::Ellipse* shape, Identifier id, Identifier parent_id)
+    {
+        auto object = shape_object(TypeId::Ellipse, shape, parent_id);
+        write_position(object, shape->position, id);
+        write_property(object, "width", shape->size, id,
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().width()); }
+        );
+        write_property(object, "height", shape->size, id,
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().height()); }
+        );
+        serializer.write_object(object);
+    }
+
+    void write_polystar(model::PolyStar* shape, Identifier id, Identifier parent_id)
+    {
+        auto type = shape->type.get() == model::PolyStar::Star ? TypeId::Star : TypeId::Polygon;
+        auto object = shape_object(type, shape, parent_id);
+        /// \todo cornerRadius
+        write_position(object, shape->position, id);
+
+        write_property(object, "points", shape->points, id, &detail::noop);
+        write_property(object, "width", shape->outer_radius, id, &detail::noop);
+        write_property(object, "height", shape->outer_radius, id, &detail::noop);
+
+        if ( type == TypeId::Star )
+        {
+            write_property(object, "innerRadius", shape->inner_radius, id,
+                [shape](const QVariant& v, model::FrameTime t) {
+                    auto outer = shape->outer_radius.get_at(t);
+                    return QVariant::fromValue(qFuzzyIsNull(outer) ? 0 : v.toDouble() / outer);
+                }
+            );
+        }
+
+        serializer.write_object(object);
+    }
+
+    void write_precomp_layer(model::PreCompLayer* shape, Identifier id, Identifier parent_id)
+    {
+        auto object = shape_object(TypeId::Rectangle, shape, parent_id);
+        write_transform(object, shape->transform.get(), id, shape->local_bounding_rect(0));
+        write_property(object, "opacity", shape->opacity, id, &detail::noop);
+        if ( auto comp = shape->composition.get() )
+        {
+            Identifier comp_index = 1;
+            for ( const auto& declared_comp : shape->document()->assets()->precompositions->values )
+            {
+                if ( declared_comp.get() == comp )
+                    break;
+                comp_index++;
+            }
+            object.set("artboardId", comp_index);
+        }
+
+        serializer.write_object(object);
     }
 
     Object shape_object(TypeId type_id, model::DocumentNode* shape, Identifier parent_id)
@@ -233,7 +304,7 @@ private:
             return;
         }
 
-        object.set(rive_prop, transform(prop.value()));
+        object.set(rive_prop, transform(prop.value(), 0));
 
         if ( !prop.animated() )
             return;
@@ -243,6 +314,7 @@ private:
         switch ( rive_prop->type )
         {
             case PropertyType::Float:
+            case PropertyType::VarUint:
                 attr = "value";
                 kf_type = types.get_type(TypeId::KeyFrameDouble);
                 break;
@@ -277,7 +349,7 @@ private:
             Object rive_kf(kf_type);
             /// \todo interpolations
             rive_kf.set("interpolationType", 1);
-            rive_kf.set(attr, transform(kf.value()));
+            rive_kf.set(attr, transform(kf.value(), kf.time()));
             rive_kf.set("frame", kf.time());
             keyed_object.emplace_back(std::move(rive_kf));
         }
@@ -286,10 +358,10 @@ private:
     void write_position(Object& object, const model::AnimatedProperty<QPointF>& prop, Identifier object_id)
     {
         write_property(object, "x", prop, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().x()); }
         );
         write_property(object, "y", prop, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().y()); }
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().y()); }
         );
     }
 
@@ -302,7 +374,7 @@ private:
             if ( box.width() > 0 )
             {
                 write_property(object, "originX", trans->anchor_point, object_id,
-                    [&box](const QVariant& v) {
+                    [&box](const QVariant& v, model::FrameTime) {
                         return QVariant::fromValue(
                             (v.toPointF().x() - box.left()) / box.width()
                         );
@@ -313,7 +385,7 @@ private:
             if ( box.height() > 0 )
             {
                 write_property(object, "originY", trans->anchor_point, object_id,
-                    [&box](const QVariant& v) {
+                    [&box](const QVariant& v, model::FrameTime) {
                         return QVariant::fromValue(
                             (v.toPointF().y() - box.top()) / box.height()
                         );
@@ -326,20 +398,20 @@ private:
             /// \todo Handle animated anchor point
             auto anchor = trans->anchor_point.get();
             write_property(object, "x", trans->position, object_id,
-                [anchor](const QVariant& v) { return QVariant::fromValue(v.toPointF().x() - anchor.x()); }
+                [anchor](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().x() - anchor.x()); }
             );
             write_property(object, "y", trans->position, object_id,
-                [anchor](const QVariant& v) { return QVariant::fromValue(v.toPointF().y() - anchor.y()); }
+                [anchor](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().y() - anchor.y()); }
             );
         }
 
         write_property(object, "rotation", trans->rotation, object_id, &detail::noop);
 
         write_property(object, "scaleX", trans->scale, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.value<QVector2D>().x()); }
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.value<QVector2D>().x()); }
         );
         write_property(object, "scaleY", trans->scale, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.value<QVector2D>().x()); }
+            [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.value<QVector2D>().x()); }
         );
     }
 

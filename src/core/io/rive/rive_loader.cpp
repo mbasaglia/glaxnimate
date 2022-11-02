@@ -555,7 +555,7 @@ struct LoadCotext
         auto shape = std::make_unique<model::PolyStar>(document);
         shape->name.set(object->get<QString>("name"));
         shape->type.set(type);
-        /// \todo cornerRadius / width / height
+        /// \todo cornerRadius
         load_property<VarUint>(object, shape->points, animations, "points", 5);
         shape->outer_radius.set(100);
 
