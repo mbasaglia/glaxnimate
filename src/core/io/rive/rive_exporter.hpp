@@ -188,7 +188,10 @@ private:
         {
             write_precomp_layer(shape, id, parent_id);
         }
-        /// \todo path
+        else if ( auto shape = element->cast<model::Path>() )
+        {
+            write_path(shape, id, parent_id);
+        }
         else
         {
             serializer.write_object(shape_object(TypeId::Shape, element, parent_id));
@@ -267,6 +270,122 @@ private:
         }
 
         serializer.write_object(object);
+    }
+
+    void write_path(model::Path* shape, Identifier id, Identifier parent_id)
+    {
+        auto object = shape_object(TypeId::PointsPath, shape, parent_id);
+        object.set("isClosed", shape->closed.get());
+        serializer.write_object(object);
+
+        auto first_point_id = next_artboard_child;
+        auto animated = shape->shape.keyframe_count() > 1;
+
+        for ( const auto& point: shape->shape.get() )
+        {
+            Object pobj;
+            auto pto = point.polar_tan_out();
+            auto pti = point.polar_tan_in();
+
+            if ( animated || (
+                point.type == math::bezier::PointType::Corner && (!qFuzzyIsNull(pto.length) || !qFuzzyIsNull(pti.length))
+            ) )
+            {
+                pobj = types.object(TypeId::CubicDetachedVertex);
+                pobj.set("outRotation", pto.angle);
+                pobj.set("outDistance", pto.length);
+                pobj.set("inRotation", pti.angle);
+                pobj.set("inDistance", pti.length);
+            }
+            else if ( point.type == math::bezier::PointType::Symmetrical)
+            {
+                pobj = types.object(TypeId::CubicMirroredVertex);
+                pobj.set("rotation", pto.angle);
+                pobj.set("distance", pto.length);
+            }
+            else if ( point.type == math::bezier::PointType::Smooth )
+            {
+                pobj = types.object(TypeId::CubicAsymmetricVertex);
+                pobj.set("rotation", pto.angle);
+                pobj.set("outDistance", pto.length);
+                pobj.set("inDistance", pti.length);
+            }
+            else
+            {
+                pobj = types.object(TypeId::StraightVertex);
+            }
+
+            pobj.set("parentId", id);
+            pobj.set("x", point.pos.x());
+            pobj.set("y", point.pos.y());
+            serializer.write_object(pobj);
+            next_artboard_child++;
+        }
+
+        if ( animated )
+        {
+            auto type = types.get_type(TypeId::CubicDetachedVertex);
+            const Identifier prop_x = 0;
+            const Identifier prop_y = 1;
+            const Identifier prop_in_rot = 2;
+            const Identifier prop_in_len = 3;
+            const Identifier prop_out_rot = 4;
+            const Identifier prop_out_len = 5;
+
+            auto kf_type = types.get_type(TypeId::KeyFrameDouble);
+            std::array<std::pair<Identifier, std::vector<Object>>, 6> props_template{{
+                {type->property("x")->id, {}},
+                {type->property("y")->id, {}},
+                {type->property("inRotation")->id, {}},
+                {type->property("inDistance")->id, {}},
+                {type->property("outRotation")->id, {}},
+                {type->property("outDistance")->id, {}}
+            }};
+
+            int point_count = next_artboard_child - first_point_id;
+            for ( auto pt_id = 0; pt_id < point_count; pt_id++ )
+            {
+                auto props = props_template;
+
+                for ( const auto& kf : shape->shape )
+                {
+                    if ( int(pt_id) >= kf.get().size() )
+                    {
+                        format->error(QObject::tr("Bezier has mismatching number of points"));
+                        continue;
+                    }
+
+                    for ( auto& prop: props )
+                    {
+                        Object rive_kf(kf_type);
+                        /// \todo interpolations
+                        rive_kf.set("interpolationType", 1);
+                        rive_kf.set("frame", kf.time());
+                        prop.second.push_back(std::move(rive_kf));
+                    }
+
+                    auto point = kf.get()[pt_id];
+                    auto pto = point.polar_tan_out();
+                    auto pti = point.polar_tan_in();
+                    props[prop_x].second.back().set("value", point.pos.x());
+                    props[prop_y].second.back().set("value", point.pos.y());
+                    props[prop_in_rot].second.back().set("value", pti.angle);
+                    props[prop_in_len].second.back().set("value", pti.length);
+                    props[prop_out_rot].second.back().set("value", pto.angle + math::pi);
+                    props[prop_out_len].second.back().set("value", pto.length);
+                }
+
+                auto& keyed_point = animations[first_point_id + pt_id];
+                for ( const auto& prop : props )
+                {
+                    keyed_point.emplace_back(types.get_type(TypeId::KeyedProperty));
+                    keyed_point.back().set("propertyKey", prop.first);
+                    for ( auto& rkf : prop.second )
+                        keyed_point.emplace_back(std::move(rkf));
+                }
+            }
+        }
+
     }
 
     Object shape_object(TypeId type_id, model::DocumentNode* shape, Identifier parent_id)
