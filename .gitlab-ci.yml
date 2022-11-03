@@ -159,7 +159,7 @@ linux:appimage:
         - mkdir build
         - cd external/QtAppSetup/external/pybind11/
         - git remote -v
-        - git fetch -v
+        - git fetch -v origin v2.9
         - git checkout v2.9
         - cd ../../../..
         - cd build

@@ -9,8 +9,7 @@
 	url = https://github.com/rpavlik/cmake-modules.git
 [submodule "external/pybind11"]
 	path = external/QtAppSetup/external/pybind11
-	url = https://github.com/mbasaglia/pybind11.git
-	#url = https://github.com/pybind/pybind11.git
+	url = https://github.com/pybind/pybind11.git
 [submodule "external/Qt-History-LineEdit"]
 	path = external/Qt-History-LineEdit
 	url = https://gitlab.com/mattbas/Qt-History-LineEdit.git
