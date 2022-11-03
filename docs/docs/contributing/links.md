@@ -4,6 +4,11 @@ Links
 =====
 
 
+Tutorials
+---------
+
+* [Playlist from Eses infor Learning](https://www.youtube.com/playlist?list=PLqlTgdmIZxTvJ98FtjTUbMVkGgA4bRAa0)
+
 Listings
 --------
 
