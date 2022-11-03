@@ -160,7 +160,7 @@ linux:appimage:
         - cd external/QtAppSetup/external/pybind11/
         - git remote -v
         - git fetch -v origin v2.9
-        - bit branch -a
+        - git branch -a
         - git checkout remotes/origin/v2.9
         - cd ../../../..
         - cd build
