@@ -4,10 +4,11 @@ Links
 =====
 
 
-Tutorials
----------
+Video Tutorials
+---------------
 
-* [Playlist from Eses infor Learning](https://www.youtube.com/playlist?list=PLqlTgdmIZxTvJ98FtjTUbMVkGgA4bRAa0)
+* [Glaxnimate - Eses infor Learning](https://www.youtube.com/playlist?list=PLqlTgdmIZxTvJ98FtjTUbMVkGgA4bRAa0) (English)
+* [Glaxnimate - punto edu](https://www.youtube.com/playlist?list=PLNdcfEqn_DGDxp6Vx1RRFZpfnHreXBn8R) (Spanish)
 
 Listings
 --------
