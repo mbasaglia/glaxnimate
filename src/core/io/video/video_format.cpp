@@ -657,21 +657,27 @@ glaxnimate::io::Autoreg<glaxnimate::io::video::VideoFormat> glaxnimate::io::vide
 
 static QStringList out_ext;
 
-static void get_formats()
+static bool format_skip(const AVOutputFormat* format)
 {
-    std::set<std::string> blacklisted = {
+    static std::set<std::string> blacklisted = {
         "webp", "gif", "ico"
     };
+
+    return
+        blacklisted.count(format->name) ||
+        format->video_codec == AV_CODEC_ID_NONE ||
+        format->flags & (AVFMT_NOFILE|AVFMT_NEEDNUMBER)
+    ;
+}
+
+static void get_formats()
+{
     out_ext.push_back("mp4");
 
     void* opaque = nullptr;
     while ( auto format = av_muxer_iterate(&opaque) )
     {
-        if (
-            blacklisted.count(format->name) ||
-            format->video_codec == AV_CODEC_ID_NONE ||
-            format->flags & (AVFMT_NOFILE|AVFMT_NEEDNUMBER)
-        )
+        if ( format_skip(format) )
             continue;
 
         out_ext += QString(format->extensions).split(',',
@@ -706,6 +712,24 @@ static QVariantMap get_codecs()
     codecs["Default"] = QVariant(qlonglong(AV_CODEC_ID_NONE));
 
     return codecs;
+}
+
+static QVariantMap get_formats_names()
+{
+    QVariantMap formats;
+
+    void* opaque = nullptr;
+    while ( auto format = av_muxer_iterate(&opaque) )
+    {
+        if ( format_skip(format) )
+            continue;
+
+        formats[format->long_name] = QVariant(format->name);
+    }
+
+    formats["Auto"] = default_option;
+
+    return formats;
 }
 
 static QVariantMap make_choices(const char** values, int count)
@@ -777,7 +801,7 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         AVFormatContext *oc;
 
         QString format_hint = settings["format"].toString();
-        if ( !format_hint.isEmpty() )
+        if ( !format_hint.isEmpty() && format_hint != default_option )
         {
             avformat_alloc_output_context2(&oc, nullptr, format_hint.toUtf8().data(), filename.data());
             if ( !oc )
@@ -887,20 +911,23 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
 std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
 {
+    static auto formats = get_formats_names();
     static auto codecs = get_codecs();
     static auto presets = get_presets();
     static auto profiles = get_profiles();
 
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        //                      slug            label               description                                         default min max
-        app::settings::Setting{"bit_rate",      tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
-        app::settings::Setting{"background",    tr("Background"),   tr("Background color"),                             QColor(0, 0, 0, 0)},
-        app::settings::Setting{"width",         tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
-        app::settings::Setting{"height",        tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
-        app::settings::Setting{"verbose",       tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
-        app::settings::Setting{"codec",         tr("Codec"),        tr("Video codec"), app::settings::Setting::Int,     qlonglong(AV_CODEC_ID_NONE), codecs},
-        app::settings::Setting{"ffmpeg:preset", tr("Preset"),       tr("ffmpeg preset"), app::settings::Setting::String,QString(default_option),     presets},
-        app::settings::Setting{"ffmpeg:profile",tr("Profile"),      tr("ffmpeg profile"),app::settings::Setting::String,QString(default_option),     profiles},
+        //                      slug            label             description                                           default                       min max
+        app::settings::Setting{"bit_rate",      tr("Bitrate"),    tr("Video bit rate"),                                 5000,                          0, 10000},
+        app::settings::Setting{"background",    tr("Background"), tr("Background color"),                               QColor(0, 0, 0, 0)},
+        app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           document->main()->width.get(), 0, 10000},
+        app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           document->main()->height.get(),0, 10000},
+        app::settings::Setting{"verbose",       tr("Verbose"),    tr("Show verbose information on the conversion"),     false},
+        //                      slug            label             description            type                           default                      choices
+        app::settings::Setting{"format",        tr("Format"),     tr("Container format"),app::settings::Setting::String,QString(default_option),     formats},
+        app::settings::Setting{"codec",         tr("Codec"),      tr("Video codec"),     app::settings::Setting::Int,   qlonglong(AV_CODEC_ID_NONE), codecs},
+        app::settings::Setting{"ffmpeg:preset", tr("Preset"),     tr("ffmpeg preset"),   app::settings::Setting::String,QString(default_option),     presets},
+        app::settings::Setting{"ffmpeg:profile",tr("Profile"),    tr("ffmpeg profile"),  app::settings::Setting::String,QString(default_option),     profiles},
     });
 }
 
