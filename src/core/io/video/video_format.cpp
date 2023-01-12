@@ -401,9 +401,9 @@ public:
             ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
         }
 
-        // just for testing, we also add B-frames
-        if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
-            ost.codec_context->max_b_frames = 2;
+//         // just for testing, we also add B-frames
+//         if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
+//             ost.codec_context->max_b_frames = 2;
 
         int ret;
         // open the codec
@@ -691,6 +691,68 @@ QStringList glaxnimate::io::video::VideoFormat::extensions() const
     return out_ext;
 }
 
+static constexpr const char* const default_option = "--glaxnimate-default--";
+
+#include <QDebug>
+static QVariantMap get_codecs()
+{
+    QVariantMap codecs;
+
+    void* opaque = nullptr;
+
+    while ( auto codec = av_codec_iterate(&opaque) )
+        codecs[codec->long_name] = QVariant(qlonglong(codec->id));
+
+    codecs["Default"] = QVariant(qlonglong(AV_CODEC_ID_NONE));
+
+    return codecs;
+}
+
+static QVariantMap make_choices(const char** values, int count)
+{
+    QVariantMap map;
+    for ( int i = 0; i < count; i++ )
+    {
+        map[values[i]] = values[i];
+    }
+
+    map["Default"] = default_option;
+
+    return map;
+}
+
+static QVariantMap get_presets()
+{
+    const char* values[] = {
+        "ultrafast",
+        "superfast",
+        "veryfast",
+        "faster",
+        "fast",
+        "medium",
+        "slow",
+        "slower",
+        "veryslow",
+        "placebo",
+    };
+
+    return make_choices(values, sizeof(values) / sizeof(values[0]));
+}
+
+static QVariantMap get_profiles()
+{
+    const char* values[] = {
+        "baseline",
+        "main",
+        "high",
+        "high10",
+        "high422",
+        "high444",
+    };
+
+    return make_choices(values, sizeof(values) / sizeof(values[0]));
+}
+
 bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
@@ -701,12 +763,15 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
 
         av::Dict opt;
-        /*
-        for (int i = 2; i+1 < argc; i+=2) {
-            if (!strcmp(argv[i], "-flags") || !strcmp(argv[i], "-fflags"))
-                av_dict_set(&opt, argv[i]+1, argv[i+1], 0);
+        for ( auto it = settings.begin(); it != settings.end(); ++it )
+        {
+            if ( it.key().startsWith("ffmpeg:") )
+            {
+                auto value = it->toString();
+                if ( value != default_option )
+                    opt[it.key().mid(7)] = value;
+            }
         }
-        */
 
         // allocate the output media context
         AVFormatContext *oc;
@@ -753,9 +818,14 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
         av::CGuard guard(&avformat_free_context, oc);
 
-        // Add the audio and video streams using the default format codecs
-        // and initialize the codecs.
-        if ( oc->oformat->video_codec == AV_CODEC_ID_NONE )
+        // Add the audio and video streams using the given (or default)
+        // format codecs and initialize the codecs.
+        auto codec_option = AVCodecID(settings["codec"].toLongLong());
+        if ( codec_option != AV_CODEC_ID_NONE )
+        {
+            oc->oformat->video_codec = codec_option;
+        }
+        else if ( oc->oformat->video_codec == AV_CODEC_ID_NONE )
         {
             error(tr("No video codec"));
             return false;
@@ -817,13 +887,20 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
 std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
 {
+    static auto codecs = get_codecs();
+    static auto presets = get_presets();
+    static auto profiles = get_profiles();
+
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        //                      slug            label           description                                         default min max
-        app::settings::Setting{"bit_rate",   tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
-        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColor(0, 0, 0, 0)},
-        app::settings::Setting{"width",      tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
-        app::settings::Setting{"height",     tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
-        app::settings::Setting{"verbose",    tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
+        //                      slug            label               description                                         default min max
+        app::settings::Setting{"bit_rate",      tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
+        app::settings::Setting{"background",    tr("Background"),   tr("Background color"),                             QColor(0, 0, 0, 0)},
+        app::settings::Setting{"width",         tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
+        app::settings::Setting{"height",        tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
+        app::settings::Setting{"verbose",       tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
+        app::settings::Setting{"codec",         tr("Codec"),        tr("Video codec"), app::settings::Setting::Int,     qlonglong(AV_CODEC_ID_NONE), codecs},
+        app::settings::Setting{"ffmpeg:preset", tr("Preset"),       tr("ffmpeg preset"), app::settings::Setting::String,QString(default_option),     presets},
+        app::settings::Setting{"ffmpeg:profile",tr("Profile"),      tr("ffmpeg profile"),app::settings::Setting::String,QString(default_option),     profiles},
     });
 }
 

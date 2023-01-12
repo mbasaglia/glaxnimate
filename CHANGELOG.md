@@ -7,6 +7,7 @@
     * New layout presets, to work better on smaller screens
 * I/O:
     * Added support for loading and saving Rive animations
+    * Added more options for video export
 * Scripting:
     * Added function to render a node at a specific frame
 * Bug fixes:
