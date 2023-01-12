@@ -362,13 +362,13 @@ public:
         }
     }
 
-    Video(AVFormatContext *oc, Dict options, int64_t bit_rate, int width, int height, int fps)
-        : ost(oc, oc->oformat->video_codec)
+    Video(AVFormatContext *oc, Dict options, AVCodecID codec_id, int64_t bit_rate, int width, int height, int fps)
+        : ost(oc, codec_id)
     {
         if ( ost.codec->type != AVMEDIA_TYPE_VIDEO )
             throw Error(QObject::tr("No video codec"));
 
-        ost.codec_context->codec_id = oc->oformat->video_codec;
+        ost.codec_context->codec_id = codec_id;
 
         ost.codec_context->bit_rate = bit_rate;
 
@@ -693,7 +693,7 @@ QStringList glaxnimate::io::video::VideoFormat::extensions() const
 
 static constexpr const char* const default_option = "--glaxnimate-default--";
 
-#include <QDebug>
+
 static QVariantMap get_codecs()
 {
     QVariantMap codecs;
@@ -820,15 +820,15 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
         // Add the audio and video streams using the given (or default)
         // format codecs and initialize the codecs.
-        auto codec_option = AVCodecID(settings["codec"].toLongLong());
-        if ( codec_option != AV_CODEC_ID_NONE )
+        AVCodecID codec_id = AVCodecID(settings["codec"].toLongLong());
+        if ( codec_id == AV_CODEC_ID_NONE )
         {
-            oc->oformat->video_codec = codec_option;
-        }
-        else if ( oc->oformat->video_codec == AV_CODEC_ID_NONE )
-        {
-            error(tr("No video codec"));
-            return false;
+            codec_id = oc->oformat->video_codec;
+            if ( codec_id == AV_CODEC_ID_NONE )
+            {
+                error(tr("No video codec"));
+                return false;
+            }
         }
 
         // Now that all the parameters are set, we can open the audio and
@@ -841,7 +841,7 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
             height = document->main()->height.get();
         int64_t bit_rate = settings["bit_rate"].toInt();
         int fps = qRound(document->main()->fps.get());
-        av::Video video(oc, opt, bit_rate*100, width, height, fps);
+        av::Video video(oc, opt, codec_id, bit_rate*100, width, height, fps);
 
         // log format info
         av_dump_format(oc, 0, filename, 1);
