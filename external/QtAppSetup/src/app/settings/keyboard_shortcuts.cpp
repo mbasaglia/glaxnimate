@@ -103,12 +103,17 @@ app::settings::ShortcutGroup* app::settings::ShortcutSettings::find_group(const 
 void app::settings::ShortcutSettings::remove_action(ShortcutAction* action)
 {
     emit begin_actions_change();
+    QString name;
+    name = action->action->objectName();
     for ( app::settings::ShortcutGroup& group : groups )
     {
         std::vector<ShortcutAction*>::iterator it = std::find(group.actions.begin(), group.actions.end(), action);
         if(it != group.actions.end())
+        {
            group.actions.erase(it);
+           break;
+        }
     }
-    actions.erase(action->label);
+    actions.erase(name);
     emit end_actions_change();
 }

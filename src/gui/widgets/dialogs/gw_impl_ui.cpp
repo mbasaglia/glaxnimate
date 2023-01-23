@@ -1075,18 +1075,9 @@ void GlaxnimateWindow::Private::init_plugins()
     });
 
     connect(&par, &plugin::PluginActionRegistry::action_removed, parent, [this](plugin::ActionService* action) {
-        app::settings::ShortcutGroup* group = GlaxnimateApp::instance()->shortcuts()->find_group(ui.menu_plugins->menuAction()->iconText());
-        if (group)
-        {
-            QString label = "action_plugin_";
-            if ( action->label.isEmpty() )
-                label += action->plugin()->data().name.toLower();
-            else
-                label += action->label.toLower();
-
-            app::settings::ShortcutAction* act = GlaxnimateApp::instance()->shortcuts()->action(label);
-            GlaxnimateApp::instance()->shortcuts()->remove_action(act);
-        }
+        QString slug = "action_plugin_" + action->plugin()->data().name.toLower() + "_" + action->label.toLower();
+        app::settings::ShortcutAction* act = GlaxnimateApp::instance()->shortcuts()->action(slug);
+        GlaxnimateApp::instance()->shortcuts()->remove_action(act);
     });
 
     connect(
