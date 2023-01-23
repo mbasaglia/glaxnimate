@@ -51,6 +51,7 @@ app::settings::ShortcutAction * app::settings::ShortcutSettings::action(const QS
 
 app::settings::ShortcutAction * app::settings::ShortcutSettings::add_action(QAction* qaction, const QString& prefix)
 {
+    emit begin_actions_change();
     auto sca = action(prefix + qaction->objectName());
 
     sca->icon = qaction->icon();
@@ -67,6 +68,7 @@ app::settings::ShortcutAction * app::settings::ShortcutSettings::add_action(QAct
         sca->label = qaction->iconText();
     });
 
+    emit end_actions_change();
     return sca;
 }
 
@@ -90,3 +92,23 @@ const QKeySequence & app::settings::ShortcutSettings::get_shortcut(const QString
     return actions.at(action_name).shortcut;
 }
 
+app::settings::ShortcutGroup* app::settings::ShortcutSettings::find_group(const QString& label)
+{
+    for ( app::settings::ShortcutGroup& group : groups )
+        if ( group.label == label )
+            return &group;
+    return {};
+}
+
+void app::settings::ShortcutSettings::remove_action(ShortcutAction* action)
+{
+    emit begin_actions_change();
+    for ( app::settings::ShortcutGroup& group : groups )
+    {
+        std::vector<ShortcutAction*>::iterator it = std::find(group.actions.begin(), group.actions.end(), action);
+        if(it != group.actions.end())
+           group.actions.erase(it);
+    }
+    actions.erase(action->label);
+    emit end_actions_change();
+}
