@@ -175,7 +175,7 @@ app::settings::ShortcutAction * app::settings::KeyboardShortcutsModel::action(co
 
 void app::settings::KeyboardShortcutsModel::begin_change_data()
 {
-    emit endResetModel();
+    emit beginResetModel();
 }
 
 void app::settings::KeyboardShortcutsModel::end_change_data()
