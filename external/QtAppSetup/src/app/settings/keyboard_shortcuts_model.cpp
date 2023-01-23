@@ -180,8 +180,6 @@ void app::settings::KeyboardShortcutsModel::begin_change_data()
 
 void app::settings::KeyboardShortcutsModel::end_change_data()
 {
-//    emit dataChanged(QModelIndex(), QModelIndex());
-//    emit layoutChanged();
     emit endResetModel();
 }
 
