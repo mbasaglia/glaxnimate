@@ -8,6 +8,7 @@
 * I/O:
     * Added support for loading and saving Rive animations
     * Added more options for video export
+    * Added CLI options to render images without starting the GUI
 * Scripting:
     * Added function to render a node at a specific frame
 * Bug fixes:

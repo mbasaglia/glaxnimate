@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     sc.finish(&window);
     window.show();
 
-    if (args.is_defined("ipc"))
+    if ( args.is_defined("ipc") )
         window.ipc_connect(args.value("ipc").toString());
 
     if ( args.is_defined("window-size") )
