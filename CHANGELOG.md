@@ -5,6 +5,7 @@
 * UI:
     * Added menu action to export as an image sequence
     * New layout presets, to work better on smaller screens
+    * Added shortcut settings for plugins
 * I/O:
     * Added support for loading and saving Rive animations
     * Added more options for video export
