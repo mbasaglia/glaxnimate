@@ -31,6 +31,9 @@ KeyboardSettingsWidget::KeyboardSettingsWidget(app::settings::ShortcutSettings* 
     d->ui.tree_view->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     d->ui.tree_view->header()->setSectionResizeMode(1, QHeaderView::Stretch);
     d->ui.tree_view->setItemDelegateForColumn(1, &d->delegate);
+
+    connect(settings, &app::settings::ShortcutSettings::begin_actions_change, &d->inner_model, &app::settings::KeyboardShortcutsModel::begin_change_data);
+    connect(settings, &app::settings::ShortcutSettings::end_actions_change, &d->inner_model, &app::settings::KeyboardShortcutsModel::end_change_data);
 }
 
 KeyboardSettingsWidget::~KeyboardSettingsWidget() = default;

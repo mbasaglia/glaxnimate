@@ -30,8 +30,10 @@ struct ShortcutGroup
 };
 
 
-class ShortcutSettings : public CustomSettingsGroupBase
+class ShortcutSettings : public QObject, public CustomSettingsGroupBase
 {
+    Q_OBJECT
+
 public:
     QString slug() const override { return "shortcuts"; }
     QString label() const override { return QObject::tr("Keyboard Shortcuts"); }
@@ -50,6 +52,12 @@ public:
     const std::unordered_map<QString, ShortcutAction>& get_actions() const;
     const QKeySequence& get_shortcut(const QString& action_name) const;
 
+    ShortcutGroup* find_group(const QString& label);
+    void remove_action(ShortcutAction* action);
+
+signals:
+    void begin_actions_change();
+    void end_actions_change();
 private:
     QList<ShortcutGroup> groups;
     std::unordered_map<QString, ShortcutAction> actions;

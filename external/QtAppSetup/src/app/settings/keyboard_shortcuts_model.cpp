@@ -173,6 +173,15 @@ app::settings::ShortcutAction * app::settings::KeyboardShortcutsModel::action(co
     return grp.actions[index.row()];
 }
 
+void app::settings::KeyboardShortcutsModel::begin_change_data()
+{
+    emit beginResetModel();
+}
+
+void app::settings::KeyboardShortcutsModel::end_change_data()
+{
+    emit endResetModel();
+}
 
 bool app::settings::KeyboardShortcutsFilterModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
