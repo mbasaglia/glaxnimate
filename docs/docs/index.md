@@ -129,7 +129,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
     <a href="contributing/scripting/" class="card">
         <img src="/img/ui/icons/preferences-plugin.svg" />
         <heading>Easily Extensible</heading>
-        <span>You can use Python to manipulate animations and creating plugins.</span>
+        <span>You can use Python to manipulate animations and create plugins.</span>
     </a>
 </div>
 
