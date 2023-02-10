@@ -824,7 +824,7 @@ private:
                 QJsonValue jkf = karr[i];
                 model::FrameTime time = jkf["t"].toDouble();
                 QJsonValue s = jkf["s"];
-                if ( version[0] < 5 && s.isUndefined() && i == karr.size() - 1 && i > 0 )
+                if ( s.isUndefined() && i == karr.size() - 1 && i > 0 )
                     s = karr[i-1].toObject()["e"];
                 if ( s.isArray() && is_scalar(prop) )
                     s = s.toArray()[0];
@@ -859,8 +859,25 @@ private:
                 }
                 else
                 {
-                    emit format->warning(QObject::tr("Cannot load keyframe at %1 for %2")
-                        .arg(time).arg(property_error_string(prop))
+                    QString value;
+                    if ( !v )
+                    {
+                        value = QObject::tr("(null)");
+                    }
+                    else
+                    {
+                        value = v->toString();
+                        if ( value == "" )
+                            value = QObject::tr("(empty)");
+                        value += " ";
+#if QT_VERSION_MAJOR >= 6
+                        value += QMetaType(v->userType()).name();
+#else
+                        value += QMetaType::typeName(v->userType());
+#endif
+                    }
+                    emit format->warning(QObject::tr("Cannot load keyframe at %1 for %2 with value %3")
+                        .arg(time).arg(property_error_string(prop)).arg(value)
                     );
                 }
             }
