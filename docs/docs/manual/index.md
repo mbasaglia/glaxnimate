@@ -2,6 +2,7 @@ Authors: Mattia Basaglia
 
 # Introduction
 
+
 ## User Interface
 
 ![Main Window](/img/screenshots/main_window/main_window.png)
@@ -22,12 +23,14 @@ You can click on the links to the various pages to get more details on each inte
 
 ### Vector graphics
 
-Glaxnimate works with vector graphics, this means images are described with
+Glaxnimate works with vector graphics, which are images made up of
 objects like lines, curves, and points. This is different from the more common
 raster graphics where you have a grid of pixels of different colors.
 
-An advantage of using vector graphics is that you can view the image at any
-resolution without losing quality.
+The use of vector graphics allows Glaxnimate to provide a high level of
+precision, scalability, and flexibility when it comes to creating and editing animations.
+Because vector graphics are resolution-independent, animations created
+in Glaxnimate can be easily resized or transformed without losing quality or clarity.
 
 You can learn more about this in the [Vector Graphics](https://en.wikipedia.org/wiki/Vector_graphics)
 article on Wikipedia.
@@ -72,4 +75,3 @@ point to that composition so you don't have to apply the changed to every instan
 With precompositions you can also change when the animation starts and its duration.
 This gives you the ability of creating elements that have looping animations simply
 by creating multiple precomposition layers with different start times.
-
