@@ -54,3 +54,14 @@ void glaxnimate::model::AnimationContainer::stretch_time(qreal multiplier)
     first_frame.set(first_frame.get() * multiplier);
     last_frame.set(last_frame.get() * multiplier);
 }
+
+
+bool glaxnimate::model::AnimationContainer::validate_first_frame(int f) const
+{
+    return f >= 0 && (first_frame.get() == -1 || f < last_frame.get());
+}
+
+bool glaxnimate::model::AnimationContainer::validate_last_frame(int f) const
+{
+    return f >= 0 && (last_frame.get() == -1 || f > first_frame.get());
+}
