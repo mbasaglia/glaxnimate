@@ -32,10 +32,10 @@ nav:
             - manual/ui/dialogs.md
             - manual/ui/menus.md
             - manual/ui/settings.md
-        - "Examples":
-            - examples/bouncy_ball.md
+        - "Tutorials":
+            - tutorial/index.md
+            - tutorial/bouncy-ball/index.md
             - examples/dragon_curve.md
-        - "Video Tutorials": contributing/links.md
         - "ChangeLog": changelog.md
     - "<i class='fa fa-hands-helping'></i> Contributing":
         - "Introduction": contributing/index.md

@@ -252,6 +252,7 @@
      <addaction name="action_lottie_canvas_preview"/>
      <addaction name="action_svg_preview"/>
      <addaction name="action_rive_preview"/>
+     <addaction name="action_lottiefiles_preview"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
     <addaction name="menu_web_preview"/>
@@ -2263,6 +2264,11 @@
   <action name="action_rive_preview">
    <property name="text">
     <string>RIVE (canvas)</string>
+   </property>
+  </action>
+  <action name="action_lottiefiles_preview">
+   <property name="text">
+    <string>LottieFiles</string>
    </property>
   </action>
  </widget>

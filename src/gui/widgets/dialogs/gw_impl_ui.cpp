@@ -283,6 +283,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_text_remove_from_path, &QAction::triggered, parent, [this]{text_remove_from_path();});
     connect(ui.action_insert_emoji, &QAction::triggered, parent, [this]{insert_emoji();});
     connect(ui.action_open_lottiefiles, &QAction::triggered, parent, [this]{import_from_lottiefiles();});
+    connect(ui.action_lottiefiles_preview, &QAction::triggered, parent, [this]{preview_lottiefiles();});
 
 
     // Undo Redo

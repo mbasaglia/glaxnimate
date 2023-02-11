@@ -16,6 +16,13 @@ inline QLatin1String operator "" _l(const char* c, std::size_t sz)
     return QLatin1String(c, sz);
 }
 
+// inline QString debug_value(QCborValue v)
+// {
+//     QCborMap map;
+//     map["v"_l] = v;
+//     return QString(cbor_write_json(map, false));
+// }
+
 class LottieExporterState
 {
     static constexpr const char* version = "5.7.1";
@@ -315,6 +322,10 @@ public:
             jsbez["o"_l] = tan_out;
             return jsbez;
         }
+        else if ( v.userType() == qMetaTypeId<math::bezier::Point>() )
+        {
+            return point_to_lottie(v.value<math::bezier::Point>().pos);
+        }
         else if ( v.userType() == qMetaTypeId<QGradientStops>() )
         {
             QCborArray weird_ass_representation;
@@ -412,6 +423,7 @@ public:
                 auto kf = prop->keyframe(i);
                 QVariant v = transform_values.to_lottie(kf->value(), kf->time());
                 QCborValue kf_value = keyframe_value_from_variant(v);
+
                 if ( i != 0 )
                 {
                     if ( old_kf )
