@@ -2,6 +2,7 @@
 
 * Editing:
     * Added support for animation following a path
+    * Select tool can now work better with ungrouped shapes
 * UI:
     * Added menu action to export as an image sequence
     * New layout presets, to work better on smaller screens
