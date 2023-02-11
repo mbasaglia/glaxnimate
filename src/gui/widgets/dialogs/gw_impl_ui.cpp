@@ -325,6 +325,7 @@ tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
             dock_tools_layout->addWidget(button);
 
             QWidget* widget = tool.second->get_settings_widget();
+            widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
             ui.tool_settings_widget->addWidget(widget);
 
             if ( !to_activate )
@@ -990,7 +991,13 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
     active_tool = tool;
     scene.set_active_tool(tool);
     ui.canvas->set_active_tool(tool);
-    ui.tool_settings_widget->setCurrentWidget(tool->get_settings_widget());
+
+    if ( auto old_wid = ui.tool_settings_widget->currentWidget() )
+        old_wid->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+    auto new_wid = tool->get_settings_widget();
+    new_wid->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui.tool_settings_widget->setCurrentWidget(new_wid);
     if ( active_tool->group() == tools::Registry::Draw || active_tool->group() == tools::Registry::Shape )
         widget_current_style->clear_gradients();
 }
