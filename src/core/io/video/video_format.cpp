@@ -697,40 +697,6 @@ QStringList glaxnimate::io::video::VideoFormat::extensions() const
     return out_ext;
 }
 
-static constexpr const char* const default_option = "--glaxnimate-default--";
-
-
-static QVariantMap get_codecs()
-{
-    QVariantMap codecs;
-
-    void* opaque = nullptr;
-
-    while ( auto codec = av_codec_iterate(&opaque) )
-        codecs[codec->long_name] = QVariant(qlonglong(codec->id));
-
-    codecs["Default"] = QVariant(qlonglong(AV_CODEC_ID_NONE));
-
-    return codecs;
-}
-
-static QVariantMap get_formats_names()
-{
-    QVariantMap formats;
-
-    void* opaque = nullptr;
-    while ( auto format = av_muxer_iterate(&opaque) )
-    {
-        if ( format_skip(format) )
-            continue;
-
-        formats[format->long_name] = QVariant(format->name);
-    }
-
-    formats["Auto"] = default_option;
-
-    return formats;
-}
 
 static QVariantMap make_choices(const char** values, int count)
 {
@@ -739,8 +705,6 @@ static QVariantMap make_choices(const char** values, int count)
     {
         map[values[i]] = values[i];
     }
-
-    map["Default"] = default_option;
 
     return map;
 }
@@ -763,20 +727,6 @@ static QVariantMap get_presets()
     return make_choices(values, sizeof(values) / sizeof(values[0]));
 }
 
-static QVariantMap get_profiles()
-{
-    const char* values[] = {
-        "baseline",
-        "main",
-        "high",
-        "high10",
-        "high422",
-        "high444",
-    };
-
-    return make_choices(values, sizeof(values) / sizeof(values[0]));
-}
-
 bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
@@ -792,37 +742,23 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
             if ( it.key().startsWith("ffmpeg:") )
             {
                 auto value = it->toString();
-                if ( value != default_option )
-                    opt[it.key().mid(7)] = value;
+                opt[it.key().mid(7)] = value;
             }
         }
 
         // allocate the output media context
         AVFormatContext *oc;
 
-        QString format_hint = settings["format"].toString();
-        if ( !format_hint.isEmpty() && format_hint != default_option )
-        {
-            avformat_alloc_output_context2(&oc, nullptr, format_hint.toUtf8().data(), filename.data());
-            if ( !oc )
-            {
-                error(tr("Format not supported: %1").arg(format_hint));
-                return false;
-            }
-        }
-        else
-        {
-            avformat_alloc_output_context2(&oc, nullptr, nullptr, filename.data());
+        avformat_alloc_output_context2(&oc, nullptr, nullptr, filename.data());
 
+        if ( !oc )
+        {
+            warning(tr("Could not deduce output format from file extension: using MPEG."));
+            avformat_alloc_output_context2(&oc, nullptr, "mpeg", filename.data());
             if ( !oc )
             {
-                warning(tr("Could not deduce output format from file extension: using MPEG."));
-                avformat_alloc_output_context2(&oc, nullptr, "mpeg", filename.data());
-                if ( !oc )
-                {
-                    error(tr("Could not find output format"));
-                    return false;
-                }
+                error(tr("Could not find output format"));
+                return false;
             }
         }
 
@@ -844,15 +780,11 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
         // Add the audio and video streams using the given (or default)
         // format codecs and initialize the codecs.
-        AVCodecID codec_id = AVCodecID(settings["codec"].toLongLong());
+        AVCodecID codec_id = oc->oformat->video_codec;
         if ( codec_id == AV_CODEC_ID_NONE )
         {
-            codec_id = oc->oformat->video_codec;
-            if ( codec_id == AV_CODEC_ID_NONE )
-            {
-                error(tr("No video codec"));
-                return false;
-            }
+            error(tr("No video codec"));
+            return false;
         }
 
         // Now that all the parameters are set, we can open the audio and
@@ -911,23 +843,17 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
 std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
 {
-    static auto formats = get_formats_names();
-    static auto codecs = get_codecs();
     static auto presets = get_presets();
-    static auto profiles = get_profiles();
 
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        //                      slug            label             description                                           default                       min max
-        app::settings::Setting{"bit_rate",      tr("Bitrate"),    tr("Video bit rate"),                                 5000,                          0, 10000},
+        //                      slug            label             description                                           default                      min max
+        app::settings::Setting{"bit_rate",      tr("Bitrate"),    tr("Video bit rate (Kb/s)"),                          10,                            0, 99999},
         app::settings::Setting{"background",    tr("Background"), tr("Background color"),                               QColor(0, 0, 0, 0)},
-        app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           document->main()->width.get(), 0, 10000},
-        app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           document->main()->height.get(),0, 10000},
+        app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           document->main()->width.get(), 0, 99999},
+        app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           document->main()->height.get(),0, 99999},
         app::settings::Setting{"verbose",       tr("Verbose"),    tr("Show verbose information on the conversion"),     false},
-        //                      slug            label             description            type                           default                      choices
-        app::settings::Setting{"format",        tr("Format"),     tr("Container format"),app::settings::Setting::String,QString(default_option),     formats},
-        app::settings::Setting{"codec",         tr("Codec"),      tr("Video codec"),     app::settings::Setting::Int,   qlonglong(AV_CODEC_ID_NONE), codecs},
-        app::settings::Setting{"ffmpeg:preset", tr("Preset"),     tr("ffmpeg preset"),   app::settings::Setting::String,QString(default_option),     presets},
-        app::settings::Setting{"ffmpeg:profile",tr("Profile"),    tr("ffmpeg profile"),  app::settings::Setting::String,QString(default_option),     profiles},
+        //                      slug            label             description            type                           default     choices
+        app::settings::Setting{"ffmpeg:preset", tr("Preset"),     tr("ffmpeg preset"),   app::settings::Setting::String,"veryslow", presets},
     });
 }
 
