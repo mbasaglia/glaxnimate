@@ -11,6 +11,7 @@
 
 #include "app/log/log.hpp"
 #include "search_result.hpp"
+#include "graphql.hpp"
 
 
 class glaxnimate::gui::LottieFilesSearchDialog::Private
@@ -60,7 +61,7 @@ public:
         current_query = query;
         current_page = page;
 
-        graphql_request(graphql_query, vars);
+        graphql.query(graphql_query, vars);
     }
 
     void featured(int page)
@@ -96,33 +97,7 @@ public:
         current_query = "";
         current_page = page;
 
-        graphql_request(query, vars);
-    }
-
-    void graphql_request(const QString& query, const QJsonObject& vars)
-    {
-        QJsonObject graphql_dict;
-        graphql_dict["query"] = query;
-        graphql_dict["variables"] = vars;
-
-
-        QNetworkRequest req(graphql_url);
-        req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-        start_load();
-        auto reply = http.post(req, QJsonDocument(graphql_dict).toJson());
-
-        connect(reply, &QNetworkReply::finished, dialog, [this, reply]{on_response(reply);});
-        connect(reply, &QNetworkReply::downloadProgress, dialog, [this](quint64 bytes, quint64 total){
-            static constexpr const int maxi = std::numeric_limits<int>::max();
-            if ( total > maxi )
-            {
-                bytes = (long double)(maxi) / total * bytes;
-                total = maxi;
-            }
-            ui.progress_bar->setMaximum(total);
-            ui.progress_bar->setValue(bytes);
-        });
+        graphql.query(query, vars);
     }
 
     void on_response(QNetworkReply* reply)
@@ -255,7 +230,7 @@ public:
             on_selected(name, url);
         });
 
-        auto reply = http.get(QNetworkRequest(widget->result().preview_url));
+        auto reply = graphql.http().get(QNetworkRequest(widget->result().preview_url));
         connect(reply, &QNetworkReply::finished, widget, [widget, reply]{
             if ( reply->error() )
                 return;
@@ -272,9 +247,20 @@ public:
         ui.button_open->setEnabled(true);
     }
 
+    void on_progress(quint64 bytes, quint64 total)
+    {
+        static constexpr const int maxi = std::numeric_limits<int>::max();
+        if ( total > maxi )
+        {
+            bytes = (long double)(maxi) / total * bytes;
+            total = maxi;
+        }
+        ui.progress_bar->setMaximum(total);
+        ui.progress_bar->setValue(bytes);
+    }
+
     Ui::LottieFilesSearchDialog ui;
-    QNetworkAccessManager http;
-    QUrl graphql_url{"https://graphql.lottiefiles.com/"};
+    GraphQl graphql{"https://graphql.lottiefiles.com/"};
     LottieFilesSearchDialog* dialog;
     QString current_query;
     int current_page = -1;
@@ -297,6 +283,10 @@ glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* paren
     d->clear_results();
     d->ui.result_area->setMinimumWidth(d->preview_size.width() * d->layout_columns + 128);
     d->featured(1);
+
+    connect(&d->graphql, &GraphQl::query_started, this, [this]{d->start_load();});
+    connect(&d->graphql, &GraphQl::query_finished, this, [this](QNetworkReply* reply){d->on_response(reply);});
+    connect(&d->graphql, &GraphQl::query_progress, this, [this](quint64 bytes, quint64 total){d->on_progress(bytes, total);});
 }
 
 glaxnimate::gui::LottieFilesSearchDialog::~LottieFilesSearchDialog() = default;

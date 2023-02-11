@@ -67,6 +67,7 @@ widgets/dialogs/export_image_sequence_dialog.ui
 widgets/lottiefiles/lottiefiles_search_dialog.cpp
 widgets/lottiefiles/lottiefiles_search_dialog.ui
 widgets/lottiefiles/search_result.cpp
+widgets/lottiefiles/graphql.cpp
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp
