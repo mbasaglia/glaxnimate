@@ -3,6 +3,7 @@
 #include <QPainter>
 
 #include "model/document.hpp"
+#include "model/shapes/styler.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Group)
 
@@ -49,13 +50,16 @@ QTransform glaxnimate::model::Group::local_transform_matrix(glaxnimate::model::F
     return transform.get()->transform_matrix(t);
 }
 
+
 QPainterPath glaxnimate::model::Group::to_painter_path_impl(glaxnimate::model::FrameTime t) const
 {
     QPainterPath path;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
     {
-        path.addPath(ch->to_clip(t));
+        if ( ch->is_instance<glaxnimate::model::Styler>() )
+            path.addPath(ch->to_clip(t));
     }
+
     return path;
 }
 

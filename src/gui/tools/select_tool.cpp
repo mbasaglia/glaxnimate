@@ -458,7 +458,7 @@ private:
 
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
-        if ( node->has("transform") || node->is_instance<model::MainComposition>() )
+        if ( node->has("transform") || node->has("position") || node->is_instance<model::MainComposition>() )
         {
             scene->show_editors(node);
         }

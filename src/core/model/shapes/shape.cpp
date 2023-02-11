@@ -193,10 +193,10 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Shape::to_pa
     return path;
 }
 
-QPainterPath glaxnimate::model::Shape::to_painter_path_impl(FrameTime) const
+QPainterPath glaxnimate::model::Shape::to_painter_path_impl(FrameTime t) const
 {
     QPainterPath p;
-//     to_bezier(t).add_to_painter_path(p);
+    to_bezier(t).add_to_painter_path(p);
     return p;
 }
 
