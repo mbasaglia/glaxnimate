@@ -288,7 +288,10 @@ public:
             {
                 key_times.push_back("1");
                 for ( auto& attr : attributes )
-                    attr.values.push_back(attr.values.back());
+                {
+                    if ( !attr.values.empty() )
+                        attr.values.push_back(attr.values.back());
+                }
             }
             else
             {
