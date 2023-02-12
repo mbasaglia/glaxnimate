@@ -54,7 +54,10 @@ public:
         doc->main()->width.set(ui.spin_size->x());
         doc->main()->height.set(ui.spin_size->y());
         doc->main()->fps.set(ui.spin_fps->value());
-        doc->main()->animation->last_frame.set(duration_frames());
+        auto last_frame = duration_frames();
+        doc->main()->animation->last_frame.set(last_frame);
+        for ( auto lay : doc->main()->docnode_find_by_type_name<model::Layer>("Layer") )
+            lay->animation->last_frame.set(last_frame);
     }
 };
 
