@@ -9,7 +9,7 @@ as it serves as a simple yet effective demonstration of motion and timing.
 This tutorial will guide you through the process of creating a
 bouncing ball animation in Glaxnimate. So let's get started!
 
-{lottie:bouncy-ball/ball-squish.json:512:512:ball-squish.rawr}
+{lottie:bouncy-ball/ball-final.json:512:512:ball-final.rawr}
 
 
 Create a new project
