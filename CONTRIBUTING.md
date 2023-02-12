@@ -49,6 +49,7 @@ integrated with continuous integration.
 * Deb
 * AUR
 * PyPI
+* Flatpak
 
 ### More packages
 

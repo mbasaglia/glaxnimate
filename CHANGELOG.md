@@ -23,6 +23,7 @@
     * Added Flatpack
     * Fixed Freedesktop file naming
     * Added Freedesktop metainfo
+    * Show contributors in the
 
 ## 0.5.1
 

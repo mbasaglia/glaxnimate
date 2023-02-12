@@ -74,6 +74,11 @@ AboutDialog::AboutDialog(QWidget* parent)
 
     populate_io(d->table_formats_input, io::IoRegistry::instance().importers());
     populate_io(d->table_formats_output, io::IoRegistry::instance().exporters());
+
+
+    QFile authors(app::Application::instance()->data_file("AUTHORS.md"));
+    if ( authors.open(QFile::ReadOnly|QFile::Text) )
+        d->credits->setText(QString::fromUtf8(authors.readAll()));
 }
 
 AboutDialog::~AboutDialog() = default;

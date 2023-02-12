@@ -54,6 +54,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/glaxnimate.in.desktop ${CMAKE_CURRENT
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION ${DATA_INSTALL})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/applications RENAME ${PROJECT_ID}.desktop)
 
+# Misc
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../AUTHORS.md ${CMAKE_CURRENT_BINARY_DIR}/AUTHORS.md COPYONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/../AUTHORS.md DESTINATION ${DATA_INSTALL})
+
 # Icon
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/file-icon.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}-file.svg COPYONLY)

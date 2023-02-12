@@ -1,7 +1,11 @@
 Developers
 ==========
 
-Mattia "Glax" Basaglia <glaxnimate@mattbas.org> (Maintainer)
+* Mattia "Glax" Basaglia (Maintainer)
+
+For a list of all the people who contributed you can also check the
+[contributor chart](https://gitlab.com/mattbas/glaxnimate/-/graphs/master)
+on GitLab.
 
 
 Translators
