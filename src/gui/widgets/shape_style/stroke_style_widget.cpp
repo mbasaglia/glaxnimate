@@ -164,7 +164,6 @@ void StrokeStyleWidget::changeEvent(QEvent* e)
 
 void StrokeStyleWidget::paintEvent(QPaintEvent* event)
 {
-
     QWidget::paintEvent(event);
     qreal stroke_width = d->ui.spin_stroke_width->value();
     const qreal frame_margin = 6;
@@ -172,9 +171,6 @@ void StrokeStyleWidget::paintEvent(QPaintEvent* event)
 
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
-
-    p.setPen(pen_style());
-    p.setBrush(Qt::NoBrush);
 
     QStyleOptionFrame panel;
     panel.initFrom(this);
@@ -184,9 +180,12 @@ void StrokeStyleWidget::paintEvent(QPaintEvent* event)
     panel.lineWidth = 2;
     panel.midLineWidth = 0;
     panel.state |= QStyle::State_Raised;
-//     style()->drawPrimitive(QStyle::PE_Frame, &panel, &p, nullptr);
-    QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, nullptr);
-    p.fillRect(r, palette().brush(d->background));
+    panel.frameShape = QFrame::StyledPanel;
+//     style()->drawPrimitive(QStyle::PE_Frame, &panel, &p, this);
+    style()->drawControl(QStyle::CE_ShapedFrame, &panel, &p, this);
+
+    p.setPen(pen_style());
+    p.setBrush(Qt::NoBrush);
 
     QRectF draw_area = QRectF(d->ui.frame->geometry()).adjusted(margin, margin, -margin, -margin);
     QPolygonF poly;

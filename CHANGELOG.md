@@ -17,7 +17,8 @@
 * Scripting:
     * Added function to render a node at a specific frame
 * Bug fixes:
-    * Fixes loading lottie with hidden stylers
+    * Fixed loading lottie with hidden stylers
+    * Fixed preview in the stroke style view
 * Other:
     * Added Flatpack
     * Fixed Freedesktop file naming
