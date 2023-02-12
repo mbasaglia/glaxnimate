@@ -181,3 +181,46 @@ as to which we modified the time stretch.
 Now you have the ball bounce twice per animation loop:
 
 {lottie:bouncy-ball/ball-twice.json:512:512:ball-twice.rawr}
+
+
+Hit Lines
+---------
+
+We will now add some lines to highlight the hit when the ball reaches the bottom.
+
+Within the precomposition (**Layer** tab), go to frame 60 (when the ball is at its lowest)
+and use the _Draw Bezier_ tool to draw a line from the bottom of the ball out.
+Make sure that in the tool options _Fill_ is unchecked and _Stroke_ is checked.
+Simply click under the ball with the _Draw Bezier_ tool active and then click
+again on the end of the line. Then press Enter on your keyboard to confirm the line.
+
+![Drawing a line](./draw-line.png)
+
+You can then use the _Stroke_ view to change the color and thickness of the line.
+
+![Styled line](./line-style.png)
+
+Draw a few more lines going in different directions making sure the staring point is towards the ball,
+then select them all (with the _Select_ tool or from the timeline) and press Ctrl+G to group them.
+Move the group below the ball by clicking on the _Lower to Bottom_ button
+on the toolbar above the canvas.
+
+![Multiple Lines](./multiple-lines.png)
+
+Now we'll animate the lines, making them appear and disappear in rapid succession.
+
+Right click on the line group in the timeline, then _Add_ > _Trim Path_.
+This will add a Trim Path at the bottom of the group, which gives you some
+properties you can animate to modify the other paths in the group.
+
+Expand **Trim Path** on the timeline, then animate its properties as we did with the ball.
+At frame 60, both _start_ and _end_ should be keyframed at 0%,
+this will make the lines invisible until that point.
+After a few frames add set _start_ to 50% and _end_ to 100% and add a new keyframe for both.
+After a few more frames add another keyframe and setting _start_ to 100%.
+
+All this will make the lines briefly appear and shoot out when the ball hits the bottom.
+
+![Trim Path keyframes](./timeline-trim-path.png)
+
+{lottie:bouncy-ball/ball-lines.json:512:512:ball-lines.rawr}
