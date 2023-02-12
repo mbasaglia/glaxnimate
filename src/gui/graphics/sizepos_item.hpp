@@ -126,13 +126,42 @@ private slots:
 private:
     void push(bool commit)
     {
-        size->object()->document()->undo_stack().push(new command::SetMultipleAnimated(
-            size->name(),
-            {size, pos},
-            {size->value(), pos->value()},
-            {rect.size(), rect.center()},
-            commit
-        ));
+        std::vector<model::AnimatableBase*> props;
+        QVariantList before;
+        QVariantList after;
+
+        props.push_back(size);
+        before.push_back(size->value());
+        after.push_back(rect.size());
+
+        auto pos_before = pos->get();
+        auto& stack = size->object()->document()->undo_stack();
+
+        // Check we should only update the size
+        bool skip_pos = qFuzzyCompare(pos_before.x(), rect.center().x()) && qFuzzyCompare(pos_before.y(), rect.center().y());
+        if ( skip_pos )
+        {
+            int undo_index = stack.index() - 1;
+            if ( undo_index > 0 )
+            {
+                auto last_command = stack.command(undo_index);
+                if ( last_command->id() == int(command::Id::SetMultipleAnimated) )
+                {
+                    auto cmd = static_cast<const command::SetMultipleAnimated*>(last_command);
+                    if ( cmd->properties().size() == 2 && cmd->properties()[0] == size && cmd->properties()[1] == pos )
+                        skip_pos = false;
+                }
+            }
+        }
+
+        if ( !skip_pos )
+        {
+            props.push_back(pos);
+            before.push_back(pos->value());
+            after.push_back(rect.center());
+        }
+
+        stack.push(new command::SetMultipleAnimated(size->name(), props, before, after, commit));
         prepareGeometryChange();
     }
 

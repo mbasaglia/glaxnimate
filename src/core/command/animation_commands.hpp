@@ -149,6 +149,8 @@ public:
 
     bool merge_with(const SetMultipleAnimated& other);
 
+    const std::vector<model::AnimatableBase*>& properties() const { return props; }
+
 private:
     static QString auto_name(model::AnimatableBase* prop);
 
