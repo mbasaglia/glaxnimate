@@ -131,3 +131,53 @@ In the end you should have something along these lines:
 
 
 {lottie:bouncy-ball/ball-squish.json:512:512:ball-squish.rawr}
+
+
+Multiple Bounces
+----------------
+
+Currently the animation consists of a single bounce of the ball, which is
+fine for a simple example but sometimes you want to repeat an action or element
+within the animation.
+
+In order to achieve this, we will look at Precompositions, a feature that
+allow you to group and organize objects into a single container,
+making it easier to manage and duplicate your animation elements.
+
+First, let's start by turning our animation layer into a precomposition:
+Right click on **Layer** in the timeline, and select _Precompose_ from
+the context menu.
+
+![Precomposed Layer](./precomposed.png)
+
+You'll notice now on top of the canvas you have two tabs, each tab
+represents a composition. The first composition corresponds to the final
+animation, and all the others are precompositions you can insert in the
+main animation or even in other precompositions.
+
+If you click on the **Animation** tab, you'll see the old shape layer
+has been replaced by a composition layer.
+
+The animation looks the same but now the layer behaves as a single uneditable object.
+
+![Timeline showing precomposed layers](./precomposed-timeline.png)
+
+Now let's make the ball bounce twice as fast, in the main composition
+you can drag the end time of the precomposed layer to end at frame 60:
+
+![Timeline showing the stretched layer time](./timeline-stretch.png)
+
+If you want more control, ensure you have the composition layer selected
+and set the timing stretch to 50%:
+
+![Property tree showing the stretched layer time](./properties-stretch.png)
+
+Now you can right click the composition layer in the timeline and select _Duplicate_.
+Finally, drag the start time of the duplicated layer to frame 60, in a similar manner
+as to which we modified the time stretch.
+
+![Timeline with the two precomp layers](./second-precomp.png)
+
+Now you have the ball bounce twice per animation loop:
+
+{lottie:bouncy-ball/ball-twice.json:512:512:ball-twice.rawr}

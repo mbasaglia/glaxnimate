@@ -10,7 +10,7 @@ class StretchableTime : public Object
 {
     GLAXNIMATE_OBJECT(StretchableTime)
     GLAXNIMATE_PROPERTY(float, start_time, 0, &StretchableTime::timing_changed, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float, stretch, 1,    &StretchableTime::timing_changed, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float, stretch, 1,    &StretchableTime::timing_changed, {}, PropertyTraits::Visual|PropertyTraits::Percent)
 
 public:
     using Object::Object;
