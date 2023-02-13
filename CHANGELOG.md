@@ -9,7 +9,7 @@
     * Added shortcut settings for plugins
 * I/O:
     * Added support for loading and saving Rive animations
-    * Added more options for video export
+    * Improved quality of video export
     * Added CLI options to render images without starting the GUI
     * Fixed Loading some old Lotties
     * Fixed loading rawr file with layer starting after 180 frames

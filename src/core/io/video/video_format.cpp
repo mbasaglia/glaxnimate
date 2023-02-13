@@ -288,6 +288,7 @@ private:
     AVDictionary* local_dict = nullptr;
 };
 
+
 class Video
 {
 public:
@@ -362,6 +363,32 @@ public:
         }
     }
 
+    static AVPixelFormat best_pixel_format(const AVPixelFormat* pix_fmts)
+    {
+        static const std::array<AVPixelFormat, 8> preferred = {
+            // RGBA and similar (no conversion)
+            AV_PIX_FMT_ARGB, AV_PIX_FMT_RGBA, AV_PIX_FMT_ABGR, AV_PIX_FMT_BGRA,
+            // YUV + Alpha
+            AV_PIX_FMT_YUVA444P, AV_PIX_FMT_YUVA420P,
+            // RGB
+            AV_PIX_FMT_RGB24, AV_PIX_FMT_BGR24,
+
+        };
+
+        if ( !pix_fmts )
+            return AV_PIX_FMT_NONE;
+
+        std::set<AVPixelFormat> supported;
+        for ( auto it = pix_fmts; it && *it != AV_PIX_FMT_NONE; ++it )
+            supported.insert(*it);
+
+        for ( auto pref : preferred )
+            if ( supported.count(pref) )
+                return pref;
+
+        return *pix_fmts;
+    }
+
     Video(AVFormatContext *oc, Dict options, AVCodecID codec_id, int64_t bit_rate, int width, int height, int fps)
         : ost(oc, codec_id)
     {
@@ -389,17 +416,12 @@ public:
 
         // emit one intra frame every twelve frames at most
         ost.codec_context->gop_size = 12;
+
         // get_format() for some reason returns an invalid value
-        if (ost.codec->id == AV_CODEC_ID_VP9 || ost.codec->id == AV_CODEC_ID_VP8)
-        {
-            ost.codec_context->pix_fmt = AV_PIX_FMT_YUVA420P;
-        }
-        else
-        {
-            if ( ost.codec->pix_fmts == nullptr )
+        ost.codec_context->pix_fmt = best_pixel_format(ost.codec->pix_fmts);
+
+        if ( ost.codec_context->pix_fmt == AV_PIX_FMT_NONE )
                 throw av::Error(QObject::tr("Could not determine pixel format"));
-            ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
-        }
 
 //         // just for testing, we also add B-frames
 //         if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
@@ -709,24 +731,6 @@ static QVariantMap make_choices(const char** values, int count)
     return map;
 }
 
-static QVariantMap get_presets()
-{
-    const char* values[] = {
-        "ultrafast",
-        "superfast",
-        "veryfast",
-        "faster",
-        "fast",
-        "medium",
-        "slow",
-        "slower",
-        "veryslow",
-        "placebo",
-    };
-
-    return make_choices(values, sizeof(values) / sizeof(values[0]));
-}
-
 bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
@@ -734,17 +738,6 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         av::Logger logger(this, settings["verbose"].toBool() ? AV_LOG_INFO : AV_LOG_WARNING);
 
         auto filename = name.toUtf8();
-
-
-        av::Dict opt;
-        for ( auto it = settings.begin(); it != settings.end(); ++it )
-        {
-            if ( it.key().startsWith("ffmpeg:") )
-            {
-                auto value = it->toString();
-                opt[it.key().mid(7)] = value;
-            }
-        }
 
         // allocate the output media context
         AVFormatContext *oc;
@@ -787,6 +780,25 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
             return false;
         }
 
+        // Options
+        av::Dict opt;
+        opt["crf"] = "18";
+        if ( codec_id == AV_CODEC_ID_H264 )
+        {
+            opt["profile"] = "high";
+            opt["preset"] = "veryslow";
+            opt["tune"] = "animation";
+        }
+
+        for ( auto it = settings.begin(); it != settings.end(); ++it )
+        {
+            if ( it.key().startsWith("ffmpeg:") )
+            {
+                auto value = it->toString();
+                opt[it.key().mid(7)] = value;
+            }
+        }
+
         // Now that all the parameters are set, we can open the audio and
         // video codecs and allocate the necessary encode buffers.
         int width = settings["width"].toInt();
@@ -795,9 +807,8 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         int height = settings["height"].toInt();
         if ( height == 0 )
             height = document->main()->height.get();
-        int64_t bit_rate = settings["bit_rate"].toInt();
         int fps = qRound(document->main()->fps.get());
-        av::Video video(oc, opt, codec_id, bit_rate*100, width, height, fps);
+        av::Video video(oc, opt, codec_id, 500000, width, height, fps);
 
         // log format info
         av_dump_format(oc, 0, filename, 1);
@@ -843,17 +854,12 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
 std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
 {
-    static auto presets = get_presets();
-
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         //                      slug            label             description                                           default                      min max
-        app::settings::Setting{"bit_rate",      tr("Bitrate"),    tr("Video bit rate (Kb/s)"),                          10,                            0, 99999},
         app::settings::Setting{"background",    tr("Background"), tr("Background color"),                               QColor(0, 0, 0, 0)},
         app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           document->main()->width.get(), 0, 99999},
         app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           document->main()->height.get(),0, 99999},
         app::settings::Setting{"verbose",       tr("Verbose"),    tr("Show verbose information on the conversion"),     false},
-        //                      slug            label             description            type                           default     choices
-        app::settings::Setting{"ffmpeg:preset", tr("Preset"),     tr("ffmpeg preset"),   app::settings::Setting::String,"veryslow", presets},
     });
 }
 
