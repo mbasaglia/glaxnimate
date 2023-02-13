@@ -55,6 +55,7 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 #include "app/settings/settings.hpp"
 #include "app/settings/palette_settings.hpp"
 #include "app/settings/keyboard_shortcuts.hpp"
+#include "app/log/listener_file.hpp"
 #include "settings/plugin_settings_group.hpp"
 #include "settings/clipboard_settings.hpp"
 #include "settings/toolbar_settings.hpp"
@@ -142,6 +143,8 @@ static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* sett
 
 void GlaxnimateApp::on_initialize()
 {
+
+    app::log::Logger::instance().add_listener<app::log::ListenerFile>(writable_data_path("log.txt"));
     app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
     store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
 

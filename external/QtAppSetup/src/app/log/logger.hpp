@@ -48,10 +48,10 @@ public:
         return instance;
     }
 
-    template<class T>
-    T* add_listener()
+    template<class T, class... Args>
+    T* add_listener(Args&&... args)
     {
-        listeners.push_back(std::make_unique<T>());
+        listeners.push_back(std::make_unique<T>(std::forward<Args>(args)...));
         return static_cast<T*>(listeners.back().get());
     }
 

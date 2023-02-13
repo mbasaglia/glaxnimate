@@ -25,6 +25,7 @@
     * Fixed Freedesktop file naming
     * Added Freedesktop metainfo
     * Show contributors in the
+    * Messages are not also logged to a file
 
 ## 0.5.1
 
