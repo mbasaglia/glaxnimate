@@ -720,17 +720,6 @@ QStringList glaxnimate::io::video::VideoFormat::extensions() const
 }
 
 
-static QVariantMap make_choices(const char** values, int count)
-{
-    QVariantMap map;
-    for ( int i = 0; i < count; i++ )
-    {
-        map[values[i]] = values[i];
-    }
-
-    return map;
-}
-
 bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
@@ -782,7 +771,7 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
         // Options
         av::Dict opt;
-        opt["crf"] = "18";
+        opt["crf"] = 23;
         if ( codec_id == AV_CODEC_ID_H264 )
         {
             opt["profile"] = "high";
@@ -808,7 +797,7 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         if ( height == 0 )
             height = document->main()->height.get();
         int fps = qRound(document->main()->fps.get());
-        av::Video video(oc, opt, codec_id, 500000, width, height, fps);
+        av::Video video(oc, opt, codec_id, 7000000, width, height, fps);
 
         // log format info
         av_dump_format(oc, 0, filename, 1);
