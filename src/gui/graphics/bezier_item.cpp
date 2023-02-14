@@ -360,6 +360,30 @@ void graphics::BezierItem::remove_point(int index)
     do_update(true, tr("Remove Point"));
 }
 
+void graphics::BezierItem::make_first(int index)
+{
+    if ( index == 0 || !bezier_.closed() )
+        return;
+
+    std::vector<math::bezier::Point> new_points(bezier_.begin() + index, bezier_.end());
+    new_points.insert(new_points.end(), bezier_.points().begin(), bezier_.points().begin() + index);
+    std::swap(new_points, bezier_.points());
+
+    std::set<int> selected;
+
+    for ( int i = 0; i < int(items.size()); i++ )
+    {
+        int new_index = i >= index ? i - index : i + items.size() - index;
+        items[i]->set_index(new_index);
+        if ( selected_indices_.count(new_index) )
+            selected.insert(new_index);
+    }
+
+    std::swap(selected, selected_indices_);
+
+    do_update(true, tr("Set Start"));
+}
+
 void graphics::BezierItem::do_update(bool commit, const QString& name)
 {
     auto lock = updating.get_lock();

@@ -1,3 +1,8 @@
+## 0.5.3
+
+* Editing:
+    * Added the ability to select the first bezier node from the node's context menu
+
 ## 0.5.2
 
 * Editing:
@@ -24,7 +29,7 @@
     * Added Flatpack
     * Fixed Freedesktop file naming
     * Added Freedesktop metainfo
-    * Show contributors in the
+    * Show contributors in the about dialog
     * Messages are not also logged to a file
 
 ## 0.5.1

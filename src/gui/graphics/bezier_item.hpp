@@ -120,6 +120,8 @@ public slots:
 
     void remove_point(int index);
 
+    void make_first(int index);
+
 private slots:
     void on_dragged(int index, const math::bezier::Point& point, bool commit, const QString& name);
     void refresh_from_position_property();

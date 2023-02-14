@@ -312,6 +312,14 @@ public:
                 item->show_tan_in(true);
                 item->show_tan_out(true);
             });
+
+            if ( item->index() > 0 && item->parent_editor()->bezier().closed() )
+            {
+                menu.addAction(QIcon::fromTheme("edit-node"), QObject::tr("Make First Node"), item, [item]{
+                    item->parent_editor()->make_first(item->index());
+                });
+            }
+
         }
         else
         {
