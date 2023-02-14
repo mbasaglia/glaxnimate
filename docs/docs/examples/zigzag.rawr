@@ -1,0 +1,326 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 90
+        },
+        "fps": 60,
+        "group_color": "#00000000",
+        "height": 300,
+        "locked": false,
+        "name": "Animation",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 180
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "inverted": false,
+                    "mask": "NoMask"
+                },
+                "name": "Layer",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                    {
+                        "__type__": "Group",
+                        "group_color": "#00000000",
+                        "locked": false,
+                        "name": "PolyStar",
+                        "opacity": {
+                            "value": 1
+                        },
+                        "shapes": [
+                            {
+                                "__type__": "ZigZag",
+                                "amplitude": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 45,
+                                            "value": 7
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 90,
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "frequency": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 5
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 45,
+                                            "value": 20
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 90,
+                                            "value": 5
+                                        }
+                                    ]
+                                },
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Zig Zag",
+                                "style": "Wave",
+                                "uuid": "30602884-2701-48cc-84d7-5e429ff98e87",
+                                "visible": true
+                            },
+                            {
+                                "__type__": "Fill",
+                                "color": {
+                                    "value": "#fffa48"
+                                },
+                                "fill_rule": "NonZero",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Fill",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "9e2b21a4-a479-4ab3-95de-95c0120b5de6",
+                                "visible": false
+                            },
+                            {
+                                "__type__": "Stroke",
+                                "cap": "RoundCap",
+                                "color": {
+                                    "value": "#ff5704"
+                                },
+                                "group_color": "#00000000",
+                                "join": "RoundJoin",
+                                "locked": false,
+                                "miter_limit": 0,
+                                "name": "Stroke",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "1a34e769-043c-46e8-adc8-f54ffeb3de05",
+                                "visible": true,
+                                "width": {
+                                    "value": 5
+                                }
+                            },
+                            {
+                                "__type__": "PolyStar",
+                                "angle": {
+                                    "value": 359.7149353027344
+                                },
+                                "group_color": "#00000000",
+                                "inner_radius": {
+                                    "value": 50
+                                },
+                                "inner_roundness": {
+                                    "value": 0
+                                },
+                                "locked": false,
+                                "name": "PolyStar",
+                                "outer_radius": {
+                                    "value": 140
+                                },
+                                "outer_roundness": {
+                                    "value": 0
+                                },
+                                "points": {
+                                    "value": 6
+                                },
+                                "position": {
+                                    "value": {
+                                        "x": 150,
+                                        "y": 150
+                                    }
+                                },
+                                "reversed": false,
+                                "type": "Polygon",
+                                "uuid": "bf4b53e0-0582-4499-b42a-000924811463",
+                                "visible": true
+                            }
+                        ],
+                        "transform": {
+                            "__type__": "Transform",
+                            "anchor_point": {
+                                "value": {
+                                    "x": 240.08586762075132,
+                                    "y": 228.75134168157422
+                                }
+                            },
+                            "position": {
+                                "value": {
+                                    "x": 240.3011033019237,
+                                    "y": 233.75047536131544
+                                }
+                            },
+                            "rotation": {
+                                "value": 0
+                            },
+                            "scale": {
+                                "value": {
+                                    "x": 1,
+                                    "y": 1
+                                }
+                            }
+                        },
+                        "uuid": "5641a3f6-30d9-4ed1-bcbe-9529f70a53d2",
+                        "visible": true
+                    }
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 255.75301570008597,
+                            "y": 247.99886770719021
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "1e59c23e-7c6a-4a84-b19e-e1c102a7bf59",
+                "visible": true
+            }
+        ],
+        "uuid": "c47273c8-f8c5-463d-992a-056f17c42f22",
+        "visible": true,
+        "width": 300
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "d34dc31a-e5fb-405d-9cb2-6b1b1caf667c",
+            "values": [
+            ]
+        },
+        "fonts": {
+            "__type__": "FontList",
+            "name": "",
+            "uuid": "ab2cd523-8108-4459-8dd8-7dce4e23c1f6",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "df6fbb47-dd10-4cf3-aa70-6a20e16d04aa",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "91810a68-bd0b-415a-af53-76d3b888d8e0",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "7fb97139-7e16-4977-b825-23f129c596ca",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "e2240911-95be-46cc-b15a-2df0b5aee948",
+            "values": [
+            ]
+        },
+        "uuid": "6aae28f3-92a0-4c03-8954-bb4d2c77efa2"
+    },
+    "format": {
+        "format_version": 7,
+        "generator": "Glaxnimate",
+        "generator_version": "0.5.2"
+    },
+    "info": {
+        "author": "",
+        "description": "",
+        "keywords": [
+        ]
+    },
+    "metadata": {
+    }
+}

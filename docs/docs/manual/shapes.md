@@ -67,9 +67,11 @@ These define the actual shapes to draw, but no styling information.
 
 ### Rectangle
 
-![Rectangle shape](/img/screenshots/shapes/rect.png)
+{lottie:/examples/rectangle.json:512:512:/examples/rectangle.rawr}
 
 #### Editing
+
+![Rectangle shape](/img/screenshots/shapes/rect.png)
 
 When a rectangle shape is being edited, it shows the following handles:
 
@@ -95,7 +97,7 @@ factor of the rectangle:
 
 ### Ellipse
 
-![Ellipse](/img/screenshots/shapes/ellipse.png)
+{lottie:/examples/ellipse.json:512:512:/examples/ellipse.rawr}
 
 The handles here work the same as for [Rectangle](#rectangle),
 minus the roundness one which is not present for ellipses.
@@ -132,11 +134,13 @@ The Point handles come in different types:
 
 ### PolyStar
 
-![PolyStar](/img/screenshots/shapes/star.png)
+{lottie:/examples/star.json:512:512:/examples/star.rawr}
 
 This shape can be used to draw stars and regular polygons.
 
 #### Editing
+
+![PolyStar](/img/screenshots/shapes/star.png)
 
 When a star shape is being edited, it shows the following handles:
 
@@ -177,6 +181,42 @@ This can be changed using the [fill style view](ui/docks.md#fill).
 
 Adds an outline to the other shapes in the same group.
 This can be changed using the [stroke style view](ui/docks.md#stroke).
+
+## Shape Modifiers
+
+### Trim Path
+
+{lottie:/examples/trim.json:512:512:/examples/trim.rawr}
+
+The Trim Path modifier is a powerful tool that allows you to trim shapes in your animation.
+It allows you to specify the start and end points of the trimming,
+giving you control over how much of the path is visible in your animation.
+
+There are no visible controls on the canvas but you can animate its properties in the timeline.
+
+### Repeater
+
+{lottie:/examples/repeater.json:512:512:/examples/repeater.rawr}
+
+The repeater allows you to multiply a shape and offset the transform of each copy.
+
+### Inflate / Deflate
+
+{lottie:/examples/inflate.json:512:512:/examples/inflate.rawr}
+
+This modifier inflates and deflates shapes like a balloon.
+
+### Offset Path
+
+{lottie:/examples/offset.json:512:512:/examples/offset.rawr}
+
+This modifier will offset the shape uniformly.
+
+### Zig Zag
+
+{lottie:/examples/zigzag.json:512:512:/examples/zigzag.rawr}
+
+Adds ripples along paths.
 
 ## Miscellaneous
 

@@ -1,6 +1,14 @@
 Authors: Mattia Basaglia
 
-# Introduction
+#  Welcome to Glaxnimate
+
+Glaxnimate is a powerful and user-friendly desktop application for vector animation and motion design.
+It focuses on Lottie and SVG and provides an intuitive interface that makes it easy to create stunning animations.
+
+In this manual, we will guide you through the various components of
+Glaxnimate's user interface and help you get started with [creating your first animation](../tutorial/bouncy-ball/index.md).
+
+So let's dive in and discover the magic of Glaxnimate!
 
 
 ## User Interface
@@ -9,14 +17,18 @@ Authors: Mattia Basaglia
 
 Glaxnimate user interface has the following components:
 
-* The [canvas](ui/canvas.md) is the area in the middle of the window, where you
-  can preview and edit the animation.
-* Around the canvas are the [dockable views](ui/docks.md), that give quick access
-  to all the main functionality of Glaxnimate.
-  These can be hidden and re-arranged to fit your taste.
-* On top are the [menu and tool bars](ui/menus.md), these work like in most user interfaces.
 
-You can click on the links to the various pages to get more details on each interface component.
+The [canvas](ui/canvas.md) is the center of the Glaxnimate interface and
+is where you will preview and edit your animations.
+
+Located around the canvas are the [dockable views](ui/docks.md).
+These provide quick access to all of the main functionality of Glaxnimate
+and can be hidden or re-arranged to fit your taste.
+Some of the dockable views include the Properties, Layers, and the Timeline.
+
+
+At the top of the Glaxnimate interface, you'll find the [menu and toolbars](ui/menus.md).
+These work in the same way as most user interfaces and provide access to a variety of tools and options that you'll use to create your animations.
 
 
 ## Core Concepts

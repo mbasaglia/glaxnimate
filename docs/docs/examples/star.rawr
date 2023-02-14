@@ -1,0 +1,398 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 75
+        },
+        "fps": 60,
+        "group_color": "#00000000",
+        "height": 300,
+        "locked": false,
+        "name": "Animation",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 75
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "inverted": false,
+                    "mask": "NoMask"
+                },
+                "name": "Layer",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                    {
+                        "__type__": "Group",
+                        "group_color": "#00000000",
+                        "locked": false,
+                        "name": "PolyStar",
+                        "opacity": {
+                            "value": 1
+                        },
+                        "shapes": [
+                            {
+                                "__type__": "Fill",
+                                "color": {
+                                    "value": "#fffa48"
+                                },
+                                "fill_rule": "NonZero",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Fill",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "cecc702e-a230-4f4f-ad0f-88a3b89a9424",
+                                "visible": true
+                            },
+                            {
+                                "__type__": "Stroke",
+                                "cap": "ButtCap",
+                                "color": {
+                                    "value": "#ff5704"
+                                },
+                                "group_color": "#00000000",
+                                "join": "RoundJoin",
+                                "locked": false,
+                                "miter_limit": 0,
+                                "name": "Stroke",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "af2e4648-86a8-4200-a78a-7a466296ce05",
+                                "visible": true,
+                                "width": {
+                                    "value": 10
+                                }
+                            },
+                            {
+                                "__type__": "PolyStar",
+                                "angle": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 75,
+                                            "value": 180
+                                        }
+                                    ]
+                                },
+                                "group_color": "#00000000",
+                                "inner_radius": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 70
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 30,
+                                            "value": 70
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 145
+                                        }
+                                    ]
+                                },
+                                "inner_roundness": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 30,
+                                            "value": 1
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "locked": false,
+                                "name": "PolyStar",
+                                "outer_radius": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 30,
+                                            "value": 145
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 70
+                                        }
+                                    ]
+                                },
+                                "outer_roundness": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 30,
+                                            "value": 1
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "points": {
+                                    "value": 5
+                                },
+                                "position": {
+                                    "value": {
+                                        "x": 150,
+                                        "y": 150
+                                    }
+                                },
+                                "reversed": false,
+                                "type": "Star",
+                                "uuid": "c9b5c6dd-3ca0-4930-8bda-3a1d8c6f41d6",
+                                "visible": true
+                            }
+                        ],
+                        "transform": {
+                            "__type__": "Transform",
+                            "anchor_point": {
+                                "value": {
+                                    "x": 132.83720930232556,
+                                    "y": 149.7674418604651
+                                }
+                            },
+                            "position": {
+                                "value": {
+                                    "x": 132.83720930232556,
+                                    "y": 149.7674418604651
+                                }
+                            },
+                            "rotation": {
+                                "value": 0
+                            },
+                            "scale": {
+                                "value": {
+                                    "x": 1,
+                                    "y": 1
+                                }
+                            }
+                        },
+                        "uuid": "e7641e0d-d1b0-421f-91d4-c1ad9b6face3",
+                        "visible": true
+                    }
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "7fd4c1b6-fcd3-43d1-8c2b-b3b3f276a201",
+                "visible": true
+            }
+        ],
+        "uuid": "b8eba9aa-235a-42f5-ab64-63d563f35cd3",
+        "visible": true,
+        "width": 300
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "776dd2a4-8f86-478e-9d68-2472d7ec7810",
+            "values": [
+            ]
+        },
+        "fonts": {
+            "__type__": "FontList",
+            "name": "",
+            "uuid": "cba61e9b-2550-40de-b78b-88409febd343",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "487a62c9-1662-4cd0-b016-15e8a994bdef",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "73dff8cd-d148-4461-97c0-548aa4543be8",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "a12b8443-f510-4877-8b16-27f242e99b97",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "a032c7c0-4555-49f1-a01a-7427211c1f8d",
+            "values": [
+            ]
+        },
+        "uuid": "9366059c-e3f8-4551-8619-ebb20eb2d64d"
+    },
+    "format": {
+        "format_version": 7,
+        "generator": "Glaxnimate",
+        "generator_version": "0.5.2"
+    },
+    "info": {
+        "author": "",
+        "description": "",
+        "keywords": [
+        ]
+    },
+    "metadata": {
+    }
+}
