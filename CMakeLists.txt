@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 cmake_policy(SET CMP0077 NEW)
 
 
-project(Glaxnimate VERSION 0.5.1 LANGUAGES CXX)
+project(Glaxnimate VERSION 0.5.2 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
 set(LIB_NAME_CORE "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
