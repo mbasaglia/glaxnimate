@@ -252,7 +252,6 @@
      <addaction name="action_lottie_canvas_preview"/>
      <addaction name="action_svg_preview"/>
      <addaction name="action_rive_preview"/>
-     <addaction name="action_lottiefiles_preview"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
     <addaction name="menu_web_preview"/>

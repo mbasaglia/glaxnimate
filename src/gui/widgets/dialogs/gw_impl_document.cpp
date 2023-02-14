@@ -31,8 +31,6 @@
 
 #include "tools/base.hpp"
 
-#include "widgets/lottiefiles/graphql.hpp"
-
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
@@ -872,51 +870,4 @@ void glaxnimate::gui::GlaxnimateWindow::Private::load_remote_document(const QUrl
         else
             import_file(reply, options);
     });
-}
-
-
-void glaxnimate::gui::GlaxnimateWindow::Private::preview_lottiefiles()
-{
-    auto exporter = io::lottie::LottieFormat();
-    dialog_export_status->reset(&exporter, tr("LottieFiles Preview"));
-
-    QByteArray data;
-    QBuffer buf(&data);
-
-    auto promise = QtConcurrent::run(
-        [&exporter, current_document=current_document.get(), &buf]() -> bool {
-            return exporter.save(buf, "preview.json", current_document, {{"strip", true}});
-        });
-
-    process_events(promise);
-
-    dialog_export_status->disconnect_import_export();
-
-    if ( !promise.result() )
-    {
-        show_warning(tr("LottieFiles Preview"), tr("Could not create file"));
-        return;
-    }
-
-
-    GraphQl graphql{"https://graphql.lottiefiles.com/"};
-
-    static const QString query = R"(
-        mutation createUploadPreview($bgColor: String!)
-        {
-            uploadPreviewAnimation(extension: "json", bgColor: $bgColor)
-            {
-                signedUrl
-                hash
-                status
-                message
-                bgColor
-                animation
-                {
-                    id
-                }
-            }
-        }
-    )";
-
 }

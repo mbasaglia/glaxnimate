@@ -185,7 +185,6 @@ public:
     void preview_svg();
     void preview_rive();
     void preview(io::ImportExport& exporter, const QVariantMap& options);
-    void preview_lottiefiles();
     void save_frame_bmp();
     void save_frame_svg();
     void validate_tgs();
