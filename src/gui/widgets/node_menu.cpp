@@ -147,6 +147,16 @@ void convert_group_callback(const Callback& callback, ToType* layer)
     callback(layer);
 }
 
+template<class ToType> void convert_group_apply_settings(ToType*){}
+
+template<>
+void convert_group_apply_settings<model::Layer>(model::Layer* layer)
+{
+    auto comp = layer->document()->main();
+    layer->animation->first_frame.set(comp->animation->first_frame.get());
+    layer->animation->last_frame.set(comp->animation->last_frame.get());
+}
+
 template<class ToType, class Callback = int>
 class ConvertGroupType
 {
@@ -174,6 +184,9 @@ public:
                     prop->assign_from(src);
             }
         }
+
+        if ( !from->is_instance<model::Layer>() )
+            convert_group_apply_settings(to);
 
         command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to %2").arg(from->name.get()).arg(to->type_name_human()), from->document());
         from->push_command(new command::AddObject(owner, std::move(uto), owner->index_of(from)));
