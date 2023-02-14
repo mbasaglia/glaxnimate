@@ -135,12 +135,12 @@ public:
             attr(svg, "sodipodi", "docname", "")
         );
 
-        if ( max_time > 0 )
-        {
-            document->main()->animation->last_frame.set(max_time);
-            for ( auto lay : layers )
-                lay->animation->last_frame.set(max_time);
-        }
+        if ( max_time <= 0 )
+            max_time = 180;
+
+        document->main()->animation->last_frame.set(max_time);
+        for ( auto lay : layers )
+            lay->animation->last_frame.set(max_time);
     }
 
     void parse_css()

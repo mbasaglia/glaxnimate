@@ -94,6 +94,8 @@ void ResizeDialog::resize_document(model::Document* doc)
             scale_h = scale_w = std::min(scale_h, scale_w);
 
         layer->transform.get()->scale.set_undoable(QVector2D(scale_w, scale_h));
+        layer->animation->first_frame.set(comp->animation->first_frame.get());
+        layer->animation->last_frame.set(comp->animation->last_frame.get());
 
         d->resize(doc);
     }
