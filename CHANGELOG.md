@@ -19,7 +19,7 @@
 * Bug fixes:
     * Fixed loading lottie with hidden stylers
     * Fixed preview in the stroke style view
-    * Changing the duratio in the startup dialog properly applies it to all layers
+    * Changing the duration in the startup dialog properly applies it to all layers
 * Other:
     * Added Flatpack
     * Fixed Freedesktop file naming

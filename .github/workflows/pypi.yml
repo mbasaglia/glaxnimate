@@ -24,6 +24,7 @@ jobs:
               run: |
                 brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                pip3 install twine
                 ./deploy/mac_build.sh deps
             - name: Build Python
               if: ${{ contains(github.ref, '/tags/') }}

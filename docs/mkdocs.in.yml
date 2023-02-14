@@ -36,7 +36,8 @@ nav:
             - tutorial/index.md
             - tutorial/bouncy-ball/index.md
             - examples/dragon_curve.md
-        - "ChangeLog": changelog.md
+        - "Release Notes":
+            - "0.5.2": release-notes/0.5.2/index.md
     - "<i class='fa fa-hands-helping'></i> Contributing":
         - "Introduction": contributing/index.md
         - "Scripting":
