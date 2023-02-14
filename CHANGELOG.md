@@ -2,6 +2,8 @@
 
 * Editing:
     * Added the ability to select the first bezier node from the node's context menu
+* UI:
+    * Nicer display of color values in tree views
 
 ## 0.5.2
 
