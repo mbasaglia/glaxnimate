@@ -1,4 +1,7 @@
 Authors: Mattia Basaglia
+description: Glaxnimate 0.5.2
+photo: wide.png
+
 
 # Glaxnimate 0.5.2
 

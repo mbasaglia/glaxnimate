@@ -17,6 +17,10 @@ markdown_extensions:
     - md_extensions
 extra_css:
     - /style/style.css
+plugins:
+    - mkdocs-simple-hooks:
+        hooks:
+            on_env: "mkdocs_plugin:on_env"
 nav:
     - index.md
     - "Download": download.md
