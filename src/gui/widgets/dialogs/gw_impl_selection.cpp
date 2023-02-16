@@ -9,6 +9,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
 
     selection_changed(selected, deselected);
 
+
     if ( !selected.empty() )
     {
         set_current_object(selected.back());
@@ -101,9 +102,9 @@ void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
     }
 
     // Styles
-    ui.stroke_style_widget->set_shape(stroke);
-    ui.fill_style_widget->set_shape(fill);
-    ui.widget_gradients->set_targets(fill, stroke);
+    ui.stroke_style_widget->set_current(stroke);;
+    ui.fill_style_widget->set_current(fill);
+    ui.widget_gradients->set_current(fill, stroke);
     widget_current_style->clear_gradients();
 
     if ( fill )
@@ -141,10 +142,29 @@ void GlaxnimateWindow::Private::selection_changed(const std::vector<model::Visua
     if ( parent->sender() != ui.timeline_widget )
         ui.timeline_widget->select(selected, deselected);
 
+    const auto& selection = scene.selection();
+
     if ( std::find(deselected.begin(), deselected.end(), current_node) != deselected.end() )
     {
         lock.unlock();
-        const auto& available = scene.selection();
-        set_current_object(available.empty() ? nullptr : available[0]);
+        set_current_object(selection.empty() ? nullptr : selection[0]);
     }
+
+    std::vector<model::Fill*> fills;
+    std::vector<model::Stroke*> strokes;
+    for ( auto node : selection )
+    {
+        for ( const auto styler : node->docnode_find_by_type<model::Styler>() )
+        {
+            if ( auto fill = styler->cast<model::Fill>() )
+                fills.push_back(fill);
+            else if ( auto stroke = styler->cast<model::Stroke>() )
+                strokes.push_back(stroke);
+        }
+    }
+
+    ui.fill_style_widget->set_targets(fills);
+    ui.stroke_style_widget->set_targets(strokes);
+    ui.widget_gradients->set_targets(fills, strokes);
 }
+

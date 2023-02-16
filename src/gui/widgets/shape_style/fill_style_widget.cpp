@@ -20,35 +20,51 @@ FillStyleWidget::FillStyleWidget(QWidget* parent )
 }
 
 
-void FillStyleWidget::set_shape(model::Fill* target, int gradient_stop)
+void FillStyleWidget::set_targets(const std::vector<model::Fill*>& new_targets)
 {
-    if ( this->target )
+    targets.clear();
+    targets.assign(new_targets.begin(), new_targets.end());
+}
+
+void glaxnimate::gui::FillStyleWidget::before_set_target()
+{
+    if ( current_target )
     {
-        disconnect(this->target, &model::Object::property_changed,
+        disconnect(current_target, &model::Object::property_changed,
                     this, &FillStyleWidget::property_changed);
     }
+}
 
-    this->target = target;
-    stop = gradient_stop;
-
-    if ( target )
+void glaxnimate::gui::FillStyleWidget::after_set_target()
+{
+    if ( current_target )
     {
         update_from_target();
-        connect(target, &model::Object::property_changed,
+        connect(current_target, &model::Object::property_changed,
                 this, &FillStyleWidget::property_changed);
     }
 }
 
-model::Fill * FillStyleWidget::shape() const
+void glaxnimate::gui::FillStyleWidget::set_current(model::Fill* current)
 {
-    return target;
+    before_set_target();
+
+    current_target = current;
+    stop = -1;
+
+    after_set_target();
+
 }
 
+model::Fill * FillStyleWidget::current() const
+{
+    return static_cast<model::Fill*>(current_target);
+}
 
 void FillStyleWidget::update_from_target()
 {
     auto lock = updating.get_lock();
-    from_styler(target, stop);
+    from_styler(current_target, stop);
     emit current_color_changed(current_color());
     update();
 }
@@ -60,13 +76,13 @@ void FillStyleWidget::set_target_color(const QColor& color)
 
 void FillStyleWidget::commit_target_color()
 {
-    if ( target )
-        set_color(target->color.get(), true);
+    if ( current_target )
+        set_color(current_target->color.get(), true);
 }
 
 void FillStyleWidget::property_changed(const model::BaseProperty* prop)
 {
-    if ( prop == &target->color || prop == &target->use )
+    if ( prop == &current_target->color || prop == &current_target->use )
     {
         update_from_target();
     }
@@ -77,17 +93,23 @@ void FillStyleWidget::set_color(const QColor&, bool commit)
     if ( updating )
         return;
 
-    to_styler(tr("Update Fill Color"), target, stop, commit);
+    apply_to_targets(tr("Update Fill Color"), targets, stop, commit);
 }
 
 void FillStyleWidget::set_gradient_stop(model::Styler* styler, int index)
 {
     if ( auto fill = styler->cast<model::Fill>() )
-        set_shape(fill, index);
+    {
+        before_set_target();
+        current_target = fill;
+        targets.push_back(fill);
+        targets.clear();
+        stop = index;
+        after_set_target();
+    }
 }
 
 void FillStyleWidget::clear_target_color()
 {
-    if ( target && target->visible.get() )
-        target->visible.set_undoable(false);
+    clear_targets(tr("Clear Fill Color"), targets);
 }

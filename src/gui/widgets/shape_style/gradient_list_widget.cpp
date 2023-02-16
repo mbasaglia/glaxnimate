@@ -33,8 +33,10 @@ public:
     item_models::GradientListModel model;
     model::Document* document = nullptr;
     glaxnimate::gui::SelectionManager* window = nullptr;
-    model::Fill* fill = nullptr;
-    model::Stroke* stroke = nullptr;
+    std::vector<model::Styler*> fills;
+    std::vector<model::Styler*> strokes;
+    model::Fill* current_fill = nullptr;
+    model::Stroke* current_stroke = nullptr;
     color_widgets::GradientDelegate delegate;
     color_widgets::GradientListModel presets;
     GradientListWidget* parent;
@@ -90,13 +92,12 @@ public:
         };
     }
 
-
     void set_gradient(bool secondary, model::Gradient::GradientType gradient_type)
     {
-        model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
+        auto& targets = secondary ? strokes : fills;
 
         // no valid selection
-        if ( !styler )
+        if ( targets.empty() )
             return;
 
         // gather colors
@@ -111,34 +112,10 @@ public:
             colors = current();
         }
 
-
+        // Undo macro
         command::UndoMacroGuard macro(tr("Set %1 Gradient").arg(model::Gradient::gradient_type_name(gradient_type)), document);
 
-        model::Gradient* old = nullptr;
-
-        // update existing Gradient object
-        if ( styler->use.get() )
-        {
-            old = styler->use->cast<model::Gradient>();
-
-            if ( old )
-            {
-                document->push_command(new command::SetPropertyValue(
-                    &old->type,
-                    QVariant::fromValue(gradient_type)
-                ));
-
-                document->push_command(new command::SetPropertyValue(
-                    &old->colors,
-                    QVariant::fromValue(colors)
-                ));
-
-                emit parent->selected(old, secondary);
-
-                return;
-            }
-        }
-
+        // Gather bounding box
         auto shape_element = window->current_shape();
         QRectF bounds;
 
@@ -156,6 +133,7 @@ public:
             bounds = QRectF(QPointF(0, 0), document->size());
 
 
+        // Insert Gradient
         auto grad = std::make_unique<model::Gradient>(document);
         grad->colors.set(colors);
         grad->type.set(gradient_type);
@@ -174,34 +152,62 @@ public:
             std::move(grad)
         ));
 
-        styler->use.set_undoable(QVariant::fromValue(gradient));
+        // Apply changes
+        for ( auto styler : targets )
+        {
+            if ( styler->docnode_locked_recursive() )
+                continue;
+
+            // update existing Gradient object
+            model::Gradient* old = styler->use.get() ? styler->use->cast<model::Gradient>() : nullptr;
+            if ( old )
+            {
+                document->push_command(new command::SetPropertyValue(
+                    &old->type,
+                    QVariant::fromValue(gradient_type)
+                ));
+
+                document->push_command(new command::SetPropertyValue(
+                    &old->colors,
+                    QVariant::fromValue(colors)
+                ));
+
+                emit parent->selected(old, secondary);
+            }
+            else
+            {
+                styler->use.set_undoable(QVariant::fromValue(gradient));
+            }
+        }
+
+        gradient->remove_if_unused(false);
+
         emit parent->selected(gradient, secondary);
 
-        remove_old(old);
-
-    }
-
-    void remove_old(model::Gradient* old)
-    {
-        if ( old )
-            old->remove_if_unused(false);
     }
 
     void clear_gradient(bool secondary)
     {
-        model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
-        if ( !styler )
+        auto& targets = secondary ? strokes : fills;
+        if ( targets.empty() )
             return;
 
         command::UndoMacroGuard macro(tr("Remove Gradient"), document);
 
-        auto old = styler->use.get();
+        for ( auto styler : targets )
+        {
+            if ( styler->docnode_locked_recursive() )
+                continue;
 
-        styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
+            model::Gradient* old = styler->use.get() ? styler->use->cast<model::Gradient>() : nullptr;
+
+            styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
+
+            if ( old )
+                old->remove_if_unused(false);
+        }
+
         emit parent->selected(nullptr, secondary);
-
-        if ( old )
-            remove_old(old->cast<model::Gradient>());
     }
 
     void add_gradient()
@@ -235,23 +241,21 @@ public:
         ui.btn_stroke_radial->setChecked(false);
     }
 
-    void set_targets(model::Fill* fill, model::Stroke* stroke)
+    void set_targets(const std::vector<model::Fill*>& fills, const std::vector<model::Stroke*>& strokes)
     {
-        this->fill = fill;
-        this->stroke = stroke;
+        this->fills.assign(fills.begin(), fills.end());
+        this->strokes.assign(strokes.begin(), strokes.end());
 
-        ui.btn_fill_linear->setEnabled(fill);
-        ui.btn_fill_radial->setEnabled(fill);
-        ui.btn_stroke_linear->setEnabled(stroke);
-        ui.btn_stroke_radial->setEnabled(stroke);
-
-        buttons_from_targets(true);
+        ui.btn_fill_linear->setEnabled(fills.size());
+        ui.btn_fill_radial->setEnabled(fills.size());
+        ui.btn_stroke_linear->setEnabled(strokes.size());
+        ui.btn_stroke_radial->setEnabled(strokes.size());
     }
 
     void buttons_from_targets(bool set_current)
     {
-        auto gradient_fill = fill ? qobject_cast<model::Gradient*>(fill->use.get()) : nullptr;
-        auto gradient_stroke = stroke ? qobject_cast<model::Gradient*>(stroke->use.get()) : nullptr;
+        auto gradient_fill = current_fill ? qobject_cast<model::Gradient*>(current_fill->use.get()) : nullptr;
+        auto gradient_stroke = current_stroke ? qobject_cast<model::Gradient*>(current_stroke->use.get()) : nullptr;
 
         clear_buttons();
 
@@ -401,8 +405,10 @@ void GradientListWidget::changeEvent ( QEvent* e )
 void GradientListWidget::set_document(model::Document* document)
 {
     d->document = document;
-    d->fill = nullptr;
-    d->stroke = nullptr;
+    d->fills = {};
+    d->strokes = {};
+    d->current_fill = nullptr;
+    d->current_stroke = nullptr;
     d->clear_buttons();
 
     if ( !document )
@@ -417,12 +423,19 @@ void GradientListWidget::set_window(glaxnimate::gui::SelectionManager* window)
 }
 
 
-void GradientListWidget::set_targets(model::Fill* fill, model::Stroke* stroke)
+void GradientListWidget::set_targets(const std::vector<model::Fill*>& fills, const std::vector<model::Stroke*>& strokes)
 {
-    d->set_targets(fill, stroke);
+    d->set_targets(fills, strokes);
 }
 
 void GradientListWidget::change_current_gradient()
 {
     d->current_gradient_changed();
+}
+
+void glaxnimate::gui::GradientListWidget::set_current(model::Fill* fill, model::Stroke* stroke)
+{
+    d->current_fill = fill;
+    d->current_stroke = stroke;
+    d->buttons_from_targets(true);
 }

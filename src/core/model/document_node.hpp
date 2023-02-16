@@ -130,7 +130,15 @@ public:
     std::vector<T*> docnode_find_by_type_name(const QString& type_name)
     {
         std::vector<T*> matches;
-        docnode_find_impl(type_name, matches);
+        docnode_find_impl<T>(type_name, matches);
+        return matches;
+    }
+
+    template<class T>
+    std::vector<T*> docnode_find_by_type()
+    {
+        std::vector<T*> matches;
+        docnode_find_impl<T>({}, matches);
         return matches;
     }
 
@@ -205,9 +213,11 @@ private:
     template<class T=DocumentNode>
     void docnode_find_impl(const QString& type_name, std::vector<T*>& matches)
     {
-        if ( docnode_is_instance(type_name) )
+        if ( type_name.isEmpty() || docnode_is_instance(type_name) )
+        {
             if ( auto obj = qobject_cast<T*>(this) )
                 matches.push_back(obj);
+        }
 
         for ( DocumentNode* child : docnode_children() )
             child->docnode_find_impl<T>(type_name, matches);

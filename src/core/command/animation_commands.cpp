@@ -288,6 +288,11 @@ QString glaxnimate::command::SetMultipleAnimated::auto_name(model::AnimatableBas
     return QObject::tr("Update %1").arg(prop->name());
 }
 
+bool glaxnimate::command::SetMultipleAnimated::empty() const
+{
+    return props.empty() && props_not_animated.empty();
+}
+
 glaxnimate::command::SetKeyframeTransition::SetKeyframeTransition(
         model::AnimatableBase* prop,
         int keyframe_index,

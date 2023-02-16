@@ -34,7 +34,8 @@ public:
 
     void from_styler(model::Styler* styler, int gradient_stop);
 
-    void to_styler(const QString& text, model::Styler* styler, int gradient_stop, bool commit);
+    void apply_to_targets(const QString& text, const std::vector<model::Styler*>& styler, int gradient_stop, bool commit);
+    void clear_targets(const QString& text, const std::vector<model::Styler*>& styler);
 
 public slots:
     void set_current_color(const QColor& c);

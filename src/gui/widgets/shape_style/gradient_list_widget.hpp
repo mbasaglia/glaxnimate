@@ -25,7 +25,8 @@ public:
     ~GradientListWidget();
 
     void set_document(model::Document* doc);
-    void set_targets(model::Fill* fill, model::Stroke* stroke);
+    void set_targets(const std::vector<model::Fill*>& fills, const std::vector<model::Stroke*>& strokes);
+    void set_current(model::Fill* fill, model::Stroke* stroke);
     void set_window(glaxnimate::gui::SelectionManager* window);
 
 protected:

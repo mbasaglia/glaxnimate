@@ -151,6 +151,8 @@ public:
 
     const std::vector<model::AnimatableBase*>& properties() const { return props; }
 
+    bool empty() const;
+
 private:
     static QString auto_name(model::AnimatableBase* prop);
 

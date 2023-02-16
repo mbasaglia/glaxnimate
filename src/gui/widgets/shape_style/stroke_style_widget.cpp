@@ -26,13 +26,21 @@ public:
     QButtonGroup group_join;
     bool dark_theme = false;
     QPalette::ColorRole background = QPalette::Base;
-    QPointer<model::Stroke> target = nullptr;
     utils::PseudoMutex updating;
-    int stop = 0;
+    int stop = -1;
+    model::Stroke* current_target = nullptr;
+    std::vector<model::Styler*> targets = {};
+
 
     bool can_update_target()
     {
-        return target && !target->docnode_locked_recursive();
+        for ( auto target : targets )
+        {
+            if ( !target->docnode_locked_recursive() )
+                return true;
+        }
+
+        return false;
     }
 
     void update_background(const QColor& color)
@@ -51,15 +59,15 @@ public:
 
     void update_from_target()
     {
-        if ( target && !updating )
+        if ( current_target && !updating )
         {
             auto lock = updating.get_lock();
-            ui.spin_stroke_width->setValue(target->width.get());
-            set_cap_style(target->cap.get());
-            set_join_style(target->join.get());
-            ui.spin_miter->setValue(target->miter_limit.get());
+            ui.spin_stroke_width->setValue(current_target->width.get());
+            set_cap_style(current_target->cap.get());
+            set_join_style(current_target->join.get());
+            ui.spin_miter->setValue(current_target->miter_limit.get());
 
-            ui.color_selector->from_styler(target, stop);
+            ui.color_selector->from_styler(current_target, stop);
         }
     }
 
@@ -99,10 +107,22 @@ public:
         }
     }
 
-    void set(model::BaseProperty& prop, const QVariant& value, bool commit)
+    template<class Prop>
+    void set(const QString& name, Prop (model::Stroke::*prop), const QVariant& value, bool commit)
     {
-        if ( !updating )
-            prop.set_undoable(value, commit);
+        if ( updating )
+            return;
+
+        auto cmd = std::make_unique<command::SetMultipleAnimated>(name, commit);
+
+        for ( auto target : targets )
+        {
+            if ( !target->docnode_locked_recursive() )
+                cmd->push_property_not_animated(&(static_cast<model::Stroke*>(target)->*prop), value);
+        }
+
+        if ( !cmd->empty() && current_target )
+            current_target->push_command(cmd.release());
     }
 
     void set_color(const QColor&, bool commit)
@@ -110,7 +130,7 @@ public:
         if ( updating )
             return;
 
-        ui.color_selector->to_styler(tr("Update Stroke Color"), target, stop, commit);
+        ui.color_selector->apply_to_targets(tr("Update Stroke Color"), targets, stop, commit);
     }
 };
 
@@ -205,8 +225,7 @@ void StrokeStyleWidget::check_cap()
     else if ( d->ui.button_cap_square->isChecked() )
         d->cap = Qt::SquareCap;
 
-    if ( d->can_update_target() )
-        d->set(d->target->cap, int(d->cap), true);
+    d->set(tr("Set Line Cap"), &model::Stroke::cap, int(d->cap), true);
 
     emit pen_style_changed();
     update();
@@ -221,8 +240,7 @@ void StrokeStyleWidget::check_join()
     else if ( d->ui.button_join_miter->isChecked() )
         d->join = Qt::MiterJoin;
 
-    if ( d->can_update_target() )
-        d->set(d->target->join, int(d->join), true);
+    d->set(tr("Set Line Join"), &model::Stroke::join, int(d->join), true);
 
     emit pen_style_changed();
     update();
@@ -269,37 +287,52 @@ void StrokeStyleWidget::check_color(const QColor& color)
     emit color_changed(color);
 }
 
-void StrokeStyleWidget::set_shape(model::Stroke* target, int gradient_stop)
+void glaxnimate::gui::StrokeStyleWidget::before_set_target()
 {
-    if ( d->target )
+    if ( d->current_target )
     {
-        disconnect(d->target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
+        disconnect(d->current_target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
     }
+}
 
-    d->target = target;
-    d->stop = gradient_stop;
 
-    if ( target )
+void glaxnimate::gui::StrokeStyleWidget::after_set_target()
+{
+    if ( d->current_target )
     {
         d->update_from_target();
 //         emit color_changed(d->ui.color_selector->current_color());
-        connect(target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
+        connect(d->current_target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
         update();
     }
 }
 
+void glaxnimate::gui::StrokeStyleWidget::set_current(model::Stroke* stroke)
+{
+    before_set_target();
+    d->current_target = stroke;
+    d->stop = -1;
+    after_set_target();
+}
+
+void glaxnimate::gui::StrokeStyleWidget::set_targets(std::vector<model::Stroke *> targets)
+{
+    d->targets.clear();
+    d->targets.assign(targets.begin(), targets.end());
+}
+
+
 void StrokeStyleWidget::property_changed(const model::BaseProperty* prop)
 {
     d->update_from_target();
-    if ( prop == &d->target->color || prop == &d->target->use )
+    if ( prop == &d->current_target->color || prop == &d->current_target->use )
         emit color_changed(d->ui.color_selector->current_color());
     update();
 }
 
 void StrokeStyleWidget::check_miter(double w)
 {
-    if ( d->can_update_target() )
-        d->set(d->target->miter_limit, w, false);
+    d->set(tr("Set Miter Limit"), &model::Stroke::miter_limit, w, false);
 
     emit pen_style_changed();
     update();
@@ -307,8 +340,7 @@ void StrokeStyleWidget::check_miter(double w)
 
 void StrokeStyleWidget::check_width(double w)
 {
-    if ( d->can_update_target() )
-        d->set(d->target->width, w, false);
+    d->set(tr("Set Line Width"), &model::Stroke::width, w, false);
 
     emit pen_style_changed();
     update();
@@ -323,14 +355,13 @@ void StrokeStyleWidget::color_committed(const QColor& color)
 
 void StrokeStyleWidget::commit_width()
 {
-    if ( d->can_update_target() && !qFuzzyCompare(d->target->width.get(), float(d->ui.spin_stroke_width->value())) )
-        d->set(d->target->width, d->ui.spin_stroke_width->value(), true);
+    d->set(tr("Set Line Width"), &model::Stroke::width, d->ui.spin_stroke_width->value(), true);
     emit pen_style_changed();
 }
 
-model::Stroke * StrokeStyleWidget::shape() const
+model::Stroke * StrokeStyleWidget::current() const
 {
-    return d->target;
+    return d->current_target;
 }
 
 void StrokeStyleWidget::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
@@ -341,7 +372,12 @@ void StrokeStyleWidget::set_palette_model(color_widgets::ColorPaletteModel* pale
 void StrokeStyleWidget::set_gradient_stop(model::Styler* styler, int index)
 {
     if ( auto stroke = styler->cast<model::Stroke>() )
-        set_shape(stroke, index);
+    {
+        before_set_target();
+        d->current_target = stroke;
+        d->stop = index;
+        after_set_target();
+    }
 }
 
 void StrokeStyleWidget::set_stroke_width(qreal w)
@@ -351,7 +387,6 @@ void StrokeStyleWidget::set_stroke_width(qreal w)
 
 void StrokeStyleWidget::clear_color()
 {
-    if ( d->can_update_target() )
-        d->target->visible.set_undoable(false);
+    d->ui.color_selector->clear_targets(tr("Clear Line Color"), d->targets);
     emit pen_style_changed();
 }

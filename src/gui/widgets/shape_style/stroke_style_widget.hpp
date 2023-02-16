@@ -24,8 +24,9 @@ public:
 
     void save_settings() const;
 
-    void set_shape(model::Stroke* stroke, int gradient_stop = 0);
-    model::Stroke* shape() const;
+    model::Stroke* current() const;
+    void set_current(model::Stroke* stroke);
+    void set_targets(std::vector<model::Stroke*> targets);
 
     void set_stroke_width(qreal w);
 
@@ -35,6 +36,10 @@ public:
     QColor current_color() const;
 
     void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
+
+private:
+    void before_set_target();
+    void after_set_target();
 
 protected:
     void changeEvent ( QEvent* e ) override;

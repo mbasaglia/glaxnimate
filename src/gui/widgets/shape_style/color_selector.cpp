@@ -43,7 +43,6 @@ public:
     utils::PseudoMutex updating_color;
     Ui::ColorSelector ui;
     ColorSelector* parent;
-    bool cleared = false;
 
     void setup_ui(ColorSelector* parent)
     {
@@ -78,25 +77,15 @@ public:
 #endif
 
         connect(ui.combo_box, qOverload<int>(&QComboBox::activated), parent, [this, parent](int i){
-            bool next_cleared = i == ui.combo_box->count() - 1;
+            bool cleared = i == ui.combo_box->count() - 1;
 
-            if ( next_cleared != cleared )
-            {
-                cleared = next_cleared;
-                if ( cleared )
-                    emit parent->current_color_cleared();
-                else
-                    emit parent->current_color_committed(current_color());
-            }
-        });
-
-        connect(ui.btn_clear, &QAbstractButton::clicked, parent, [this, parent]{
-            if ( !cleared )
-            {
-                cleared = true;
+            if ( cleared )
                 emit parent->current_color_cleared();
-            }
+            else
+                emit parent->current_color_committed(current_color());
         });
+
+        connect(ui.btn_clear, &QAbstractButton::clicked, parent, &ColorSelector::current_color_cleared);
     }
 
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
@@ -369,34 +358,75 @@ void ColorSelector::from_styler(model::Styler* styler, int gradient_stop)
 
 }
 
-void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gradient_stop, bool commit)
+void ColorSelector::apply_to_targets(
+    const QString& text,
+    const std::vector<model::Styler*>& stylers,
+    int gradient_stop,
+    bool commit
+)
 {
-    if ( !styler || styler->docnode_locked_recursive() )
-        return;
-
-    QColor color = d->current_color();
 
     auto cmd = new command::SetMultipleAnimated(text, commit);
-    cmd->push_property_not_animated(&styler->visible, true);
+    QColor color = d->current_color();
 
-    if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
+    for ( auto styler : stylers )
     {
-        cmd->push_property(&named_color->color, color);
-    }
-    else if ( auto gradient = qobject_cast<model::Gradient*>(styler->use.get()) )
-    {
-        auto colors = gradient->colors.get();
-        if ( colors && !colors->colors.get().empty() )
+        if ( styler->docnode_locked_recursive() )
+            continue;
+
+        cmd->push_property_not_animated(&styler->visible, true);
+
+        if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
         {
-            gradient_stop = qBound(0, gradient_stop, colors->colors.get().size() - 1);
-            auto stops = colors->colors.get();
-            stops[gradient_stop].second = color;
-            cmd->push_property(&colors->colors, QVariant::fromValue(stops));
+            cmd->push_property(&named_color->color, color);
         }
+        else if ( auto gradient = qobject_cast<model::Gradient*>(styler->use.get()) )
+        {
+            if ( gradient_stop >= 0 )
+            {
+                auto colors = gradient->colors.get();
+                if ( colors && !colors->colors.get().empty() )
+                {
+                    gradient_stop = qBound(0, gradient_stop, colors->colors.get().size() - 1);
+                    auto stops = colors->colors.get();
+                    stops[gradient_stop].second = color;
+                    cmd->push_property(&colors->colors, QVariant::fromValue(stops));
+                }
+            }
+            else
+            {
+                cmd->push_property_not_animated(&styler->use, QVariant::fromValue((model::Styler*)nullptr));
+            }
+        }
+
+        cmd->push_property(&styler->color, color);
+
     }
 
-    cmd->push_property(&styler->color, color);
+    if ( !cmd->empty() )
+    {
+        auto doc = stylers[0]->document();
+        // std::unique_lock<utils::PseudoMutex> lock(d->updating_color);
+        doc->push_command(cmd);
+    }
+}
 
-//     std::unique_lock<utils::PseudoMutex> lock(d->updating_color);
-    styler->push_command(cmd);
+void ColorSelector::clear_targets(const QString& text, const std::vector<model::Styler*>& stylers)
+{
+
+    auto cmd = new command::SetMultipleAnimated(text, true);
+
+    for ( auto styler : stylers )
+    {
+        if ( styler->docnode_locked_recursive() )
+            continue;
+
+        cmd->push_property_not_animated(&styler->visible, false);
+    }
+
+    if ( !cmd->empty() )
+    {
+        auto doc = stylers[0]->document();
+        doc->push_command(cmd);
+    }
 }

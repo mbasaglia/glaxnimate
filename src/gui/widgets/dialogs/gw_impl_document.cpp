@@ -307,8 +307,10 @@ bool GlaxnimateWindow::Private::close_document()
         active_tool->close_document_event({ui.canvas, &scene, parent});
 
     comp = nullptr;
-    ui.stroke_style_widget->set_shape(nullptr);
-    ui.fill_style_widget->set_shape(nullptr);
+    ui.stroke_style_widget->set_targets({});
+    ui.stroke_style_widget->set_current(nullptr);
+    ui.fill_style_widget->set_targets({});
+    ui.fill_style_widget->set_current(nullptr);
     document_node_model.clear_document();
     property_model.clear_document();
     scene.clear_document();
@@ -681,13 +683,13 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
     QString what;
     if ( secondary )
     {
-        target = ui.stroke_style_widget->shape();
-        what = tr("Fill");
+        target = ui.stroke_style_widget->current();
+        what = tr("Stroke");
     }
     else
     {
-        target = ui.fill_style_widget->shape();
-        what = tr("Stroke");
+        target = ui.fill_style_widget->current();
+        what = tr("Fill");
     }
 
     if ( target )
