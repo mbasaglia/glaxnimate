@@ -10,6 +10,7 @@ const std::map<QString, QString> glaxnimate::io::svg::detail::xmlns = {
     {"sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"},
     {"inkscape", "http://www.inkscape.org/namespaces/inkscape"},
     {"xlink", "http://www.w3.org/1999/xlink"},
+    {"android", "http://schemas.android.com/apk/res/android"},
 };
 
 const std::unordered_set<QString> glaxnimate::io::svg::detail::css_atrrs = {

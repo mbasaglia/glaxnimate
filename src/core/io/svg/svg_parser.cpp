@@ -1,67 +1,39 @@
 #include "svg_parser.hpp"
-
-#include <unordered_set>
-
-#include "utils/regexp.hpp"
-#include "utils/sort_gradient.hpp"
-#include "model/shapes/group.hpp"
-#include "model/shapes/layer.hpp"
-#include "model/shapes/precomp_layer.hpp"
-#include "model/shapes/rect.hpp"
-#include "model/shapes/ellipse.hpp"
-#include "model/shapes/path.hpp"
-#include "model/shapes/polystar.hpp"
-#include "model/shapes/fill.hpp"
-#include "model/shapes/stroke.hpp"
-#include "model/shapes/image.hpp"
-#include "model/shapes/text.hpp"
-#include "model/document.hpp"
-#include "model/assets/named_color.hpp"
-
-#include "path_parser.hpp"
-#include "animate_parser.hpp"
-#include "math/math.hpp"
-#include "font_weight.hpp"
-#include "css_parser.hpp"
-#include "app/utils/string_view.hpp"
-
+#include "svg_parser_private.hpp"
 
 using namespace glaxnimate::io::svg::detail;
 
-class glaxnimate::io::svg::SvgParser::Private
+class glaxnimate::io::svg::SvgParser::Private : public SvgParserPrivate
 {
 public:
-    using ShapeCollection = std::vector<std::unique_ptr<model::ShapeElement>>;
+    Private(
+        model::Document* document,
+        const std::function<void(const QString&)>& on_warning,
+        ImportExport* io,
+        QSize forced_size,
+        GroupMode group_mode
+    ) : SvgParserPrivate(document, on_warning, io, forced_size),
+        group_mode(group_mode)
+    {}
 
-    struct ParseFuncArgs
+protected:
+    void on_parse_prepare(const QDomElement& svg) override
     {
-        const QDomElement& element;
-        model::ShapeListProperty* shape_parent;
-        const Style& parent_style;
-        bool in_group;
-    };
-
-    void parse()
-    {
-        size = document->size();
-        auto svg = dom.documentElement();
-        dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
-
-        if ( forced_size.isValid() )
-        {
-            size = forced_size;
-        }
-        else
-        {
-            size.setWidth(len_attr(svg, "width", size.width()));
-            size.setHeight(len_attr(svg, "height", size.height()));
-        }
-
         for ( const auto& p : shape_parsers )
             to_process += dom.elementsByTagName(p.first).count();
+    }
 
-        if ( io )
-            io->progress_max_changed(to_process);
+    QSizeF get_size(const QDomElement& svg) override
+    {
+        return {
+            len_attr(svg, "width", size.width()),
+            len_attr(svg, "height", size.height())
+        };
+    }
+
+    std::pair<QPointF, QVector2D> on_parse_meta(const QDomElement& svg) override
+    {
+        dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
 
         QPointF pos;
         QVector2D scale{1, 1};
@@ -112,37 +84,37 @@ public:
         parse_defs();
         parse_metadata();
 
-        model::Layer* parent_layer = parse_objects(svg);
-        parent_layer->transform.get()->position.set(-pos);
-        parent_layer->transform.get()->scale.set(scale);
+        return {pos, scale};
+    }
 
+    void on_parse_finish(model::Layer* parent_layer, const QDomElement& svg) override
+    {
         parent_layer->name.set(
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
         );
 
-        write_document_data(svg);
-    }
-
-    void write_document_data(const QDomElement& svg)
-    {
-        document->main()->width.set(size.width());
-        document->main()->height.set(size.height());
-
-        if ( to_process < 1000 )
-            document->main()->recursive_rename();
-
         document->main()->name.set(
             attr(svg, "sodipodi", "docname", "")
         );
-
-        if ( max_time <= 0 )
-            max_time = 180;
-
-        document->main()->animation->last_frame.set(max_time);
-        for ( auto lay : layers )
-            lay->animation->last_frame.set(max_time);
     }
 
+    void parse_shape(const ParseFuncArgs& args) override
+    {
+        if ( handle_mask(args) )
+            return;
+
+        parse_shape_impl(args);
+    }
+
+    Style initial_style(const QDomElement& svg) override
+    {
+        Style default_style(Style::Map{
+            {"fill", "black"},
+        });
+        return parse_style(svg, default_style);
+    }
+
+private:
     void parse_css()
     {
         CssParser parser(css_blocks);
@@ -375,119 +347,6 @@ public:
         document->assets()->gradients->values.insert(std::move(gradient));
     }
 
-    model::Layer* parse_objects(const QDomElement& svg)
-    {
-        model::Layer* parent_layer = add_layer(&document->main()->shapes);
-        parent_layer->name.set(parent_layer->type_name_human());
-        Style default_style(Style::Map{
-            {"fill", "black"},
-        });
-        parse_children({svg, &parent_layer->shapes, parse_style(svg, default_style), false});
-
-        return parent_layer;
-    }
-
-    qreal len_attr(const QDomElement& e, const QString& name, qreal defval = 0)
-    {
-        if ( e.hasAttribute(name) )
-            return parse_unit(e.attribute(name));
-        return defval;
-    }
-
-    QString attr(const QDomElement& e, const QString& ns, const QString& name, const QString& defval = {})
-    {
-        if ( ns.isEmpty() )
-            return e.attribute(name, defval);
-        return e.attributeNS(xmlns.at(ns), name, defval);
-    }
-
-    qreal parse_unit(const QString& svg_value)
-    {
-        QRegularExpressionMatch match = unit_re.match(svg_value);
-        if ( match.hasMatch() )
-        {
-            qreal value = match.captured(1).toDouble();
-            qreal mult = unit_multiplier(match.captured(2));
-            if ( mult != 0 )
-                return value * mult;
-        }
-
-        warning(QString("Unknown length value %1").arg(svg_value));
-        return 0;
-    }
-
-    qreal unit_multiplier(const QString& unit)
-    {
-        static const constexpr qreal cmin = 2.54;
-
-        if ( unit == "px" || unit == "" )
-            return 1;
-        else if ( unit == "vw" )
-            return size.width() * 0.01;
-        else if ( unit == "vh" )
-            return size.height() * 0.01;
-        else if ( unit == "vmin" )
-            return std::min(size.width(), size.height()) * 0.01;
-        else if ( unit == "vmax" )
-            return std::max(size.width(), size.height()) * 0.01;
-        else if ( unit == "in" )
-            return dpi;
-        else if ( unit == "pc" )
-            return dpi / 6;
-        else if ( unit == "pt" )
-            return dpi / 72;
-        else if ( unit == "cm" )
-            return dpi / cmin;
-        else if ( unit == "mm" )
-            return dpi / cmin / 10;
-        else if ( unit == "Q" )
-            return dpi / cmin / 40;
-
-        return 0;
-    }
-
-    qreal unit_convert(qreal val, const QString& from, const QString& to)
-    {
-        return val * unit_multiplier(from) / unit_multiplier(to);
-    }
-
-    void warning(const QString& msg)
-    {
-        if ( on_warning )
-            on_warning(msg);
-    }
-
-    model::Layer* add_layer(model::ShapeListProperty* parent)
-    {
-        model::Layer* lay = new model::Layer(document);
-        parent->insert(std::unique_ptr<model::Layer>(lay));
-        layers.push_back(lay);
-        return lay;
-    }
-
-    QStringList split_attr(const QDomElement& e, const QString& name)
-    {
-        return e.attribute(name).split(AnimateParser::separator,
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-        Qt::SkipEmptyParts
-#else
-        QString::SkipEmptyParts
-#endif
-        );
-    }
-
-    void parse_children(const ParseFuncArgs& args)
-    {
-        for ( const auto& domnode : ItemCountRange(args.element.childNodes()) )
-        {
-            if ( domnode.isElement() )
-            {
-                auto child = domnode.toElement();
-                parse_shape({child, args.shape_parent, args.parent_style, args.in_group});
-            }
-        }
-    }
-
     Style parse_style(const QDomElement& element, const Style& parent_style)
     {
         Style style = parent_style;
@@ -618,45 +477,6 @@ public:
         }
     }
 
-    void parse_shape(const ParseFuncArgs& args)
-    {
-        if ( handle_mask(args) )
-            return;
-
-        parse_shape_impl(args);
-    }
-
-    template<class T>
-    T* push(ShapeCollection& sc)
-    {
-        T* t = new T(document);
-        sc.emplace_back(t);
-        return t;
-    }
-
-    void populate_ids(const QDomElement& elem)
-    {
-        if ( elem.hasAttribute("id") )
-            map_ids[elem.attribute("id")] = elem;
-
-        for ( const auto& domnode : ItemCountRange(elem.childNodes()) )
-        {
-            if ( domnode.isElement() )
-                populate_ids(domnode.toElement());
-        }
-    }
-
-    QDomElement element_by_id(const QString& id)
-    {
-        // dom.elementById() doesn't work ;_;
-        if ( map_ids.empty() )
-            populate_ids(dom.documentElement());
-        auto it = map_ids.find(id);
-        if ( it == map_ids.end() )
-            return {};
-        return it->second;
-    }
-
     void parse_transform(
         const QDomElement& element,
         model::VisualNode* node,
@@ -723,22 +543,6 @@ public:
                 transform->position.set_keyframe(kf.time, p)->set_transition(kf.transition);
             }
         }
-    }
-
-    std::vector<qreal> double_args(const QString& str)
-    {
-        auto args_s = ::utils::split_ref(str, AnimateParser::separator,
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-            Qt::SkipEmptyParts
-#else
-            QString::SkipEmptyParts
-#endif
-        );
-        std::vector<qreal> args;
-        args.reserve(args_s.size());
-        std::transform(args_s.begin(), args_s.end(), std::back_inserter(args),
-                        [](const ::utils::StringView& s){ return s.toDouble(); });
-        return args;
     }
 
     struct ParsedTransformInfo
@@ -828,17 +632,6 @@ public:
         return info;
     }
 
-    static qreal opacity_value(const QString& v)
-    {
-        if ( v.isEmpty() )
-            return 1;
-
-        if ( v.back() == '%' )
-            return v.mid(0, v.size()-1).toDouble() / 100;
-
-        return v.toDouble();
-    }
-
     void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
     {
         if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
@@ -869,7 +662,11 @@ public:
     {
         QString name = attr(element, "inkscape", "label");
         if ( name.isEmpty() )
-            name = element.attribute("id");
+        {
+            name = attr(element, "android", "name");
+            if ( name.isEmpty() )
+                name = element.attribute("id");
+        }
         node->name.set(name);
     }
 
@@ -1538,13 +1335,6 @@ public:
         parse_text_element(args, {});
     }
 
-    void mark_progress()
-    {
-        processed++;
-        if ( io && processed % 10 == 0 )
-            io->progress(processed);
-    }
-
     void parse_metadata()
     {
         auto meta = dom.elementsByTagNameNS(xmlns.at("cc"), "Work");
@@ -1566,54 +1356,11 @@ public:
         }
     }
 
-    QDomElement query_element(const std::vector<QString>& path, const QDomElement& parent, std::size_t index = 0)
-    {
-        if ( index >= path.size() )
-            return parent;
-
-
-        auto head = path[index];
-        for ( const auto& domnode : ItemCountRange(parent.childNodes()) )
-        {
-            if ( domnode.isElement() )
-            {
-                auto child = domnode.toElement();
-                if ( child.tagName() == head )
-                    return query_element(path, child, index+1);
-            }
-        }
-        return {};
-    }
-
-    QString query(const std::vector<QString>& path, const QDomElement& parent, std::size_t index = 0)
-    {
-        return query_element(path, parent, index).text();
-    }
-
-    QDomDocument dom;
-
-    qreal dpi = 96;
-    QSizeF size;
-
-    model::Document* document;
-
-    AnimateParser animate_parser;
-    model::FrameTime max_time = 0;
     GroupMode group_mode;
-    std::function<void(const QString&)> on_warning;
-    std::unordered_map<QString, QDomElement> map_ids;
-    std::unordered_map<QString, model::BrushStyle*> brush_styles;
-    std::unordered_map<QString, model::GradientColors*> gradients;
-    std::vector<model::Layer*> layers;
     std::vector<CssStyleBlock> css_blocks;
-
-    int to_process = 0;
-    int processed = 0;
-    ImportExport* io = nullptr;
-    QSize forced_size;
+    friend SvgParser;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
-    static const QRegularExpression unit_re;
     static const QRegularExpression transform_re;
     static const QRegularExpression url_re;
 };
@@ -1631,7 +1378,7 @@ const std::map<QString, void (glaxnimate::io::svg::SvgParser::Private::*)(const 
     {"image",   &glaxnimate::io::svg::SvgParser::Private::parseshape_image},
     {"text",    &glaxnimate::io::svg::SvgParser::Private::parseshape_text},
 };
-const QRegularExpression glaxnimate::io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
+const QRegularExpression glaxnimate::io::svg::detail::SvgParserPrivate::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
 const QRegularExpression glaxnimate::io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
 const QRegularExpression glaxnimate::io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
 const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"};
@@ -1646,18 +1393,10 @@ glaxnimate::io::svg::SvgParser::SvgParser(
     ImportExport* io,
     QSize forced_size
 )
-    : d(std::make_unique<Private>())
+    : d(std::make_unique<Private>(document, on_warning, io, forced_size, group_mode))
 {
-    d->document = document;
-    d->animate_parser.fps = d->document ? d->document->main()->fps.get() : 60;
     d->group_mode = group_mode;
-    d->animate_parser.on_warning = d->on_warning = on_warning;
-    d->io = io;
-    d->forced_size = forced_size;
-
-    SvgParseError err;
-    if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )
-        throw err;
+    d->load(device);
 }
 
 glaxnimate::io::svg::SvgParser::~SvgParser()
