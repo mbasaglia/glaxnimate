@@ -17,7 +17,7 @@ public:
     {}
 
 protected:
-    void on_parse_prepare(const QDomElement& svg) override
+    void on_parse_prepare(const QDomElement&) override
     {
         for ( const auto& p : shape_parsers )
             to_process += dom.elementsByTagName(p.first).count();
@@ -632,15 +632,6 @@ private:
         return info;
     }
 
-    void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
-    {
-        if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
-            node->visible.set(false);
-        node->locked.set(attr(element, "sodipodi", "insensitive") == "true");
-        node->set("opacity", opacity_value(style.get("opacity", "1")));
-        node->get("transform").value<model::Transform*>();
-    }
-
     void add_shapes(const ParseFuncArgs& args, ShapeCollection&& shapes)
     {
         Style style = parse_style(args.element, args.parent_style);
@@ -656,6 +647,15 @@ private:
         // parse_transform at the end so the bounding box isn't empty
         parse_transform(args.element, group.get(), group->transform.get());
         args.shape_parent->insert(std::move(group));
+    }
+
+    void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
+    {
+        if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
+            node->visible.set(false);
+        node->locked.set(attr(element, "sodipodi", "insensitive") == "true");
+        node->set("opacity", percent_1(style.get("opacity", "1")));
+        node->get("transform").value<model::Transform*>();
     }
 
     void set_name(model::DocumentNode* node, const QDomElement& element)
@@ -731,22 +731,9 @@ private:
         stroke->opacity.set(percent_1(style.get("stroke-opacity", "1")));
         stroke->width.set(parse_unit(style.get("stroke-width", "1")));
 
-        QString linecap = style.get("stroke-linecap", "butt");
-        if ( linecap == "round" )
-            stroke->cap.set(model::Stroke::RoundCap);
-        else if ( linecap == "butt" )
-            stroke->cap.set(model::Stroke::ButtCap);
-        else if ( linecap == "square" )
-            stroke->cap.set(model::Stroke::SquareCap);
-
-        QString linejoin = style.get("stroke-linejoin", "miter");
-        if ( linejoin == "round" )
-            stroke->join.set(model::Stroke::RoundJoin);
-        else if ( linejoin == "bevel" )
-            stroke->join.set(model::Stroke::BevelJoin);
-        else if ( linejoin == "miter" || linejoin == "arcs" || linejoin == "miter-clip" )
-            stroke->join.set(model::Stroke::MiterJoin);
-
+        stroke->cap.set(line_cap(style.get("stroke-linecap", "butt")));
+        stroke->join.set(line_join(style.get("stroke-linejoin", "miter")));
+        stroke->miter_limit.set(parse_unit(style.get("stroke-miterlimit", "4")));
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.single("stroke")) )
@@ -763,14 +750,6 @@ private:
         display_to_opacity(stroke.get(), anim, stroke->opacity, nullptr);
 
         shapes->insert(std::move(stroke));
-    }
-
-    // parse attributes like opacity where it's a value in [0-1] or a percentage
-    double percent_1(const QString& s)
-    {
-        if ( s.contains('%') )
-            return ::utils::mid_ref(s, 0, s.size()-1).toDouble();
-        return s.toDouble();
     }
 
     void set_styler_style(model::Styler* styler, const QString& color_str, const QColor& current_color)
@@ -1358,7 +1337,6 @@ private:
 
     GroupMode group_mode;
     std::vector<CssStyleBlock> css_blocks;
-    friend SvgParser;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression transform_re;
@@ -1395,7 +1373,6 @@ glaxnimate::io::svg::SvgParser::SvgParser(
 )
     : d(std::make_unique<Private>(document, on_warning, io, forced_size, group_mode))
 {
-    d->group_mode = group_mode;
     d->load(device);
 }
 
@@ -1408,8 +1385,7 @@ glaxnimate::io::mime::DeserializedData glaxnimate::io::svg::SvgParser::parse_to_
 {
     glaxnimate::io::mime::DeserializedData data;
     data.initialize_data();
-    d->document = data.document.get();
-    d->parse();
+    d->parse(data.document.get());
     return data;
 }
 

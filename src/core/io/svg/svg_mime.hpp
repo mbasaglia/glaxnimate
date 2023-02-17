@@ -1,6 +1,7 @@
 #pragma once
 
 #include "io/svg/svg_parser.hpp"
+#include "io/svg/parse_error.hpp"
 #include "io/svg/svg_renderer.hpp"
 #include "io/mime/mime_serializer.hpp"
 

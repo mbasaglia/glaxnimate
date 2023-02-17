@@ -18,13 +18,21 @@
 #include "model/document.hpp"
 #include "model/assets/named_color.hpp"
 
-#include "path_parser.hpp"
-#include "animate_parser.hpp"
 #include "math/math.hpp"
-#include "font_weight.hpp"
-#include "css_parser.hpp"
 #include "app/utils/string_view.hpp"
 
+#include "path_parser.hpp"
+#include "animate_parser.hpp"
+#include "parse_error.hpp"
+#include "font_weight.hpp"
+#include "css_parser.hpp"
+#include "detail.hpp"
+
+namespace glaxnimate::io::svg {
+
+QColor parse_color(const QString& string);
+
+} // namespace glaxnimate::io::svg
 
 namespace glaxnimate::io::svg::detail {
 
@@ -52,7 +60,6 @@ public:
         io(io),
         forced_size(forced_size)
     {
-        animate_parser.fps = document ? document->main()->fps.get() : 60;
         animate_parser.on_warning = on_warning;
     }
 
@@ -65,9 +72,14 @@ public:
 
     virtual ~SvgParserPrivate() = default;
 
-    void parse()
+    void parse(model::Document* document = nullptr)
     {
-        size = document->size();
+        if ( document )
+            this->document = document;
+
+        animate_parser.fps = this->document->main()->fps.get();
+
+        size = this->document->size();
         auto root = dom.documentElement();
 
 
@@ -278,15 +290,36 @@ protected:
         return args;
     }
 
-    static qreal opacity_value(const QString& v)
+    // parse attributes like opacity where it's a value in [0-1] or a percentage
+    static double percent_1(const QString& s)
     {
-        if ( v.isEmpty() )
-            return 1;
+        if ( s.contains('%') )
+            return ::utils::mid_ref(s, 0, s.size()-1).toDouble() / 100;
+        return s.toDouble();
+    }
 
-        if ( v.back() == '%' )
-            return v.mid(0, v.size()-1).toDouble() / 100;
+    static model::Stroke::Cap line_cap(const QString& linecap)
+    {
+        if ( linecap == "round" )
+            return model::Stroke::RoundCap;
+        else if ( linecap == "butt" )
+            return model::Stroke::ButtCap;
+        else if ( linecap == "square" )
+            return model::Stroke::SquareCap;
 
-        return v.toDouble();
+        return model::Stroke::ButtCap;
+    }
+
+    static model::Stroke::Join line_join(const QString& linecap)
+    {
+        if ( linecap == "round" )
+            return model::Stroke::RoundJoin;
+        else if ( linecap == "bevel" )
+            return model::Stroke::BevelJoin;
+        else if ( linecap == "miter" )
+            return model::Stroke::MiterJoin;
+
+        return model::Stroke::MiterJoin;
     }
 
 private:
@@ -295,8 +328,8 @@ private:
         document->main()->width.set(size.width());
         document->main()->height.set(size.height());
 
-        if ( to_process < 1000 )
-            document->main()->recursive_rename();
+//         if ( to_process < 1000 )
+//             document->main()->recursive_rename();
 
         if ( max_time <= 0 )
             max_time = 180;

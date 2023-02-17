@@ -5,6 +5,9 @@
     * Setting fill / stroke / gradient updates all selected objects, not just the last selected
 * UI:
     * Nicer display of color values in tree views
+* I/O:
+    * Various fixes to the SVG parser
+    * Added support for Android Vector Drawables
 
 ## 0.5.2
 

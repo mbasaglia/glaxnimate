@@ -4,6 +4,7 @@
 
 #include "utils/gzip.hpp"
 #include "svg_parser.hpp"
+#include "parse_error.hpp"
 #include "svg_renderer.hpp"
 #include "model/assets/assets.hpp"
 

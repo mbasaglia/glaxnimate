@@ -29,6 +29,8 @@ io/svg/detail.cpp
 io/svg/svg_format.cpp
 io/svg/svg_parser.cpp
 io/svg/svg_renderer.cpp
+io/avd/avd_parser.cpp
+io/avd/avd_format.cpp
 
 math/geom.cpp
 math/polynomial.cpp

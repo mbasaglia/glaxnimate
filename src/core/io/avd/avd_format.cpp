@@ -1,0 +1,29 @@
+#include "avd_format.hpp"
+
+#include "avd_parser.hpp"
+#include "io/svg/parse_error.hpp"
+
+glaxnimate::io::Autoreg<glaxnimate::io::avd::AvdFormat> glaxnimate::io::avd::AvdFormat::autoreg;
+
+
+bool glaxnimate::io::avd::AvdFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
+{
+    auto on_error = [this](const QString& s){warning(s);};
+    try
+    {
+        QSize forced_size = options["forced_size"].toSize();
+
+        AvdParser(&file, document, on_error, this, forced_size).parse_to_document();
+        return true;
+
+    }
+    catch ( const svg::SvgParseError& err )
+    {
+        error(err.formatted(QFileInfo(filename).baseName()));
+        return false;
+    }
+}
+
+bool glaxnimate::io::avd::AvdFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values)
+{
+}
