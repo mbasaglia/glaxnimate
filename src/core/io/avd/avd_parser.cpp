@@ -321,23 +321,67 @@ private:
         trans->rotation.set(args.element.attribute("rotation", "0").toDouble());
     }
 
+    std::unique_ptr<model::Group> parse_clip(const QDomElement& element)
+    {
+        auto clip = std::make_unique<model::Group>(document);
+        set_name(clip.get(), element);
+
+        QString d = element.attribute("pathData");
+        math::bezier::MultiBezier bez = PathDParser(d).parse();
+
+        auto fill = std::make_unique<model::Fill>(document);
+        fill->color.set(QColor(255, 255, 255));
+        clip->shapes.insert(std::move(fill));
+
+        model::Path* shape = nullptr;
+        for ( const auto& bezier : bez.beziers() )
+        {
+            auto shape = std::make_unique<model::Path>(document);
+            shape->shape.set(bezier);
+            shape->closed.set(bezier.closed());
+            clip->shapes.insert(std::move(shape));
+        }
+
+        return clip;
+    }
+
     void parseshape_group(const ParseFuncArgs& args)
     {
-        auto group = std::make_unique<model::Group>(document);
+        std::unique_ptr<model::Group> clip;
 
-        set_name(group.get(), args.element);
+        for ( auto e : ElementRange(args.element) )
+        {
+            if ( e.tagName() == "clip-path" )
+            {
+                clip = parse_clip(e);
+                break;
+            }
+        }
+
+        model::Group* group = nullptr;
+        if ( clip )
+        {
+            auto obj = std::make_unique<model::Layer>(document);
+            group = obj.get();
+            args.shape_parent->insert(std::move(obj));
+        }
+        else
+        {
+            auto obj = std::make_unique<model::Group>(document);
+            group = obj.get();
+            args.shape_parent->insert(std::move(obj));
+        }
+
+        set_name(group, args.element);
 
         parse_transform(group->transform.get(), args);
         parse_children({args.element, &group->shapes, args.parent_style, true});
-
-        args.shape_parent->insert(std::move(group));
     }
 
     void parseshape_path(const ParseFuncArgs& args)
     {
         QString d = args.element.attribute("pathData");
         math::bezier::MultiBezier bez = PathDParser(d).parse();
-
 
         ShapeCollection shapes;
         model::Path* shape = nullptr;

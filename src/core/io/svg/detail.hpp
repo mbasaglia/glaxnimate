@@ -91,6 +91,7 @@ struct ElementRange
     };
 
     ElementRange(const QDomNodeList& dom_list) : dom_list(dom_list) {}
+    ElementRange(const QDomElement& el) : dom_list(el.childNodes()) {}
     iterator begin() const { return {this, 0}; }
     iterator end() const { return {this, dom_list.count()}; }
     int size() const { return dom_list.count(); }
