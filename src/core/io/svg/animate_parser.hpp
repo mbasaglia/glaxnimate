@@ -127,7 +127,7 @@ public:
             type = ValueVariant::Bezier;
         else if ( attr == "display" )
             type = ValueVariant::String;
-        else if ( attr == "fill" || attr == "stroke" )
+        else if ( attr == "fill" || attr == "stroke" || attr == "stop-color" )
             type = ValueVariant::Color;
 
         std::vector<ValueVariant> values;

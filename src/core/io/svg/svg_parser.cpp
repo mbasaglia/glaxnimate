@@ -245,9 +245,7 @@ private:
             auto anim = parse_animated(gradient.firstChildElement("stop"));
 
             for ( const auto& kf : add_keyframes(anim.single("stop-color")) )
-                col->color.set_keyframe(kf.time,
-                    QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
-                )->set_transition(kf.transition);
+                col->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
             document->assets()->colors->values.insert(std::move(col));
             return;
@@ -737,9 +735,7 @@ private:
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.single("stroke")) )
-            stroke->color.set_keyframe(kf.time,
-                QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
-            )->set_transition(kf.transition);
+            stroke->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("stroke-opacity")) )
             stroke->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
