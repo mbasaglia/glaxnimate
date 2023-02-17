@@ -28,6 +28,7 @@
 #include "css_parser.hpp"
 #include "detail.hpp"
 
+
 namespace glaxnimate::io::svg::detail {
 
 class SvgParserPrivate
@@ -354,8 +355,12 @@ private:
             max_time = 180;
 
         document->main()->animation->last_frame.set(max_time);
-        for ( auto lay : layers )
+        for ( auto lay : document->main()->docnode_find_by_type<model::Layer>() )
+        {
             lay->animation->last_frame.set(max_time);
+        }
+
+        document->undo_stack().clear();
     }
 
     model::Layer* parse_objects(const QDomElement& root)

@@ -1,5 +1,7 @@
 #include "avd_parser.hpp"
 
+#include <QPalette>
+
 #include "io/svg/svg_parser_private.hpp"
 #include "model/shapes/trim.hpp"
 
@@ -43,14 +45,13 @@ protected:
                 if ( iter == animations.end() )
                     iter = animations.insert({name, {}}).first;
 
-                auto props = iter->second;
+                auto& props = iter->second;
 
                 for ( const auto& anim : ElementRange(attr.elementsByTagName("objectAnimator")) )
                 {
                     parse_animator(props, anim);
                 }
             }
-
         }
     }
 
@@ -116,7 +117,9 @@ protected:
         }
         else if ( args.element.tagName() == "attr" && args.element.attribute("name").endsWith("drawable") )
         {
-            parseshape_drawable(args);
+            for ( const auto& e : ElementRange(args.element) )
+                if ( e.tagName() == "vector" )
+                parseshape_drawable({e, args.shape_parent, args.parent_style, false});
         }
     }
 
@@ -138,8 +141,8 @@ private:
 
     void parse_animator(AnimateParser::AnimatedProperties& props, const QDomElement& anim)
     {
-        model::FrameTime start_time = anim.attribute("startOffset", "0").toDouble() / 1000;;
-        model::FrameTime end_time = start_time + anim.attribute("duration", "0").toDouble() / 1000;
+        model::FrameTime start_time = qRound(anim.attribute("startOffset", "0").toDouble() / 1000 * animate_parser.fps);
+        model::FrameTime end_time = qRound(start_time + anim.attribute("duration", "0").toDouble() / 1000 * animate_parser.fps);
         std::vector<AnimatedProperty*> updated_props;
 
         QString name = anim.attribute("propertyName");
@@ -354,6 +357,10 @@ private:
             if ( res && res->element.tagName() == "gradient" )
                 styler->use.set(parse_gradient(res));
         }
+        else if ( color[0] == '?' )
+        {
+            styler->use.set(color_from_theme(color));
+        }
         else
         {
             styler->color.set(parse_color(color));
@@ -560,7 +567,7 @@ private:
 
     void parseshape_drawable(const ParseFuncArgs& args)
     {
-        std::unique_ptr<model::Layer> layer;
+        std::unique_ptr<model::Layer> layer = std::make_unique<model::Layer>(document);
         set_name(layer.get(), args.element);
         parse_children({args.element, &layer->shapes, args.parent_style, false});
         args.shape_parent->insert(std::move(layer));
@@ -658,13 +665,37 @@ private:
         return id;
     }
 
+    model::NamedColor* color_from_theme(const QString& color)
+    {
+        QString norm_name;
+        if ( color.contains("/") )
+            norm_name = color.split("/").back();
+        else
+            norm_name = color.mid(1);
+
+        auto iter = palette_colors.find(norm_name);
+        if ( iter != palette_colors.end() )
+            return iter->second;
+
+        QColor col = Qt::black;
+        auto it2 = theme_colors.find(norm_name);
+        if ( it2 != theme_colors.end() )
+            col = it2->second;
+
+        auto asset = document->assets()->add_color(col);
+        palette_colors.emplace(norm_name, asset);
+        return asset;
+    }
+
     QDir resource_path;
     std::map<QString, Resource> resources;
     int internal_resource_id = 0;
+    std::map<QString, model::NamedColor*> palette_colors;
     std::map<QString, AnimateParser::AnimatedProperties> animations;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const std::unordered_set<QString> style_atrrs;
+    static const std::unordered_map<QString, QString> theme_colors;
 };
 
 const std::map<QString, void (glaxnimate::io::avd::AvdParser::Private::*)(const glaxnimate::io::avd::AvdParser::Private::ParseFuncArgs&)> glaxnimate::io::avd::AvdParser::Private::shape_parsers = {
@@ -697,3 +728,39 @@ void glaxnimate::io::avd::AvdParser::parse_to_document()
 {
     d->parse();
 }
+
+/// Based on the material theme
+/// Extracted using https://gitlab.com/-/snippets/2502132
+const std::unordered_map<QString, QString> glaxnimate::io::avd::AvdParser::Private::theme_colors = {
+    {"colorForeground", "#ffffffff"},
+    {"colorForegroundInverse", "#ff000000"},
+    {"colorBackground", "#ff303030"},
+    {"colorBackgroundFloating", "#ff424242"},
+    {"colorError", "#ff7043"},
+    {"opacityListDivider", "#1f000000"},
+    {"textColorPrimary", "#ff000000"},
+    {"textColorSecondary", "#ff000000"},
+    {"textColorHighlight", "#ffffffff"},
+    {"textColorHighlightInverse", "#ffffffff"},
+    {"navigationBarColor", "#ff000000"},
+    {"panelColorBackground", "#000"},
+    {"colorPrimaryDark", "#ff000000"},
+    {"colorPrimary", "#ff212121"},
+    {"colorAccent", "#ff80cbc4"},
+    {"tooltipForegroundColor", "#ff000000"},
+    {"colorPopupBackground", "#ff303030"},
+    {"colorListDivider", "#ffffffff"},
+    {"textColorLink", "#ff80cbc4"},
+    {"textColorLinkInverse", "#ff80cbc4"},
+    {"editTextColor", "#ff000000"},
+    {"windowBackground", "#ff303030"},
+    {"statusBarColor", "#ff000000"},
+    {"panelBackground", "#ff303030"},
+    {"panelColorForeground", "#ff000000"},
+    {"detailsElementBackground", "#ff303030"},
+    {"actionMenuTextColor", "#ff000000"},
+    {"colorEdgeEffect", "#ff212121"},
+    {"colorControlNormal", "#ff000000"},
+    {"colorControlActivated", "#ff80cbc4"},
+    {"colorProgressBackgroundNormal", "#ff000000"},
+};
