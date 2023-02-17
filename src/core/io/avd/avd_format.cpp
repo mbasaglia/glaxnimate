@@ -12,8 +12,9 @@ bool glaxnimate::io::avd::AvdFormat::on_open(QIODevice& file, const QString& fil
     try
     {
         QSize forced_size = options["forced_size"].toSize();
+        auto resource_path = QFileInfo(filename).dir();
 
-        AvdParser(&file, document, on_error, this, forced_size).parse_to_document();
+        AvdParser(&file, resource_path, document, on_error, this, forced_size).parse_to_document();
         return true;
 
     }

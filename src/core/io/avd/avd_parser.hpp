@@ -3,6 +3,8 @@
 #include <memory>
 #include <functional>
 
+#include <QDir>
+
 #include "io/base.hpp"
 
 namespace glaxnimate::io::avd {
@@ -18,6 +20,7 @@ public:
      */
     AvdParser(
         QIODevice* device,
+        const QDir& resource_path,
         model::Document* document,
         const std::function<void(const QString&)>& on_warning = {},
         ImportExport* io = nullptr,

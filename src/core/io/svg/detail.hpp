@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include <QColor>
+#include <QDomNodeList>
 
 #include "app/utils/qstring_hash.hpp"
 
@@ -65,6 +66,36 @@ struct ItemCountRange
     int size() const { return dom_list.count(); }
 
     T dom_list;
+};
+
+struct ElementRange
+{
+    struct iterator
+    {
+        auto operator*() const { return range->dom_list.item(index).toElement(); }
+        iterator& operator++()
+        {
+            index++;
+            while ( index < range->dom_list.count() && !range->dom_list.item(index).isElement() )
+                index++;
+            return *this;
+
+        }
+        bool operator != (const iterator& it) const
+        {
+            return range != it.range || index != it.index;
+        }
+
+        const ElementRange* range;
+        int index;
+    };
+
+    ElementRange(const QDomNodeList& dom_list) : dom_list(dom_list) {}
+    iterator begin() const { return {this, 0}; }
+    iterator end() const { return {this, dom_list.count()}; }
+    int size() const { return dom_list.count(); }
+
+    QDomNodeList dom_list;
 };
 
 } // io::svg::detail

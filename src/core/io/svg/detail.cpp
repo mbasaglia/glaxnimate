@@ -11,6 +11,7 @@ const std::map<QString, QString> glaxnimate::io::svg::detail::xmlns = {
     {"inkscape", "http://www.inkscape.org/namespaces/inkscape"},
     {"xlink", "http://www.w3.org/1999/xlink"},
     {"android", "http://schemas.android.com/apk/res/android"},
+    {"aapt", "http://schemas.android.com/aapt"},
 };
 
 const std::unordered_set<QString> glaxnimate::io::svg::detail::css_atrrs = {

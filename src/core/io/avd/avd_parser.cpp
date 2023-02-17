@@ -11,7 +11,15 @@ using namespace glaxnimate::io::svg::detail;
 class glaxnimate::io::avd::AvdParser::Private : public svg::detail::SvgParserPrivate
 {
 public:
-    using svg::detail::SvgParserPrivate::SvgParserPrivate;
+    Private(
+        const QDir& resource_path,
+        model::Document* document,
+        const std::function<void(const QString&)>& on_warning,
+        ImportExport* io,
+        QSize forced_size
+    ) : SvgParserPrivate(document, on_warning, io, forced_size),
+        resource_path(resource_path)
+    {}
 
 protected:
     void on_parse_prepare(const QDomElement&) override
@@ -91,6 +99,13 @@ protected:
     }
 
 private:
+    struct Resource
+    {
+        QString name;
+        QDomElement element;
+        model::Asset* asset = nullptr;
+    };
+
     void add_shapes(const ParseFuncArgs& args, ShapeCollection&& shapes)
     {
         Style style = parse_style(args.element, args.parent_style);
@@ -117,6 +132,26 @@ private:
             auto attr = domnode.toAttr();
             if ( style_atrrs.count(attr.name()) )
                 style[attr.name()] = attr.value();
+        }
+
+        for ( const auto& child : ItemCountRange(element.childNodes()) )
+        {
+            if ( child.isElement() )
+            {
+                auto attr = child.toElement();
+                if ( attr.tagName() == "attr" )
+                {
+                    auto attr_name = attr.attribute("name").split(":").back();
+                    for ( const auto& grandchild : ItemCountRange(child.childNodes()) )
+                    {
+                        if ( grandchild.isElement() )
+                        {
+                            style[attr_name] = add_as_resource(grandchild.toElement());
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         return style;
@@ -151,12 +186,20 @@ private:
 
     void set_styler_style(model::Styler* styler, const QString& color)
     {
-        qDebug() << "color" << color;
-        // TODO gradients
-        if ( color == "" )
+        if ( color.isEmpty() )
+        {
             styler->visible.set(false);
+        }
+        else if ( color[0] == '@' )
+        {
+            auto res = get_resource(color);
+            if ( res && res->element.tagName() == "gradient" )
+                styler->use.set(parse_gradient(res));
+        }
         else
+        {
             styler->color.set(parse_color(color));
+        }
 
     }
 
@@ -197,6 +240,64 @@ private:
         trim->offset.set(percent_1(style.get("trimPathOffset", "1")));
 
         shapes->insert(std::move(trim));
+    }
+
+    model::Gradient* parse_gradient(Resource* res)
+    {
+        if ( res->element.tagName() != "gradient" )
+            return nullptr;
+
+        if ( res->asset )
+            return res->asset->cast<model::Gradient>();
+
+        // Load colors
+        auto colors = document->assets()->add_gradient_colors();
+
+        QGradientStops stops;
+        if ( res->element.hasAttribute("startColor") )
+        stops.push_back({0.0, parse_color(res->element.attribute("startColor"))});
+        if ( res->element.hasAttribute("centerColor") )
+            stops.push_back({0.5, parse_color(res->element.attribute("centerColor"))});
+        if ( res->element.hasAttribute("endColor") )
+            stops.push_back({1.0, parse_color(res->element.attribute("endColor"))});
+
+        for ( QDomElement e : ElementRange(res->element.childNodes()) )
+        {
+            if ( e.tagName() == "item" )
+                stops.push_back({
+                    e.attribute("offset", "0").toDouble(),
+                    parse_color(e.attribute("color"))
+                });
+        }
+
+        colors->colors.set(stops);
+
+        // Load gradient
+        auto gradient = document->assets()->add_gradient();
+        gradient->colors.set(colors);
+
+        // TODO sweep = conical
+        QString type = res->element.attribute("type", "linear");
+        if ( type == "linear" )
+            gradient->type.set(model::Gradient::Linear);
+        else if ( type == "radial" )
+            gradient->type.set(model::Gradient::Radial);
+
+        gradient->start_point.set({
+            len_attr(res->element, "startX"),
+            len_attr(res->element, "startY"),
+        });
+
+        gradient->end_point.set({
+            len_attr(res->element, "endX"),
+            len_attr(res->element, "endY"),
+        });
+
+        // TODO center / radius
+
+
+        res->asset = gradient;
+        return gradient;
     }
 
     void parse_transform(model::Transform* trans, const ParseFuncArgs& args)
@@ -249,6 +350,52 @@ private:
         add_shapes(args, std::move(shapes));
     }
 
+    Resource* get_resource(const QString& id)
+    {
+        auto iter = resources.find(id);
+        if ( iter != resources.end() )
+            return &iter->second;
+
+        if ( resource_path.isRoot() || id.isEmpty() || id[0] != '@' || id.back() == '\0' )
+        {
+            warning(QObject::tr("Unkown resource id %1").arg(id));
+            return {};
+        }
+
+        QString path = resource_path.filePath(id.mid(1) + ".xml");
+        QFile resource_file(path);
+        if ( !resource_file.open(QIODevice::ReadOnly) )
+        {
+            warning(QObject::tr("Could not read file %1").arg(path));
+            warning(QObject::tr("Could not load resource %1").arg(id));
+            return {};
+        }
+
+        SvgParseError err;
+        QDomDocument resource_dom;
+        if ( !resource_dom.setContent(&resource_file, true, &err.message, &err.line, &err.column) )
+        {
+            warning(err.formatted(path));
+            warning(QObject::tr("Could not load resource %1").arg(id));
+            return {};
+        }
+
+        iter = resources.insert({id, {id, resource_dom.documentElement()}}).first;
+        return &iter->second;
+    }
+
+    QString add_as_resource(const QDomElement& e)
+    {
+        internal_resource_id++;
+        QString id = QString("@(internal)%1").arg(internal_resource_id);
+        id.push_back('\0');
+        resources[id] = {e.tagName(), e};
+        return id;
+    }
+
+    QDir resource_path;
+    std::map<QString, Resource> resources;
+    int internal_resource_id = 0;
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const std::unordered_set<QString> style_atrrs;
 };
@@ -266,12 +413,13 @@ const std::unordered_set<QString> glaxnimate::io::avd::AvdParser::Private::style
 
 glaxnimate::io::avd::AvdParser::AvdParser(
     QIODevice* device,
+    const QDir& resource_path,
     model::Document* document,
     const std::function<void(const QString&)>& on_warning,
     ImportExport* io,
     QSize forced_size
 )
-    : d(std::make_unique<Private>(document, on_warning, io, forced_size))
+    : d(std::make_unique<Private>(resource_path, document, on_warning, io, forced_size))
 {
     d->load(device);
 }
