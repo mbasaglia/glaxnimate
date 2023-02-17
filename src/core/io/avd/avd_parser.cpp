@@ -26,6 +26,28 @@ protected:
     {
         for ( const auto& p : shape_parsers )
             to_process += dom.elementsByTagName(p.first).count();
+
+
+        for ( const auto& target : ElementRange(dom.elementsByTagName("target")) )
+        {
+            QString name = target.attribute("name");
+            if ( name.isEmpty() )
+                continue;
+
+            for ( const auto& attr : ElementRange(target) )
+            {
+                if ( attr.tagName() != "attr" || !attr.attribute("name").endsWith("animation") )
+                    continue;
+
+                for ( const auto& anim : ElementRange(attr) )
+                {
+                    if ( anim.tagName() != "objectAnimator" )
+                        continue;
+
+                    animations[name][anim.attribute("propertyName")] = anim;
+                }
+            }
+        }
     }
 
     QSizeF get_size(const QDomElement& svg) override
@@ -87,6 +109,10 @@ protected:
         {
             mark_progress();
             (this->*it->second)(args);
+        }
+        else if ( args.element.tagName() == "attr" && args.element.attribute("name").endsWith("drawable") )
+        {
+            parseshape_drawable(args);
         }
     }
 
@@ -345,17 +371,22 @@ private:
         return clip;
     }
 
+    void parseshape_drawable(const ParseFuncArgs& args)
+    {
+        std::unique_ptr<model::Layer> layer;
+        set_name(layer.get(), args.element);
+        parse_children({args.element, &layer->shapes, args.parent_style, false});
+        args.shape_parent->insert(std::move(layer));
+    }
+
     void parseshape_group(const ParseFuncArgs& args)
     {
         std::unique_ptr<model::Group> clip;
 
-        for ( auto e : ElementRange(args.element) )
+        for ( auto e : ElementRange(args.element.elementsByTagName("clip-path")) )
         {
-            if ( e.tagName() == "clip-path" )
-            {
-                clip = parse_clip(e);
-                break;
-            }
+            clip = parse_clip(e);
+            break;
         }
 
         model::Group* group = nullptr;
@@ -440,6 +471,8 @@ private:
     QDir resource_path;
     std::map<QString, Resource> resources;
     int internal_resource_id = 0;
+    std::map<QString, std::map<QString, QDomElement>> animations;
+
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const std::unordered_set<QString> style_atrrs;
 };
