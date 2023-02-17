@@ -28,12 +28,6 @@
 #include "css_parser.hpp"
 #include "detail.hpp"
 
-namespace glaxnimate::io::svg {
-
-QColor parse_color(const QString& string);
-
-} // namespace glaxnimate::io::svg
-
 namespace glaxnimate::io::svg::detail {
 
 class SvgParserPrivate
@@ -320,6 +314,31 @@ protected:
             return model::Stroke::MiterJoin;
 
         return model::Stroke::MiterJoin;
+    }
+
+    template<class KfCollection>
+    KfCollection add_keyframes(KfCollection&& kfs)
+    {
+        if ( !kfs.empty() && kfs.back().time > max_time)
+            max_time = kfs.back().time;
+
+        return std::forward<KfCollection>(kfs);
+    }
+
+    void path_animation(
+        const std::vector<model::Path*>& paths,
+        const AnimatedProperties& anim,
+        const QString& attr
+    )
+    {
+        if ( !paths.empty() )
+        {
+            for ( const auto& kf : add_keyframes(anim.single(attr)) )
+            {
+                for ( int i = 0; i < math::min<int>(kf.values.bezier().size(), paths.size()); i++ )
+                    paths[i]->shape.set_keyframe(kf.time, kf.values.bezier()[i])->set_transition(kf.transition);
+            }
+        }
     }
 
 private:

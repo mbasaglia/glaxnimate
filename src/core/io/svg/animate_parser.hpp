@@ -15,6 +15,12 @@
 #include "detail.hpp"
 #include "io/animated_properties.hpp"
 
+namespace glaxnimate::io::svg {
+
+QColor parse_color(const QString& string);
+
+} // namespace glaxnimate::io::svg
+
 namespace glaxnimate::io::svg::detail {
 
 using namespace glaxnimate::io::detail;
@@ -107,7 +113,7 @@ public:
             case ValueVariant::String:
                 return str;
             case ValueVariant::Color:
-                return QColor(str);
+                return parse_color(str);
         }
 
         return {};
@@ -121,6 +127,8 @@ public:
             type = ValueVariant::Bezier;
         else if ( attr == "display" )
             type = ValueVariant::String;
+        else if ( attr == "fill" || attr == "stroke" )
+            type = ValueVariant::Color;
 
         std::vector<ValueVariant> values;
 

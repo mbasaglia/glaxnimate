@@ -17,6 +17,10 @@ public:
         Vector, Bezier, String, Color
     };
 
+    ValueVariant(qreal v)
+        : value_(std::vector<qreal>{v})
+    {}
+
     ValueVariant(std::vector<qreal> v = {})
         : value_(std::move(v))
     {}
@@ -44,6 +48,11 @@ public:
     }
 
     Type type() const { return Type(value_.index()); }
+
+    qreal scalar() const
+    {
+        return vector()[0];
+    }
 
     const std::vector<qreal>& vector() const
     {
@@ -112,6 +121,11 @@ struct PropertyKeyframe
     model::FrameTime time;
     ValueVariant values;
     model::KeyframeTransition transition;
+
+    bool operator< (const PropertyKeyframe& o) const
+    {
+        return time < o.time;
+    }
 };
 
 struct JoinedPropertyKeyframe
@@ -124,6 +138,11 @@ struct JoinedPropertyKeyframe
 struct AnimatedProperty
 {
     std::vector<PropertyKeyframe> keyframes;
+
+    void sort()
+    {
+        std::sort(keyframes.begin(), keyframes.end());
+    }
 };
 
 struct JoinedProperty

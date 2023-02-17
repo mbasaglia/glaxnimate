@@ -788,9 +788,7 @@ private:
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.single("fill")) )
-            fill->color.set_keyframe(kf.time,
-                QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
-            )->set_transition(kf.transition);
+            fill->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("fill-opacity")) )
             fill->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
@@ -946,21 +944,23 @@ private:
         parse_transform(args.element, g_node, transform);
     }
 
-    model::Path* parse_bezier_impl(const ParseFuncArgs& args, const math::bezier::MultiBezier& bez)
+    std::vector<model::Path*> parse_bezier_impl(const ParseFuncArgs& args, const math::bezier::MultiBezier& bez)
     {
         if ( bez.beziers().empty() )
             return {};
 
         ShapeCollection shapes;
-        model::Path* shape = nullptr;
+        std::vector<model::Path*> paths;
         for ( const auto& bezier : bez.beziers() )
         {
+            model::Path* shape = nullptr;
+            paths.push_back(shape);
             shape = push<model::Path>(shapes);
             shape->shape.set(bezier);
             shape->closed.set(bezier.closed());
         }
         add_shapes(args, std::move(shapes));
-        return shape;
+        return paths;
     }
 
 
@@ -971,15 +971,6 @@ private:
         path->shape.set(bez);
         add_shapes(args, {std::move(shapes)});
         return path;
-    }
-
-    template<class KfCollection>
-    KfCollection add_keyframes(KfCollection&& kfs)
-    {
-        if ( !kfs.empty() && kfs.back().time > max_time)
-            max_time = kfs.back().time;
-
-        return std::move(kfs);
     }
 
     detail::AnimateParser::AnimatedProperties parse_animated(const QDomElement& element)
@@ -1058,13 +1049,9 @@ private:
         QString d = args.element.attribute("d");
         math::bezier::MultiBezier bez = PathDParser(d).parse();
         /// \todo sodipodi:nodetypes
-        auto path = parse_bezier_impl(args, bez);
+        auto paths = parse_bezier_impl(args, bez);
 
-        if ( bez.size() == 1 && path )
-        {
-            for ( const auto& kf : add_keyframes(parse_animated(args.element).single("d")) )
-                path->shape.set_keyframe(kf.time, kf.values.bezier()[0])->set_transition(kf.transition);
-        }
+        path_animation(paths, parse_animated(args.element), "d" );
     }
 
     bool parse_star(const ParseFuncArgs& args)

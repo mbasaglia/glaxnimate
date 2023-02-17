@@ -8,6 +8,7 @@
 * I/O:
     * Various fixes to the SVG parser
     * Added support for Android Vector Drawables
+    * Improved support for animated SVG paths
 
 ## 0.5.2
 

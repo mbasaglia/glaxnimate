@@ -57,6 +57,10 @@ void glaxnimate::model::KeyframeTransition::set_before_descriptive(model::Keyfra
             bezier_.set<1>(QPointF{1./3., 0});
             hold_ = false;
             break;
+        case Fast:
+            bezier_.set<1>(QPointF{0, 1./3.});
+            hold_ = false;
+            break;
         case Custom:
             hold_ = false;
             break;
@@ -76,6 +80,10 @@ void glaxnimate::model::KeyframeTransition::set_after_descriptive(model::Keyfram
             break;
         case Ease:
             bezier_.set<2>(QPointF{2./3., 1});
+            hold_ = false;
+            break;
+        case Fast:
+            bezier_.set<2>(QPointF{1, 2./3.});
             hold_ = false;
             break;
         case Custom:
@@ -128,6 +136,22 @@ glaxnimate::model::KeyframeTransition::KeyframeTransition(const QPointF& before_
     : bezier_({0, 0}, before_handle, after_handle, {1,1}),
     hold_(hold)
 {}
+
+glaxnimate::model::KeyframeTransition::KeyframeTransition(
+    glaxnimate::model::KeyframeTransition::Descriptive before,
+    glaxnimate::model::KeyframeTransition::Descriptive after)
+    : KeyframeTransition()
+{
+    set_before_descriptive(before);
+    set_after_descriptive(after);
+}
+
+glaxnimate::model::KeyframeTransition::KeyframeTransition(glaxnimate::model::KeyframeTransition::Descriptive descriptive)
+    : KeyframeTransition(descriptive, descriptive)
+{
+}
+
+
 
 std::pair<glaxnimate::model::KeyframeTransition, glaxnimate::model::KeyframeTransition> glaxnimate::model::KeyframeTransition::split(double x) const
 {

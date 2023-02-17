@@ -39,14 +39,18 @@ protected:
                 if ( attr.tagName() != "attr" || !attr.attribute("name").endsWith("animation") )
                     continue;
 
-                for ( const auto& anim : ElementRange(attr) )
-                {
-                    if ( anim.tagName() != "objectAnimator" )
-                        continue;
+                auto iter = animations.find(name);
+                if ( iter == animations.end() )
+                    iter = animations.insert({name, {}}).first;
 
-                    animations[name][anim.attribute("propertyName")] = anim;
+                auto props = iter->second;
+
+                for ( const auto& anim : ElementRange(attr.elementsByTagName("objectAnimator")) )
+                {
+                    parse_animator(props, anim);
                 }
             }
+
         }
     }
 
@@ -131,6 +135,134 @@ private:
         QDomElement element;
         model::Asset* asset = nullptr;
     };
+
+    void parse_animator(AnimateParser::AnimatedProperties& props, const QDomElement& anim)
+    {
+        model::FrameTime start_time = anim.attribute("startOffset", "0").toDouble() / 1000;;
+        model::FrameTime end_time = start_time + anim.attribute("duration", "0").toDouble() / 1000;
+        std::vector<AnimatedProperty*> updated_props;
+
+        QString name = anim.attribute("propertyName");
+        if ( !name.isEmpty() )
+        {
+            auto& prop = props.properties[name];
+            updated_props.push_back(&prop);
+            parse_animated_prop(prop, name, anim, start_time, end_time);
+        }
+
+        for ( const auto& value_holder : ElementRange(anim) )
+        {
+            if ( value_holder.tagName() != "propertyValuesHolder" )
+                continue;
+
+            name = value_holder.attribute("propertyName");
+            if ( !name.isEmpty() )
+            {
+                auto& prop = props.properties[name];
+                updated_props.push_back(&prop);
+                parse_animated_prop(prop, name, value_holder, start_time, end_time);
+            }
+        }
+
+        for ( auto prop : updated_props )
+            prop->sort();
+    }
+
+    model::KeyframeTransition interpolator(const QString& interpolator)
+    {
+        using Type = model::KeyframeTransition::Descriptive;
+
+        if ( interpolator == "@android:interpolator/fast_out_slow_in" )
+            return model::KeyframeTransition(Type::Fast, Type::Ease);
+        if ( interpolator == "@android:interpolator/fast_out_linear_in" )
+            return model::KeyframeTransition(Type::Fast, Type::Linear);
+        if ( interpolator == "@android:interpolator/linear_out_slow_in" )
+            return model::KeyframeTransition(Type::Linear, Type::Ease);
+        if ( interpolator == "@android:anim/accelerate_decelerate_interpolator" )
+            return model::KeyframeTransition(Type::Ease, Type::Ease);
+        if ( interpolator == "@android:anim/accelerate_interpolator" )
+            return model::KeyframeTransition(Type::Ease, Type::Fast);
+        if ( interpolator == "@android:anim/decelerate_interpolator" )
+            return model::KeyframeTransition(Type::Fast, Type::Ease);
+        if ( interpolator == "@android:anim/linear_interpolator" )
+            return model::KeyframeTransition(Type::Linear, Type::Linear);
+
+        // TODO?
+        // @android:anim/anticipate_interpolator
+        // @android:anim/overshoot_interpolator
+        // @android:anim/bounce_interpolator
+        // @android:anim/anticipate_overshoot_interpolator
+        if ( interpolator != "" )
+            warning(QObject::tr("Unknown interpolator %s").arg(interpolator));
+
+        return model::KeyframeTransition(Type::Ease, Type::Ease);
+    }
+
+    ValueVariant parse_animated_value(const QString& value, ValueVariant::Type type)
+    {
+        switch ( type )
+        {
+            case ValueVariant::Vector:
+                return value.toDouble();
+            case ValueVariant::Bezier:
+                return PathDParser(value).parse();
+            case ValueVariant::String:
+                return value;
+            case ValueVariant::Color:
+                return parse_color(value);
+        }
+
+        return {};
+    }
+
+    void parse_animated_prop(
+        AnimatedProperty& prop,
+        const QString& name,
+        const QDomElement& value_holder,
+        model::FrameTime start_time,
+        model::FrameTime end_time
+    )
+    {
+        static model::KeyframeTransition transition;
+
+        ValueVariant::Type type = ValueVariant::Vector;
+        if ( name == "pathData" )
+            type = ValueVariant::Bezier;
+        else if ( name.endsWith("Color") )
+            type = ValueVariant::Color;
+
+        if ( value_holder.hasAttribute("valueFrom") )
+        {
+            prop.keyframes.push_back({
+                start_time,
+                parse_animated_value(value_holder.attribute("valueFrom"), type),
+                interpolator(value_holder.attribute("interpolator"))
+            });
+        }
+
+        if ( value_holder.hasAttribute("valueTo") )
+        {
+            prop.keyframes.push_back({
+                end_time,
+                parse_animated_value(value_holder.attribute("valueTo"), type),
+                model::KeyframeTransition(model::KeyframeTransition::Ease)
+            });
+        }
+
+        for ( const auto& kf : ElementRange(value_holder) )
+        {
+            if ( kf.tagName() != "keyframe" )
+                continue;
+
+            auto fraction = kf.attribute("fraction").toDouble();
+
+            prop.keyframes.push_back({
+                math::lerp(start_time, end_time, fraction),
+                parse_animated_value(kf.attribute("value"), type),
+                interpolator(kf.attribute("interpolator"))
+            });
+        }
+    }
 
     void add_shapes(const ParseFuncArgs& args, ShapeCollection&& shapes)
     {
@@ -241,8 +373,23 @@ private:
         stroke->join.set(line_join(style.get("strokeLineJoin", "butt")));
         stroke->miter_limit.set(parse_unit(style.get("strokeMiterLimit", "4")));
 
+        auto anim = get_animations(args.element);
+        for ( const auto& kf : add_keyframes(anim.single("strokeColor")) )
+            stroke->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("strokeAlpha")) )
+            stroke->opacity.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("strokeWidth")) )
+            stroke->width.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
         shapes->insert(std::move(stroke));
+    }
+
+    const AnimateParser::AnimatedProperties& get_animations(const QDomElement& element)
+    {
+        auto name = element.attribute("name");
+        return animations[name];
     }
 
     void add_fill(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
@@ -254,6 +401,13 @@ private:
         if ( style.get("fillType", "") == "evenOdd" )
             fill->fill_rule.set(model::Fill::EvenOdd);
 
+        auto anim = get_animations(args.element);
+        for ( const auto& kf : add_keyframes(anim.single("fillColor")) )
+            fill->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("fillAlpha")) )
+            fill->opacity.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
+
         shapes->insert(std::move(fill));
     }
 
@@ -264,6 +418,17 @@ private:
         trim->start.set(percent_1(style.get("trimPathStart", "1")));
         trim->end.set(percent_1(style.get("trimPathEnd", "1")));
         trim->offset.set(percent_1(style.get("trimPathOffset", "1")));
+
+        auto anim = get_animations(args.element);
+
+        for ( const auto& kf : add_keyframes(anim.single("trimPathStart")) )
+            trim->start.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("trimPathEnd")) )
+            trim->end.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("trimPathOffset")) )
+            trim->offset.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
         shapes->insert(std::move(trim));
     }
@@ -345,6 +510,25 @@ private:
         ));
 
         trans->rotation.set(args.element.attribute("rotation", "0").toDouble());
+
+        auto anim = get_animations(args.element);
+
+        for ( const auto& kf : add_keyframes(anim.joined({"pivotX", "pivotY", "translateX", "translateY"})) )
+        {
+            anchor = QPointF(kf.values[0].scalar(), kf.values[1].scalar());
+            trans->anchor_point.set_keyframe(kf.time, anchor)->set_transition(kf.transition);
+            QPointF pos(kf.values[2].scalar(), kf.values[3].scalar());
+            trans->position.set_keyframe(kf.time, anchor + pos)->set_transition(kf.transition);
+        }
+
+        for ( const auto& kf : add_keyframes(anim.joined({"scaleX", "scaleY"})) )
+        {
+            QVector2D scale(kf.values[0].scalar(), kf.values[1].scalar());
+            trans->scale.set_keyframe(kf.time, scale)->set_transition(kf.transition);
+        }
+
+        for ( const auto& kf : add_keyframes(anim.single("rotation")) )
+            trans->rotation.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
     }
 
     std::unique_ptr<model::Group> parse_clip(const QDomElement& element)
@@ -359,14 +543,17 @@ private:
         fill->color.set(QColor(255, 255, 255));
         clip->shapes.insert(std::move(fill));
 
-        model::Path* shape = nullptr;
+        std::vector<model::Path*> shapes;
         for ( const auto& bezier : bez.beziers() )
         {
             auto shape = std::make_unique<model::Path>(document);
             shape->shape.set(bezier);
             shape->closed.set(bezier.closed());
+            shapes.push_back(shape.get());
             clip->shapes.insert(std::move(shape));
         }
+
+        path_animation(shapes, get_animations(element), "pathData");
 
         return clip;
     }
@@ -415,14 +602,17 @@ private:
         math::bezier::MultiBezier bez = PathDParser(d).parse();
 
         ShapeCollection shapes;
-        model::Path* shape = nullptr;
+        std::vector<model::Path*> paths;
         for ( const auto& bezier : bez.beziers() )
         {
-            shape = push<model::Path>(shapes);
+            auto shape = push<model::Path>(shapes);
             shape->shape.set(bezier);
             shape->closed.set(bezier.closed());
+            paths.push_back(shape);
         }
         add_shapes(args, std::move(shapes));
+
+        path_animation(paths, get_animations(args.element), "pathData");
     }
 
     Resource* get_resource(const QString& id)
@@ -471,7 +661,7 @@ private:
     QDir resource_path;
     std::map<QString, Resource> resources;
     int internal_resource_id = 0;
-    std::map<QString, std::map<QString, QDomElement>> animations;
+    std::map<QString, AnimateParser::AnimatedProperties> animations;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const std::unordered_set<QString> style_atrrs;

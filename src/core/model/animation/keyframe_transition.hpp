@@ -21,6 +21,7 @@ public:
         Hold,
         Linear,
         Ease,
+        Fast, // TODO add to UI and such
         Custom,
     };
 
@@ -28,6 +29,8 @@ public:
 
     KeyframeTransition() = default;
     KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle, bool hold = false);
+    explicit KeyframeTransition(Descriptive before, Descriptive after);
+    explicit KeyframeTransition(Descriptive descriptive);
 
     const math::bezier::CubicBezierSolver<QPointF>& bezier() const { return bezier_; }
     bool hold() const { return hold_; }
