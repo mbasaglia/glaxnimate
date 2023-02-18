@@ -8,8 +8,6 @@
 using namespace glaxnimate::io::svg;
 using namespace glaxnimate::io::svg::detail;
 
-#include <QDebug>
-
 class glaxnimate::io::avd::AvdParser::Private : public svg::detail::SvgParserPrivate
 {
 public:

@@ -2,6 +2,7 @@
 
 #include "avd_parser.hpp"
 #include "io/svg/parse_error.hpp"
+#include "avd_renderer.hpp"
 
 glaxnimate::io::Autoreg<glaxnimate::io::avd::AvdFormat> glaxnimate::io::avd::AvdFormat::autoreg;
 
@@ -25,6 +26,12 @@ bool glaxnimate::io::avd::AvdFormat::on_open(QIODevice& file, const QString& fil
     }
 }
 
-bool glaxnimate::io::avd::AvdFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values)
+bool glaxnimate::io::avd::AvdFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
+    auto on_error = [this](const QString& s){warning(s);};
+    AvdRenderer rend(on_error);
+    rend.render(document);
+    auto dom = rend.single_file();
+    file.write(dom.toByteArray(4));
+    return true;
 }

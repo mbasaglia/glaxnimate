@@ -48,4 +48,10 @@ private:
     std::unique_ptr<Private> d;
 };
 
+/**
+ * \brief Converts a multi bezier into path data
+ * \returns pair of [path data, sodipodi nodetypes]
+ */
+std::pair<QString, QString> path_data(const math::bezier::MultiBezier& shape);
+
 } // namespace glaxnimate::io::svg

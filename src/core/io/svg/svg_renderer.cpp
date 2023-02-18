@@ -739,55 +739,6 @@ public:
         }
     }
 
-    char bezier_node_type(const math::bezier::Point& p)
-    {
-        switch ( p.type )
-        {
-            case math::bezier::PointType::Smooth:
-                return 's';
-            case math::bezier::PointType::Symmetrical:
-                return 'z';
-            case math::bezier::PointType::Corner:
-            default:
-                return 'c';
-        }
-    }
-
-    std::pair<QString, QString> path_data(const math::bezier::MultiBezier& shape)
-    {
-        QString d;
-        QString nodetypes;
-        for ( const math::bezier::Bezier& b : shape.beziers() )
-        {
-            if ( b.empty() )
-                continue;
-
-            d += QString("M %1,%2 C").arg(b[0].pos.x()).arg(b[0].pos.y());
-            nodetypes += bezier_node_type(b[0]);
-
-            for ( int i = 1; i < b.size(); i++ )
-            {
-                d += QString(" %1,%2 %3,%4 %5,%6")
-                    .arg(b[i-1].tan_out.x()).arg(b[i-1].tan_out.y())
-                    .arg(b[i].tan_in.x()).arg(b[i].tan_in.y())
-                    .arg(b[i].pos.x()).arg(b[i].pos.y())
-                ;
-                nodetypes += bezier_node_type(b[i]);
-            }
-
-            if ( b.closed() )
-            {
-                d += QString(" %1,%2 %3,%4 %5,%6")
-                    .arg(b.back().tan_out.x()).arg(b.back().tan_out.y())
-                    .arg(b[0].tan_in.x()).arg(b[0].tan_in.y())
-                    .arg(b[0].pos.x()).arg(b[0].pos.y())
-                ;
-                d += " Z";
-            }
-        }
-        return {d, nodetypes};
-    }
-
     QDomElement write_bezier(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
     {
         QDomElement path = element(parent, "path");
@@ -1215,7 +1166,10 @@ io::svg::SvgRenderer::SvgRenderer(AnimationType animated, CssFontType font_type)
     d->dom.appendChild(d->svg);
     d->svg.setAttribute("xmlns", detail::xmlns.at("svg"));
     for ( const auto& p : detail::xmlns )
-        d->svg.setAttribute("xmlns:" + p.first, p.second);
+    {
+        if ( !p.second.contains("android") )
+            d->svg.setAttribute("xmlns:" + p.first, p.second);
+    }
 
     d->write_style(d->svg, {
         {"fill", "none"},
@@ -1297,4 +1251,53 @@ glaxnimate::io::svg::CssFontType glaxnimate::io::svg::SvgRenderer::suggested_typ
     if ( !font->data.get().isEmpty() )
         return CssFontType::Embedded;
     return CssFontType::None;
+}
+
+static char bezier_node_type(const math::bezier::Point& p)
+{
+    switch ( p.type )
+    {
+        case math::bezier::PointType::Smooth:
+            return 's';
+        case math::bezier::PointType::Symmetrical:
+            return 'z';
+        case math::bezier::PointType::Corner:
+        default:
+            return 'c';
+    }
+}
+
+std::pair<QString, QString> glaxnimate::io::svg::path_data(const math::bezier::MultiBezier& shape)
+{
+    QString d;
+    QString nodetypes;
+    for ( const math::bezier::Bezier& b : shape.beziers() )
+    {
+        if ( b.empty() )
+            continue;
+
+        d += QString("M %1,%2 C").arg(b[0].pos.x()).arg(b[0].pos.y());
+        nodetypes += bezier_node_type(b[0]);
+
+        for ( int i = 1; i < b.size(); i++ )
+        {
+            d += QString(" %1,%2 %3,%4 %5,%6")
+                .arg(b[i-1].tan_out.x()).arg(b[i-1].tan_out.y())
+                .arg(b[i].tan_in.x()).arg(b[i].tan_in.y())
+                .arg(b[i].pos.x()).arg(b[i].pos.y())
+            ;
+            nodetypes += bezier_node_type(b[i]);
+        }
+
+        if ( b.closed() )
+        {
+            d += QString(" %1,%2 %3,%4 %5,%6")
+                .arg(b.back().tan_out.x()).arg(b.back().tan_out.y())
+                .arg(b[0].tan_in.x()).arg(b[0].tan_in.y())
+                .arg(b[0].pos.x()).arg(b[0].pos.y())
+            ;
+            d += " Z";
+        }
+    }
+    return {d, nodetypes};
 }
