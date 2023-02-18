@@ -31,7 +31,7 @@ protected:
         };
     }
 
-    std::pair<QPointF, QVector2D> on_parse_meta(const QDomElement& svg) override
+    void on_parse(const QDomElement& svg) override
     {
         dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
 
@@ -84,14 +84,17 @@ protected:
         parse_defs();
         parse_metadata();
 
-        return {pos, scale};
-    }
-
-    void on_parse_finish(model::Layer* parent_layer, const QDomElement& svg) override
-    {
+        model::Layer* parent_layer = add_layer(&document->main()->shapes);
+        parent_layer->transform.get()->position.set(-pos);
+        parent_layer->transform.get()->scale.set(scale);
         parent_layer->name.set(
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
         );
+
+        Style default_style(Style::Map{
+            {"fill", "black"},
+        });
+        parse_children({svg, &parent_layer->shapes, parse_style(svg, default_style), false});
 
         document->main()->name.set(
             attr(svg, "sodipodi", "docname", "")
@@ -104,14 +107,6 @@ protected:
             return;
 
         parse_shape_impl(args);
-    }
-
-    Style initial_style(const QDomElement& svg) override
-    {
-        Style default_style(Style::Map{
-            {"fill", "black"},
-        });
-        return parse_style(svg, default_style);
     }
 
 private:
@@ -429,9 +424,9 @@ private:
 
 
         Style style = parse_style(args.element, args.parent_style);
-        auto layer = std::make_unique<model::Layer>(document);
-        apply_common_style(layer.get(), args.element, style);
-        set_name(layer.get(), args.element);
+        auto layer = add_layer(args.shape_parent);
+        apply_common_style(layer, args.element, style);
+        set_name(layer, args.element);
         layer->mask->mask.set(model::MaskSettings::Alpha);
 
         QDomElement element = args.element;
@@ -459,9 +454,8 @@ private:
             false
         });
 
-        parse_transform(trans_copy, layer.get(), layer->transform.get());
+        parse_transform(trans_copy, layer, layer->transform.get());
 
-        args.shape_parent->insert(std::move(layer));
         return true;
     }
 

@@ -63,21 +63,79 @@ protected:
         };
     }
 
-    std::pair<QPointF, QVector2D> on_parse_meta(const QDomElement& root) override
+    void on_parse(const QDomElement& root) override
+    {
+        static const Style default_style(Style::Map{
+            {"fillColor", "black"},
+        });
+
+        if ( root.tagName() == "vector" )
+        {
+            parse_vector({root, &document->main()->shapes, default_style, false});
+        }
+        else
+        {
+            if ( root.hasAttribute("drawable") )
+            {
+                if ( auto res = get_resource(root.attribute("drawable")) )
+                {
+                    if ( res->element.tagName() == "vector" )
+                        parse_vector({res->element, &document->main()->shapes, default_style, false});
+                }
+            }
+
+            for ( const auto& ch : ElementRange(root) )
+            {
+                if ( ch.tagName() == "attr" && ch.attribute("name").endsWith("drawable") )
+                {
+                    for ( const auto& e : ElementRange(ch) )
+                        if ( e.tagName() == "vector" )
+                            parse_vector({e, &document->main()->shapes, default_style, false});
+                }
+            }
+        }
+
+        document->main()->name.set(
+            attr(root, "android", "name", "")
+        );
+    }
+
+    void parse_shape(const ParseFuncArgs& args) override
+    {
+        auto it = shape_parsers.find(args.element.tagName());
+        if ( it != shape_parsers.end() )
+        {
+            mark_progress();
+            (this->*it->second)(args);
+        }
+    }
+
+private:
+    struct Resource
+    {
+        QString name;
+        QDomElement element;
+        model::Asset* asset = nullptr;
+    };
+
+    void parse_vector(const ParseFuncArgs& args)
     {
         QPointF pos;
         QVector2D scale{1, 1};
 
-        if ( root.hasAttribute("viewportWidth") && root.hasAttribute("viewportHeight") )
+        model::Layer* layer = add_layer(args.shape_parent);
+        set_name(layer, args.element);
+
+        if ( args.element.hasAttribute("viewportWidth") && args.element.hasAttribute("viewportHeight") )
         {
-            qreal vbw = len_attr(root, "viewportWidth");
-            qreal vbh = len_attr(root, "viewportHeight");
+            qreal vbw = len_attr(args.element, "viewportWidth");
+            qreal vbh = len_attr(args.element, "viewportHeight");
 
             if ( !forced_size.isValid() )
             {
-                if ( !root.hasAttribute("width") )
+                if ( !args.element.hasAttribute("width") )
                     size.setWidth(vbw);
-                if ( !root.hasAttribute("height") )
+                if ( !args.element.hasAttribute("height") )
                     size.setHeight(vbh);
             }
 
@@ -93,51 +151,11 @@ protected:
             }
         }
 
-        return {pos, scale};
+        layer->transform.get()->position.set(-pos);
+        layer->transform.get()->scale.set(scale);
+
+        parse_children({args.element, &layer->shapes, args.parent_style, false});
     }
-
-    void on_parse_finish(model::Layer* parent_layer, const QDomElement& svg) override
-    {
-        parent_layer->name.set(
-            attr(svg, "android", "name", parent_layer->type_name_human())
-        );
-
-        document->main()->name.set(
-            attr(svg, "android", "name", "")
-        );
-    }
-
-    void parse_shape(const ParseFuncArgs& args) override
-    {
-        auto it = shape_parsers.find(args.element.tagName());
-        if ( it != shape_parsers.end() )
-        {
-            mark_progress();
-            (this->*it->second)(args);
-        }
-        else if ( args.element.tagName() == "attr" && args.element.attribute("name").endsWith("drawable") )
-        {
-            for ( const auto& e : ElementRange(args.element) )
-                if ( e.tagName() == "vector" )
-                parseshape_drawable({e, args.shape_parent, args.parent_style, false});
-        }
-    }
-
-    Style initial_style(const QDomElement&) override
-    {
-        Style default_style(Style::Map{
-            {"fillColor", "black"},
-        });
-        return default_style;
-    }
-
-private:
-    struct Resource
-    {
-        QString name;
-        QDomElement element;
-        model::Asset* asset = nullptr;
-    };
 
     void parse_animator(AnimateParser::AnimatedProperties& props, const QDomElement& anim)
     {
@@ -563,14 +581,6 @@ private:
         path_animation(shapes, get_animations(element), "pathData");
 
         return clip;
-    }
-
-    void parseshape_drawable(const ParseFuncArgs& args)
-    {
-        std::unique_ptr<model::Layer> layer = std::make_unique<model::Layer>(document);
-        set_name(layer.get(), args.element);
-        parse_children({args.element, &layer->shapes, args.parent_style, false});
-        args.shape_parent->insert(std::move(layer));
     }
 
     void parseshape_group(const ParseFuncArgs& args)

@@ -77,7 +77,6 @@ public:
         size = this->document->size();
         auto root = dom.documentElement();
 
-
         if ( forced_size.isValid() )
         {
             size = forced_size;
@@ -92,15 +91,7 @@ public:
         if ( io )
             io->progress_max_changed(to_process);
 
-        QPointF pos;
-        QVector2D scale;
-        std::tie(pos, scale) = on_parse_meta(root);
-
-        model::Layer* parent_layer = parse_objects(root);
-        parent_layer->transform.get()->position.set(-pos);
-        parent_layer->transform.get()->scale.set(scale);
-
-        on_parse_finish(parent_layer, root);
+        on_parse(root);
 
         write_document_data();
     }
@@ -355,7 +346,7 @@ private:
             max_time = 180;
 
         document->main()->animation->last_frame.set(max_time);
-        for ( auto lay : document->main()->docnode_find_by_type<model::Layer>() )
+        for ( auto lay : layers )
         {
             lay->animation->last_frame.set(max_time);
         }
@@ -363,22 +354,11 @@ private:
         document->undo_stack().clear();
     }
 
-    model::Layer* parse_objects(const QDomElement& root)
-    {
-        model::Layer* parent_layer = add_layer(&document->main()->shapes);
-        parent_layer->name.set(parent_layer->type_name_human());
-        parse_children({root, &parent_layer->shapes, initial_style(root), false});
-
-        return parent_layer;
-    }
-
 protected:
     virtual void on_parse_prepare(const QDomElement& root) = 0;
     virtual QSizeF get_size(const QDomElement& root) = 0;
-    virtual std::pair<QPointF, QVector2D> on_parse_meta(const QDomElement& root) = 0;
-    virtual void on_parse_finish(model::Layer* parent_layer, const QDomElement& root) = 0;
     virtual void parse_shape(const ParseFuncArgs& args) = 0;
-    virtual Style initial_style(const QDomElement& root) = 0;
+    virtual void on_parse(const QDomElement& root) = 0;
 
     QDomDocument dom;
 
