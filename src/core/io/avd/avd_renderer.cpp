@@ -451,6 +451,9 @@ public:
             case model::Gradient::Radial:
                 gradel.setAttribute("android:type", "radial");
                 break;
+            case model::Gradient::Conical:
+                gradel.setAttribute("android:type", "sweep");
+                break;
         }
 
         gradel.setAttribute("startX", gradient->start_point.get().x());

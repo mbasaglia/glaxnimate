@@ -215,6 +215,16 @@ QBrush glaxnimate::model::Gradient::brush_style ( glaxnimate::model::FrameTime t
         g.setSpread(QGradient::PadSpread);
         return g;
     }
+    else if ( type.get() == Conical )
+    {
+        auto start = start_point.get_at(t);
+        auto end = end_point.get_at(t);
+        auto angle = -math::rad2deg(math::atan2(end.y() - start.y(), end.x() - start.x()));
+        QConicalGradient g(start, angle);
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        return g;
+    }
     else
     {
         QLinearGradient g(start_point.get_at(t), end_point.get_at(t));
@@ -230,6 +240,13 @@ QBrush glaxnimate::model::Gradient::constrained_brush_style(FrameTime t, const Q
     if ( type.get() == Radial )
     {
         QRadialGradient g(bounds.center(), bounds.width() / 2);
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        return g;
+    }
+    else if ( type.get() == Conical )
+    {
+        QConicalGradient g(bounds.center(), 02);
         if ( colors.get() )
             g.setStops(colors->colors.get_at(t));
         return g;
@@ -262,6 +279,8 @@ QString glaxnimate::model::Gradient::gradient_type_name(GradientType t)
             return tr("Linear");
         case Radial:
             return tr("Radial");
+        case Conical:
+            return tr("Conical");
     }
 
     return {};

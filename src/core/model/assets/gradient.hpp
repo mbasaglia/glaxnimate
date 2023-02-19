@@ -51,7 +51,8 @@ public:
     enum GradientType
     {
         Linear = 1,
-        Radial = 2
+        Radial = 2,
+        Conical = 3
     };
 
     Q_ENUM(GradientType)

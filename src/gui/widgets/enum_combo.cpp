@@ -94,6 +94,8 @@ std::pair<QString, const char*> EnumCombo::data_for(const QMetaEnum& meta_enum, 
                 return {tr("Linear"), "paint-gradient-linear"};
             case model::Gradient::Radial:
                 return {tr("Radial"), "paint-gradient-radial"};
+            case model::Gradient::Conical:
+                return {tr("Conical"), "paint-gradient-conical"};
         }
     }
 

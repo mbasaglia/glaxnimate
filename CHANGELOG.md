@@ -4,6 +4,7 @@
     * Added the ability to select the first bezier node from the node's context menu
     * Setting fill / stroke / gradient updates all selected objects, not just the last selected
     * New keyframe easing preset "Fast" (Opposite of Ease)
+    * Added conical gradients
 * UI:
     * Nicer display of color values in tree views
 * I/O:

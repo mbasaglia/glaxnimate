@@ -490,12 +490,13 @@ private:
         auto gradient = document->assets()->add_gradient();
         gradient->colors.set(colors);
 
-        // TODO sweep = conical
         QString type = res->element.attribute("type", "linear");
         if ( type == "linear" )
             gradient->type.set(model::Gradient::Linear);
         else if ( type == "radial" )
             gradient->type.set(model::Gradient::Radial);
+        else if ( type == "sweeo" )
+            gradient->type.set(model::Gradient::Conical);
 
         gradient->start_point.set({
             len_attr(res->element, "startX"),

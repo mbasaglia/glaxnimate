@@ -1107,7 +1107,7 @@ public:
     void write_gradient(QDomElement& parent, model::Gradient* gradient)
     {
         QDomElement e;
-        if ( gradient->type.get() == model::Gradient::Radial )
+        if ( gradient->type.get() == model::Gradient::Radial || gradient->type.get() == model::Gradient::Conical )
         {
             e = element(parent, "radialGradient");
             write_properties(e, {&gradient->start_point}, {"cx", "cy"}, &Private::callback_point);

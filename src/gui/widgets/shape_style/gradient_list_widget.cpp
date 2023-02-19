@@ -53,7 +53,7 @@ public:
 
     struct TypeButtonSlot
     {
-        QToolButton* btn_other;
+        std::pair<QToolButton*, QToolButton*> btn_others;
         GradientListWidget* widget;
         model::Gradient::GradientType gradient_type;
         bool secondary;
@@ -66,16 +66,27 @@ public:
             }
             else
             {
-                btn_other->setChecked(false);
+                btn_others.first->setChecked(false);
+                btn_others.second->setChecked(false);
                 widget->d->set_gradient(secondary, gradient_type);
             }
         }
     };
 
+    TypeButtonSlot slot_conical(GradientListWidget* widget, bool secondary)
+    {
+        return {
+            {secondary ? ui.btn_stroke_linear : ui.btn_fill_linear, secondary ? ui.btn_stroke_radial : ui.btn_fill_radial},
+            widget,
+            model::Gradient::Conical,
+            secondary
+        };
+    }
+
     TypeButtonSlot slot_radial(GradientListWidget* widget, bool secondary)
     {
         return {
-            secondary ? ui.btn_stroke_linear : ui.btn_fill_linear,
+            {secondary ? ui.btn_stroke_linear : ui.btn_fill_linear, secondary ? ui.btn_stroke_conical : ui.btn_fill_conical},
             widget,
             model::Gradient::Radial,
             secondary
@@ -85,7 +96,7 @@ public:
     TypeButtonSlot slot_linear(GradientListWidget* widget, bool secondary)
     {
         return {
-            secondary ? ui.btn_stroke_radial : ui.btn_fill_radial,
+            {secondary ? ui.btn_stroke_radial : ui.btn_fill_radial, secondary ? ui.btn_stroke_conical : ui.btn_fill_conical},
             widget,
             model::Gradient::Linear,
             secondary
@@ -138,10 +149,10 @@ public:
         grad->colors.set(colors);
         grad->type.set(gradient_type);
 
-        if ( gradient_type == model::Gradient::Radial )
-            grad->start_point.set(bounds.center());
-        else
+        if ( gradient_type == model::Gradient::Linear )
             grad->start_point.set(QPointF(bounds.left(), bounds.center().y()));
+        else
+            grad->start_point.set(bounds.center());
 
         grad->highlight.set(grad->start_point.get());
         grad->end_point.set(QPointF(bounds.right(), bounds.center().y()));
@@ -237,8 +248,10 @@ public:
     {
         ui.btn_fill_linear->setChecked(false);
         ui.btn_fill_radial->setChecked(false);
+        ui.btn_fill_conical->setChecked(false);
         ui.btn_stroke_linear->setChecked(false);
         ui.btn_stroke_radial->setChecked(false);
+        ui.btn_stroke_conical->setChecked(false);
     }
 
     void set_targets(const std::vector<model::Fill*>& fills, const std::vector<model::Stroke*>& strokes)
@@ -248,8 +261,10 @@ public:
 
         ui.btn_fill_linear->setEnabled(fills.size());
         ui.btn_fill_radial->setEnabled(fills.size());
+        ui.btn_fill_conical->setEnabled(fills.size());
         ui.btn_stroke_linear->setEnabled(strokes.size());
         ui.btn_stroke_radial->setEnabled(strokes.size());
+        ui.btn_stroke_conical->setEnabled(strokes.size());
     }
 
     void buttons_from_targets(bool set_current)
@@ -281,18 +296,34 @@ public:
 
         if ( colors_fill == colors )
         {
-            if ( gradient_fill->type.get() == model::Gradient::Radial )
-                ui.btn_fill_radial->setChecked(true);
-            else
-                ui.btn_fill_linear->setChecked(true);
+            switch ( gradient_fill->type.get() )
+            {
+                case model::Gradient::Radial:
+                    ui.btn_fill_radial->setChecked(true);
+                    break;
+                case model::Gradient::Linear:
+                    ui.btn_fill_linear->setChecked(true);
+                    break;
+                case model::Gradient::Conical:
+                    ui.btn_fill_conical->setChecked(true);
+                    break;
+            }
         }
 
         if ( colors_stroke == colors )
         {
-            if ( gradient_stroke->type.get() == model::Gradient::Radial )
-                ui.btn_stroke_radial->setChecked(true);
-            else
-                ui.btn_stroke_linear->setChecked(true);
+            switch ( gradient_stroke->type.get() )
+            {
+                case model::Gradient::Radial:
+                    ui.btn_stroke_radial->setChecked(true);
+                    break;
+                case model::Gradient::Linear:
+                    ui.btn_stroke_linear->setChecked(true);
+                    break;
+                case model::Gradient::Conical:
+                    ui.btn_stroke_conical->setChecked(true);
+                    break;
+            }
         }
     }
 
@@ -386,8 +417,10 @@ GradientListWidget::GradientListWidget(QWidget* parent)
     connect(d->ui.btn_remove, &QAbstractButton::clicked, this, [this]{ d->delete_gradient(); });
     connect(d->ui.btn_fill_linear,   &QAbstractButton::clicked, this, d->slot_linear(this, false));
     connect(d->ui.btn_fill_radial,   &QAbstractButton::clicked, this, d->slot_radial(this, false));
+    connect(d->ui.btn_fill_conical,   &QAbstractButton::clicked, this, d->slot_conical(this, false));
     connect(d->ui.btn_stroke_linear, &QAbstractButton::clicked, this, d->slot_linear(this, true));
     connect(d->ui.btn_stroke_radial, &QAbstractButton::clicked, this, d->slot_radial(this, true));
+    connect(d->ui.btn_stroke_conical, &QAbstractButton::clicked, this, d->slot_conical(this, true));
 }
 
 GradientListWidget::~GradientListWidget() = default;
