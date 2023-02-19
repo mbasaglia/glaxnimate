@@ -2,6 +2,7 @@
 #include "ui_shape_parent_dialog.h"
 #include <QtColorWidgets/ColorDelegate>
 #include "model/shapes/group.hpp"
+#include "item_models/node_type_proxy_model.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -13,10 +14,18 @@ public:
     item_models::DocumentNodeModel* model = nullptr;
     Ui::ShapeParentDialog ui;
     color_widgets::ReadOnlyColorDelegate color_delegate;
+    item_models::NodeTypeProxyModel proxy;
+
+    Private(item_models::DocumentNodeModel* model)
+        : model(model), proxy(model)
+    {
+        proxy.allow<model::Group>();
+        proxy.allow<model::Composition>();
+    }
 
     model::ShapeListProperty* get_popr(const QModelIndex& index)
     {
-        auto node = model->node(index);
+        auto node = model->node(proxy.mapToSource(index));
         if ( !node )
             return nullptr;
         if ( auto grp = qobject_cast<model::Group*>(node) )
@@ -28,11 +37,10 @@ public:
 };
 
 ShapeParentDialog::ShapeParentDialog(item_models::DocumentNodeModel* model, QWidget* parent)
-    : QDialog(parent), d(std::make_unique<Private>())
+    : QDialog(parent), d(std::make_unique<Private>(model))
 {
     d->ui.setupUi(this);
-    d->model = model;
-    d->ui.view_document_node->setModel(model);
+    d->ui.view_document_node->setModel(&d->proxy);
     d->ui.view_document_node->expandAll();
     d->ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
     d->ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible);
