@@ -24,7 +24,6 @@ public:
     void render(model::Document* document);
 
     QDomElement graphics();
-    const std::vector<QDomElement>& animations();
     QDomDocument single_file();
 
 private:
