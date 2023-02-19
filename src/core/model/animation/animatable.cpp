@@ -177,8 +177,7 @@ void glaxnimate::model::detail::AnimatedPropertyPosition::split_segment(int inde
 
 bool glaxnimate::model::detail::AnimatedPropertyPosition::set_bezier(math::bezier::Bezier bezier)
 {
-    if ( bezier.closed() && !bezier.empty() && !math::fuzzy_compare(bezier[0].pos, bezier.back().pos) )
-        bezier.push_back(bezier[0]);
+    bezier.add_close_point();
 
     // TODO if sizes don't match, re-arrange keyframes based on
     // how far keyframes are in the bezier

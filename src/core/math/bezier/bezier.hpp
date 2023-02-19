@@ -186,6 +186,11 @@ public:
      */
     math::bezier::Bezier removed_points(const std::set<int>& indices) const;
 
+    /**
+     * \brief For closed beziers, ensure the last segment is present
+     */
+    void add_close_point();
+
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1

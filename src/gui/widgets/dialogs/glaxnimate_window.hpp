@@ -13,6 +13,7 @@
 #include "plugin/executor.hpp"
 
 #include "selection_manager.hpp"
+#include "item_models/document_node_model.hpp"
 
 
 namespace glaxnimate::plugin {
@@ -141,6 +142,8 @@ public:
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
 
     void ipc_connect(const QString& name);
+
+    item_models::DocumentNodeModel* node_model() const;
 
 public slots:
     void document_save();

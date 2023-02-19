@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>glaxnimate::gui::SelectShapeDialog</class>
+ <widget class="QDialog" name="glaxnimate::gui::SelectShapeDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>560</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Select Shape</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeView" name="view_document_node"/>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>glaxnimate::gui::SelectShapeDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>539</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>180</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>glaxnimate::gui::SelectShapeDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>534</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_document_node</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>glaxnimate::gui::SelectShapeDialog</receiver>
+   <slot>select(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>455</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_document_node</sender>
+   <signal>activated(QModelIndex)</signal>
+   <receiver>glaxnimate::gui::SelectShapeDialog</receiver>
+   <slot>select(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>select(QModelIndex)</slot>
+ </slots>
+</ui>

@@ -195,6 +195,15 @@ math::bezier::Bezier math::bezier::Bezier::removed_points(const std::set<int>& i
     return new_bez;
 }
 
+void glaxnimate::math::bezier::Bezier::add_close_point()
+{
+    if ( closed_ && !points_.empty() && !math::fuzzy_compare(points_[0].pos, points_.back().pos) )
+    {
+        points_.push_back(points_[0]);
+        points_.back().tan_out = points_[0].tan_in = points_[0].pos;
+    }
+}
+
 
 QRectF math::bezier::MultiBezier::bounding_box() const
 {

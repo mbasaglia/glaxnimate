@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>glaxnimate::gui::FollowPathDialog</class>
+ <widget class="QDialog" name="glaxnimate::gui::FollowPathDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>356</width>
+    <height>246</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Follow Path</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Duration</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Time Units</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Shape</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QDoubleSpinBox" name="spin_start"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>End Time</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QComboBox" name="combo_units">
+     <item>
+      <property name="text">
+       <string>Frames</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Seconds</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="line_shape_name">
+       <property name="text">
+        <string notr="true"/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Choose...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Start Time</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="spin_duration"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="spin_end"/>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>235</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>289</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>344</x>
+     <y>287</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_units</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>change_units(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>326</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_duration</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>change_duration(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_end</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>change_end(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>475</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>glaxnimate::gui::FollowPathDialog</receiver>
+   <slot>select_path()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>35</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>apply()</slot>
+  <slot>change_units(int)</slot>
+  <slot>change_duration(double)</slot>
+  <slot>change_end(double)</slot>
+  <slot>select_path()</slot>
+ </slots>
+</ui>

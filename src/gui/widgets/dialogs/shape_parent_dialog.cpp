@@ -11,13 +11,12 @@ class ShapeParentDialog::Private
 {
 public:
     model::ShapeListProperty* current = nullptr;
-    item_models::DocumentNodeModel* model = nullptr;
     Ui::ShapeParentDialog ui;
     color_widgets::ReadOnlyColorDelegate color_delegate;
     item_models::NodeTypeProxyModel proxy;
 
     Private(item_models::DocumentNodeModel* model)
-        : model(model), proxy(model)
+        : proxy(model)
     {
         proxy.allow<model::Group>();
         proxy.allow<model::Composition>();
@@ -25,7 +24,7 @@ public:
 
     model::ShapeListProperty* get_popr(const QModelIndex& index)
     {
-        auto node = model->node(proxy.mapToSource(index));
+        auto node = proxy.node(index);
         if ( !node )
             return nullptr;
         if ( auto grp = qobject_cast<model::Group*>(node) )
@@ -45,6 +44,7 @@ ShapeParentDialog::ShapeParentDialog(item_models::DocumentNodeModel* model, QWid
     d->ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
     d->ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible);
     d->ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked);
+    d->ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnUsers);
     d->ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
     d->ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &d->color_delegate);
 }

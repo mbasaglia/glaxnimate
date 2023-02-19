@@ -30,7 +30,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex & index) const override
     {
         auto src = mapToSource(index);
-        auto flags = source_model()->flags(src);
+        auto flags = source_model()->flags(src) & ~(Qt::ItemIsEditable|Qt::ItemIsDragEnabled|Qt::ItemIsDropEnabled);
         auto node = source_model()->node(src);
         bool selectable = false;
 
@@ -60,6 +60,11 @@ public:
             flags &= ~Qt::ItemIsSelectable;
 
         return flags;
+    }
+
+    model::DocumentNode* node(const QModelIndex& index) const
+    {
+        return source_model()->node(mapToSource(index));
     }
 
 protected:

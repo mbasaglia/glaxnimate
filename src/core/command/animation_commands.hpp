@@ -103,7 +103,8 @@ private:
     };
     model::AnimatableBase* prop;
     std::vector<Keframe> keyframes;
-    QVariant value;
+    QVariant before;
+    QVariant after;
 };
 
 

@@ -66,6 +66,7 @@ private slots:
     void click_index ( const QModelIndex& index );
     void rows_removed( const QModelIndex& index, int first, int last );
     void loop_keyframes();
+    void follow_path();
     
 private:
     class Private;

@@ -63,6 +63,10 @@ widgets/dialogs/startup_dialog.cpp
 widgets/dialogs/startup_dialog.ui
 widgets/dialogs/export_image_sequence_dialog.cpp
 widgets/dialogs/export_image_sequence_dialog.ui
+widgets/dialogs/select_shape_dialog.cpp
+widgets/dialogs/select_shape_dialog.ui
+widgets/dialogs/follow_path_dialog.cpp
+widgets/dialogs/follow_path_dialog.ui
 
 widgets/lottiefiles/lottiefiles_search_dialog.cpp
 widgets/lottiefiles/lottiefiles_search_dialog.ui

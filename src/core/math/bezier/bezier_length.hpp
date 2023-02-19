@@ -39,6 +39,16 @@ public:
 
     qreal length() const noexcept;
 
+    /**
+     * \returns The length at which the child at \p index starts
+     */
+    qreal child_start(int index) const;
+
+    /**
+     * \returns The length at which the child at \p index ends
+     */
+    qreal child_end(int index) const;
+
 private:
     LengthData(qreal t, qreal length, qreal cumulative_length);
 

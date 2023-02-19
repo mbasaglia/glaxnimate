@@ -125,3 +125,14 @@ qreal glaxnimate::math::bezier::LengthData::from_ratio(qreal ratio) const
     return length_;
 }
 
+qreal glaxnimate::math::bezier::LengthData::child_start(int index) const
+{
+    if ( index == 0 )
+        return 0;
+    return children_[index - 1].cumulative_length_;
+}
+
+qreal glaxnimate::math::bezier::LengthData::child_end(int index) const
+{
+    return children_[index].cumulative_length_;
+}

@@ -5,6 +5,7 @@
     * Setting fill / stroke / gradient updates all selected objects, not just the last selected
     * New keyframe easing preset "Fast" (Opposite of Ease)
     * Added conical gradients
+    * Context menu for position properties that shows a dialog to select a shape to follow
 * UI:
     * Nicer display of color values in tree views
     * Remove extra items from the "Move To" dialog

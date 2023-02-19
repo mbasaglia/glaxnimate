@@ -21,6 +21,7 @@
 #include "style/property_delegate.hpp"
 #include "style/fixed_height_delegate.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
+#include "widgets/dialogs/follow_path_dialog.hpp"
 
 #ifndef Q_OS_ANDROID
     #include "widgets/node_menu.hpp"
@@ -108,6 +109,11 @@ public:
         action_kf_loop.setIcon(QIcon::fromTheme("media-repeat-all"));
         connect(&action_kf_loop, &QAction::triggered, parent, &CompoundTimelineWidget::loop_keyframes);
         menu_property.addAction(&action_kf_loop);
+
+        action_follow_path.setIcon(QIcon::fromTheme("draw-bezier-curves"));
+        connect(&action_follow_path, &QAction::triggered, parent, &CompoundTimelineWidget::follow_path);
+        menu_property.addAction(&action_follow_path);
+        action_follow_path.setVisible(false);
 
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
 
@@ -211,6 +217,7 @@ public:
         action_kf_paste.setText(tr("Paste Keyframe"));
 
         action_kf_loop.setText(tr("Loop Animation"));
+        action_follow_path.setText(tr("Follow Path..."));
     }
 
     void retranslateUi(CompoundTimelineWidget* parent)
@@ -346,6 +353,7 @@ public:
     QAction action_exit_custom;
     QAction action_kf_copy;
     QAction action_kf_paste;
+    QAction action_follow_path;
     QMenu menu_keyframe;
     QActionGroup enter{&menu_keyframe};
     QActionGroup exit{&menu_keyframe};
@@ -522,6 +530,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     {
         d->action_title->setText(d->menu_anim->name());
         d->toggle_paste();
+        d->action_follow_path.setVisible(item.property->traits().type == model::PropertyTraits::Point);
         d->menu_property.exec(glob);
     }
 #ifndef Q_OS_ANDROID
@@ -782,4 +791,13 @@ void glaxnimate::gui::CompoundTimelineWidget::loop_keyframes()
         d->menu_anim->keyframe(0)->value(),
         true
     ));
+}
+
+void glaxnimate::gui::CompoundTimelineWidget::follow_path()
+{
+    if ( d->menu_anim && d->menu_anim->traits().type == model::PropertyTraits::Point )
+    {
+        auto prop = static_cast<model::AnimatedProperty<QPointF>*>(d->menu_anim);
+        FollowPathDialog(prop, d->window->node_model(), d->window).exec();
+    }
 }
