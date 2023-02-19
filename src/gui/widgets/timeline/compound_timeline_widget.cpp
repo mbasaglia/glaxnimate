@@ -120,27 +120,33 @@ public:
         action_enter_hold.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/hold.svg")));
         action_enter_linear.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/linear.svg")));
         action_enter_ease.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/ease.svg")));
+        action_enter_fast.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/fast.svg")));
         action_enter_custom.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/custom.svg")));
         action_exit_hold.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/hold.svg")));
         action_exit_linear.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/linear.svg")));
         action_exit_ease.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/ease.svg")));
+        action_exit_fast.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/fast.svg")));
         action_exit_custom.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/custom.svg")));
 
         action_enter_hold.setActionGroup(&enter);
         action_enter_linear.setActionGroup(&enter);
         action_enter_ease.setActionGroup(&enter);
+        action_enter_fast.setActionGroup(&enter);
         action_enter_custom.setActionGroup(&enter);
         action_exit_hold.setActionGroup(&exit);
         action_exit_linear.setActionGroup(&exit);
         action_exit_ease.setActionGroup(&exit);
+        action_exit_fast.setActionGroup(&exit);
         action_exit_custom.setActionGroup(&exit);
 
         action_enter_hold.setData(QVariant::fromValue(model::KeyframeTransition::Hold));
         action_enter_linear.setData(QVariant::fromValue(model::KeyframeTransition::Linear));
         action_enter_ease.setData(QVariant::fromValue(model::KeyframeTransition::Ease));
+        action_enter_fast.setData(QVariant::fromValue(model::KeyframeTransition::Fast));
         action_exit_hold.setData(QVariant::fromValue(model::KeyframeTransition::Hold));
         action_exit_linear.setData(QVariant::fromValue(model::KeyframeTransition::Linear));
         action_exit_ease.setData(QVariant::fromValue(model::KeyframeTransition::Ease));
+        action_exit_fast.setData(QVariant::fromValue(model::KeyframeTransition::Fast));
 
         menu_keyframe.addAction(&action_kf_remove);
         action_kf_remove.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
@@ -191,6 +197,9 @@ public:
 
         action_enter_ease.setText(tr("Ease"));
         action_exit_ease.setText(action_enter_ease.text());
+
+        action_enter_fast.setText(tr("Fast"));
+        action_exit_fast.setText(action_enter_fast.text());
 
         action_enter_custom.setText(tr("Custom..."));
         action_exit_custom.setText(action_enter_custom.text());
@@ -328,10 +337,12 @@ public:
     QAction action_enter_hold;
     QAction action_enter_linear;
     QAction action_enter_ease;
+    QAction action_enter_fast;
     QAction action_enter_custom;
     QAction action_exit_hold;
     QAction action_exit_linear;
     QAction action_exit_ease;
+    QAction action_exit_fast;
     QAction action_exit_custom;
     QAction action_kf_copy;
     QAction action_kf_paste;
@@ -476,6 +487,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
                 case model::KeyframeTransition::Ease:
                     d->action_enter_ease.setChecked(true);
                     break;
+                case model::KeyframeTransition::Fast:
+                    d->action_enter_fast.setChecked(true);
+                    break;
                 default:
                     d->action_enter_custom.setChecked(true);
                     break;
@@ -492,6 +506,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
                 break;
             case model::KeyframeTransition::Ease:
                 d->action_exit_ease.setChecked(true);
+                break;
+            case model::KeyframeTransition::Fast:
+                d->action_exit_fast.setChecked(true);
                 break;
             default:
                 d->action_exit_custom.setChecked(true);

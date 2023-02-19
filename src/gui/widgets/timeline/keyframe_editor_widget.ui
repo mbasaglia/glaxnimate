@@ -56,6 +56,11 @@
         </item>
         <item>
          <property name="text">
+          <string>Fast</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Custom</string>
          </property>
         </item>
@@ -96,6 +101,11 @@
         <item>
          <property name="text">
           <string>Ease Out</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Fast</string>
          </property>
         </item>
         <item>

@@ -148,6 +148,7 @@ void define_animatable(py::module& m)
         .value("Hold", model::KeyframeTransition::Hold)
         .value("Linear", model::KeyframeTransition::Linear)
         .value("Ease", model::KeyframeTransition::Ease)
+        .value("Fast", model::KeyframeTransition::Fast)
         .value("Custom", model::KeyframeTransition::Custom)
     ;
     kt
