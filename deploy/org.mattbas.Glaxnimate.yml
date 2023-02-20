@@ -7,17 +7,17 @@ command: glaxnimate
 finish-args:
     - --share=ipc
     - --share=network
-    - --socket=x11
+    - --socket=fallback-x11
     - --socket=wayland
     - --filesystem=host
     - --device=dri
 modules:
     -
         name: glaxnimate
-        buildsystem: cmake
+        buildsystem: cmake-ninja
         builddir: true
         config-opts:
-            - -DCMAKE_BUILD_TYPE=Release
+            - -DCMAKE_BUILD_TYPE=RelWithDebInfo
             - -DGLAXNIMATE_SYSTEM_POTRACE=OFF
         sources:
             -

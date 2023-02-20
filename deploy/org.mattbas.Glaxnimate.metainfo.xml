@@ -7,12 +7,27 @@
     <name>Glaxnimate</name>
     <summary>Vector Animation Editor</summary>
     <description>
-        <p>Glaxnimate is a vector animation program.</p>
+        <p>Glaxnimate is an open-source vector animation and motion design desktop application.</p>
+        <p>Features:</p>
+        <ul>
+            <li>Tweening</li>
+            <li>Precompositions</li>
+            <li>Time Stretching</li>
+            <li>Motion Along Path</li>
+            <li>Shape Modifiers</li>
+            <li>Text Support</li>
+            <li>Animated Gradients</li>
+            <li>Scripting Support</li>
+        </ul>
+        <p>Supported Formats:</p>
         <ul>
             <li>Lottie</li>
             <li>Animated SVG</li>
             <li>Animated WebP</li>
-            <li>Scripting Support</li>
+            <li>Animated Vector Drawables</li>
+            <li>RIVE</li>
+            <li>Video Export</li>
+            <li>Spritesheet Export</li>
         </ul>
     </description>
     <categories>
@@ -22,7 +37,7 @@
     <url type="bugtracker">https://gitlab.com/mattbas/glaxnimate/-/issues</url>
     <url type="help">https://glaxnimate.mattbas.org/manual/</url>
     <url type="donation">https://glaxnimate.mattbas.org/donate/</url>
-<!--     <url type="contribute">https://glaxnimate.mattbas.org/contributing/</url> -->
+    <url type="contribute">https://glaxnimate.mattbas.org/contributing/</url>
     <screenshots>
         <screenshot type="default">
             <caption>Glaxnimate main window</caption>
