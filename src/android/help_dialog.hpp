@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef HELP_DIALOG_HPP
 #define HELP_DIALOG_HPP
 

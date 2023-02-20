@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "shape_tool_widget_p.hpp"
 
 using namespace glaxnimate::gui;

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "widgets/dialogs/glaxnimate_window.hpp"
 #include "widgets/dialogs/plugin_ui_dialog.hpp"
 #include "app/scripting/python/register_machinery.hpp"

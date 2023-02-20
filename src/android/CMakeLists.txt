@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 set(SOURCES
     android_file_picker.cpp
     android_intent_handler.cpp

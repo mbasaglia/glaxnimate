@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "startup_dialog.hpp"
 #include "ui_startup_dialog.h"
 

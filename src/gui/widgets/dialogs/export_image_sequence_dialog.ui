@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 <ui version="4.0">
  <class>glaxnimate::gui::ExportImageSequenceDialog</class>
  <widget class="QDialog" name="glaxnimate::gui::ExportImageSequenceDialog">

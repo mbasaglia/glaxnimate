@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #define PROJECT_VERSION "${PROJECT_VERSION}"
 #define PROJECT_SLUG "${PROJECT_SLUG}"
 #define PROJECT_NAME "${PROJECT_NAME}"

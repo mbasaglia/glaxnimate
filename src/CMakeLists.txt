@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/core/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gui/)

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "shape_parent_dialog.hpp"
 #include "ui_shape_parent_dialog.h"
 #include <QtColorWidgets/ColorDelegate>

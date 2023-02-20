@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "lottie_html_format.hpp"
 #include "lottie_exporter.hpp"
 #include "cbor_write_json.hpp"

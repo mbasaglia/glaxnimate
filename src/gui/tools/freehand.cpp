@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "draw_tool_base.hpp"
 #include "model/shapes/path.hpp"
 #include "math/bezier/operations.hpp"

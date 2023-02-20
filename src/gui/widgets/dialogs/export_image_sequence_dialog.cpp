@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #include "export_image_sequence_dialog.hpp"
 #include "ui_export_image_sequence_dialog.h"
 #include <QEvent>
