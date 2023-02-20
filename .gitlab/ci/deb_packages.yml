@@ -1,0 +1,17 @@
+linux:deb:
+    image: ubuntu:latest
+    stage: build
+    script:
+        - mkdir build
+        - cd build
+        - cmake .. -DCPACK_DEBIAN_FILE_NAME=glaxnimate.deb -DVERSION_SUFFIX="deb-$CI_COMMIT_SHORT_SHA"
+        - make
+        - make translations
+        - cpack -G DEB
+        - sha1sum glaxnimate.deb >checksum.txt
+    artifacts:
+        paths:
+            - build/glaxnimate.deb
+            - build/checksum.txt
+            - build/CMakeCache.txt
+    when: always

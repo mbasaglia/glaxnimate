@@ -1,0 +1,22 @@
+pages:
+    image: ubuntu:latest
+    stage: deploy
+    script:
+        - apt-get install -y doxygen graphviz g++ python3-distutils git
+        - mkdir -p build
+        - cd build
+        - cmake ..
+        - make doxygen
+        - make docs_depends_install
+        - make docs
+    after_script:
+        - mv build/docs/site public
+        - mv build/coverage public/coverage
+        - mv build/doxygen/html public/doxygen
+    artifacts:
+        paths:
+            - public
+    when: always
+    only:
+        - master
+    needs: ["linux:test"]

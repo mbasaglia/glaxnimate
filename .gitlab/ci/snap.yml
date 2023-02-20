@@ -1,0 +1,56 @@
+linux:snap_tag:
+    #image: snapcore/snapcraft:stable
+    image: mattbas/snapcraft:latest
+    stage: deploy
+    only:
+        - tags
+    dependencies:
+    needs: []
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - apt remove cmake
+        - pip3 install cmake==3.22.6
+    script:
+        - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - test -f "$SNAPCRAFT_LOGIN_FILE"
+        - mkdir -p build
+        - cd build
+        - cmake .. -DSNAP_IS_SUCH_A_PAIN=ON -DVERSION_SUFFIX="" || true
+        - ls -lah .
+        - cd ..
+        - mkdir snap
+        - cp build/snapcraft.yaml snap
+        - snapcraft
+        - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
+        - snapcraft upload --release=stable glaxnimate_*.snap |& tee snap_out || true
+        - grep -Eq "Revision [0-9]+ of 'glaxnimate' created." snap_out
+
+linux:snap_beta:
+    #image: snapcore/snapcraft:stable
+    image: mattbas/snapcraft:latest
+    stage: deploy
+    only:
+        - master
+        - pre-release
+    dependencies:
+    needs: []
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - apt remove cmake
+        - pip3 install cmake==3.22.6
+    script:
+        - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - test -f "$SNAPCRAFT_LOGIN_FILE"
+        - mkdir -p build
+        - cd build
+        - cmake .. -DSNAP_IS_SUCH_A_PAIN=ON -DVERSION_SUFFIX="snap-$CI_COMMIT_SHORT_SHA" || true
+        - ls -lah .
+        - cd ..
+        - mkdir snap
+        - cp build/snapcraft.yaml snap
+        - snapcraft
+        - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
+        - snapcraft upload --release=beta glaxnimate_*.snap |& tee snap_out || true
+        - grep -Eq "Revision [0-9]+ of 'glaxnimate' created." snap_out

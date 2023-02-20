@@ -1,0 +1,23 @@
+linux:test:
+    image: ubuntu:latest
+    stage: build
+    script:
+        - pip3 install gcovr
+        - mkdir build
+        - cd build
+        - cmake .. -DCMAKE_CXX_FLAGS=--coverage
+        - make tests_coverage
+    artifacts:
+        paths:
+            - build/coverage
+    when: always
+
+linux:build:
+    image: ubuntu:latest
+    stage: build
+    script:
+        - mkdir build
+        - cd build
+        - cmake .. -DCMAKE_CXX_FLAGS="-Werror -pedantic"
+        - make VERBOSE=1
+    when: always
