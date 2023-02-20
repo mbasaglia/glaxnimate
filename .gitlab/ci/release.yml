@@ -1,0 +1,107 @@
+release:
+    stage: deploy
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip rsync
+        - pip3 install requests
+    script:
+        - ./deploy/make_release.py
+        # Copy release files into the release tag directory
+        - mkdir artifacts
+        - cd artifacts
+        - chmod 600 "$AUR_SSH_KEY"
+        - rsync -a mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/release . -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
+        - mv release $CI_COMMIT_TAG
+        - rsync -a $CI_COMMIT_TAG mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
+    only:
+        - tags
+    when: manual
+    artifacts:
+        paths:
+            - artifacts/release/MacOs/glaxnimate.dmg
+            - artifacts/release/MacOs/checksum.txt
+            - artifacts/release/Win/glaxnimate-x86_64.zip
+            - artifacts/release/Win/checksum.txt
+
+
+release:check:
+    stage: deploy
+    when: manual
+    dependencies:
+    needs: []
+    only:
+        - tags
+        - master
+        - release
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - pip3 install requests
+    script:
+        - ./deploy/release_check.py
+
+release:check_deb:
+    image: ubuntu:latest
+    stage: deploy
+    only:
+        - tags
+        - master
+        - release
+    dependencies:
+        - release:check
+    needs:
+        - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip xvfb
+        - pip3 install requests
+    script:
+        - ./deploy/release_check.py --package "Deb Package" --action check_hash
+        - ./deploy/release_check.py --package "Deb Package" --action download
+        - apt install -y ./glaxnimate.deb
+        - Xvfb :0 -screen 0 1024x768x16 &
+        - export DISPLAY=:0
+        - ./deploy/check_package_version.sh glaxnimate
+
+release:check_appimage:
+    image: ubuntu:latest
+    stage: deploy
+    only:
+        - tags
+        - master
+        - release
+    dependencies:
+        - release:check
+    needs:
+        - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip xvfb libqt5widgets5
+        - pip3 install requests
+    script:
+        - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
+        - ./deploy/release_check.py --package "Linux Appimage" --action download
+        - chmod a+x glaxnimate-x86_64.AppImage
+        - ./glaxnimate-x86_64.AppImage --appimage-extract
+        - Xvfb :0 -screen 0 1024x768x16 &
+        - export DISPLAY=:0
+        - ./deploy/check_package_version.sh ./squashfs-root/AppRun
+
+release:check_pypi:
+    image: ubuntu:latest
+    stage: deploy
+    only:
+        - tags
+        - master
+        - release
+    dependencies:
+        - release:check
+    needs:
+        - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip curl libqt5widgets5 libqt5xml5 potrace ffmpeg libarchive13
+    script:
+        - PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
+        - pip3 install glaxnimate=="$PYPI_VERSION"
+        - ./deploy/pypi_version_check.py "$PYPI_VERSION"
