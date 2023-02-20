@@ -17,6 +17,7 @@
             <li>Shape Modifiers</li>
             <li>Text Support</li>
             <li>Animated Gradients</li>
+            <li>Raster to Vector</li>
             <li>Scripting Support</li>
         </ul>
         <p>Supported Formats:</p>

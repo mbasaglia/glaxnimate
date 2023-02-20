@@ -36,7 +36,7 @@ and similar effects.
 
 We will use it to make the loading spinner appear, go around, and disappear.
 
-To add it, you can righ click on the _Ellipse_ group in the timeline,
+To add it, you can right click on the _Ellipse_ group in the timeline,
 then select _Add_ and _Trim Path_.
 
 ![Adding Trim Path](./add-trim.png)

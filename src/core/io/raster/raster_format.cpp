@@ -1,4 +1,7 @@
 #include "raster_format.hpp"
+
+#include <QFileInfo>
+
 #include "io/raster/raster_mime.hpp"
 #include "utils/trace_wrapper.hpp"
 
@@ -15,7 +18,7 @@ QStringList glaxnimate::io::raster::RasterFormat::extensions() const
     return formats;
 }
 
-bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap& settings)
+bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString& filename, model::Document* document, const QVariantMap& settings)
 {
 #ifndef WITHOUT_POTRACE
     if ( settings.value("trace", {}).toBool() )
@@ -26,10 +29,7 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         if ( image.isNull() )
             return false;
 
-        QString name = "";
-        if ( auto file = qobject_cast<QFile*>(&dev) )
-            name = file->fileName();
-        utils::trace::TraceWrapper trace(document, image, name);
+        utils::trace::TraceWrapper trace(document, image, filename);
         std::vector<QRgb> colors;
         std::vector<utils::trace::TraceWrapper::TraceResult> result;
         auto preset = trace.preset_suggestion();
@@ -48,6 +48,8 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
     auto img = std::make_unique<model::Image>(document);
     img->image.set(bmp);
     QPointF p(bmp->pixmap().width() / 2.0, bmp->pixmap().height() / 2.0);
+    if ( !filename.isEmpty() )
+        img->name.set(QFileInfo(filename).baseName());
     img->transform->anchor_point.set(p);
     img->transform->position.set(p);
     document->main()->shapes.insert(std::move(img));
