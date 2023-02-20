@@ -33,7 +33,7 @@
 
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
-#include "widgets/node_menu.hpp"
+#include "widgets/menus/node_menu.hpp"
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 #include "style/better_elide_delegate.hpp"

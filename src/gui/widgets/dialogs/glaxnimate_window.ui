@@ -2339,7 +2339,7 @@
   <customwidget>
    <class>glaxnimate::gui::ScriptConsole</class>
    <extends>QWidget</extends>
-   <header>widgets/script_console.hpp</header>
+   <header>widgets/docks/script_console.hpp</header>
    <container>1</container>
    <slots>
     <slot>run_snippet(QString)</slot>
@@ -2348,18 +2348,18 @@
   <customwidget>
    <class>glaxnimate::gui::CustomTreeView</class>
    <extends>QTreeView</extends>
-   <header>widgets/custom_treeview.hpp</header>
+   <header>widgets/docks/custom_treeview.hpp</header>
   </customwidget>
   <customwidget>
    <class>glaxnimate::gui::CompositionTabBar</class>
    <extends>QWidget</extends>
-   <header>widgets/composition_tab_bar.hpp</header>
+   <header>widgets/tab_bar/composition_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>glaxnimate::gui::SnippetListWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/snippet_list_widget.hpp</header>
+   <header>widgets/docks/snippet_list_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>run_snippet(QString)</signal>
@@ -2369,7 +2369,7 @@
   <customwidget>
    <class>glaxnimate::gui::LayerView</class>
    <extends>QTreeView</extends>
-   <header>widgets/layer_view.hpp</header>
+   <header>widgets/docks/layer_view.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

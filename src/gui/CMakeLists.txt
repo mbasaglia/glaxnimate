@@ -101,10 +101,10 @@ widgets/spin2d.cpp
 widgets/enum_combo.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
-widgets/tab_bar_close_button.cpp
-widgets/clickable_tab_bar.cpp
-widgets/composition_tab_bar.cpp
-widgets/layer_view.cpp
+widgets/tab_bar/tab_bar_close_button.cpp
+widgets/tab_bar/clickable_tab_bar.cpp
+widgets/tab_bar/composition_tab_bar.cpp
+widgets/docks/layer_view.cpp
 
 widgets/settings/plugin_settings_widget.cpp
 widgets/settings/plugin_settings_widget.ui
@@ -161,11 +161,11 @@ if ( NOT ANDROID )
         widgets/dialogs/gw_impl_debug.cpp
         widgets/dialogs/gw_impl_selection.cpp
 
-        widgets/script_console.cpp
-        widgets/script_console.ui
-        widgets/snippet_list_widget.cpp
-        widgets/snippet_list_widget.ui
-        widgets/node_menu.cpp
+        widgets/docks/script_console.cpp
+        widgets/docks/script_console.ui
+        widgets/docks/snippet_list_widget.cpp
+        widgets/docks/snippet_list_widget.ui
+        widgets/menus/node_menu.cpp
     )
 endif()
 

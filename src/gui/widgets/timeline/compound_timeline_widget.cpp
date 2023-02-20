@@ -24,7 +24,7 @@
 #include "widgets/dialogs/follow_path_dialog.hpp"
 
 #ifndef Q_OS_ANDROID
-    #include "widgets/node_menu.hpp"
+    #include "widgets/menus/node_menu.hpp"
 #endif
 
 using namespace glaxnimate::gui;

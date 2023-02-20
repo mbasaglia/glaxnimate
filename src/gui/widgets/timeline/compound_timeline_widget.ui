@@ -207,7 +207,7 @@
   <customwidget>
    <class>glaxnimate::gui::CompositionTabBar</class>
    <extends>QWidget</extends>
-   <header>widgets/composition_tab_bar.hpp</header>
+   <header>widgets/tab_bar/composition_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
