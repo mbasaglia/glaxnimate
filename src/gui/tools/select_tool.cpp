@@ -442,7 +442,7 @@ private:
             menu.addAction((new NodeMenu(preferred, window, &menu))->menuAction());
 
         if ( targets.handle )
-            add_property_menu_actions(this, &menu, targets.handle);
+            add_property_menu_actions(&menu, targets.handle, event.window);
 
 
         menu.exec(QCursor::pos());

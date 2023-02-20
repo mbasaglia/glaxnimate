@@ -8,11 +8,12 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 #include "app/application.hpp"
+#include "widgets/menus/animated_property_menu.hpp"
 
 
 namespace glaxnimate::gui::tools {
 
-inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem* item)
+inline void add_property_menu_actions(QMenu* menu, QGraphicsItem* item, SelectionManager* window)
 {
     bool started = false;
     for ( const auto& propvariant : item->data(graphics::AssociatedProperty).toList() )
@@ -27,46 +28,10 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
             started = true;
         }
 
-        QMenu* sub = new QMenu(prop->name(), menu);
-        sub->setIcon(QIcon::fromTheme("label"));
+        AnimatedPropertyMenu* sub = new AnimatedPropertyMenu(menu);
+        sub->set_property(prop);
+        sub->set_controller(window);
         menu->addAction(sub->menuAction());
-
-        if ( prop->has_keyframe(prop->time()) )
-        {
-            sub->addAction(
-                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-remove.svg")),
-                QMenu::tr("Remove Keyframe"),
-                thus,
-                [prop]{
-                    prop->object()->push_command(
-                        new command::RemoveKeyframeTime(prop, prop->time())
-                    );
-                }
-            );
-        }
-        else
-        {
-            sub->addAction(
-                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-add.svg")),
-                QMenu::tr("Add Keyframe"),
-                thus,
-                [prop]{
-                    prop->add_smooth_keyframe_undoable(prop->time(), prop->value());
-                }
-            );
-        }
-
-        if ( prop->animated() )
-        {
-            sub->addAction(
-                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-remove.svg")),
-                QMenu::tr("Clear Animations"),
-                thus,
-                [prop]{
-                    prop->clear_keyframes_undoable();
-                }
-            );
-        }
 
     }
 }

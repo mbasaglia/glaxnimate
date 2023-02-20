@@ -21,11 +21,11 @@
 #include "style/property_delegate.hpp"
 #include "style/fixed_height_delegate.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
-#include "widgets/dialogs/follow_path_dialog.hpp"
 
 #ifndef Q_OS_ANDROID
     #include "widgets/menus/node_menu.hpp"
 #endif
+#include "widgets/menus/animated_property_menu.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -91,29 +91,6 @@ public:
             QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
         );
         connect(ui.action_add_keyframe, &QAction::triggered, parent, &CompoundTimelineWidget::add_keyframe);
-        action_title = menu_property.addSeparator();
-        menu_property.addAction(ui.action_add_keyframe);
-
-        menu_property.addAction(&action_kf_paste);
-        action_kf_paste.setIcon(QIcon::fromTheme("edit-paste"));
-        connect(&action_kf_paste, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
-
-        menu_property.addSeparator();
-
-        ui.action_remove_all_keyframes->setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
-        );
-        connect(ui.action_remove_all_keyframes, &QAction::triggered, parent, &CompoundTimelineWidget::remove_all_keyframes);
-        menu_property.addAction(ui.action_remove_all_keyframes);
-
-        action_kf_loop.setIcon(QIcon::fromTheme("media-repeat-all"));
-        connect(&action_kf_loop, &QAction::triggered, parent, &CompoundTimelineWidget::loop_keyframes);
-        menu_property.addAction(&action_kf_loop);
-
-        action_follow_path.setIcon(QIcon::fromTheme("draw-bezier-curves"));
-        connect(&action_follow_path, &QAction::triggered, parent, &CompoundTimelineWidget::follow_path);
-        menu_property.addAction(&action_follow_path);
-        action_follow_path.setVisible(false);
 
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
 
@@ -169,7 +146,7 @@ public:
 
         menu_keyframe.addAction(&action_kf_remove_all);
         action_kf_remove_all.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
-        connect(&action_kf_remove_all, &QAction::triggered, parent, &CompoundTimelineWidget::remove_all_keyframes);
+        connect(&action_kf_remove_all, &QAction::triggered, &menu_property, &AnimatedPropertyMenu::remove_all_keyframes);
 
         action_enter = menu_keyframe.addSeparator();
         for ( QAction* ac : enter.actions() )
@@ -215,9 +192,6 @@ public:
 
         action_kf_copy.setText(tr("Copy Keyframe"));
         action_kf_paste.setText(tr("Paste Keyframe"));
-
-        action_kf_loop.setText(tr("Loop Animation"));
-        action_follow_path.setText(tr("Follow Path..."));
     }
 
     void retranslateUi(CompoundTimelineWidget* parent)
@@ -228,7 +202,7 @@ public:
 
     void clear_menu_data()
     {
-        menu_anim = nullptr;
+        menu_property.set_property(nullptr);
         menu_kf_enter = nullptr;
         menu_kf_exit = nullptr;
     }
@@ -236,19 +210,19 @@ public:
     void keyframe_action(CompoundTimelineWidget* parent, model::KeyframeBase* keyframe, bool before_transition, QAction* action)
     {
 
-        if ( !keyframe || !menu_anim )
+        if ( !keyframe || !menu_property.property() )
             return;
 
-        int index = menu_anim->keyframe_index(keyframe);
+        int index = menu_property.property()->keyframe_index(keyframe);
         if ( index == -1 )
             return;
 
         QVariant data = action->data();
         if ( data.isValid() )
         {
-            menu_anim->object()->push_command(
+            menu_property.property()->object()->push_command(
                 new command::SetKeyframeTransition(
-                    menu_anim, index, data.value<model::KeyframeTransition::Descriptive>(),
+                    menu_property.property(), index, data.value<model::KeyframeTransition::Descriptive>(),
                     before_transition ? keyframe->transition().before() : keyframe->transition().after(),
                     before_transition
                 )
@@ -260,9 +234,9 @@ public:
             keyframe_editor.setWindowModality(Qt::ApplicationModal);
             if ( keyframe_editor.exec() )
             {
-                menu_anim->object()->push_command(
+                menu_property.property()->object()->push_command(
                     new command::SetKeyframeTransition(
-                        menu_anim, index,
+                        menu_property.property(), index,
                         keyframe_editor.transition()
                     )
                 );
@@ -272,18 +246,7 @@ public:
 
     void toggle_paste()
     {
-        const QMimeData* data = QGuiApplication::clipboard()->mimeData();
-        bool enabled = false;
-        if ( menu_anim && data->hasFormat("application/x.glaxnimate-keyframe") )
-        {
-            QByteArray encoded = data->data("application/x.glaxnimate-keyframe");
-            QDataStream stream(&encoded, QIODevice::ReadOnly);
-            int type = model::PropertyTraits::Unknown;
-            stream >> type;
-            enabled = type == menu_anim->traits().type;
-        }
-
-        action_kf_paste.setEnabled(enabled);
+        action_kf_paste.setEnabled(menu_property.can_paste());
     }
 
     void emit_click(CompoundTimelineWidget* parent, QModelIndex index)
@@ -333,14 +296,14 @@ public:
     style::FixedHeightDelegate fixed_height_delegate;
     item_models::CompFilterModel comp_model;
 
-    QAction* action_title;
-    QMenu menu_property;
+    AnimatedPropertyMenu menu_property;
 
     QAction* action_enter;
     QAction* action_exit;
+    QAction action_kf_copy;
+    QAction action_kf_paste;
     QAction action_kf_remove;
     QAction action_kf_remove_all;
-    QAction action_kf_loop;
     QAction action_enter_hold;
     QAction action_enter_linear;
     QAction action_enter_ease;
@@ -351,14 +314,10 @@ public:
     QAction action_exit_ease;
     QAction action_exit_fast;
     QAction action_exit_custom;
-    QAction action_kf_copy;
-    QAction action_kf_paste;
-    QAction action_follow_path;
     QMenu menu_keyframe;
     QActionGroup enter{&menu_keyframe};
     QActionGroup exit{&menu_keyframe};
 
-    model::AnimatableBase* menu_anim = nullptr;
     model::KeyframeBase* menu_kf_enter = nullptr;
     model::KeyframeBase* menu_kf_exit = nullptr;
 
@@ -477,7 +436,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     }
 
     if ( item.property && item.property->traits().flags & model::PropertyTraits::Animated )
-        d->menu_anim = static_cast<model::AnimatableBase*>(item.property);
+        d->menu_property.set_property(static_cast<model::AnimatableBase*>(item.property));
 
     if ( d->menu_kf_exit )
     {
@@ -526,11 +485,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
         d->toggle_paste();
         d->menu_keyframe.exec(glob);
     }
-    else if ( d->menu_anim )
+    else if ( d->menu_property.property() )
     {
-        d->action_title->setText(d->menu_anim->name());
-        d->toggle_paste();
-        d->action_follow_path.setVisible(item.property->traits().type == model::PropertyTraits::Point);
+        d->menu_property.refresh_actions();
         d->menu_property.exec(glob);
     }
 #ifndef Q_OS_ANDROID
@@ -543,11 +500,11 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
 
 void CompoundTimelineWidget::add_keyframe()
 {
-    if ( !d->menu_anim )
+    if ( !d->menu_property.property() )
         return;
 
-    d->menu_anim->add_smooth_keyframe_undoable(
-        d->ui.timeline->highlighted_time(), d->menu_anim->value()
+    d->menu_property.property()->add_smooth_keyframe_undoable(
+        d->ui.timeline->highlighted_time(), d->menu_property.property()->value()
     );
 }
 
@@ -569,20 +526,12 @@ void CompoundTimelineWidget::keyframe_action_exit()
 
 void CompoundTimelineWidget::remove_keyframe()
 {
-    if ( !d->menu_kf_exit || !d->menu_anim )
+    if ( !d->menu_kf_exit || !d->menu_property.property() )
         return;
 
-    d->menu_anim->object()->document()->undo_stack().push(
-        new command::RemoveKeyframeTime(d->menu_anim, d->menu_kf_exit->time())
+    d->menu_property.property()->object()->document()->undo_stack().push(
+        new command::RemoveKeyframeTime(d->menu_property.property(), d->menu_kf_exit->time())
     );
-}
-
-void CompoundTimelineWidget::remove_all_keyframes()
-{
-    if ( !d->menu_anim )
-        return;
-
-    d->menu_anim->clear_keyframes_undoable();
 }
 
 void CompoundTimelineWidget::load_state(const QByteArray& state)
@@ -598,46 +547,24 @@ QByteArray CompoundTimelineWidget::save_state() const
 void CompoundTimelineWidget::set_controller(GlaxnimateWindow* window)
 {
     d->window = window;
+    d->menu_property.set_controller(window);
 }
 
 
 void CompoundTimelineWidget::copy_keyframe()
 {
-    if ( !d->menu_kf_exit || !d->menu_anim )
+    if ( !d->menu_kf_exit || !d->menu_property.property() )
         return;
 
     QMimeData* data = new QMimeData;
     QByteArray encoded;
     QDataStream stream(&encoded, QIODevice::WriteOnly);
-    stream << int(d->menu_anim->traits().type);
+    stream << int(d->menu_property.property()->traits().type);
     stream << d->menu_kf_exit->value();
     data->setData("application/x.glaxnimate-keyframe", encoded);
     QGuiApplication::clipboard()->setMimeData(data);
 }
 
-void CompoundTimelineWidget::paste_keyframe()
-{
-    if ( !d->menu_anim )
-        return;
-
-    const QMimeData* data = QGuiApplication::clipboard()->mimeData();
-    if ( !data->hasFormat("application/x.glaxnimate-keyframe") )
-        return;
-
-    QByteArray encoded = data->data("application/x.glaxnimate-keyframe");
-    QDataStream stream(&encoded, QIODevice::ReadOnly);
-    int type = model::PropertyTraits::Unknown;
-    stream >> type;
-    if ( type != d->menu_anim->traits().type )
-        return;
-
-    QVariant value;
-    stream >> value;
-
-    d->menu_anim->object()->push_command(
-        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
-    );
-}
 
 void CompoundTimelineWidget::collapse_index(const QModelIndex& index)
 {
@@ -778,26 +705,4 @@ QModelIndex glaxnimate::gui::CompoundTimelineWidget::current_index_raw() const
 QModelIndex glaxnimate::gui::CompoundTimelineWidget::current_index_filtered() const
 {
     return d->ui.properties->currentIndex();
-}
-
-void glaxnimate::gui::CompoundTimelineWidget::loop_keyframes()
-{
-    if ( !d->menu_anim || d->menu_anim->keyframe_count() < 1 )
-        return;
-
-    d->menu_anim->object()->push_command(new command::SetKeyframe(
-        d->menu_anim,
-        d->menu_anim->object()->document()->main()->animation->last_frame.get(),
-        d->menu_anim->keyframe(0)->value(),
-        true
-    ));
-}
-
-void glaxnimate::gui::CompoundTimelineWidget::follow_path()
-{
-    if ( d->menu_anim && d->menu_anim->traits().type == model::PropertyTraits::Point )
-    {
-        auto prop = static_cast<model::AnimatedProperty<QPointF>*>(d->menu_anim);
-        FollowPathDialog(prop, d->window->node_model(), d->window).exec();
-    }
 }

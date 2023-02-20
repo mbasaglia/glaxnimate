@@ -395,7 +395,7 @@ public:
         else if ( role == graphics::MoveHandle::GradientStop )
             gradient_menu(menu, handle, event.window->as_widget());
 
-        add_property_menu_actions(thus, &menu, handle);
+        add_property_menu_actions(&menu, handle, event.window);
 
         if ( !menu.actions().empty() )
             menu.exec(QCursor::pos());

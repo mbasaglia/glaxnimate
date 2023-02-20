@@ -166,6 +166,7 @@ if ( NOT ANDROID )
         widgets/docks/snippet_list_widget.cpp
         widgets/docks/snippet_list_widget.ui
         widgets/menus/node_menu.cpp
+        widgets/menus/animated_property_menu.cpp
     )
 endif()
 

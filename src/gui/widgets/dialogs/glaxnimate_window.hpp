@@ -21,10 +21,6 @@ class Plugin;
 class PluginScript;
 } // namespace plugin
 
-namespace glaxnimate::gui::item_models {
-class DocumentNodeModel;
-} // namespace item_models
-
 namespace glaxnimate::model {
 class BrushStyle;
 } // namespace model
@@ -93,7 +89,7 @@ public:
     void ungroup_shapes();
     void move_to();
 
-    item_models::DocumentNodeModel* model() const;
+    item_models::DocumentNodeModel* model() const override;
 
     qreal current_zoom() const override;
 
@@ -142,8 +138,6 @@ public:
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
 
     void ipc_connect(const QString& name);
-
-    item_models::DocumentNodeModel* node_model() const;
 
 public slots:
     void document_save();

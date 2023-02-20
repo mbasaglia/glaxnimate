@@ -15,6 +15,12 @@
 
 class QWidget;
 
+
+namespace glaxnimate::gui::item_models {
+class DocumentNodeModel;
+} // namespace item_models
+
+
 namespace glaxnimate::gui::tools {
 class Tool;
 } // namespace glaxnimate::gui::tools
@@ -66,6 +72,8 @@ public:
     virtual void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) = 0;
 
     QUndoGroup& undo_group() { return undo_group_; }
+
+    virtual item_models::DocumentNodeModel* model() const = 0;
 
 protected:
     virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;

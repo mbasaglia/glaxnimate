@@ -6,6 +6,7 @@
     * New keyframe easing preset "Fast" (Opposite of Ease)
     * Added conical gradients
     * Context menu for position properties that shows a dialog to select a shape to follow
+    * Revamped the context menu for property editor handles
 * UI:
     * Nicer display of color values in tree views
     * Remove extra items from the "Move To" dialog
