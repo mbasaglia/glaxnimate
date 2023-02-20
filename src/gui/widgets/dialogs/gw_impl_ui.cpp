@@ -612,6 +612,9 @@ void GlaxnimateWindow::Private::init_docks()
         case LayoutPreset::Compact:
             layout_compact();
             break;
+        case LayoutPreset::Medium:
+            layout_medium();
+            break;
         case LayoutPreset::Custom:
             layout_auto();
             app::settings::set("ui", "layout", int(LayoutPreset::Custom));
@@ -628,11 +631,13 @@ void GlaxnimateWindow::Private::layout_update()
         layout_compact();
     else if ( ui.action_layout_custom->isChecked() )
         layout_custom();
+    else if ( ui.action_layout_medium->isChecked() )
+        layout_medium();
     else
         layout_auto();
 }
 
-void GlaxnimateWindow::Private::layout_wide()
+void GlaxnimateWindow::Private::layout_medium()
 {
     // Bottom
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_timeline);
@@ -645,9 +650,7 @@ void GlaxnimateWindow::Private::layout_wide()
     ui.dock_timeline->setVisible(true);
     ui.dock_properties->setVisible(true);
 
-
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_snippets);
-
 
     // Bottom Right
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
@@ -670,7 +673,69 @@ void GlaxnimateWindow::Private::layout_wide()
     ui.dock_stroke->setVisible(true);
     ui.dock_undo->setVisible(true);
 
-    parent->addDockWidget(Qt::RightDockWidgetArea, ui.dock_undo);
+
+    // Left
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tools);
+
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tool_options);
+    parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
+    ui.dock_tool_options->raise();
+    ui.dock_tool_options->setVisible(true);
+    ui.dock_align->setVisible(true);
+
+    // Resize
+    parent->resizeDocks({ui.dock_snippets}, {1}, Qt::Horizontal);
+    parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
+    parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
+    parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
+    parent->resizeDocks({ui.dock_timeline}, {300}, Qt::Vertical);
+    ui.dock_script_console->setVisible(false);
+    ui.dock_logs->setVisible(false);
+    ui.dock_tools->setVisible(false);
+    ui.dock_snippets->setVisible(false);
+
+    // Resize parent to have a reasonable default size
+    parent->resize(1440, 900);
+
+    app::settings::set("ui", "layout", int(LayoutPreset::Medium));
+    ui.action_layout_medium->setChecked(true);
+}
+
+void GlaxnimateWindow::Private::layout_wide()
+{
+    // Bottom
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_timeline);
+    parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
+    parent->tabifyDockWidget(ui.dock_logs, ui.dock_time_slider);
+    ui.dock_timeline->raise();
+    ui.dock_time_slider->setVisible(false);
+    ui.dock_timeline->setVisible(true);
+    ui.dock_properties->setVisible(true);
+
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_snippets);
+
+    // Bottom Right
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
+    parent->tabifyDockWidget(ui.dock_layers, ui.dock_gradients);
+    parent->tabifyDockWidget(ui.dock_gradients, ui.dock_swatches);
+    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_assets);
+    ui.dock_gradients->raise();
+    ui.dock_gradients->setVisible(true);
+    ui.dock_assets->setVisible(false);
+    ui.dock_swatches->setVisible(false);
+    ui.dock_layers->setVisible(true);
+
+
+    // Right
+    parent->addDockWidget(Qt::RightDockWidgetArea, ui.dock_colors);
+    parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
+    ui.dock_colors->raise();
+    ui.dock_colors->setVisible(true);
+    ui.dock_stroke->setVisible(true);
+    ui.dock_undo->setVisible(true);
 
 
     // Left
@@ -686,7 +751,7 @@ void GlaxnimateWindow::Private::layout_wide()
     parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
-    parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
+    parent->resizeDocks({ui.dock_timeline}, {1080/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
     ui.dock_tools->setVisible(false);
@@ -761,6 +826,8 @@ void GlaxnimateWindow::Private::layout_auto()
     auto real_estate = qApp->primaryScreen()->availableSize();
     if ( real_estate.width() >= 1920 && real_estate.height() >= 1080 )
         layout_wide();
+    else if ( real_estate.width() >= 1440 && real_estate.height() >= 900 )
+        layout_medium();
     else
         layout_compact();
 

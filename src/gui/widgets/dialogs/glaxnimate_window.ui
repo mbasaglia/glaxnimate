@@ -198,6 +198,7 @@
      <addaction name="action_layout_custom"/>
      <addaction name="action_layout_automatic"/>
      <addaction name="action_layout_wide"/>
+     <addaction name="action_layout_medium"/>
      <addaction name="action_layout_compact"/>
     </widget>
     <addaction name="separator"/>
@@ -2268,6 +2269,17 @@
   <action name="action_lottiefiles_preview">
    <property name="text">
     <string>LottieFiles</string>
+   </property>
+  </action>
+  <action name="action_layout_medium">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Medium</string>
+   </property>
+   <property name="toolTip">
+    <string>More compact that Wide but larger than Compact</string>
    </property>
   </action>
  </widget>

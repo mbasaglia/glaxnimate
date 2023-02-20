@@ -11,6 +11,8 @@
 * UI:
     * Nicer display of color values in tree views
     * Remove extra items from the "Move To" dialog
+    * Tweaked the "Wide" layout preset
+    * Added a "Medium" layout preset
 * I/O:
     * Various fixes to the SVG parser
     * Added support for Android Vector Drawables

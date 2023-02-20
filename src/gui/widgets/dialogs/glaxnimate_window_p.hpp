@@ -105,6 +105,7 @@ public:
         Custom,
         Auto,
         Wide,
+        Medium,
         Compact
     };
 
@@ -242,6 +243,7 @@ public:
 
     void layout_auto();
     void layout_wide();
+    void layout_medium();
     void layout_compact();
     void layout_custom();
     void layout_update();
