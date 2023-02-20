@@ -168,7 +168,6 @@ void glaxnimate::gui::AnimatedPropertyMenu::refresh_actions()
     if ( d->property )
     {
         bool has_kf = d->property->has_keyframe(d->property->time());
-        d->action_add_keyframe.setEnabled(!has_kf);
         d->action_remove_keyframe.setEnabled(has_kf);
         d->action_remove_all_keyframes.setEnabled(d->property->keyframe_count() > 0);
         d->action_kf_loop.setEnabled(d->property->keyframe_count() > 0);

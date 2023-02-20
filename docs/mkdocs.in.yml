@@ -39,6 +39,7 @@ nav:
         - "Tutorials":
             - tutorial/index.md
             - tutorial/bouncy-ball/index.md
+            - tutorial/loading-spinner/index.md
             - examples/dragon_curve.md
         - "Release Notes":
             - "0.5.2": release-notes/0.5.2/index.md

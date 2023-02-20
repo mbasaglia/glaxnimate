@@ -1,0 +1,329 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 60
+        },
+        "fps": 60,
+        "group_color": "#00000000",
+        "height": 512,
+        "locked": false,
+        "name": "Animation",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 60
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "inverted": false,
+                    "mask": "NoMask"
+                },
+                "name": "Layer",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                    {
+                        "__type__": "Group",
+                        "group_color": "#00000000",
+                        "locked": false,
+                        "name": "Ellipse",
+                        "opacity": {
+                            "value": 1
+                        },
+                        "shapes": [
+                            {
+                                "__type__": "Trim",
+                                "end": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 20,
+                                            "value": 0.33000001311302185
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 40,
+                                            "value": 0.33000001311302185
+                                        }
+                                    ]
+                                },
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "multiple": "Individually",
+                                "name": "Trim Path",
+                                "offset": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 0,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 0.6700000166893005
+                                        }
+                                    ]
+                                },
+                                "start": {
+                                    "keyframes": [
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 40,
+                                            "value": 0
+                                        },
+                                        {
+                                            "after": {
+                                                "x": 1,
+                                                "y": 1
+                                            },
+                                            "before": {
+                                                "x": 0,
+                                                "y": 0
+                                            },
+                                            "time": 60,
+                                            "value": 0.33000001311302185
+                                        }
+                                    ]
+                                },
+                                "uuid": "e6863f11-28e9-4995-a00d-8227a17a79c6",
+                                "visible": true
+                            },
+                            {
+                                "__type__": "Fill",
+                                "color": {
+                                    "value": "#ffffff"
+                                },
+                                "fill_rule": "NonZero",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Fill",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "d330d039-a063-4e40-8dee-831ea8b87b2b",
+                                "visible": false
+                            },
+                            {
+                                "__type__": "Stroke",
+                                "cap": "RoundCap",
+                                "color": {
+                                    "value": "#3250b0"
+                                },
+                                "group_color": "#00000000",
+                                "join": "MiterJoin",
+                                "locked": false,
+                                "miter_limit": 4,
+                                "name": "Stroke",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "c3a91201-b127-43da-a7c5-ce3a8de1af2e",
+                                "visible": true,
+                                "width": {
+                                    "value": 40
+                                }
+                            },
+                            {
+                                "__type__": "Ellipse",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Ellipse",
+                                "position": {
+                                    "value": {
+                                        "x": 247.8987341772152,
+                                        "y": 244.25316455696202
+                                    }
+                                },
+                                "reversed": false,
+                                "size": {
+                                    "value": {
+                                        "height": 354.83544303797464,
+                                        "width": 354.83544303797464
+                                    }
+                                },
+                                "uuid": "987e9416-d1aa-45df-b4b1-e45976079944",
+                                "visible": true
+                            }
+                        ],
+                        "transform": {
+                            "__type__": "Transform",
+                            "anchor_point": {
+                                "value": {
+                                    "x": 247.8987341772152,
+                                    "y": 244.25316455696202
+                                }
+                            },
+                            "position": {
+                                "value": {
+                                    "x": 256,
+                                    "y": 256
+                                }
+                            },
+                            "rotation": {
+                                "value": 0
+                            },
+                            "scale": {
+                                "value": {
+                                    "x": 1,
+                                    "y": 1
+                                }
+                            }
+                        },
+                        "uuid": "efd8436f-e76b-4ccf-8bc5-aca046b54666",
+                        "visible": true
+                    }
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "ff811067-ca6d-442e-8707-f946b6cbf02c",
+                "visible": true
+            }
+        ],
+        "uuid": "30243815-2747-4d8f-9302-12dec317138e",
+        "visible": true,
+        "width": 512
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "bf151a62-f93b-426d-a456-08b0bd0bf8b4",
+            "values": [
+            ]
+        },
+        "fonts": {
+            "__type__": "FontList",
+            "name": "",
+            "uuid": "2a7c6cc7-2ca2-4819-b0ea-54261e1d9b90",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "e07bbc81-633e-4651-a0dd-3388df3b262c",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "74cc0ec9-42e2-4c24-bc29-66053fdac533",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "6bf4b86b-4a9f-46e7-8c81-2969f987872e",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "0260ec58-2c75-4f86-8593-c33515a6e730",
+            "values": [
+            ]
+        },
+        "uuid": "4315bdb3-2d68-479e-beb5-d41048aefd1d"
+    },
+    "format": {
+        "format_version": 7,
+        "generator": "Glaxnimate",
+        "generator_version": "0.5.2"
+    },
+    "info": {
+        "author": "",
+        "description": "",
+        "keywords": [
+        ]
+    },
+    "metadata": {
+    }
+}
