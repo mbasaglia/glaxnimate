@@ -74,16 +74,6 @@ protected:
         }
     }
 
-    void key_release(const KeyEvent& event) override
-    {
-        if ( dragging && event.key() == Qt::Key_Control )
-        {
-            angle_from_points();
-            update_shape();
-            event.repaint();
-        }
-    }
-
 private:
     void snap_angle()
     {

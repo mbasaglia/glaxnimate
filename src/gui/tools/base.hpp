@@ -119,7 +119,7 @@ public:
     virtual void mouse_double_click(const MouseEvent& event) = 0;
     virtual void paint(const PaintEvent& event) = 0;
     virtual void key_press(const KeyEvent& event) = 0;
-    virtual void key_release(const KeyEvent& event) = 0;
+    virtual void key_release(const KeyEvent& event) { Q_UNUSED(event); }
     virtual QCursor cursor() = 0;
     virtual void enable_event(const Event& event) = 0;
     virtual void disable_event(const Event& event) = 0;

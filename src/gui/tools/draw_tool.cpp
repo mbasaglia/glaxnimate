@@ -343,19 +343,6 @@ glaxnimate::gui::tools::DrawTool::~DrawTool()
 {
 }
 
-void glaxnimate::gui::tools::DrawTool::key_release(const glaxnimate::gui::tools::KeyEvent& event)
-{
-    if ( d->bezier.empty() )
-        return;
-
-    if ( event.key() == Qt::Key_Shift || event.key() == Qt::Key_Control )
-    {
-        d->adjust_point_type(event.modifiers());
-        event.accept();
-        event.repaint();
-    }
-}
-
 void glaxnimate::gui::tools::DrawTool::mouse_press(const glaxnimate::gui::tools::MouseEvent& event)
 {
     if ( event.button() != Qt::LeftButton )

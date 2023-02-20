@@ -27,7 +27,6 @@ public:
     void mouse_double_click(const MouseEvent& event) override;
     void paint(const PaintEvent& event) override;
     void key_press(const KeyEvent& event) override;
-    void key_release(const KeyEvent& event) override;
     void enable_event(const Event& event) override;
     void disable_event(const Event& event) override;
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override;

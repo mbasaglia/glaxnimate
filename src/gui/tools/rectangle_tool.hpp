@@ -52,15 +52,6 @@ protected:
         }
     }
 
-    void key_release(const KeyEvent& event) override
-    {
-        if ( dragging )
-        {
-            update_rect(event.modifiers());
-            event.repaint();
-        }
-    }
-
     void paint(const PaintEvent& event) override
     {
         if ( dragging )

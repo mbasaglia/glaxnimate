@@ -7,6 +7,7 @@
     * Added conical gradients
     * Context menu for position properties that shows a dialog to select a shape to follow
     * Revamped the context menu for property editor handles
+    * Releasing modifier keys on edit tools no longer immediately afftects the shape
 * UI:
     * Nicer display of color values in tree views
     * Remove extra items from the "Move To" dialog
