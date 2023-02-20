@@ -19,6 +19,8 @@ modules:
         config-opts:
             - -DCMAKE_BUILD_TYPE=RelWithDebInfo
             - -DGLAXNIMATE_SYSTEM_POTRACE=OFF
+        build-commands:
+            - ninja translations
         sources:
             -
                 type: git
