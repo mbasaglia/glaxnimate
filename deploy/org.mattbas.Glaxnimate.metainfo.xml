@@ -38,7 +38,8 @@
     <url type="bugtracker">https://gitlab.com/mattbas/glaxnimate/-/issues</url>
     <url type="help">https://glaxnimate.mattbas.org/manual/</url>
     <url type="donation">https://glaxnimate.mattbas.org/donate/</url>
-    <url type="contribute">https://glaxnimate.mattbas.org/contributing/</url>
+<!-- url type=contribute is not recognized but it should be valid o_O -->
+<!--     <url type="contribute">https://glaxnimate.mattbas.org/contributing/</url> -->
     <screenshots>
         <screenshot type="default">
             <caption>Glaxnimate main window</caption>
@@ -55,4 +56,3 @@
         <release version="0.5.2" date="2023-02-14"></release>
     </releases>
 </component>
-
