@@ -72,7 +72,10 @@ void glaxnimate::gui::tools::DrawToolBase::create_shape(
     // Layer
     if ( options->create_layer() )
     {
-        std::unique_ptr<model::Group> layer = std::make_unique<model::Layer>(document);
+        std::unique_ptr<model::Layer> layer = std::make_unique<model::Layer>(document);
+        auto comp = event.window->document()->main();
+        layer->animation->last_frame.set(comp->animation->last_frame.get());
+        layer->animation->first_frame.set(comp->animation->first_frame.get());
         layer->name.set(name);
         model::ShapeListProperty* group_container = &event.window->document()->main()->shapes;
         select = layer.get();

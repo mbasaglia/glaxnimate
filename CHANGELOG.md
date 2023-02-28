@@ -20,6 +20,8 @@
     * Improved support for animated SVG paths
     * Opening raster images uses the file basename as layer name
     * Fixed plugin export
+* Bug fixes:
+    * Fixed layers created by drawing tools not having an end frame
 
 ## 0.5.2
 
