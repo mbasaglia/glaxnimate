@@ -21,19 +21,19 @@ using namespace glaxnimate;
 
 bool plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantList& args ) const
 {
-     if ( !data_.engine )
-     {
-         logger().log("Can't run script from a plugin with no engine", app::log::Error);
-         return false;
-     }
+    if ( !data_.engine )
+    {
+        logger().log("Can't run script from a plugin with no engine", app::log::Error);
+        return false;
+    }
 
-     if ( !PluginRegistry::instance().executor() )
-     {
-         logger().log("No script executor", app::log::Error);
-         return false;
-     }
+    if ( !PluginRegistry::instance().executor() )
+    {
+        logger().log("No script executor", app::log::Error);
+        return false;
+    }
 
-     return PluginRegistry::instance().executor()->execute(*this, script, args);
+    return PluginRegistry::instance().executor()->execute(*this, script, args);
 }
 
 void plugin::PluginRegistry::load()

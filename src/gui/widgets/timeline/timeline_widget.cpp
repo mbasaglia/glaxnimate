@@ -350,7 +350,11 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
     }
     else
     {
-        if ( event->modifiers() & Qt::ShiftModifier )
+        if ( event->modifiers() & (Qt::ShiftModifier|Qt::AltModifier) )
+        {
+            QApplication::sendEvent(horizontalScrollBar(), event);
+        }
+        else
         {
             int row = (verticalScrollBar()->value() + d->header_height) / d->row_height;
             if ( event->angleDelta().y() > 0 && !event->inverted() )
@@ -358,10 +362,6 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
             else
                 row += 1;
             emit scrolled(row);
-        }
-        else
-        {
-            QApplication::sendEvent(horizontalScrollBar(), event);
         }
     }
 }

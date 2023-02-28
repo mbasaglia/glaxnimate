@@ -28,6 +28,7 @@
 #include "io/lottie/tgs_format.hpp"
 #include "io/lottie/validation.hpp"
 #include "io/rive/rive_html_format.hpp"
+#include "plugin/io.hpp"
 
 #include "model/visitor.hpp"
 #include "widgets/font/font_loader.hpp"
@@ -357,16 +358,27 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
 
     dialog_export_status->reset(opts.format, opts.filename);
 
-    auto promise = QtConcurrent::run(
-        [opts, current_document=current_document.get()]{
-            QFile file(opts.filename);
-            return opts.format->save(file, opts.filename, current_document, opts.settings);
-        });
+    if ( !qobject_cast<plugin::IoFormat*>(opts.format) )
+    {
+        auto promise = QtConcurrent::run(
+            [opts, current_document=current_document.get()]{
+                QFile file(opts.filename);
+                return opts.format->save(file, opts.filename, current_document, opts.settings);
+            });
 
-    process_events(promise);
+        process_events(promise);
 
-    if ( !promise.result() )
-        return false;
+        if ( !promise.result() )
+            return false;
+    }
+    else
+    {
+        QFile file(opts.filename);
+        bool result = opts.format->save(file, opts.filename, current_document.get(), opts.settings);
+
+        if ( result )
+            return false;
+    }
 
     if ( export_opts )
     {

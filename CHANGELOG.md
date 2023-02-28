@@ -13,11 +13,13 @@
     * Remove extra items from the "Move To" dialog
     * Tweaked the "Wide" layout preset
     * Added a "Medium" layout preset
+    * Made scrolling on the timeline more consistent
 * I/O:
     * Various fixes to the SVG parser
     * Added support for Android Vector Drawables
     * Improved support for animated SVG paths
     * Opening raster images uses the file basename as layer name
+    * Fixed plugin export
 
 ## 0.5.2
 

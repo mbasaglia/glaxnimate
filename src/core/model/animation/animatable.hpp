@@ -889,9 +889,9 @@ public:
 
     Q_INVOKABLE void split_segment(int index, qreal factor);
 
-    Q_INVOKABLE bool set_bezier(math::bezier::Bezier bezier);
+    Q_INVOKABLE bool set_bezier(glaxnimate::math::bezier::Bezier bezier);
 
-    Q_INVOKABLE math::bezier::Bezier bezier() const;
+    Q_INVOKABLE glaxnimate::math::bezier::Bezier bezier() const;
 
     void remove_points(const std::set<int>& indices);
 
