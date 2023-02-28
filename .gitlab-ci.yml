@@ -16,9 +16,8 @@ include:
     - .gitlab/ci/snap.yml
     - .gitlab/ci/flatpak.yml
     - .gitlab/ci/appimage.yml
+    - .gitlab/ci/craft-appimage.yml
     - .gitlab/ci/archlinux_packages.yml
     - .gitlab/ci/deb_packages.yml
     - .gitlab/ci/tarball.yml
     - .gitlab/ci/release.yml
-
-
