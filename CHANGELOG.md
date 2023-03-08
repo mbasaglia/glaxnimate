@@ -1,3 +1,8 @@
+## 0.5.4
+
+* Scripting
+    * `window.choose_option()` method that shows a dilaog to display a selection
+
 ## 0.5.3
 
 * Editing:

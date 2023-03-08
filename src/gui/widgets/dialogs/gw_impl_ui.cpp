@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QActionGroup>
 #include <QScreen>
+#include <QDialogButtonBox>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -1238,7 +1239,6 @@ void GlaxnimateWindow::Private::insert_emoji()
     import_file(dialog.selected_svg(), {{"forced_size", current_document->size()}});
 }
 
-
 void GlaxnimateWindow::Private::import_from_lottiefiles()
 {
     LottieFilesSearchDialog dialog;
@@ -1248,4 +1248,40 @@ void GlaxnimateWindow::Private::import_from_lottiefiles()
     options.format = io::IoRegistry::instance().from_slug("lottie");
     options.filename = dialog.selected_name() + ".json";
     load_remote_document(dialog.selected_url(), options, dialog.result() == LottieFilesSearchDialog::Open);
+}
+
+QVariant GlaxnimateWindow::Private::choose_option(const QString& label, const QVariantMap& options, const QString& title) const
+{
+    QDialog dialog(parent);
+    if ( !title.isEmpty() )
+        dialog.setWindowTitle(title);
+
+    QVBoxLayout* layout = new QVBoxLayout();
+    dialog.setLayout(layout);
+
+    QLabel qlabel;
+    qlabel.setText(label);
+    layout->addWidget(&qlabel);
+
+    QComboBox box;
+    layout->addWidget(&box);
+    int count = 0;
+    for ( auto it = options.begin(); it != options.end(); ++it )
+    {
+        box.insertItem(count++, it.key(), *it);
+    }
+
+    layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+    QDialogButtonBox buttons;
+    buttons.addButton(QDialogButtonBox::Ok);
+    buttons.addButton(QDialogButtonBox::Cancel);
+    connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    layout->addWidget(&buttons);
+
+    if ( !dialog.exec() )
+        return {};
+
+    return box.currentData();
 }

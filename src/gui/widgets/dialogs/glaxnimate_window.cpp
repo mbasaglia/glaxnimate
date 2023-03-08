@@ -192,6 +192,11 @@ void GlaxnimateWindow::status ( const QString& message ) const
     d->status_message(message);
 }
 
+QVariant GlaxnimateWindow::choose_option(const QString& label, const QVariantMap& options, const QString& title) const
+{
+    return d->choose_option(label, options, title);
+}
+
 void GlaxnimateWindow::save_frame_bmp()
 {
     d->save_frame_bmp();

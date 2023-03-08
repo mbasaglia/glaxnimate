@@ -83,6 +83,11 @@ public:
     Q_INVOKABLE void status(const QString& message) const;
 
     /**
+     * \brief Shows a dialog to pick one of the given options
+     */
+    Q_INVOKABLE QVariant choose_option(const QString& label, const QVariantMap& options, const QString& title = "") const;
+
+    /**
      * \brief Selected nodes, removing nodes that are descendants of other selected nodes
      */
     std::vector<model::VisualNode*> cleaned_selection() const override;
