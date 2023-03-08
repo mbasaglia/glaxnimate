@@ -3,7 +3,7 @@ description: Glaxnimate 0.5.3
 photo: gradient.png
 
 
-# Glaxnimate 0.5.2
+# Glaxnimate 0.5.3
 
 ![Main Window](gradient.png)
 
