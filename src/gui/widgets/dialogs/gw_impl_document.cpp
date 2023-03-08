@@ -331,6 +331,7 @@ bool GlaxnimateWindow::Private::close_document()
         parent->undo_group().removeStack(stack);
 
     ui.console->clear_contexts();
+    ui.console->clear_output();
     ui.console->set_global("document", QVariant{});
 
     comp_selections.clear();

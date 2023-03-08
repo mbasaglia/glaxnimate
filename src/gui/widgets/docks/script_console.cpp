@@ -232,6 +232,10 @@ void ScriptConsole::set_global(const QString& name, const QVariant& value)
 void ScriptConsole::clear_contexts()
 {
     d->script_contexts.clear();
+}
+
+void ScriptConsole::clear_output()
+{
     if ( !d->ui.check_persist->isChecked() )
         console_clear();
 }

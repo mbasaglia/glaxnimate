@@ -1,7 +1,10 @@
 ## 0.5.4
 
+* I/O:
+    * Fixed error message showing when loading a dotLottie without custom metadata
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
+    * Exception from I/O plugins now properly show in the script console
 
 ## 0.5.3
 

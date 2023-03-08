@@ -31,6 +31,7 @@ public:
     PluginUiDialog* create_dialog(const QString& ui_file) const;
 
     void clear_contexts();
+    void clear_output();
     void save_settings();
 
 protected:

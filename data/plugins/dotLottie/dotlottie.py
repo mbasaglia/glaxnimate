@@ -115,17 +115,23 @@ def load_asset(asset, file):
     )
     asset["e"] = 1
 
-
 def open_dotlottie(window, document, file, fname, import_export, settings):
     file.open("rb")
     with zipfile.ZipFile(file, "r") as zf:
         with zf.open("manifest.json") as manifest:
             meta = json.load(manifest)
 
-        # TODO dialog showing available animations
-        id = meta["animations"][0]["id"]
+        chosen_id = None
+        if len(meta["animations"]) > 1:
+            ids = {
+                anim["id"]: anim["id"] for anim in meta["animations"]
+            }
+            chosen_id = window.choose_option("Animation", ids, "Open dotLottie")
 
-        info = zf.getinfo("animations/%s.json" % id)
+        if chosen_id is None:
+            chosen_id = meta["animations"][0]["id"]
+
+        info = zf.getinfo("animations/%s.json" % chosen_id)
         with zf.open(info) as animfile:
             lottie = json.load(animfile)
 
@@ -139,6 +145,9 @@ def open_dotlottie(window, document, file, fname, import_export, settings):
 
         glaxnimate.io.registry["lottie"].load(document, json.dumps(lottie).encode("utf-8"))
 
-        meta["custom"]["author"] = meta["author"]
-        meta["custom"]["revision"] = meta["revision"]
-        document.metadata = meta["custom"]
+        custom_meta = meta.get("custom", {})
+        if "author" in meta:
+            custom_meta["author"] = meta["author"]
+        if "revision" in meta:
+            custom_meta["revision"] = meta["revision"]
+        document.metadata = custom_meta
