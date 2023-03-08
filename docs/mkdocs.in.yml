@@ -43,6 +43,7 @@ nav:
             - examples/dragon_curve.md
         - "Release Notes":
             - "0.5.2": release-notes/0.5.2/index.md
+            - "0.5.3": release-notes/0.5.3/index.md
     - "<i class='fa fa-hands-helping'></i> Contributing":
         - "Introduction": contributing/index.md
         - "Scripting":
