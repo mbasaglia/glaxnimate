@@ -8,7 +8,9 @@ linux:flatpak:
         - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         - flatpak install -y org.kde.Platform/x86_64/6.3
         - flatpak install -y org.kde.Sdk/x86_64/6.3
+        - flatpak install -y org.flatpak.Builder
     script:
         - mkdir -p build/flatpak_out
         - deploy/local_flatpak.py | tee org.mattbas.Glaxnimate.yml
         - flatpak-builder build/flatpak_out org.mattbas.Glaxnimate.yml
+        - flatpak run --env=G_DEBUG=fatal-criticals --command=appstream-util org.flatpak.Builder validate deploy/org.mattbas.Glaxnimate.metainfo.xml
