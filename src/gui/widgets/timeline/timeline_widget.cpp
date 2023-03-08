@@ -350,7 +350,11 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
     }
     else
     {
-        if ( event->modifiers() & (Qt::ShiftModifier|Qt::AltModifier) )
+        bool horizontal = event->modifiers() & (Qt::ShiftModifier|Qt::AltModifier);
+        if ( app::settings::get<bool>("ui", "timeline_scroll_horizontal") )
+            horizontal = !horizontal;
+
+        if ( horizontal )
         {
             QApplication::sendEvent(horizontalScrollBar(), event);
         }
