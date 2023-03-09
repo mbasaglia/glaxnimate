@@ -121,24 +121,35 @@ def open_dotlottie(window, document, file, fname, import_export, settings):
         with zf.open("manifest.json") as manifest:
             meta = json.load(manifest)
 
+        animations = {}
+        ids = {}
+        for anim in meta["animations"]:
+            anim_id = anim["id"]
+            info = zf.getinfo("animations/%s.json" % anim_id)
+            with zf.open(info) as animfile:
+                lottie = json.load(animfile)
+
+            animations[anim_id] = lottie
+            ids[lottie.get("nm", anim_id)] = anim_id
+
         chosen_id = None
         if len(meta["animations"]) > 1:
-            ids = {
-                anim["id"]: anim["id"] for anim in meta["animations"]
-            }
             chosen_id = window.choose_option("Animation", ids, "Open dotLottie")
-
         if chosen_id is None:
             chosen_id = meta["animations"][0]["id"]
 
-        info = zf.getinfo("animations/%s.json" % chosen_id)
-        with zf.open(info) as animfile:
-            lottie = json.load(animfile)
+        lottie = animations[chosen_id]
 
         for asset in lottie.get("assets", []):
-            if "e" not in asset or "p" not in asset and not asset["e"]:
+            # .lottie is very werid on how it handles assets so we can't
+            # rely on `e` or `p`...
+            if asset.get("p", "").startswith("data:"):
                 continue
+
             asset_fname = os.path.join(asset["u"], asset["p"])
+            if asset_fname not in zf.namelist() and "images/" + asset_fname in zf.namelist():
+                asset_fname = "images/" + asset_fname
+
             if asset_fname in zf.namelist():
                 with zf.open(asset_fname) as asset_file:
                     load_asset(asset, asset_file)

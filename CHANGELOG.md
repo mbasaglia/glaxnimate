@@ -2,6 +2,7 @@
 
 * I/O:
     * Fixed error message showing when loading a dotLottie without custom metadata
+    * Fixed loading image assets from dotLottie
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
