@@ -426,6 +426,75 @@ private slots:
         FUZZY_COMPARE(bbox.first, VecT(21.1349479424, 20));
         FUZZY_COMPARE(bbox.second, VecT(261.392510712, 239.272612647));
     }
+
+    void test_extrema_ends()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{10, 20};
+        VecT c{80, 90};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        QCOMPARE(minmax.first, 0.);
+        QCOMPARE(minmax.second, 1.);
+    }
+
+    void test_extrema_start_mid()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{0, 0};
+        VecT c{50, 200};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        QCOMPARE(minmax.first, 0.);
+        QCOMPARE(minmax.second, 0.8);
+    }
+
+    void test_extrema_end_mid()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{50, -100};
+        VecT c{100, 100};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        QCOMPARE(minmax.first, 0.2);
+        QCOMPARE(minmax.second, 1.);
+    }
+
+    void test_extrema_mid()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{50, -100};
+        VecT c{50, 200};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        QVERIFY(minmax.first < 0.5);
+        QVERIFY(minmax.first > 0);
+        QVERIFY(minmax.second < 1.);
+        QVERIFY(minmax.second > 0.5);
+    }
+
+    void test_extrema_mid_swap()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{00, 300};
+        VecT c{00, -200};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        QVERIFY(minmax.first < 0.5);
+        QVERIFY(minmax.first > 0);
+        QVERIFY(minmax.second < 1.);
+        QVERIFY(minmax.second > 0.5);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestCase)

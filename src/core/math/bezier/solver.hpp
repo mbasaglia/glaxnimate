@@ -165,6 +165,58 @@ public:
         return {min, max};
     }
 
+
+    /**
+     * \brief Returns the \p t for the min/max points for the given component
+     *
+     * \note The returned value is sorted so that \p first <= \p second
+     */
+    std::pair<argument_type, argument_type> extrema(int component) const
+    {
+        std::vector<scalar> solutions;
+        bounds_solve(3 * detail::get(a_, component), 2 * detail::get(b_, component), detail::get(c_, component), solutions);
+
+        // No solution: end points have the extrema
+        if ( solutions.size() == 0 )
+            return {0, 1};
+
+        // One solution: one of the end points has an extreme
+        if ( solutions.size() == 1 )
+        {
+            auto val = solve_component(solutions[0], component);
+            // The end point is a minimum
+            if ( detail::get(points_[0], component) < val )
+            {
+                // Last point is min
+                if ( detail::get(points_[3], component) < detail::get(points_[0], component) )
+                    return {solutions[0], 1};
+
+                // First point is min
+                return {0, solutions[0]};
+            }
+            // Last point is min
+            else if ( detail::get(points_[3], component) < val )
+            {
+                return {solutions[0], 1};
+            }
+            // end point is a maximum
+            else
+            {
+                // First point is max
+                if ( detail::get(points_[0], component) > val )
+                    return {0, solutions[0]};
+
+                // Last point is max
+                return {solutions[0], 1};
+            }
+        }
+
+        if ( solutions[0] > solutions[1] )
+            return {solutions[1], solutions[0]};
+
+        return {solutions[0], solutions[1]};
+    }
+
     /**
      * \brief Return inflection points for a 2D bezier
      */
@@ -261,7 +313,7 @@ private:
         return k0;
     }
 
-    static void bounds_solve(scalar a, scalar b, scalar c, std::vector<scalar>& solutions)
+    static void bounds_solve(scalar a, scalar b, scalar c, std::vector<argument_type>& solutions)
     {
         scalar d = b * b - 4. * a * c;
 
@@ -283,7 +335,7 @@ private:
         }
     }
 
-    static void add_bounds_solution(scalar solution, std::vector<scalar>& solutions)
+    static void add_bounds_solution(scalar solution, std::vector<argument_type>& solutions)
     {
         if ( solution >= 0 && solution <= 1 )
             solutions.push_back(solution);

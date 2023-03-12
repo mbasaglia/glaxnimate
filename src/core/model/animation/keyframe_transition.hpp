@@ -27,7 +27,8 @@ public:
         Hold,
         Linear,
         Ease,
-        Fast, // TODO add to UI and such
+        Fast,
+        Overshoot,
         Custom,
     };
 

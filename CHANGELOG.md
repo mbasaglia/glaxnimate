@@ -1,5 +1,7 @@
 ## 0.5.4
 
+* Editing:
+    * New keyframe preset: overshoot
 * I/O:
     * Fixed error message showing when loading a dotLottie without custom metadata
     * Fixed loading image assets from dotLottie

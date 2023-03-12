@@ -10,6 +10,61 @@
 #include "model/object.hpp"
 #include "math/bezier/segment.hpp"
 
+
+class glaxnimate::model::Keyframe<QPointF>::PointKeyframeSplitter : public KeyframeSplitter
+{
+public:
+    const Keyframe* self;
+    const Keyframe* other;
+    math::bezier::CubicBezierSolver<QPointF> solver;
+    math::bezier::LengthData len;
+    QPointF tan_in;
+    math::bezier::Point point_before;
+    math::bezier::Point point_mid;
+
+    PointKeyframeSplitter(const Keyframe<QPointF>* self, const Keyframe<QPointF>* other)
+        : self(self),
+          other(other),
+          solver(self->bezier_solver(*other)),
+          len(solver, 20),
+          tan_in(self->point_.tan_in)
+    {
+    }
+
+    void step(const QPointF& p) override
+    {
+
+        auto beziers = solver.split(p.y());
+        solver = beziers.second;
+        point_before = math::bezier::Point (beziers.first[0], tan_in, beziers.first[1]);
+        point_mid = math::bezier::Point (beziers.first[3], beziers.first[2], beziers.second[1]);
+        tan_in = beziers.second[2];
+    }
+
+    std::unique_ptr<KeyframeBase> left(const QPointF& p) const override
+    {
+        return std::make_unique<Keyframe>(math::lerp(self->time(), other->time(), p.x()), point_before);
+    }
+
+    std::unique_ptr<KeyframeBase> right(const QPointF& p) const override
+    {
+        return std::make_unique<Keyframe>(math::lerp(self->time(), other->time(), 1 - p.x()), point_mid);
+    }
+
+    std::unique_ptr<KeyframeBase> last() const override
+    {
+        math::bezier::Point point_after = other->point();
+        point_after.tan_in = tan_in;
+        return std::make_unique<Keyframe>(other->time(), point_after);
+    }
+
+};
+
+std::unique_ptr<glaxnimate::model::KeyframeBase::KeyframeSplitter> glaxnimate::model::Keyframe<QPointF>::splitter(const KeyframeBase* other) const
+{
+    return std::make_unique<PointKeyframeSplitter>(this, static_cast<const Keyframe<QPointF>*>(other));
+}
+
 bool glaxnimate::model::AnimatableBase::assign_from(const model::BaseProperty* prop)
 {
     if ( prop->traits().flags != traits().flags || prop->traits().type != traits().type )

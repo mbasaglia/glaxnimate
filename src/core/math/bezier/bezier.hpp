@@ -308,4 +308,13 @@ private:
 
 } // namespace glaxnimate::math
 
+namespace glaxnimate::math {
+
+inline bezier::Bezier lerp(const math::bezier::Bezier& a, const math::bezier::Bezier& b, qreal factor)
+{
+    return a.lerp(b, factor);
+}
+
+} // namespace glaxnimate::math
+
 Q_DECLARE_METATYPE(glaxnimate::math::bezier::Bezier)

@@ -182,6 +182,7 @@ private:
             case model::KeyframeTransition::Linear: which = "linear"; break;
             case model::KeyframeTransition::Ease: which = "ease"; break;
             case model::KeyframeTransition::Fast: which = "fast"; break;
+            case model::KeyframeTransition::Overshoot: which = "overshoot"; break;
             case model::KeyframeTransition::Custom: which = "custom"; break;
         }
         return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));

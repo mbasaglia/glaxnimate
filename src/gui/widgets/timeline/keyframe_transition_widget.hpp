@@ -25,6 +25,8 @@ public:
     
     QSize sizeHint() const override;
 
+    void set_y_margin(double margin);
+
 protected:
     void paintEvent(QPaintEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;

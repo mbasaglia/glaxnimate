@@ -10,6 +10,8 @@
 #include <QMouseEvent>
 #include <QPainterPath>
 
+#include "math/math.hpp"
+
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
 
@@ -20,6 +22,7 @@ public:
     int selected_handle = 0;
     int highlighted_handle = 0;
     int handle_radius = 8;
+    double y_margin = 0;
     QPoint drag_start_mouse;
     QPoint drag_start_handle;
 
@@ -30,16 +33,16 @@ public:
 
     const QPointF& point(int i) { return target->bezier().points()[i]; }
 
-    double map_coord(double coord, double size)
+    double map_coord(double coord, double size, double margin)
     {
-        return handle_radius + (size - 2 * handle_radius) * coord;
+        return margin + (size - 2 * margin) * coord;
     }
 
     QPointF map_pt(const QPointF& p, int width, int height)
     {
         return QPointF(
-            map_coord(p.x(), width),
-            map_coord((1-p.y()), height)
+            map_coord(p.x(), width, handle_radius),
+            map_coord((1-p.y()), height, y_margin * height + handle_radius)
         );
     }
 
@@ -48,16 +51,16 @@ public:
         return map_pt(point(i), width, height);
     }
 
-    double unmap_coord(double coord, double size)
+    double unmap_coord(double coord, double size, double margin)
     {
-        return qBound(0., (coord - handle_radius) / (size - 2.0 * handle_radius), 1.);
+        return qBound(0., (coord - margin) / (size - 2.0 * margin), 1.);
     }
 
     QPointF unmap_pt(const QPoint& p, int width, int height)
     {
         return QPointF{
-            unmap_coord(p.x(), width),
-            (1-unmap_coord(p.y(), height)),
+            unmap_coord(p.x(), width, 0),
+            (1-unmap_coord(p.y(), height, y_margin * height + handle_radius)),
         };
     }
 
@@ -76,6 +79,12 @@ KeyframeTransitionWidget::~KeyframeTransitionWidget() = default;
 void KeyframeTransitionWidget::set_target(model::KeyframeTransition* kft)
 {
     d->target = kft;
+    auto margin = math::max(-kft->before().y(), kft->after().y() - 1);
+    if ( margin > 0 )
+    {
+        d->y_margin = margin / (2 * margin + 1);
+    }
+
     update();
     if ( kft )
     {
@@ -88,11 +97,12 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 
+
     QRect center_rect = rect().adjusted(
         d->handle_radius,
-        d->handle_radius,
+        d->handle_radius + d->y_margin * height(),
         -d->handle_radius,
-        -d->handle_radius
+        -d->handle_radius - d->y_margin * height()
     );
 
     QPalette::ColorGroup group = isEnabled() && d->target && !d->hold() ? QPalette::Active : QPalette::Disabled;
@@ -117,7 +127,7 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
         // Path
         QPainterPath pp(p[0]);
         pp.cubicTo(p[1], p[2], p[3]);
-        painter.setBrush(Qt::transparent);
+        painter.setBrush(Qt::NoBrush);
         painter.setPen(QPen(palette().brush(group, QPalette::Mid), 3));
         painter.drawPath(pp);
         painter.setPen(QPen(fg, 1));
@@ -126,7 +136,7 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
         // Connect handles
         QPen high_pen(palette().brush(group, QPalette::Highlight), 2);
         QPen low_pen(QPen(palette().brush(group, QPalette::Text), 2));
-        painter.setBrush(Qt::transparent);
+        painter.setBrush(Qt::NoBrush);
         painter.setPen(1 == d->selected_handle && enabled ? high_pen : low_pen);
         painter.drawLine(p[0], p[1]);
         painter.setPen(2 == d->selected_handle && enabled ? high_pen : low_pen);
@@ -258,3 +268,10 @@ QSize KeyframeTransitionWidget::sizeHint() const
 {
     return QSize(300, 200);
 }
+
+void glaxnimate::gui::KeyframeTransitionWidget::set_y_margin(double margin)
+{
+    d->y_margin = margin;
+    update();
+}
+

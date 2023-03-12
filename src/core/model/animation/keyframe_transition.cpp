@@ -31,6 +31,9 @@ glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTr
     if ( bezier_.points()[1].y() == 0 )
         return Ease;
 
+    if ( bezier_.points()[1].y() < 0 )
+        return Overshoot;
+
     if ( bezier_.points()[1].x() < bezier_.points()[1].y() )
         return Fast;
 
@@ -47,6 +50,9 @@ glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTr
 
     if ( bezier_.points()[2].y() == 1 )
         return Ease;
+
+    if ( bezier_.points()[2].y() > 1 )
+        return Overshoot;
 
     if ( bezier_.points()[2].x() > bezier_.points()[2].y() )
         return Fast;
@@ -73,6 +79,10 @@ void glaxnimate::model::KeyframeTransition::set_before_descriptive(model::Keyfra
             bezier_.set<1>(QPointF{1./6., 1./3.});
             hold_ = false;
             break;
+        case Overshoot:
+            bezier_.set<1>(QPointF{2./3., -1./3.});
+            hold_ = false;
+            break;
         case Custom:
             hold_ = false;
             break;
@@ -96,6 +106,10 @@ void glaxnimate::model::KeyframeTransition::set_after_descriptive(model::Keyfram
             break;
         case Fast:
             bezier_.set<2>(QPointF{5./6., 2./3.});
+            hold_ = false;
+            break;
+        case Overshoot:
+            bezier_.set<2>(QPointF{1./3., 4./3.});
             hold_ = false;
             break;
         case Custom:

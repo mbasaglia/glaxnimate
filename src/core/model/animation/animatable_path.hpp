@@ -14,52 +14,6 @@
 namespace glaxnimate::model {
 
 namespace detail {
-class AnimatedPropertyBezier;
-} // namespace glaxnimate::name
-
-
-
-template<>
-class Keyframe<math::bezier::Bezier> : public KeyframeBase
-{
-public:
-    using value_type = math::bezier::Bezier;
-    using reference = const math::bezier::Bezier&;
-
-    Keyframe(FrameTime time, math::bezier::Bezier value)
-        : KeyframeBase(time), value_(std::move(value)) {}
-
-    void set(reference v)
-    {
-        value_ = v;
-    }
-
-    reference get() const
-    {
-        return value_;
-    }
-
-    QVariant value() const override
-    {
-        return QVariant::fromValue(value_);
-    }
-
-    bool set_value(const QVariant&) override
-    {
-        return false;
-    }
-
-    value_type lerp(const Keyframe<math::bezier::Bezier>& other, double t) const
-    {
-        return value_.lerp(other.get(), this->transition().lerp_factor(t));
-    }
-
-private:
-    friend detail::AnimatedPropertyBezier;
-    math::bezier::Bezier value_;
-};
-
-namespace detail {
 
 // Intermediare non-templated class so Q_OBJECT works
 class AnimatedPropertyBezier : public detail::AnimatedProperty<math::bezier::Bezier>

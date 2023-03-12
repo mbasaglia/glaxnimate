@@ -67,8 +67,82 @@ public:
         time_ *= multiplier;
     }
 
+    /**
+     * \brief Splits a keyframe into multiple segments
+     * \param other The keyframe following this
+     * \param splits Array of splits in [0, 1], indicating the fractions at which splits shall occur
+     * \pre \p other must be the same type of keyframe as \b this
+     * \returns An array of keyframes matching the splits,
+     *      this will include a copy of \p other, which might have been modified slightly.
+     *      This should be used as \p this for the next keyframe
+     */
+    std::vector<std::unique_ptr<KeyframeBase>> split(const KeyframeBase* other, std::vector<qreal> splits) const
+    {
+        std::vector<std::unique_ptr<KeyframeBase>> kfs;
+        if ( transition().hold() )
+        {
+            kfs.push_back(clone());
+            kfs.push_back(other->clone());
+            return kfs;
+        }
+
+        auto splitter = this->splitter(other);
+
+        kfs.reserve(splits.size()+2);
+        qreal prev_split = 0;
+        const KeyframeBase* to_split = this;
+        std::unique_ptr<KeyframeBase> split_right;
+        for ( qreal split : splits )
+        {
+            // Skip zeros
+            if ( qFuzzyIsNull(split) )
+                continue;
+
+            qreal split_ratio = (split - prev_split) / (1 - prev_split);
+            prev_split = split;
+            auto transitions = to_split->transition().split(split_ratio);
+            // split_ratio is t
+            // p.x() is time lerp
+            // p.y() is value lerp
+            QPointF p = to_split->transition().bezier().solve(split_ratio);
+            splitter->step(p);
+            auto split_left = splitter->left(p);
+            split_right = splitter->right(p);
+            split_left->set_transition(transitions.first);
+            split_right->set_transition(transitions.second);
+            kfs.push_back(std::move(split_left));
+        }
+        kfs.push_back(std::move(split_right));
+        kfs.push_back(splitter->last());
+        kfs.back()->set_transition(other->transition());
+
+        return kfs;
+    }
+
+    std::unique_ptr<KeyframeBase> clone() const
+    {
+        auto clone = do_clone();
+        clone->set_transition(transition_);
+        return clone;
+    }
+
 signals:
     void transition_changed(KeyframeTransition::Descriptive before, KeyframeTransition::Descriptive after);
+
+protected:
+    virtual std::unique_ptr<KeyframeBase> do_clone() const = 0;
+
+    class KeyframeSplitter
+    {
+    public:
+        virtual ~KeyframeSplitter() = default;
+        virtual void step(const QPointF& p) = 0;
+        virtual std::unique_ptr<KeyframeBase> left(const QPointF& p) const = 0;
+        virtual std::unique_ptr<KeyframeBase> right(const QPointF& p) const = 0;
+        virtual std::unique_ptr<KeyframeBase> last() const = 0;
+    };
+
+    virtual std::unique_ptr<KeyframeSplitter> splitter(const KeyframeBase* other) const = 0;
 
 private:
     FrameTime time_;
@@ -337,6 +411,47 @@ public:
         return math::lerp(value_, other.get(), this->transition().lerp_factor(t));
     }
 
+
+protected:
+    std::unique_ptr<KeyframeBase> do_clone() const override
+    {
+        return std::make_unique<Keyframe>(time(), value_);
+    }
+
+    class TypedKeyframeSplitter : public KeyframeSplitter
+    {
+    public:
+        TypedKeyframeSplitter(const Keyframe* a, const Keyframe* b) : a(a), b(b) {}
+
+        void step(const QPointF&) override {}
+
+        std::unique_ptr<KeyframeBase> left(const QPointF& p) const override
+        {
+            return std::make_unique<Keyframe>(
+                math::lerp(a->time(), b->time(), p.x()),
+                math::lerp(a->get(), b->get(), p.y())
+            );
+        }
+
+        std::unique_ptr<KeyframeBase> right(const QPointF& p) const override
+        {
+            return std::make_unique<Keyframe>(
+                math::lerp(a->time(), b->time(), 1 - p.x()),
+                math::lerp(a->get(), b->get(), 1 - p.y())
+            );
+        }
+
+        std::unique_ptr<KeyframeBase> last() const override { return b->clone(); }
+
+        const Keyframe* a;
+        const Keyframe* b;
+    };
+
+    virtual std::unique_ptr<KeyframeSplitter> splitter(const KeyframeBase* other) const override
+    {
+        return std::make_unique<TypedKeyframeSplitter>(this, static_cast<const Keyframe*>(other));
+    }
+
 private:
     Type value_;
 };
@@ -351,6 +466,11 @@ public:
 
     Keyframe(FrameTime time, const QPointF& value)
         : KeyframeBase(time), point_(value) {}
+
+
+    Keyframe(FrameTime time, const math::bezier::Point& value)
+        : KeyframeBase(time), point_(value), linear(point_is_linear(value))
+        {}
 
     void set(reference value)
     {
@@ -396,7 +516,7 @@ public:
     void set_point(const math::bezier::Point& point)
     {
         point_ = point;
-        linear = point_.tan_in == point.pos && point.tan_out == point.pos;
+        linear = point_is_linear(point);
     }
 
     const math::bezier::Point& point() const
@@ -416,7 +536,21 @@ public:
         return linear;
     }
 
+protected:
+    std::unique_ptr<KeyframeBase> do_clone() const override
+    {
+        return std::make_unique<Keyframe>(time(), point_);
+    }
+
+    class PointKeyframeSplitter;
+    std::unique_ptr<KeyframeSplitter> splitter(const KeyframeBase* other) const override;
+
 private:
+    static bool point_is_linear(const math::bezier::Point& point)
+    {
+        return point.tan_in == point.pos && point.tan_out == point.pos;
+    }
+
     math::bezier::Point point_;
     bool linear = true;
 };

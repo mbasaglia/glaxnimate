@@ -110,32 +110,38 @@ public:
         action_enter_linear.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/linear.svg")));
         action_enter_ease.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/ease.svg")));
         action_enter_fast.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/fast.svg")));
+        action_enter_over.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/overshoot.svg")));
         action_enter_custom.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/custom.svg")));
         action_exit_hold.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/hold.svg")));
         action_exit_linear.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/linear.svg")));
         action_exit_ease.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/ease.svg")));
         action_exit_fast.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/fast.svg")));
+        action_exit_over.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/overshoot.svg")));
         action_exit_custom.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/custom.svg")));
 
         action_enter_hold.setActionGroup(&enter);
         action_enter_linear.setActionGroup(&enter);
         action_enter_ease.setActionGroup(&enter);
         action_enter_fast.setActionGroup(&enter);
+        action_enter_over.setActionGroup(&enter);
         action_enter_custom.setActionGroup(&enter);
         action_exit_hold.setActionGroup(&exit);
         action_exit_linear.setActionGroup(&exit);
         action_exit_ease.setActionGroup(&exit);
         action_exit_fast.setActionGroup(&exit);
+        action_exit_over.setActionGroup(&exit);
         action_exit_custom.setActionGroup(&exit);
 
         action_enter_hold.setData(QVariant::fromValue(model::KeyframeTransition::Hold));
         action_enter_linear.setData(QVariant::fromValue(model::KeyframeTransition::Linear));
         action_enter_ease.setData(QVariant::fromValue(model::KeyframeTransition::Ease));
         action_enter_fast.setData(QVariant::fromValue(model::KeyframeTransition::Fast));
+        action_enter_over.setData(QVariant::fromValue(model::KeyframeTransition::Overshoot));
         action_exit_hold.setData(QVariant::fromValue(model::KeyframeTransition::Hold));
         action_exit_linear.setData(QVariant::fromValue(model::KeyframeTransition::Linear));
         action_exit_ease.setData(QVariant::fromValue(model::KeyframeTransition::Ease));
         action_exit_fast.setData(QVariant::fromValue(model::KeyframeTransition::Fast));
+        action_exit_over.setData(QVariant::fromValue(model::KeyframeTransition::Overshoot));
 
         menu_keyframe.addAction(&action_kf_remove);
         action_kf_remove.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
@@ -189,6 +195,9 @@ public:
 
         action_enter_fast.setText(tr("Fast"));
         action_exit_fast.setText(action_enter_fast.text());
+
+        action_enter_over.setText(tr("Overshoot"));
+        action_exit_over.setText(action_enter_over.text());
 
         action_enter_custom.setText(tr("Custom..."));
         action_exit_custom.setText(action_enter_custom.text());
@@ -314,11 +323,13 @@ public:
     QAction action_enter_linear;
     QAction action_enter_ease;
     QAction action_enter_fast;
+    QAction action_enter_over;
     QAction action_enter_custom;
     QAction action_exit_hold;
     QAction action_exit_linear;
     QAction action_exit_ease;
     QAction action_exit_fast;
+    QAction action_exit_over;
     QAction action_exit_custom;
     QMenu menu_keyframe;
     QActionGroup enter{&menu_keyframe};
@@ -463,6 +474,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
                 case model::KeyframeTransition::Fast:
                     d->action_enter_fast.setChecked(true);
                     break;
+                case model::KeyframeTransition::Overshoot:
+                    d->action_enter_over.setChecked(true);
+                    break;
                 default:
                     d->action_enter_custom.setChecked(true);
                     break;
@@ -482,6 +496,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
                 break;
             case model::KeyframeTransition::Fast:
                 d->action_exit_fast.setChecked(true);
+                break;
+            case model::KeyframeTransition::Overshoot:
+                d->action_exit_over.setChecked(true);
                 break;
             default:
                 d->action_exit_custom.setChecked(true);

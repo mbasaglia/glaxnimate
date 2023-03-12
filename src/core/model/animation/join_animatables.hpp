@@ -246,17 +246,67 @@ public:
             set_transition(subkf->transition());
         }
 
+        Keyframe(JoinedAnimatable* parent, model::FrameTime time)
+            : KeyframeBase(time),
+              parent(parent),
+              subkf(nullptr)
+        {}
+
         QVariant value() const override
         {
-            return parent->converter(subkf->values);
+            if ( subkf )
+                return parent->converter(subkf->values);
+            else
+                return parent->converter(parent->value_at(time()));
         }
 
         // read only
         bool set_value(const QVariant&) override { return false; }
 
+    protected:
+        std::unique_ptr<KeyframeBase> do_clone() const override
+        {
+            return std::make_unique<JoinedAnimatable::Keyframe>(parent, subkf);
+        }
+
+        class Splitter : public KeyframeSplitter
+        {
+        public:
+            Splitter(const Keyframe* a, const Keyframe* b) : a(a), b(b) {}
+
+            void step(const QPointF&) override {}
+
+
+            std::unique_ptr<KeyframeBase> left(const QPointF& p) const override
+            {
+                return std::make_unique<Keyframe>(
+                    a->parent,
+                    math::lerp(a->time(), b->time(), p.x())
+                );
+            }
+
+            std::unique_ptr<KeyframeBase> right(const QPointF& p) const override
+            {
+                return std::make_unique<Keyframe>(
+                    a->parent,
+                    math::lerp(a->time(), b->time(), 1 - p.x())
+                );
+            }
+
+            std::unique_ptr<KeyframeBase> last() const override { return b->clone(); }
+
+            const Keyframe* a;
+            const Keyframe* b;
+        };
+
+        std::unique_ptr<KeyframeSplitter> splitter(const KeyframeBase* other) const override
+        {
+            return std::make_unique<Splitter>(this, static_cast<const Keyframe*>(other));
+        }
+
     private:
         JoinedAnimatable* parent;
-        const JoinAnimatables::Keyframe* subkf;
+        const JoinAnimatables::Keyframe* subkf = nullptr;
     };
 
     JoinedAnimatable(std::vector<const model::AnimatableBase*> properties, ConversionFunction converter, int flags = Normal)
