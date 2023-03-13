@@ -395,8 +395,8 @@ protected:
         std::unique_ptr<KeyframeBase> right(const QPointF& p) const override
         {
             return std::make_unique<Keyframe>(
-                math::lerp(a->time(), b->time(), 1 - p.x()),
-                math::lerp(a->get(), b->get(), 1 - p.y())
+                math::lerp(a->time(), b->time(), p.x()),
+                math::lerp(a->get(), b->get(), p.y())
             );
         }
 
@@ -942,8 +942,7 @@ protected:
         // Interpolate between two keyframes
         const keyframe_type* second = keyframe(index+1);
         double scaled_time = (time - first->time()) / (second->time() - first->time());
-        double lerp_factor = first->transition().lerp_factor(scaled_time);
-        return {nullptr, first->lerp(*second, lerp_factor)};
+        return {nullptr, first->lerp(*second, scaled_time)};
     }
 
     QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const override

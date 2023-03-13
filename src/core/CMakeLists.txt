@@ -12,6 +12,7 @@ command/animation_commands.cpp
 
 io/base.cpp
 io/binary_stream.cpp
+io/utils.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
 io/glaxnimate/glaxnimate_mime.cpp

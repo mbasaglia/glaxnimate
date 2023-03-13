@@ -11,7 +11,6 @@
 #include "math/bezier/segment.hpp"
 
 
-
 std::vector<std::unique_ptr<glaxnimate::model::KeyframeBase>> glaxnimate::model::KeyframeBase::split(const KeyframeBase* other, std::vector<qreal> splits) const
 {
     std::vector<std::unique_ptr<KeyframeBase>> kfs;
@@ -28,6 +27,7 @@ std::vector<std::unique_ptr<glaxnimate::model::KeyframeBase>> glaxnimate::model:
     qreal prev_split = 0;
     const KeyframeBase* to_split = this;
     std::unique_ptr<KeyframeBase> split_right;
+    QPointF old_p;
     for ( qreal split : splits )
     {
         // Skip zeros
@@ -36,16 +36,18 @@ std::vector<std::unique_ptr<glaxnimate::model::KeyframeBase>> glaxnimate::model:
 
         qreal split_ratio = (split - prev_split) / (1 - prev_split);
         prev_split = split;
-        auto transitions = to_split->transition().split(split_ratio);
+        auto transitions = to_split->transition().split_t(split_ratio);
         // split_ratio is t
         // p.x() is time lerp
         // p.y() is value lerp
-        QPointF p = to_split->transition().bezier().solve(split_ratio);
+        QPointF p = transition().bezier().solve(split);
         splitter->step(p);
-        auto split_left = splitter->left(p);
-        split_right = splitter->right(p);
+        auto split_left = splitter->left(old_p);
         split_left->set_transition(transitions.first);
+        old_p = p;
+        split_right = splitter->right(p);
         split_right->set_transition(transitions.second);
+        to_split = split_right.get();
         kfs.push_back(std::move(split_left));
     }
     kfs.push_back(std::move(split_right));
@@ -66,20 +68,28 @@ public:
     QPointF tan_in;
     math::bezier::Point point_before;
     math::bezier::Point point_mid;
+    qreal prev_split = 0;
+    bool linear;
 
     PointKeyframeSplitter(const Keyframe<QPointF>* self, const Keyframe<QPointF>* other)
         : self(self),
           other(other),
           solver(self->bezier_solver(*other)),
           len(solver, 20),
-          tan_in(self->point_.tan_in)
+          tan_in(self->point_.tan_in),
+          linear(self->is_linear())
     {
     }
 
     void step(const QPointF& p) override
     {
+        if ( linear )
+            return;
 
-        auto beziers = solver.split(p.y());
+        // TODO: would need the ability to access other keyframes to properly handle values outside [0, 1]
+        qreal split = math::bound(0., p.y(), 1.);
+        auto beziers = solver.split((split - prev_split) / (1 - prev_split));
+        prev_split = split;
         solver = beziers.second;
         point_before = math::bezier::Point (beziers.first[0], tan_in, beziers.first[1]);
         point_mid = math::bezier::Point (beziers.first[3], beziers.first[2], beziers.second[1]);
@@ -88,16 +98,35 @@ public:
 
     std::unique_ptr<KeyframeBase> left(const QPointF& p) const override
     {
+        if ( linear )
+        {
+            return std::make_unique<Keyframe>(
+                math::lerp(self->time(), other->time(), p.x()),
+                math::lerp(self->get(), other->get(), p.y())
+            );
+        }
+
         return std::make_unique<Keyframe>(math::lerp(self->time(), other->time(), p.x()), point_before);
     }
 
     std::unique_ptr<KeyframeBase> right(const QPointF& p) const override
     {
-        return std::make_unique<Keyframe>(math::lerp(self->time(), other->time(), 1 - p.x()), point_mid);
+        if ( linear )
+        {
+            return std::make_unique<Keyframe>(
+                math::lerp(self->time(), other->time(), p.x()),
+                math::lerp(self->get(), other->get(), p.y())
+            );
+        }
+
+        return std::make_unique<Keyframe>(math::lerp(self->time(), other->time(), p.x()), point_mid);
     }
 
     std::unique_ptr<KeyframeBase> last() const override
     {
+        if ( linear )
+            return other->clone();
+
         math::bezier::Point point_after = other->point();
         point_after.tan_in = tan_in;
         return std::make_unique<Keyframe>(other->time(), point_after);

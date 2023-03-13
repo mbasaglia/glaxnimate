@@ -25,6 +25,7 @@
 
 #include "detail.hpp"
 #include "font_weight.hpp"
+#include "io/utils.hpp"
 
 
 using namespace glaxnimate::io::svg::detail;
@@ -340,15 +341,16 @@ public:
 
         if ( animated )
         {
-            int kf_count = property->keyframe_count();
-            if ( kf_count < 2 )
+            if ( property->keyframe_count() < 2 )
                 return;
 
-            AnimationData data(this, {attr}, property->keyframe_count());
+            auto keyframes = split_keyframes(property);
 
-            for ( int i = 0; i < kf_count; i++ )
+            AnimationData data(this, {attr}, keyframes.size());
+
+            for ( int i = 0; i < int(keyframes.size()); i++ )
             {
-                auto kf = property->keyframe(i);
+                auto kf = keyframes[i].get();
                 data.add_keyframe(time_to_global(kf->time()), {kf->value().toString()}, kf->transition());
             }
 
@@ -372,7 +374,7 @@ public:
     )
     {
         auto jflags = animated == NotAnimated ? model::JoinAnimatables::NoKeyframes : model::JoinAnimatables::Normal;
-        model::JoinAnimatables j(std::move(properties), jflags);
+        model::JoinedAnimatable j(std::move(properties), {}, jflags);
 
         {
             auto vals = callback(j.current_value());
@@ -382,10 +384,11 @@ public:
 
         if ( j.animated() && animated )
         {
-            AnimationData data(this, attrs, j.keyframes().size());
+            auto keys = split_keyframes(&j);
+            AnimationData data(this, attrs, keys.size());
 
-            for ( const auto& kf : j )
-                data.add_keyframe(time_to_global(kf.time), callback(kf.values), kf.transition());
+            for ( const auto& kf : keys )
+                data.add_keyframe(time_to_global(kf->time()), callback(j.value_at(kf->time())), kf->transition());
 
             data.add_dom(element);
         }

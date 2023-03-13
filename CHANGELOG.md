@@ -2,6 +2,7 @@
 
 * Editing:
     * New keyframe preset: overshoot
+    * More accurate timing for keyframe easing curves
 * I/O:
     * Fixed error message showing when loading a dotLottie without custom metadata
     * Fixed loading image assets from dotLottie

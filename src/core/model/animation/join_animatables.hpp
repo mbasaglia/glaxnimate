@@ -233,7 +233,7 @@ private:
 class JoinedAnimatable : public AnimatableBase, public JoinAnimatables
 {
 public:
-    using ConversionFunction = std::function<QVariant (const std::vector<QVariant> args)>;
+    using ConversionFunction = std::function<QVariant (const std::vector<QVariant>& args)>;
 
     class Keyframe : public KeyframeBase
     {
@@ -251,6 +251,14 @@ public:
               parent(parent),
               subkf(nullptr)
         {}
+
+        std::vector<QVariant> get() const
+        {
+            if ( subkf )
+                return subkf->values;
+            else
+                return parent->value_at(time());
+        }
 
         QVariant value() const override
         {
@@ -289,7 +297,7 @@ public:
             {
                 return std::make_unique<Keyframe>(
                     a->parent,
-                    math::lerp(a->time(), b->time(), 1 - p.x())
+                    math::lerp(a->time(), b->time(), p.x())
                 );
             }
 
