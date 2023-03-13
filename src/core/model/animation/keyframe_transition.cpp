@@ -68,7 +68,7 @@ void glaxnimate::model::KeyframeTransition::set_before_descriptive(model::Keyfra
             set_hold(true);
             return;
         case Linear:
-            bezier_.set<1>(bezier_.points()[0]);
+            bezier_.set<1>(QPointF{1./3., 1./3.});
             hold_ = false;
             break;
         case Ease:
@@ -97,7 +97,7 @@ void glaxnimate::model::KeyframeTransition::set_after_descriptive(model::Keyfram
             set_hold(true);
             return;
         case Linear:
-            bezier_.set<2>(bezier_.points()[3]);
+            bezier_.set<2>(QPointF{2./3., 2./3.});
             hold_ = false;
             break;
         case Ease:
@@ -177,14 +177,26 @@ glaxnimate::model::KeyframeTransition::KeyframeTransition(glaxnimate::model::Key
 {
 }
 
-
-
 std::pair<glaxnimate::model::KeyframeTransition, glaxnimate::model::KeyframeTransition> glaxnimate::model::KeyframeTransition::split(double x) const
+{
+    return split_t(bezier_.t_at_value(x));
+}
+
+std::pair<glaxnimate::model::KeyframeTransition, glaxnimate::model::KeyframeTransition> glaxnimate::model::KeyframeTransition::split_t(double t) const
 {
     if ( hold_ )
         return { {{0, 0}, {1, 1}, true}, {{0, 0}, {1, 1}, true} };
 
-    qreal t = bezier_.t_at_value(x);
+    if ( qFuzzyIsNull(t) )
+    {
+        return { {{0, 0}, {1, 1}, false}, *this };
+    }
+    else if ( qFuzzyCompare(t, 1) )
+    {
+        return { *this, {{0, 0}, {1, 1}, false} };
+    }
+
+    qreal x = bezier_.solve_component(t, 0);
     qreal y = bezier_.solve_component(t, 1);
     math::bezier::BezierSegment left, right;
     std::tie(left, right) = bezier_.split(t);
@@ -193,14 +205,32 @@ std::pair<glaxnimate::model::KeyframeTransition, glaxnimate::model::KeyframeTran
     qreal left_factor_y = 1 / y;
     qreal right_factor_x = 1 / (1-x);
     qreal right_factor_y = 1 / (1-y);
+    qreal right_offset_y = 0;
+
+    QPointF left_p1{left[1].x() * left_factor_x, left[1].y() * left_factor_y};
+    QPointF left_p2{left[2].x() * left_factor_x, left[2].y() * left_factor_y};
+    QPointF right_p1{(right[1].x() - x) / (1-x), (right[1].y() - y) / (1-y)};
+    QPointF right_p2{(right[2].x() - x) / (1-x), (right[2].y() - y) / (1-y)};
+
+    if ( y < 0 )
+    {
+        left_p1.setY(-left[1].y() / (y - 1));
+        left_p2.setY(1 - left[2].y() / (y - 1));
+    }
+    else if ( y > 1 )
+    {
+        right_p1.setY(-(right[1].y() - 1) / (y - 1));
+        right_p2.setY(1 - (right[2].y() - 1) / (y - 1));
+    }
+
     return {
         {
             {left[1].x() * left_factor_x, left[1].y() * left_factor_y},
             {left[2].x() * left_factor_x, left[2].y() * left_factor_y}
         },
         {
-            {(right[1].x() - x) * right_factor_x, (right[1].y() - y) * right_factor_y},
-            {(right[2].x() - x) * right_factor_x, (right[2].y() - y) * right_factor_y}
+            {(right[1].x() - x) * right_factor_x, right_offset_y + (right[1].y() - y) * right_factor_y},
+            {(right[2].x() - x) * right_factor_x, right_offset_y + (right[2].y() - y) * right_factor_y}
         }
     };
 }

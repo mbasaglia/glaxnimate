@@ -76,48 +76,7 @@ public:
      *      this will include a copy of \p other, which might have been modified slightly.
      *      This should be used as \p this for the next keyframe
      */
-    std::vector<std::unique_ptr<KeyframeBase>> split(const KeyframeBase* other, std::vector<qreal> splits) const
-    {
-        std::vector<std::unique_ptr<KeyframeBase>> kfs;
-        if ( transition().hold() )
-        {
-            kfs.push_back(clone());
-            kfs.push_back(other->clone());
-            return kfs;
-        }
-
-        auto splitter = this->splitter(other);
-
-        kfs.reserve(splits.size()+2);
-        qreal prev_split = 0;
-        const KeyframeBase* to_split = this;
-        std::unique_ptr<KeyframeBase> split_right;
-        for ( qreal split : splits )
-        {
-            // Skip zeros
-            if ( qFuzzyIsNull(split) )
-                continue;
-
-            qreal split_ratio = (split - prev_split) / (1 - prev_split);
-            prev_split = split;
-            auto transitions = to_split->transition().split(split_ratio);
-            // split_ratio is t
-            // p.x() is time lerp
-            // p.y() is value lerp
-            QPointF p = to_split->transition().bezier().solve(split_ratio);
-            splitter->step(p);
-            auto split_left = splitter->left(p);
-            split_right = splitter->right(p);
-            split_left->set_transition(transitions.first);
-            split_right->set_transition(transitions.second);
-            kfs.push_back(std::move(split_left));
-        }
-        kfs.push_back(std::move(split_right));
-        kfs.push_back(splitter->last());
-        kfs.back()->set_transition(other->transition());
-
-        return kfs;
-    }
+    std::vector<std::unique_ptr<KeyframeBase>> split(const KeyframeBase* other, std::vector<qreal> splits) const;
 
     std::unique_ptr<KeyframeBase> clone() const
     {

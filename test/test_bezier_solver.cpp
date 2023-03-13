@@ -495,6 +495,46 @@ private slots:
         QVERIFY(minmax.second < 1.);
         QVERIFY(minmax.second > 0.5);
     }
+
+    void test_extrema_mid_values_100()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{100, -100};
+        VecT c{0, 200};
+        VecT d{100, 100};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        float t = 0.146446609407;
+        QCOMPARE(float(minmax.first), t);
+        QCOMPARE(float(minmax.second), 1-t);
+        float x = 32.3223;
+        float y = 20.7107;
+        QCOMPARE(float(bs.solve_component(minmax.first, 0)), x);
+        QCOMPARE(float(bs.solve_component(minmax.first, 1)), -y);
+        QCOMPARE(float(bs.solve_component(minmax.second, 0)), 100-x);
+        QCOMPARE(float(bs.solve_component(minmax.second, 1)), 100+y);
+    }
+
+    void test_extrema_mid_values_1()
+    {
+        using VecT = QPointF;
+        VecT a{0, 0};
+        VecT b{1, -1};
+        VecT c{0, 2};
+        VecT d{1, 1};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
+        auto minmax = bs.extrema(1);
+        float t = 0.146446609407;
+        QCOMPARE(float(minmax.first), t);
+        QCOMPARE(float(minmax.second), 1-t);
+        float x = 0.323223;
+        float y = 0.207107;
+        QCOMPARE(float(bs.solve_component(minmax.first, 0)), x);
+        QCOMPARE(float(bs.solve_component(minmax.first, 1)), -y);
+        QCOMPARE(float(bs.solve_component(minmax.second, 0)), 1-x);
+        QCOMPARE(float(bs.solve_component(minmax.second, 1)), 1+y);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestCase)

@@ -102,6 +102,75 @@ private slots:
         QCOMPARE(qRound(kft.lerp_factor(0.1)*100), 18);
     }
 
+    void test_split_hold()
+    {
+        model::KeyframeTransition kft({0, 0}, {1, 1}, true);
+        auto split = kft.split(0.2);
+        QCOMPARE(split.first.hold(), true);
+        QCOMPARE(split.second.hold(), true);
+    }
+
+    void test_split_linear()
+    {
+        model::KeyframeTransition kft({1./3., 1./3.}, {2./3., 2./3.}, false);
+        auto split = kft.split(0.2);
+
+        QCOMPARE(split.first.hold(), false);
+        QCOMPARE(split.first.before().x(), 1./3.);
+        QCOMPARE(split.first.before().y(), 1./3.);
+        QCOMPARE(split.first.after().x(), 2./3.);
+        QCOMPARE(split.first.after().y(), 2./3.);
+
+        QCOMPARE(split.second.hold(), false);
+        QCOMPARE(split.second.before().x(), 1./3.);
+        QCOMPARE(split.second.before().y(), 1./3.);
+        QCOMPARE(split.second.after().x(), 2./3.);
+        QCOMPARE(split.second.after().y(), 2./3.);
+    }
+
+    void test_split_ease()
+    {
+        model::KeyframeTransition kft({1./3., 0}, {2./3., 1}, false);
+        auto split = kft.split(0.5);
+
+        QCOMPARE(split.first.hold(), false);
+        QCOMPARE(split.first.before().x(), 1./3.);
+        QCOMPARE(split.first.before().y(), 0);
+        QCOMPARE(split.first.after().x(), 2./3.);
+        QCOMPARE(split.first.after().y(), 0.5);
+
+        QCOMPARE(split.second.hold(), false);
+        QCOMPARE(split.second.before().x(), 1./3.);
+        QCOMPARE(split.second.before().y(), 0.5);
+        QCOMPARE(split.second.after().x(), 2./3.);
+        QCOMPARE(split.second.after().y(), 1.);
+    }
+
+    void test_split_left()
+    {
+        model::KeyframeTransition kft({1, -1}, {0, 2});
+        float t = 0.146446609407;
+        auto split = kft.split_t(t).first;
+
+        QCOMPARE(split.hold(), false);
+        QCOMPARE(float(split.before().x()), 0.453082f);
+        QCOMPARE(float(split.before().y()), 0.707107f);
+        QCOMPARE(float(split.after().x()), 0.773459f);
+        QCOMPARE(float(split.after().y()), 1.f);
+    }
+
+    void test_split_right()
+    {
+        model::KeyframeTransition kft({1, -1}, {0, 2});
+        float t = 0.146446609407;
+        auto split = kft.split_t(1-t).second;
+
+        QCOMPARE(split.hold(), false);
+        QCOMPARE(float(split.before().x()), 1-0.773459f);
+        QCOMPARE(float(split.before().y()), 0.f);
+        QCOMPARE(float(split.after().x()), 1-0.453082f);
+        QCOMPARE(float(split.after().y()), 1-0.707107f);
+    }
 };
 
 

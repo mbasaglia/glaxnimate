@@ -78,6 +78,9 @@ public:
      */
     std::pair<KeyframeTransition, KeyframeTransition> split(double x) const;
 
+
+    std::pair<KeyframeTransition, KeyframeTransition> split_t(double t) const;
+
 private:
     math::bezier::CubicBezierSolver<QPointF> bezier_ { QPointF(0, 0), QPointF(0, 0), QPointF(1, 1), QPointF(1, 1) };
     bool hold_ = false;
