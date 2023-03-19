@@ -7,6 +7,7 @@
 #include "timeline_items.hpp"
 
 #include "command/undo_macro_guard.hpp"
+#include "keyframe_transition_data.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -25,14 +26,14 @@ bool timeline::enable_debug = false;
 
 void timeline::KeyframeSplitItem::set_enter(model::KeyframeTransition::Descriptive enter)
 {
-    icon_enter = icon_from_kdf(enter, "finish");
+    icon_enter = KeyframeTransitionData::data(enter, KeyframeTransitionData::Finish).icon();
     pix_enter = icon_enter.pixmap(icon_size);
     update();
 }
 
 void timeline::KeyframeSplitItem::set_exit(model::KeyframeTransition::Descriptive exit)
 {
-    icon_exit = icon_from_kdf(exit, "start");
+    icon_exit = KeyframeTransitionData::data(exit, KeyframeTransitionData::Start).icon();
     pix_exit = icon_exit.pixmap(icon_size);
     update();
 }

@@ -7,43 +7,24 @@
 #include "keyframe_editor_widget.hpp"
 #include "ui_keyframe_editor_widget.h"
 #include "app/application.hpp"
+#include "keyframe_transition_data.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
-
-
-namespace  {
-
-void set_icon(QComboBox* box, int i, const char* ba)
-{
-    QString icon_name = QString("images/keyframe/%1/%2.svg");
-    QString which;
-    switch ( model::KeyframeTransition::Descriptive(i) )
-    {
-        case model::KeyframeTransition::Hold: which = "hold"; break;
-        case model::KeyframeTransition::Linear: which = "linear"; break;
-        case model::KeyframeTransition::Ease: which = "ease"; break;
-        case model::KeyframeTransition::Fast: which = "fast"; break;
-        case model::KeyframeTransition::Overshoot: which = "overshoot"; break;
-        case model::KeyframeTransition::Custom: which = "custom"; break;
-    }
-    box->setItemIcon(i, QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which))));
-}
-
-void set_icons(QComboBox* box, const char* ba)
-{
-    for ( int i = 0; i < box->count(); i++ )
-        set_icon(box, i, ba);
-}
-
-} // namespace
 
 KeyframeEditorWidget::KeyframeEditorWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::KeyframeEditorWidget>())
 {
     d->setupUi(this);
-    set_icons(d->combo_before, "start");
-    set_icons(d->combo_after, "finish");
+
+
+    for ( int i = 0; i < KeyframeTransitionData::count; i++ )
+    {
+        auto data = KeyframeTransitionData::from_index(i, KeyframeTransitionData::Start);
+        d->combo_before->addItem(data.icon(), data.name);
+        data = KeyframeTransitionData::from_index(i, KeyframeTransitionData::Finish);
+        d->combo_after->addItem(data.icon(), data.name);
+    }
 
     connect(d->bezier_editor, &KeyframeTransitionWidget::before_changed, this, &KeyframeEditorWidget::update_before);
     connect(d->bezier_editor, &KeyframeTransitionWidget::after_changed, this, &KeyframeEditorWidget::update_after);

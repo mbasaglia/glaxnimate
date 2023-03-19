@@ -172,22 +172,6 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
 
 private:
-    QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
-    {
-        QString icon_name = QString("images/keyframe/%1/%2.svg");
-        QString which;
-        switch ( desc )
-        {
-            case model::KeyframeTransition::Hold: which = "hold"; break;
-            case model::KeyframeTransition::Linear: which = "linear"; break;
-            case model::KeyframeTransition::Ease: which = "ease"; break;
-            case model::KeyframeTransition::Fast: which = "fast"; break;
-            case model::KeyframeTransition::Overshoot: which = "overshoot"; break;
-            case model::KeyframeTransition::Custom: which = "custom"; break;
-        }
-        return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
-    }
-
     bool drag_allowed() const
     {
         /// \todo Handle for stuff like transform attributes :/

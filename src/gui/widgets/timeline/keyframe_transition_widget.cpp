@@ -53,7 +53,7 @@ public:
 
     double unmap_coord(double coord, double size, double margin)
     {
-        return qBound(0., (coord - margin) / (size - 2.0 * margin), 1.);
+        return qBound(0. - y_margin, (coord - margin) / (size - 2.0 * margin), 1. + y_margin);
     }
 
     QPointF unmap_pt(const QPoint& p, int width, int height)
@@ -98,16 +98,27 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
     QPainter painter(this);
 
 
-    QRect center_rect = rect().adjusted(
+    QRect bounds = rect();
+    QRect center_rect = bounds.adjusted(
         d->handle_radius,
-        d->handle_radius + d->y_margin * height(),
+        d->handle_radius,
         -d->handle_radius,
-        -d->handle_radius - d->y_margin * height()
+        -d->handle_radius
     );
 
     QPalette::ColorGroup group = isEnabled() && d->target && !d->hold() ? QPalette::Active : QPalette::Disabled;
-    painter.fillRect(rect(), palette().brush(group, QPalette::Window));
+    painter.fillRect(bounds, palette().brush(group, QPalette::Window));
     painter.fillRect(center_rect, palette().brush(group, QPalette::Base));
+
+    if ( d->y_margin > 0 )
+    {
+        painter.setPen(QPen(palette().brush(group, QPalette::Base), 1, Qt::DotLine));
+        int y = bounds.top() + d->y_margin * bounds.height();
+        painter.drawLine(bounds.left(), y, bounds.right(), y);
+        y = bounds.bottom() - d->y_margin * bounds.height();
+        painter.drawLine(bounds.left(), y, bounds.right(), y);
+
+    }
 
     if ( d->target )
     {

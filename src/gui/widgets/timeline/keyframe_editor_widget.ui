@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>glaxnimate::gui::KeyframeEditorWidget</class>
- <widget class="QWidget" name="KeyframeEditorWidget">
+ <widget class="QWidget" name="glaxnimate::gui::KeyframeEditorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -45,33 +38,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combo_before">
-        <item>
-         <property name="text">
-          <string>Hold</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Linear</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Ease In</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Fast</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Custom</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="combo_before"/>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -94,33 +61,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combo_after">
-        <item>
-         <property name="text">
-          <string>Hold</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Linear</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Ease Out</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Fast</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Custom</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="combo_after"/>
       </item>
      </layout>
     </widget>
@@ -140,7 +81,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
   <connection>
    <sender>combo_before</sender>
    <signal>activated(int)</signal>
-   <receiver>KeyframeEditorWidget</receiver>
+   <receiver>glaxnimate::gui::KeyframeEditorWidget</receiver>
    <slot>preset_before(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -156,7 +97,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
   <connection>
    <sender>combo_after</sender>
    <signal>activated(int)</signal>
-   <receiver>KeyframeEditorWidget</receiver>
+   <receiver>glaxnimate::gui::KeyframeEditorWidget</receiver>
    <slot>preset_after(int)</slot>
    <hints>
     <hint type="sourcelabel">
