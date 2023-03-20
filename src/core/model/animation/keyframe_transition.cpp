@@ -14,7 +14,7 @@ constexpr QPointF bound_vec(const QPointF& v)
 {
     return {
         qBound(glaxnimate::math::scalar_type<QPointF>(0), v.x(), glaxnimate::math::scalar_type<QPointF>(1)),
-        qBound(glaxnimate::math::scalar_type<QPointF>(0), v.y(), glaxnimate::math::scalar_type<QPointF>(1))
+        v.y()
     };
 }
 
