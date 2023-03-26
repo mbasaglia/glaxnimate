@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+# SPDX-License-Identifier: BSD-2-Clause
+
 message(STATUS "Test targets enabled")
 set(SOURCE_BASE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(COVERAGE_TOOL "gcovr")
