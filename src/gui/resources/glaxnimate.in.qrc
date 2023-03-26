@@ -1,4 +1,9 @@
-<!DOCTYPE RCC><RCC>
+<!DOCTYPE RCC>
+<!--
+SPDX-FileCopyrightText: none
+SPDX-License-Identifier: CC0-1.0
+-->
+<RCC>
     <qresource prefix="/glaxnimate">
         <file alias="splash.svg">${CMAKE_SOURCE_DIR}/data/logo/splash-screen.svg</file>
     </qresource>

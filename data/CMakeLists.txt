@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+# SPDX-License-Identifier: BSD-2-Clause
+
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 
 if ( ANDROID )
