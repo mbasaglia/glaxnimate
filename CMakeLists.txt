@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+# SPDX-License-Identifier: BSD-2-Clause
+
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 # cmake_policy(SET CMP0076 NEW)
 cmake_policy(SET CMP0077 NEW)

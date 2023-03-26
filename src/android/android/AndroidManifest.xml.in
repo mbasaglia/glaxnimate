@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
+<!--
+    SPDX-FileCopyrightText: 2021 Mattia Basaglia <dev@dragon.best>
+    SPDX-License-Identifier: BSD-2-Clause
+-->
+
 <manifest package="org.mattbas.glaxnimate" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="@PROJECT_VERSION@" android:versionCode="@VERSION_CODE@" android:installLocation="auto">
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="29"/>
 
