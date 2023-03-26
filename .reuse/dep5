@@ -26,6 +26,5 @@ Copyright: 2019 Mattia Basaglia <dev@dragon.best>
 License: CC-BY-SA-4.0
 
 Files: src/android/android/gradlew src/android/android/gradlew.bat src/android/android/gradle/wrapper/gradle-wrapper.jar
-Copyright: The Gradle authors
-Copyright: 2019 Mattia Basaglia <dev@dragon.best>
+Copyright: The Gradle authors and 2019 Mattia Basaglia <dev@dragon.best>
 License: Apache-2.0
