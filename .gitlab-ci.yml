@@ -21,3 +21,4 @@ include:
     - .gitlab/ci/deb_packages.yml
     - .gitlab/ci/tarball.yml
     - .gitlab/ci/release.yml
+    - .gitlab/ci/reuse-lint.yml

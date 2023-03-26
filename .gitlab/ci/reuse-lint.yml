@@ -1,0 +1,12 @@
+reuse:
+  image:
+    name: fsfe/reuse:latest
+    entrypoint: [""]
+  stage: build
+  interruptible: true
+  before_script:
+    - echo "Overwrite default before_script"
+  script:
+    - rm -rf po/ poqm/ # HACK some projects have po files committed. Those do not have SPDX markers. Ignore them for now to avoid CI noise
+    - rm -rf data deploy docs external .github .gitlab
+    - reuse lint
