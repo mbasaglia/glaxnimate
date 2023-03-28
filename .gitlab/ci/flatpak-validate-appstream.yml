@@ -1,0 +1,11 @@
+flatpak_validate_appstream:
+    image: ubuntu:latest
+    stage: build
+    before_script:
+        - apt-get update -qq
+        - apt install -y flatpak-builder
+        - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        - flatpak install -y org.flatpak.Builder
+    script:
+        - flatpak run --env=G_DEBUG=fatal-criticals --command=appstream-util org.flatpak.Builder validate .flatpak-manifest.yml
+

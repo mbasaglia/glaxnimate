@@ -13,16 +13,25 @@ finish-args:
     - --device=dri
 modules:
     -
+        name: potrace
+        buildsystem: autotools
+        builddir: true
+        config-opts:
+            - --with-libpotrace
+        sources:
+            -
+                type: archive
+                url: http://potrace.sourceforge.net/download/1.16/potrace-1.16.tar.gz
+                sha256: be8248a17dedd6ccbaab2fcc45835bb0502d062e40fbded3bc56028ce5eb7acc
+    -
         name: glaxnimate
         buildsystem: cmake-ninja
         builddir: true
         config-opts:
             - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-            - -DGLAXNIMATE_SYSTEM_POTRACE=OFF
         build-commands:
             - ninja translations
         sources:
             -
-                type: git
-                url: https://gitlab.com/mattbas/glaxnimate.git
-                branch: release
+                type: dir
+                path: .

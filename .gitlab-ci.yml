@@ -18,6 +18,8 @@ include:
     - .gitlab/ci/python_package.yml
     - .gitlab/ci/snap.yml
     - .gitlab/ci/flatpak.yml
+    # Disabled due to Flatpak bug: https://github.com/flatpak/flatpak/issues/5076
+    #- .gitlab/ci/flatpak-validate-appstream.yml
     - .gitlab/ci/appimage.yml
     - .gitlab/ci/craft-appimage.yml
     - .gitlab/ci/archlinux_packages.yml
