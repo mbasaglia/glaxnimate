@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: CC0-1.0
+
 app-id: org.mattbas.Glaxnimate
 runtime: org.kde.Platform
 runtime-version: "6.3"
