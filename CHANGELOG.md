@@ -9,6 +9,9 @@
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
+* Bug Fixes:
+    * Fixed button connections in the advanced page of the trace dialog
+    * Opening an image file sets the animation to 1 second rather than 0
 
 ## 0.5.3
 

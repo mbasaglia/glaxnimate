@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
- <class>glaxnimate::gui::TraceDialog</class>
+ <class>TraceDialog</class>
  <widget class="QDialog" name="TraceDialog">
   <property name="geometry">
    <rect>
@@ -692,7 +685,8 @@ p, li { white-space: pre-wrap; }
         <string>Advanced</string>
        </property>
        <property name="icon">
-           <iconset theme="preferences-system"></iconset>
+        <iconset theme="preferences-system">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -839,38 +833,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>702</x>
-     <y>633</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>726</x>
-     <y>732</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>apply()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>618</x>
-     <y>632</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>638</x>
-     <y>761</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>list_presets</sender>
    <signal>currentRowChanged(int)</signal>
    <receiver>TraceDialog</receiver>
@@ -883,6 +845,102 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>260</x>
      <y>831</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_detect_colors</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>auto_colors()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>664</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_quantize_options</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>color_options()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>699</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>add_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>364</x>
+     <y>758</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>remove_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>500</x>
+     <y>734</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>499</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>525</x>
+     <y>789</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>532</x>
+     <y>642</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>678</y>
     </hint>
    </hints>
   </connection>

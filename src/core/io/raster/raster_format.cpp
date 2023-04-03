@@ -26,6 +26,8 @@ QStringList glaxnimate::io::raster::RasterFormat::extensions() const
 
 bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString& filename, model::Document* document, const QVariantMap& settings)
 {
+    document->main()->animation->last_frame.set(document->main()->fps.get());
+
 #ifndef WITHOUT_POTRACE
     if ( settings.value("trace", {}).toBool() )
     {
