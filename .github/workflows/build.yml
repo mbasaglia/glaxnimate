@@ -106,6 +106,7 @@ jobs:
               run: |
                 (cd ./data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
+                chmod 700 .
                 ./deploy/win_build.sh build
             - name: Build Python
               run: |
