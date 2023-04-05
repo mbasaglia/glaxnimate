@@ -1,7 +1,7 @@
 message(STATUS "Test targets enabled")
 set(SOURCE_BASE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(COVERAGE_TOOL "gcovr")
-set(COVERAGE_REMOVE_PATTERNS "/usr/.*")
+#set(COVERAGE_REMOVE_PATTERNS "/usr/.*")
 set(COVERAGE_FILTER_PATTERNS ".*/src/core/.*")
 include(testing)
 
