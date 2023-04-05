@@ -6,10 +6,11 @@ linux:test:
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_CXX_FLAGS=--coverage
-        - make tests_coverage
-    artifacts:
-        paths:
-            - build/coverage
+        - make tests
+        #- make tests_coverage
+    #artifacts:
+        #paths:
+            #- build/coverage
     when: always
 
 linux:build:

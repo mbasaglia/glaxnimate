@@ -11,12 +11,12 @@ pages:
         - make docs
     after_script:
         - mv build/docs/site public
-        - mv build/coverage public/coverage
         - mv build/doxygen/html public/doxygen
+        #- mv build/coverage public/coverage
     artifacts:
         paths:
             - public
     when: always
     only:
         - master
-    needs: ["linux:test"]
+    #needs: ["linux:test"]
