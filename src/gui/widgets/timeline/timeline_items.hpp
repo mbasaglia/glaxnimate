@@ -91,7 +91,7 @@ public:
     quintptr id() const { return id_; }
 
 signals:
-    void removed(quintptr id, QPrivateSignal = {});
+    void removed(quintptr id, QPrivateSignal = QPrivateSignal());
     void clicked(quintptr id, bool selected, bool replace_selection);
 
 protected:
