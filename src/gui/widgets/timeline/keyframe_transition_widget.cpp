@@ -25,7 +25,7 @@ public:
     int highlighted_handle = 0;
     int handle_radius = 8;
     double y_margin = 0;
-    double y_margin2 = 0;
+    double y_margin_value = 0;
     QPoint drag_start_mouse;
     QPoint drag_start_handle;
 
@@ -59,12 +59,12 @@ public:
         return qBound(0. - bound_margin, (coord - margin) / (size - 2.0 * margin), 1. + bound_margin);
     }
 
-    QPointF unmap_pt(const QPoint& p, int width, int height)
+    QPointF unmap_pt(const QPoint& p, int width, int height, bool clamp_y = false)
     {
-        return QPointF{
-            unmap_coord(p.x(), width, 0, 0),
-            1 - unmap_coord(p.y(), height, y_margin * height + handle_radius, y_margin2),
-        };
+        auto y = 1 - unmap_coord(p.y(), height, y_margin * height + handle_radius, y_margin_value);
+        if ( clamp_y )
+            y = qBound(0., y, 1.);
+        return QPointF{unmap_coord(p.x(), width, 0, 0), y};
     }
 
 };
@@ -85,9 +85,8 @@ void KeyframeTransitionWidget::set_target(model::KeyframeTransition* kft)
     auto margin = math::max(-kft->before().y(), kft->after().y() - 1);
     if ( margin > 0 )
     {
-        d->y_margin2 = margin;
+        d->y_margin_value = margin;
         d->y_margin = margin / (2 * margin + 1);
-        qDebug() << "y_margin" << d->y_margin << kft->before().y();
     }
 
     update();
@@ -119,9 +118,9 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
     if ( d->y_margin > 0 )
     {
         painter.setPen(QPen(palette().brush(group, QPalette::Window), 2, Qt::DotLine));
-        int y = bounds.top() + d->y_margin * bounds.height();
+        int y = bounds.top() + d->y_margin * bounds.height() + d->handle_radius;
         painter.drawLine(bounds.left(), y, bounds.right(), y);
-        y = bounds.bottom() - d->y_margin * bounds.height();
+        y = bounds.bottom() - d->y_margin * bounds.height() - d->handle_radius;
         painter.drawLine(bounds.left(), y, bounds.right(), y);
 
     }
@@ -217,14 +216,16 @@ void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
     {
         QPoint pos = event->pos() - d->drag_start_mouse + d->drag_start_handle;
 
+        bool clamp_y = event->modifiers() & Qt::ControlModifier;
+
         if ( d->selected_handle == 1 )
         {
-            d->target->set_before(d->unmap_pt(pos, width(), height()));
+            d->target->set_before(d->unmap_pt(pos, width(), height(), clamp_y));
             emit before_changed(d->target->before_descriptive());
         }
         else if ( d->selected_handle == 2 )
         {
-            d->target->set_after(d->unmap_pt(pos, width(), height()));
+            d->target->set_after(d->unmap_pt(pos, width(), height(), clamp_y));
             emit after_changed(d->target->after_descriptive());
         }
         update();
