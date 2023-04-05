@@ -394,6 +394,9 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
         current_document_has_file = true;
         app::settings::set<QString>("open_save", "path", opts.path.absolutePath());
         current_document->set_io_options(opts);
+
+        if ( !export_opts && !export_options.format )
+            export_options.path = opts.path;
     }
 
     return true;
