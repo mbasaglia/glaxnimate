@@ -1,5 +1,5 @@
 linux:test:
-    image: ubuntu:latest
+    image: ubuntu:22.04
     stage: build
     script:
         - pip3 install gcovr
