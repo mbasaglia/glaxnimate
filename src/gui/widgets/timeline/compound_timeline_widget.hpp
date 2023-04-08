@@ -33,7 +33,9 @@ public:
     void clear_document();
     QByteArray save_state() const;
     void load_state(const QByteArray& state);
+#ifndef MOBILE_UI
     void set_controller(GlaxnimateWindow* window);
+#endif
     QAbstractItemModel* filtered_model() const;
     QAbstractItemModel* raw_model() const;
     TimelineWidget* timeline() const;

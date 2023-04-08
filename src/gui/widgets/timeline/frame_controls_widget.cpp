@@ -24,7 +24,7 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     d->layout->setSpacing(0);
 #endif
 
-    d->button_record->setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-record.svg")));
+    d->button_record->setIcon(QIcon::fromTheme("keyframe-record"));
 
     d->button_next_kf->setVisible(false);
     d->button_prev_kf->setVisible(false);

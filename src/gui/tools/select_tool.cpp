@@ -386,7 +386,7 @@ private:
 
     void context_menu(const MouseEvent& event)
     {
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_UI
         auto window = static_cast<GlaxnimateWindow*>(event.window);
 
         auto targets = under_mouse(event, true, graphics::DocumentNodeGraphicsItem::None);

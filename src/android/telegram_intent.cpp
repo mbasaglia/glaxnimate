@@ -6,7 +6,7 @@
 
 #include "telegram_intent.hpp"
 
-#ifndef Q_OS_ANDROID_FAKE
+#ifdef Q_OS_ANDROID
 
 #include <QAndroidIntent>
 #include <QtAndroid>
@@ -52,6 +52,8 @@ glaxnimate::android::TelegramIntent::Result glaxnimate::android::TelegramIntent:
 #else
 glaxnimate::android::TelegramIntent::Result glaxnimate::android::TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
 {
+    Q_UNUSED(filenames)
+    Q_UNUSED(emoji)
     return {};
 }
 #endif

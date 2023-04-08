@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: BSD-2-Clause
 
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/core/)
@@ -8,7 +7,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gui/)
 
 add_subdirectory(core)
 add_subdirectory(gui)
-if ( ANDROID )
+if ( MOBILE_UI )
     add_subdirectory(android)
 else()
     add_subdirectory(python)

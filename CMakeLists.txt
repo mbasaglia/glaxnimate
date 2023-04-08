@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+# SPDX-License-Identifier: BSD-2-Clause
+
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 # cmake_policy(SET CMP0076 NEW)
 cmake_policy(SET CMP0077 NEW)
@@ -26,6 +29,16 @@ set(PROJECT_DESCRIPTION "Simple vector animation program")
 set(PROJECT_MANINTAINER_NAME "Mattia Basaglia")
 set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
 set(PROJECT_MANINTAINER "${PROJECT_MANINTAINER_NAME} <${PROJECT_MANINTAINER_EMAIL}>")
+
+option(MOBILE_UI "Build the mobile user interface" OFF)
+
+if (ANDROID)
+    set(MOBILE_UI ON)
+endif()
+
+if(MOBILE_UI)
+    add_compile_definitions(MOBILE_UI)
+endif()
 
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
@@ -104,7 +117,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Potrace
 option(GLAXNIMATE_SYSTEM_POTRACE "Use the system potrace libarary" ON)
-if ( ANDROID OR NOT GLAXNIMATE_SYSTEM_POTRACE )
+if (NOT GLAXNIMATE_SYSTEM_POTRACE)
     message(STATUS "Using bundled potrace")
     set(CMAKE_C_COMPILE_OBJECT ${CMAKE_CXX_COMPILE_OBJECT})
     add_subdirectory(external/potrace/)
@@ -177,6 +190,9 @@ add_custom_target(
 )
 
 # Misc files
+if (ANDROID)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/android/android/version.gradle.in ${CMAKE_BINARY_DIR}/version.gradle)
+endif()
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/deploy/org.mattbas.Glaxnimate.metainfo.xml DESTINATION share/metainfo)
 
 # Packaging

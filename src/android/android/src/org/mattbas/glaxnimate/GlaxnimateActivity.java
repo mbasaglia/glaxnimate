@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 Mattia Basaglia <dev@dragon.best>
+// SPDX-License-Identifier: GPL-3.0-or-later
 package org.mattbas.glaxnimate;
 
 import android.app.Notification;

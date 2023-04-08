@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: BSD-2-Clause
 
 set(SOURCES
     android_file_picker.cpp
@@ -20,16 +19,24 @@ set(SOURCES
     timeline_slider.cpp
 )
 
+if(NOT ANDROID)
+    add_compile_definitions(Q_OS_ANDROID_FAKE)
+endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
-include_directories(${CMAKE_SOURCE_DIR}/src/core)
-include_directories(${CMAKE_SOURCE_DIR}/src/gui)
-include_directories(${CMAKE_SOURCE_DIR}/external/QtColorWidgets/include)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/external/QtAppSetup/src
+    ${CMAKE_SOURCE_DIR}/src/core
+    ${CMAKE_SOURCE_DIR}/src/gui
+    ${CMAKE_SOURCE_DIR}/external/QtColorWidgets/include
+)
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras Svg REQUIRED)
+if (ANDROID)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras Svg REQUIRED)
+endif()
 
-add_library(${PROJECT_SLUG}_android SHARED ${SOURCES})
-target_link_libraries(${PROJECT_SLUG}_android PUBLIC
+add_executable(${PROJECT_SLUG}_mobile ${SOURCES})
+
+target_link_libraries(${PROJECT_SLUG}_mobile PUBLIC
     QtAppSetup
     ${LIB_NAME_CORE}
     ${LIB_NAME_GUI}
@@ -40,52 +47,37 @@ target_link_libraries(${PROJECT_SLUG}_android PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::UiTools
     Qt${QT_VERSION_MAJOR}::Concurrent
-    Qt${QT_VERSION_MAJOR}::AndroidExtras
-    Qt${QT_VERSION_MAJOR}::Svg
 )
 
-set(ANDROID_PLATFORM_LEVEL ${ANDROID_PLATFORM})
-set(ANDROID_SDK "$ENV{HOME}/Android/Sdk" CACHE STRING "")
-set(PACKAGE_NAME "org.mattbas.glaxnimate")
-set(JAVA_HOME "/usr/lib/jvm/default-java" CACHE STRING "")
+if (ANDROID)
+    target_link_libraries(${PROJECT_SLUG}_mobile PUBLIC
+        Qt${QT_VERSION_MAJOR}::AndroidExtras
+        Qt${QT_VERSION_MAJOR}::Svg
+    )
+endif()
+
 string(TIMESTAMP VERSION_CODE "%s" UTC)
 
-include(qt-android-cmake/AddQtAndroidApk.cmake)
-add_qt_android_apk(
-    ${PROJECT_SLUG}_apk
-    ${PROJECT_SLUG}_android
-    NAME ${PROJECT_NAME}
-    VERSION_CODE ${VERSION_CODE}
-    PACKAGE_NAME ${PACKAGE_NAME}
-    PACKAGE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/android
-    #DEPENDS
-        #QtColorWidgets
-        #QtHistoryLineEdit
-        #Qt${QT_VERSION_MAJOR}::Core
-        #Qt${QT_VERSION_MAJOR}::Gui
-        #Qt${QT_VERSION_MAJOR}::Widgets
-        #Qt${QT_VERSION_MAJOR}::UiTools
-        #Qt${QT_VERSION_MAJOR}::Concurrent
-    #INSTALL
-)
+#install(TARGETS ${PROJECT_SLUG}_mobile ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS ${PROJECT_SLUG}_mobile)
 
 # Download Twemoji
-get_target_property(ASSETS_PATH ${PROJECT_SLUG}_apk assets)
 add_custom_command(
-    OUTPUT ${ASSETS_PATH}/emoji
-    COMMAND wget "https://github.com/googlefonts/noto-emoji/archive/refs/heads/main.tar.gz" -O /tmp/noto-emoji.tar.gz
-    COMMAND tar -xaf /tmp/noto-emoji.tar.gz -C /tmp noto-emoji-main/svg noto-emoji-main/png/72 noto-emoji-main/third_party/region-flags
-    COMMAND mkdir ${ASSETS_PATH}/emoji
-    COMMAND mv -T /tmp/noto-emoji-main/svg ${ASSETS_PATH}/emoji/svg
-    COMMAND mv -T /tmp/noto-emoji-main/png/72 ${ASSETS_PATH}/emoji/png
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/svg/ ${ASSETS_PATH}/emoji/svg
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/png/ ${ASSETS_PATH}/emoji/png
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/emoji
+    COMMAND rm -r -f /tmp/noto-emoji-main
+    COMMAND git clone https://github.com/googlefonts/noto-emoji.git /tmp/noto-emoji-main
+    COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/emoji
+    COMMAND mv -T /tmp/noto-emoji-main/svg ${CMAKE_CURRENT_BINARY_DIR}/emoji/svg
+    COMMAND mv -T /tmp/noto-emoji-main/png/72 ${CMAKE_CURRENT_BINARY_DIR}/emoji/png
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/svg/ ${CMAKE_CURRENT_BINARY_DIR}/emoji/svg
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/png/ ${CMAKE_CURRENT_BINARY_DIR}/emoji/png
 )
 add_custom_target(emoji_images
-    DEPENDS ${ASSETS_PATH}/emoji
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/emoji
 )
-add_dependencies(${PROJECT_SLUG}_apk emoji_images)
-message(STATUS ${ASSETS_PATH}/emoji)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/emoji DESTINATION ${DATA_INSTALL} PATTERN *@* EXCLUDE)
+add_dependencies(${PROJECT_SLUG}_mobile emoji_images)
+message(STATUS ${DATA_INSTALL}/emoji)
 
 # Lists virtual devices
 add_custom_target(
@@ -109,14 +101,14 @@ add_custom_target(
 )
 
 
-# Installs (and runs the apk)
-add_custom_target(
-    android_install
-    COMMAND adb install -r $<TARGET_PROPERTY:${PROJECT_SLUG}_apk,apk>
-    COMMAND adb shell am force-stop ${PACKAGE_NAME}
-    COMMAND adb shell am start -n ${PACKAGE_NAME}/.GlaxnimateActivity -W
-    #DEPENDS ${PROJECT_SLUG}_apk
-)
+# # Installs (and runs the apk)
+# add_custom_target(
+#     android_install
+#     COMMAND adb install -r $<TARGET_PROPERTY:${PROJECT_SLUG}_mobile,apk>
+#     COMMAND adb shell am force-stop ${PACKAGE_NAME}
+#     COMMAND adb shell am start -n ${PACKAGE_NAME}/.GlaxnimateActivity -W
+#     #DEPENDS ${PROJECT_SLUG}_mobile
+# )
 
 # Attaches to the logs of the running app
 add_custom_target(

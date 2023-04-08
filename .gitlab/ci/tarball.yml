@@ -1,6 +1,7 @@
 tarball:
     stage: build
     before_script:
+        - echo "Overwrite default before_script"
     script:
         - rm -rf .git
         - cd ..

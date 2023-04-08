@@ -120,7 +120,7 @@ public:
         }
 
         menu_keyframe.addAction(&action_kf_remove);
-        action_kf_remove.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
+        action_kf_remove.setIcon(QIcon::fromTheme("keyframe-remove"));
         connect(&action_kf_remove, &QAction::triggered, parent, &CompoundTimelineWidget::remove_keyframe);
 
 
@@ -133,7 +133,7 @@ public:
         menu_keyframe.addSeparator();
 
         menu_keyframe.addAction(&action_kf_remove_all);
-        action_kf_remove_all.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
+        action_kf_remove_all.setIcon(QIcon::fromTheme("edit-clear-all"));
         connect(&action_kf_remove_all, &QAction::triggered, &menu_property, &AnimatedPropertyMenu::remove_all_keyframes);
 
         action_enter = menu_keyframe.addSeparator();
@@ -438,7 +438,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
         d->menu_property.refresh_actions();
         d->menu_property.exec(glob);
     }
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_UI
     else if ( auto dn = qobject_cast<model::DocumentNode*>(item.object) )
     {
         NodeMenu(dn, d->window, this).exec(glob);
@@ -492,12 +492,13 @@ QByteArray CompoundTimelineWidget::save_state() const
     return d->ui.splitter->saveState();
 }
 
+#ifndef MOBILE_UI
 void CompoundTimelineWidget::set_controller(GlaxnimateWindow* window)
 {
     d->window = window;
     d->menu_property.set_controller(window);
 }
-
+#endif
 
 void CompoundTimelineWidget::copy_keyframe()
 {
