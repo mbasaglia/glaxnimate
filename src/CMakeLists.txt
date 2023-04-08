@@ -7,7 +7,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gui/)
 
 add_subdirectory(core)
 add_subdirectory(gui)
-if ( ANDROID )
+if ( MOBILE_UI )
     add_subdirectory(android)
 else()
     add_subdirectory(python)

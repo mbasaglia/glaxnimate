@@ -8,7 +8,7 @@
 
 #include <QtGlobal>
 
-#ifdef Q_OS_ANDROID_FAKE
+#ifndef Q_OS_ANDROID
 
 class glaxnimate::android::AndroidFilePicker::Private
 {

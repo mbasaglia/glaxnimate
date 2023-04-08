@@ -18,7 +18,7 @@ glaxnimate::android::BaseDialog::BaseDialog(QWidget *parent)
     //    setWindowFlags(Qt::Window);
     //    setAttribute(Qt::WA_TranslucentBackground, false);
     //    setWindowState(windowState() | Qt::WindowFullScreen);
-#ifndef Q_OS_ANDROID_FAKE
+#ifdef Q_OS_ANDROID
         showMaximized();
 #endif
         setVisible(false);
@@ -26,7 +26,7 @@ glaxnimate::android::BaseDialog::BaseDialog(QWidget *parent)
 
 int glaxnimate::android::BaseDialog::exec()
 {
-#ifndef Q_OS_ANDROID_FAKE
+#ifdef Q_OS_ANDROID
     showMaximized();
 #endif
     setFocus();

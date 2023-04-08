@@ -19,9 +19,7 @@
 [submodule "data/icons/breeze-icons"]
 	path = data/icons/breeze-icons
 	url = https://github.com/KDE/breeze-icons.git
+	branch = kf5
 [submodule "data/lib/python-lottie"]
 	path = data/lib/python-lottie
 	url = https://gitlab.com/mattbas/python-lottie.git
-[submodule "src/android/qt-android-cmake"]
-	path = src/android/qt-android-cmake
-	url = https://github.com/mbasaglia/QtAndroidCmake

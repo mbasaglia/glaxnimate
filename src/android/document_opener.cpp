@@ -119,7 +119,7 @@ std::unique_ptr<glaxnimate::model::Document> glaxnimate::android::DocumentOpener
     QFileInfo finfo(path);
     QString extension = finfo.suffix();
     io::Options options;
-    options.format = io::IoRegistry::instance().from_extension(extension);
+    options.format = io::IoRegistry::instance().from_extension(extension, io::ImportExport::Import);
 
     if ( url.isLocalFile() )
     {

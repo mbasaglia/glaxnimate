@@ -1,0 +1,9 @@
+// SPDX-FileCopyrightText: 2022 Julius Künzel <jk.kdedev@smartlab.uber.space>
+// SPDX-License-Identifier: BSD-2-Clause
+
+ext {
+    projectVersionFull = "@PROJECT_VERSION@"
+    projectId = "@PROJECT_ID@"
+}
+
+
