@@ -15,7 +15,7 @@
 #include "app/application.hpp"
 
 
-#ifdef Q_OS_ANDROID
+#ifdef MOBILE_UI
 
 namespace glaxnimate::gui {
 
@@ -30,9 +30,9 @@ public:
     {
         return static_cast<GlaxnimateApp *>(QCoreApplication::instance());
     }
-
+#ifdef Q_OS_ANDROID
     QString data_file(const QString& name) const override;
-
+#endif
     static qreal handle_size_multiplier();
     static qreal handle_distance_multiplier();
 

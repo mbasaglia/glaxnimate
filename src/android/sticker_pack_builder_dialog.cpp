@@ -282,7 +282,7 @@ glaxnimate::android::StickerPackBuilderDialog::StickerPackBuilderDialog(QWidget 
     BaseDialog(parent),
     d(std::make_unique<Private>(this))
 {
-    d->emoji_selector.set_image_path(QDir("assets:/emoji/png"));
+    d->emoji_selector.set_image_path(QDir("assets:/share/glaxnimate/glaxnimate/emoji/png"));
     emoji::EmojiSetSlugFormat slug;
     slug.prefix = "emoji_u";
     d->emoji_selector.set_image_suffix(".png");

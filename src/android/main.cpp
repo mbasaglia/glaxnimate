@@ -72,11 +72,11 @@ QMenu::item:selected, QMenu::item:checked {
 
     app.initialize();
 
-#ifdef Q_OS_ANDROID_FAKE
+#ifndef Q_OS_ANDROID
     QDir d(__FILE__); d.cdUp(); d.cdUp(); d.cdUp();
     QIcon::setThemeSearchPaths({d.filePath("data/icons/breeze-icons/")});
 #else
-    QIcon::setThemeSearchPaths({"assets:/icons"});
+    QIcon::setThemeSearchPaths({"assets:/share/glaxnimate/glaxnimate/icons"});
 #endif
     QIcon::setThemeName("icons");
 //    QIcon::setFallbackSearchPaths({"assets:/icons/icons"});

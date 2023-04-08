@@ -6,7 +6,7 @@
 
 #include "android_intent_handler.hpp"
 
-#ifndef Q_OS_ANDROID_FAKE
+#ifdef Q_OS_ANDROID
 
 extern "C" {
 #include <jni.h>

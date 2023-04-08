@@ -12,24 +12,27 @@
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
 
-#ifdef Q_OS_ANDROID
+#ifdef MOBILE_UI
 
 #include <QScreen>
 
 static qreal get_mult()
 {
-#ifdef Q_OS_ANDROID_FAKE
+#ifndef Q_OS_ANDROID
     return 1;
+}
 #else
     auto sz = QApplication::primaryScreen()->size();
     return qMin(sz.width(), sz.height()) / 240.;
-#endif
+
 }
 
 QString GlaxnimateApp::data_file(const QString &name) const
 {
-    return "assets:/" + name;
+    return "assets:/share/glaxnimate/glaxnimate/" + name;
 }
+
+#endif
 
 qreal GlaxnimateApp::handle_size_multiplier()
 {
@@ -270,6 +273,10 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
     return QGuiApplication::clipboard()->mimeData();
 }
 
+void glaxnimate::gui::GlaxnimateApp::on_initialize_translations()
+{
+    app::TranslationService::instance().initialize("en_US");
+}
 #endif
 
 
@@ -289,9 +296,4 @@ QString GlaxnimateApp::temp_path()
 QString GlaxnimateApp::backup_path(const QString& file) const
 {
     return writable_data_path("backup/"+file);
-}
-
-void glaxnimate::gui::GlaxnimateApp::on_initialize_translations()
-{
-    app::TranslationService::instance().initialize("en_US");
 }

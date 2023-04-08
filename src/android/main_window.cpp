@@ -29,7 +29,7 @@
 #include "item_models/document_node_model.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/flow_layout.hpp"
-#include "widgets/layer_view.hpp"
+#include "widgets/docks/layer_view.hpp"
 #include "style/property_delegate.hpp"
 #include "utils/pseudo_mutex.hpp"
 #include "style/scroll_area_event_filter.hpp"
@@ -200,8 +200,8 @@ public:
         action_redo->setEnabled(false);
         action_undo->setEnabled(false);        
         clear_property_widgets();
-        ui.stroke_style_widget->set_shape(nullptr);
-        ui.fill_style_widget->set_shape(nullptr);
+        ui.stroke_style_widget->set_current(nullptr);
+        ui.fill_style_widget->set_current(nullptr);
         comp = nullptr;
         current_document.reset();
         current_document_has_file = false;
@@ -466,7 +466,7 @@ public:
         ));
 
         layout_actions->addWidget(action_button(
-            document_action_public(QIcon::fromTheme("edit-delete"), tr("Delete Selected"), &MainWindow::delete_shapes)
+            document_action_public(QIcon::fromTheme("edit-delete"), tr("Delete Selected"), &MainWindow::delete_selected)
         ));
 
         toolbar_spacers.push_back(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
@@ -524,7 +524,7 @@ public:
         );
 
         layout_edit_actions->addWidget(action_button(
-            document_action(QIcon::fromTheme("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
+            document_action(QIcon::fromTheme("telegram"), tr("Send to Telegram"), &Private::document_export_telegram)
         ));
 
         // Spacer
@@ -629,7 +629,7 @@ public:
 
             gui::ImportExportDialog dialog(opts, parent);
 
-            if ( !dialog.export_dialog() )
+            if ( !dialog.export_dialog(current_document.get()) )
                 return false;
 
             opts = dialog.io_options();
@@ -811,7 +811,7 @@ public:
 
         QSize screen_size = QApplication::primaryScreen()->size();
 
-#ifdef Q_OS_ANDROID_FAKE
+#ifndef Q_OS_ANDROID
         screen_size = parent->size();
 #endif
 
@@ -969,9 +969,7 @@ public:
                     QHBoxLayout* btnlay = new QHBoxLayout();
 
                     auto btn_add_kf = new QToolButton();
-                    btn_add_kf->setIcon(
-                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
-                    );
+                    btn_add_kf->setIcon(QIcon::fromTheme("keyframe-add"));
                     btn_add_kf->setText(tr("Add keyframe"));
                     connect(btn_add_kf, &QToolButton::clicked, node, [anim]{
                         anim->add_smooth_keyframe_undoable(anim->time(), anim->value());
@@ -980,9 +978,7 @@ public:
                     btnlay->addWidget(btn_add_kf);
 
                     auto btn_rm_kf = new QToolButton();
-                    btn_rm_kf->setIcon(
-                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
-                    );
+                    btn_rm_kf->setIcon(QIcon::fromTheme("keyframe-remove"));
                     btn_rm_kf->setText(tr("Remove keyframe"));
                     connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
                         if ( anim->has_keyframe(anim->time()) )
@@ -997,9 +993,7 @@ public:
 
 
                     auto btn_rm_kf_all = new QToolButton();
-                    btn_rm_kf_all->setIcon(
-                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
-                    );
+                    btn_rm_kf_all->setIcon(QIcon::fromTheme("edit-clear-all"));
                     btn_rm_kf_all->setText(tr("Clear Animations"));
                     connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
                         if ( anim->animated() )
@@ -1079,11 +1073,11 @@ public:
         if ( !dialog.exec() )
             return;
 
-        QString filename = "assets:/emoji/svg/" + dialog.image_slug_format().slug(dialog.current_slug()) + ".svg";
+        QString filename = gui::GlaxnimateApp::instance()->data_file("emoji/svg/" + dialog.image_slug_format().slug(dialog.current_slug()) + ".svg");
 
         QFileInfo finfo(filename);
         io::Options options;
-        options.format = io::IoRegistry::instance().from_extension(finfo.suffix());
+        options.format = io::IoRegistry::instance().from_extension(finfo.suffix(), io::ImportExport::Import);
         if ( !options.format )
             return;
 
@@ -1216,8 +1210,8 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
             d->secondary_brush = d->current_stroke->use.get();
     }
 
-    d->ui.stroke_style_widget->set_shape(d->current_stroke);
-    d->ui.fill_style_widget->set_shape(d->current_fill);
+    d->ui.stroke_style_widget->set_current(d->current_stroke);
+    d->ui.fill_style_widget->set_current(d->current_fill);
 
 
     d->set_property_widgets(node);
@@ -1260,7 +1254,7 @@ void MainWindow::resizeEvent(QResizeEvent* e)
 {
     QMainWindow::resizeEvent(e);
 
-#ifdef Q_OS_ANDROID_FAKE
+#ifndef Q_OS_ANDROID
     d->adjust_size();
 #endif
 }
@@ -1291,6 +1285,11 @@ void MainWindow::update_selection(const std::vector<model::VisualNode *> &select
 
     if ( sender() != d->layer_view )
         d->layer_view->update_selection(selected, deselected);
+}
+
+glaxnimate::gui::item_models::DocumentNodeModel* MainWindow::model() const
+{
+    return &d->document_node_model;
 }
 
 void MainWindow::open_intent(const QUrl &uri)

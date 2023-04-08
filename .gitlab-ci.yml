@@ -22,6 +22,9 @@ include:
     #- .gitlab/ci/flatpak-validate-appstream.yml
     - .gitlab/ci/appimage.yml
     - .gitlab/ci/craft-appimage.yml
+    - .gitlab/ci/craft-android-arm64.yml
+    # TODO: not all dependencies build hence it fails yet
+    #- .gitlab/ci/craft-android-x86-64.yml
     - .gitlab/ci/archlinux_packages.yml
     - .gitlab/ci/deb_packages.yml
     - .gitlab/ci/tarball.yml

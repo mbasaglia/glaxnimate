@@ -78,7 +78,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             tr("Saves the current frame as a still image")
         },
         {
-            "document-send",
+            "telegram",
             tr("Creates a sticker pack to export to Telegram.\nNote that only recent version of Telegram support this.\nIf your Telegram version is too old, you can Export the file to TGS and upload that on Telegram.")
         },
         {
@@ -174,7 +174,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             tr("Starts playback.")
         },
         {
-            "media-playlist-loop",
+            "media-playlist-repeat",
             tr("Toggles looping for the playback (on by default).")
         },
         {
@@ -194,7 +194,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             tr("Jumps to the last frame.")
         },
         {
-            "database-change-key",
+            "keyframe-record",
             tr("When enabled (which is the default) whenever you change an object property, a new keyframe is added for that property.")
         },
         {

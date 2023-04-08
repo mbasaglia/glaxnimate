@@ -362,7 +362,7 @@ void glaxnimate::gui::tools::DrawTool::mouse_press(const glaxnimate::gui::tools:
     else
     {
         QPointF pos = d->best_point(event);
-        bezier.points().push_back(math::bezier::Point(pos, pos, pos, d->point_type));
+        d->bezier.points().push_back(math::bezier::Point(pos, pos, pos, d->point_type));
         event.repaint();
     }
 #endif

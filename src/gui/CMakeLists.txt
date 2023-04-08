@@ -140,9 +140,11 @@ widgets/font/font_size_widget.ui
 widgets/font/external_font_widget.cpp
 widgets/font/external_font_widget.ui
 widgets/font/font_loader.cpp
+
+widgets/menus/animated_property_menu.cpp
 )
 
-if ( NOT ANDROID )
+if ( NOT MOBILE_UI )
     list(APPEND SOURCES
         main.cpp
         cli.cpp
@@ -169,7 +171,6 @@ if ( NOT ANDROID )
         widgets/docks/snippet_list_widget.cpp
         widgets/docks/snippet_list_widget.ui
         widgets/menus/node_menu.cpp
-        widgets/menus/animated_property_menu.cpp
     )
 endif()
 
@@ -205,6 +206,6 @@ target_link_libraries(
 
 
 
-if ( NOT ANDROID )
+if ( NOT MOBILE_UI )
     target_link_libraries(${LIB_NAME_GUI} PUBLIC QtHistoryLineEdit )
 endif()

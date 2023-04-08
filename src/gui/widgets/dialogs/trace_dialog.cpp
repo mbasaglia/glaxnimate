@@ -294,12 +294,14 @@ public:
         if ( scr->size().height() > scr->size().width() )
         {
             ui.layout_main->setDirection(QBoxLayout::TopToBottom);
-            ui.widget_controls->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            ui.stacked_preset_advanced->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            //ui.widget_controls->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         }
         else
         {
             ui.layout_main->setDirection(QBoxLayout::LeftToRight);
-            ui.widget_controls->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+            ui.stacked_preset_advanced->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            //ui.widget_controls->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         }
     }
 #endif

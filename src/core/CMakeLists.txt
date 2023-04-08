@@ -114,7 +114,6 @@ if ( NOT ANDROID )
         utils/tar.cpp
     )
     find_package(Libav COMPONENTS codec util format swscale REQUIRED)
-    include_directories(${Potrace_INCLUDE_DIRS})
     include_directories(${Libav_INCLUDE_DIRS})
 
     find_package(LibArchive REQUIRED)
@@ -131,6 +130,9 @@ configure_file(
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
+if ( GLAXNIMATE_SYSTEM_POTRACE )
+    include_directories(${Potrace_INCLUDE_DIRS})
+endif()
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
 target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES})

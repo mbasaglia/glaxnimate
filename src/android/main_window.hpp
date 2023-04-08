@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "widgets/dialogs/selection_manager.hpp"
+#include "item_models/document_node_model.hpp"
 
 namespace glaxnimate::android {
 
@@ -46,6 +47,8 @@ public:
     std::vector<io::mime::MimeSerializer*> supported_mimes() const override;
     void set_selection(const std::vector<model::VisualNode*>& selected) override;
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
+
+    glaxnimate::gui::item_models::DocumentNodeModel* model() const override;
 
 public slots:
     void open_intent(const QUrl& uri);
