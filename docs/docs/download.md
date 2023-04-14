@@ -45,7 +45,7 @@ These packages are built continuously as new changes are made.
 They contain all the latest features but might also include bugs and broken features.
 
 
-All packages provided here are for the x86_64 architecture.
+Unless stated otherwise, packages provided here are for the x86_64 architecture.
 
 {download_table:master:git}
 
