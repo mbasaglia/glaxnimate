@@ -10,7 +10,7 @@ android:sign:
         - base64 -d "$APK_KEYSTORE" >key.keystore
         - apksigner sign -verbose -ks key.keystore --ks-pass env:APK_KS_PASSWORD build/glaxnimate-arm64-v8a.apk
         - rm key.keystore
-        - sha1sum build/glaxnimate_mobile-arm64-v8a.signed.apk >build/checksum.txt
+        - sha1sum build/glaxnimate-arm64-v8a.apk >build/checksum.txt
     artifacts:
         paths:
             - build
