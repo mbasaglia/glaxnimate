@@ -30,3 +30,4 @@ include:
     - .gitlab/ci/tarball.yml
     - .gitlab/ci/release.yml
     - .gitlab/ci/reuse-lint.yml
+    - .gitlab/ci/android-sign.yml
