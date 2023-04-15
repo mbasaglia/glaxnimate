@@ -6,9 +6,9 @@ android:sign:
         - apt-get install -y zipalign apksigner
     script:
         - mkdir build
-        - zipalign -p -f -v 4 .kde-ci-packages/glaxnimate_mobile-arm64-v8a.apk build/glaxnimate_mobile-arm64-v8a.signed.apk
+        - zipalign -p -f -v 4 .kde-ci-packages/glaxnimate_mobile-arm64-v8a.apk build/glaxnimate-arm64-v8a.apk
         - base64 -d "$APK_KEYSTORE" >key.keystore
-        - apksigner sign -verbose -ks key.keystore --ks-pass env:APK_KS_PASSWORD build/glaxnimate_mobile-arm64-v8a.signed.apk
+        - apksigner sign -verbose -ks key.keystore --ks-pass env:APK_KS_PASSWORD build/glaxnimate-arm64-v8a.apk
         - rm key.keystore
         - sha1sum build/glaxnimate_mobile-arm64-v8a.signed.apk >build/checksum.txt
     artifacts:

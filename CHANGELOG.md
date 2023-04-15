@@ -13,6 +13,8 @@
 * Bug Fixes:
     * Fixed button connections in the advanced page of the trace dialog
     * Opening an image file sets the animation to 1 second rather than 0
+* Other:
+    * Added arm64 APK download
 
 ## 0.5.3
 

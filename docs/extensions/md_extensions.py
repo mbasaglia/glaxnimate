@@ -158,12 +158,12 @@ class DownloadTable(InlineProcessor):
         tbody = etree.SubElement(table, "tbody")
         branch = m.group(1)
         rows = [
-            self.Row("Linux Appimage",  "fab", "linux",    "glaxnimate-x86_64.AppImage",   "linux:appimage"),
-            self.Row("Deb Package",     "fab", "ubuntu",   "glaxnimate.deb",               "linux:deb"),
-            self.Row("Android (arm64)",  "fab", "android",  "glaxnimate_mobile-arm64-v8a.apk","craft_android_arm64", parent=".kde-ci-packages/"),
-            self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",        "-win"),
-            self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "-mac"),
-            self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",        "tarball", "/contributing/read_me", ""),
+            self.Row("Linux Appimage",  "fab", "linux",    "glaxnimate-x86_64.AppImage",    "linux:appimage"),
+            self.Row("Deb Package",     "fab", "ubuntu",   "glaxnimate.deb",                "linux:deb"),
+            self.Row("Android (arm64)", "fab", "android",  "glaxnimate-arm64-v8a.apk",      "android:sign"),
+            self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",         "-win"),
+            self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",                "-mac"),
+            self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",         "tarball", "/contributing/read_me", ""),
         ]
 
         if not self.git:
