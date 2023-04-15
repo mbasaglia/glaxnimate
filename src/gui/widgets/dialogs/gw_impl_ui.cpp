@@ -946,9 +946,9 @@ void GlaxnimateWindow::Private::init_tools(tools::Tool* to_activate)
 
 void GlaxnimateWindow::Private::init_restore_state()
 {
-    parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
     parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
     ui.timeline_widget->load_state(app::settings::get<QByteArray>("ui", "timeline_splitter"));
+    parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
 
     // Hide tool widgets, as they might get shown by restoreState
     ui.toolbar_node->setVisible(false);
