@@ -55,11 +55,13 @@ public:
         model::Document* document,
         const std::function<void(const QString&)>& on_warning,
         ImportExport* io,
-        QSize forced_size
+        QSize forced_size,
+        model::FrameTime default_time
     ) : document(document),
         on_warning(on_warning),
         io(io),
-        forced_size(forced_size)
+        forced_size(forced_size),
+        default_time(default_time == 0 ? 180 : default_time)
     {
         animate_parser.on_warning = on_warning;
     }
@@ -349,7 +351,7 @@ private:
 //             document->main()->recursive_rename();
 
         if ( max_time <= 0 )
-            max_time = 180;
+            max_time = default_time;
 
         document->main()->animation->last_frame.set(max_time);
         for ( auto lay : layers )
@@ -385,6 +387,7 @@ protected:
     int processed = 0;
     ImportExport* io = nullptr;
     QSize forced_size;
+    model::FrameTime default_time;
 
     static const QRegularExpression unit_re;
 };

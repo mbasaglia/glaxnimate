@@ -30,7 +30,8 @@ public:
         model::Document* document,
         const std::function<void(const QString&)>& on_warning = {},
         ImportExport* io = nullptr,
-        QSize forced_size = {}
+        QSize forced_size = {},
+        model::FrameTime default_time = 180
     );
 
     ~AvdParser();

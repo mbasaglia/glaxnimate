@@ -794,7 +794,9 @@ void GlaxnimateWindow::Private::import_file(QIODevice* file, const io::Options& 
     model::Document imported(options.filename);
 
     dialog_export_status->reset(options.format, options.filename);
-    bool ok = options.format->open(*file, options.filename, &imported, options.settings);
+    auto settings = options.settings;
+    settings["default_time"] = current_document->main()->animation->last_frame.get();
+    bool ok = options.format->open(*file, options.filename, &imported, settings);
     if ( !ok )
     {
         show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));

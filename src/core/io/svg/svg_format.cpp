@@ -25,16 +25,17 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     try
     {
         QSize forced_size = options["forced_size"].toSize();
+        model::FrameTime default_time = options["default_time"].toFloat();
 
         if ( utils::gzip::is_compressed(file) )
         {
             utils::gzip::GzipStream decompressed(&file, on_error);
             decompressed.open(QIODevice::ReadOnly);
-            SvgParser(&decompressed, mode, document, on_error, this, forced_size).parse_to_document();
+            SvgParser(&decompressed, mode, document, on_error, this, forced_size, default_time).parse_to_document();
             return true;
         }
 
-        SvgParser(&file, mode, document, on_error, this, forced_size).parse_to_document();
+        SvgParser(&file, mode, document, on_error, this, forced_size, default_time).parse_to_document();
         return true;
 
     }

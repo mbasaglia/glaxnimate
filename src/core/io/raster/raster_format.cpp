@@ -28,6 +28,10 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
 {
     document->main()->animation->last_frame.set(document->main()->fps.get());
 
+
+    model::FrameTime default_time = settings["default_time"].toFloat();
+    document->main()->animation->last_frame.set(default_time == 0 ? default_time : 180);
+
 #ifndef WITHOUT_POTRACE
     if ( settings.value("trace", {}).toBool() )
     {

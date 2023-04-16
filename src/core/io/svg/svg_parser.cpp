@@ -17,8 +17,9 @@ public:
         const std::function<void(const QString&)>& on_warning,
         ImportExport* io,
         QSize forced_size,
+        model::FrameTime default_time,
         GroupMode group_mode
-    ) : SvgParserPrivate(document, on_warning, io, forced_size),
+    ) : SvgParserPrivate(document, on_warning, io, forced_size, default_time),
         group_mode(group_mode)
     {}
 
@@ -1352,9 +1353,10 @@ glaxnimate::io::svg::SvgParser::SvgParser(
     model::Document* document,
     const std::function<void(const QString&)>& on_warning,
     ImportExport* io,
-    QSize forced_size
+    QSize forced_size,
+    model::FrameTime default_time
 )
-    : d(std::make_unique<Private>(document, on_warning, io, forced_size, group_mode))
+    : d(std::make_unique<Private>(document, on_warning, io, forced_size, default_time, group_mode))
 {
     d->load(device);
 }

@@ -70,7 +70,9 @@ public:
             break;
         }
 
-        return options_dialog(io_options_.format->save_settings(doc));
+        auto ok =  options_dialog(io_options_.format->save_settings(doc));
+        io_options_.settings["default_time"] = doc->main()->animation->last_frame.get();
+        return ok;
     }
 
     bool import_dialog()
