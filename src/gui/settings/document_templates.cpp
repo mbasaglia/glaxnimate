@@ -25,36 +25,53 @@ settings::DocumentTemplate::DocumentTemplate(const QString& filename, bool* load
 
 QSize settings::DocumentTemplate::size() const
 {
-    return document->size();
+    if ( auto comp = main_comp() )
+        return comp->size();
+    return {};
+}
+
+model::Composition* settings::DocumentTemplate::main_comp() const
+{
+    if ( document->assets()->compositions->values.empty() )
+        return nullptr;
+    return document->assets()->compositions->values[0];
 }
 
 model::FrameTime settings::DocumentTemplate::duration() const
 {
-    return document->main()->animation->last_frame.get() - document->main()->animation->first_frame.get();
+    if ( auto comp = main_comp() )
+        return comp->animation->last_frame.get() - comp->animation->first_frame.get();
+
+    return 0;
 }
 
 QString settings::DocumentTemplate::name() const
 {
-    return document->main()->name.get();
+    if ( auto comp = main_comp() )
+        return comp->name.get();
+    return QObject::tr("Unnamed");
 }
 
 QString settings::DocumentTemplate::long_name() const
 {
-    return name_template(document.get()).arg(name());
+    return name_template(main_comp()).arg(name());
 }
 
 float settings::DocumentTemplate::fps() const
 {
-    return document->main()->fps.get();
+    if ( auto comp = main_comp() )
+        return comp->fps.get();
+
+    return 60;
 }
 
 std::unique_ptr<model::Document> settings::DocumentTemplate::create(bool* ok) const
 {
     std::unique_ptr<model::Document> document;
     document = load(ok);
-    document->main()->refresh_uuid();
     document->assets()->refresh_uuid();
-    document->set_best_name(document->main());
+    for ( const auto& comp : document->assets()->compositions->values )
+        document->set_best_name(comp.get());
     return document;
 }
 
@@ -68,8 +85,8 @@ std::unique_ptr<model::Document> settings::DocumentTemplate::load(bool* ok) cons
 
 bool settings::DocumentTemplate::operator<(const settings::DocumentTemplate& other) const
 {
-    QString n1 = document->main()->name.get();
-    QString n2 = other.document->main()->name.get();
+    QString n1 = name();
+    QString n2 = other.name();
     if ( n1 == n2 )
     {
         if ( size().width() == other.size().width() )
@@ -95,18 +112,21 @@ QString settings::DocumentTemplate::aspect_ratio(const QSize& size)
     return {};
 }
 
-QString settings::DocumentTemplate::name_template(model::Document* document)
+QString settings::DocumentTemplate::name_template(model::Composition* comp)
 {
+    if ( !comp )
+        return "%1";
+
     QString aspect;
-    auto w = document->main()->width.get();
-    auto h = document->main()->height.get();
+    auto w = comp->width.get();
+    auto h = comp->height.get();
 
     //: %5 is the file name, %1x%2 is the size, %3 is the aspect ratio, %4 is the frame rate
     return DocumentTemplates::tr("%5 - %1x%2 %3 %4fps")
         .arg(w)
         .arg(h)
         .arg(aspect_ratio(QSize(w, h)))
-        .arg(document->main()->fps.get())
+        .arg(comp->fps.get())
     ;
 }
 
@@ -150,12 +170,17 @@ settings::DocumentTemplates::DocumentTemplates()
 
 bool settings::DocumentTemplates::save_as_template(model::Document* document)
 {
-    QString name_base = document->main()->name.get();
+    if ( !document->assets()->compositions->values.empty() )
+        return false;
+
+    model::Composition* comp = document->assets()->compositions->values[0];
+
+    QString name_base = comp ? comp->name.get() : "";
     if ( name_base.isEmpty() )
         name_base = tr("Template");
 
     // Find a nice name, avoiding duplicates
-    QString name_full_template = DocumentTemplate::name_template(document);
+    QString name_full_template = DocumentTemplate::name_template(comp);
     QString name_template = tr("%1 %2").arg(name_base);
     QString name = name_base;
     QString name_full = name_full_template.arg(name);
@@ -186,7 +211,7 @@ bool settings::DocumentTemplates::save_as_template(model::Document* document)
     }
 
     QFile file(path);
-    if ( !format.save(file, path, document, {}) )
+    if ( !format.save(file, path, comp, {}) )
         return false;
     file.close();
 

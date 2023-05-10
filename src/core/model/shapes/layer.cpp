@@ -8,7 +8,7 @@
 
 #include <QPainter>
 
-#include "model/composition.hpp"
+#include "model/assets/composition.hpp"
 #include "model/document.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Layer)
@@ -135,7 +135,7 @@ void glaxnimate::model::Layer::paint(QPainter* painter, FrameTime time, PaintMod
             {
                 QPainterPath outer_clip;
                 outer_clip.addPolygon(
-                    transform.inverted().map(QRectF(QPointF(0, 0), document()->size()))
+                    transform.inverted().map(owner_composition()->rect())
                 );
                 clip = outer_clip.subtracted(clip);
             }

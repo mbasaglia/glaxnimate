@@ -18,14 +18,13 @@ using namespace glaxnimate;
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
-const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 7;
+const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 8;
 
 
 
-bool io::glaxnimate::GlaxnimateFormat::on_save(QIODevice& file, const QString&,
-                model::Document* document, const QVariantMap&)
+bool io::glaxnimate::GlaxnimateFormat::on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&)
 {
-    return file.write(to_json(document).toJson(QJsonDocument::Indented));
+    return file.write(to_json(comp->document()).toJson(QJsonDocument::Indented));
 }
 
 QJsonObject io::glaxnimate::GlaxnimateFormat::format_metadata()
@@ -51,7 +50,6 @@ QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* docum
     info["keywords"] = keywords;
     doc_obj["info"] = info;
     doc_obj["assets"] = to_json(document->assets());
-    doc_obj["animation"] = to_json(document->main());
     return QJsonDocument(doc_obj);
 }
 

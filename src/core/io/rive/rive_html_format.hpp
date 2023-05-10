@@ -24,7 +24,7 @@ public:
 
 private:
     bool on_save(QIODevice& file, const QString& filename,
-                 model::Document* document, const QVariantMap& setting_values) override;
+                 model::Composition* comp, const QVariantMap& setting_values) override;
 };
 
 } // namespace glaxnimate::io::rive

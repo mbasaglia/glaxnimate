@@ -90,11 +90,11 @@ bool glaxnimate::io::lottie::TgsFormat::on_open(QIODevice& file, const QString&,
     return load_json(json, document);
 }
 
-bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&)
 {
-    validate(document);
+    validate(comp->document(), comp);
 
-    QCborMap json = LottieFormat::to_json(document, true, true);
+    QCborMap json = LottieFormat::to_json(comp, true, true);
     json[QLatin1String("tgs")] = 1;
     QByteArray data = cbor_write_json(json, true);
 
@@ -110,9 +110,9 @@ bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&,
 }
 
 
-void glaxnimate::io::lottie::TgsFormat::validate(model::Document* document)
+void glaxnimate::io::lottie::TgsFormat::validate(model::Document* document, model::Composition* comp)
 {
-    TgsVisitor(this).visit(document);
+    TgsVisitor(this).visit(document, comp);
 }
 
 

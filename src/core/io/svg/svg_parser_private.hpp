@@ -80,9 +80,15 @@ public:
         if ( document )
             this->document = document;
 
-        animate_parser.fps = this->document->main()->fps.get();
 
-        size = this->document->size();
+        model::Composition* main;
+        if ( document->assets()->compositions->values.empty() )
+            main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
+        else
+            main = document->assets()->compositions->values[0];
+        animate_parser.fps = main->fps.get();
+
+        size = main->size();
         auto root = dom.documentElement();
 
         if ( forced_size.isValid() )
@@ -93,6 +99,8 @@ public:
         {
             size = get_size(root);
         }
+
+        main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
 
         to_process = 0;
         on_parse_prepare(root);
@@ -344,16 +352,13 @@ protected:
 private:
     void write_document_data()
     {
-        document->main()->width.set(size.width());
-        document->main()->height.set(size.height());
-
-//         if ( to_process < 1000 )
-//             document->main()->recursive_rename();
+        main->width.set(size.width());
+        main->height.set(size.height());
 
         if ( max_time <= 0 )
             max_time = default_time;
 
-        document->main()->animation->last_frame.set(max_time);
+        main->animation->last_frame.set(max_time);
         for ( auto lay : layers )
         {
             lay->animation->last_frame.set(max_time);
@@ -388,6 +393,7 @@ protected:
     ImportExport* io = nullptr;
     QSize forced_size;
     model::FrameTime default_time;
+    model::Composition* main = nullptr;
 
     static const QRegularExpression unit_re;
 };

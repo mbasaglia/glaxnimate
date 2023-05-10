@@ -50,10 +50,10 @@ bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, 
     return RiveLoader(stream, this).load_document(document);
 }
 
-bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice& device, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice& device, const QString&, model::Composition* comp, const QVariantMap&)
 {
     RiveExporter exporter(&device, this);
-    exporter.write_document(document);
+    exporter.write_document(comp->document());
     return true;
 }
 

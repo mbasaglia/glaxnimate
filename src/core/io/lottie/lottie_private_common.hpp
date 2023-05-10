@@ -167,11 +167,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"Composition", {
         FieldInfo("layers", Custom),
-    }},
-    {"Precomposition", {
-        FieldInfo("id", Custom)
-    }},
-    {"MainComposition", {
+        FieldInfo("id", Custom),
         FieldInfo{"op", Custom},
         FieldInfo{"ip", Custom},
         FieldInfo("v", Custom),

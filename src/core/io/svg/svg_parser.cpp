@@ -91,7 +91,7 @@ protected:
         parse_defs();
         parse_metadata();
 
-        model::Layer* parent_layer = add_layer(&document->main()->shapes);
+        model::Layer* parent_layer = add_layer(&main->shapes);
         parent_layer->transform.get()->position.set(-pos);
         parent_layer->transform.get()->scale.set(scale);
         parent_layer->name.set(
@@ -103,7 +103,7 @@ protected:
         });
         parse_children({svg, &parent_layer->shapes, parse_style(svg, default_style), false});
 
-        document->main()->name.set(
+        main->name.set(
             attr(svg, "sodipodi", "docname", "")
         );
     }

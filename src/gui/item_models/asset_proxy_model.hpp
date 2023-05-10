@@ -71,7 +71,7 @@ public:
 protected:
     bool is_precomp(const QModelIndex & index) const
     {
-        return cast_index<model::Precomposition>(index);
+        return cast_index<model::Composition>(index);
     }
 
     template<class T>

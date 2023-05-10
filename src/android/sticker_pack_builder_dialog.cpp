@@ -74,20 +74,22 @@ public:
 
         void rebuild_preview()
         {
+            auto main = document->assets()->compositions->values[0];
             rebuild_preview((
-                document->main()->animation->first_frame.get() +
-                document->main()->animation->last_frame.get()
+                main->animation->first_frame.get() +
+                main->animation->last_frame.get()
             ) / 2);
         }
 
         void rebuild_preview(model::FrameTime t)
         {
+            auto main = document->assets()->compositions->values[0];
             pixmap.fill(Qt::white);
             QPainter painter(&pixmap);
             painter.setRenderHint(QPainter::Antialiasing);
-            auto scale = qreal(pixmap.width()) / document->main()->width.get();
+            auto scale = qreal(pixmap.width()) / main->width.get();
             painter.scale(scale, scale);
-            document->main()->paint(&painter, t, model::VisualNode::Render);
+            main->paint(&painter, t, model::VisualNode::Render);
             painter.end();
             preview.setPixmap(pixmap);
         }

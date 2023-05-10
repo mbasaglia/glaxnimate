@@ -40,10 +40,10 @@ public:
     {
         load_version(json);
         load_meta(json["meta"]);
-        load_animation_container(json, document->main()->animation.get());
         load_assets(json["assets"].toArray());
         load_fonts(json["fonts"]["list"].toArray());
-        load_composition(json, document->main());
+        auto main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
+        load_composition(json, main);
     }
 
 private:
@@ -106,6 +106,7 @@ private:
         layer_indices.clear();
         deferred.clear();
 
+        load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
 
         {
@@ -156,7 +157,7 @@ private:
         {
             inner_shape = load_precomp_layer(json);
 
-            auto op = document->main()->animation->last_frame.get();
+            auto op = this->composition->animation->last_frame.get();
             if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 ||
                 json["op"].toDouble(op) != op || start_mask
             )
@@ -908,7 +909,7 @@ private:
 
     void load_assets(const QJsonArray& assets)
     {
-        std::vector<std::pair<QJsonObject, model::Precomposition*>> comps;
+        std::vector<std::pair<QJsonObject, model::Composition*>> comps;
 
         for ( const auto& assetv : assets )
         {
@@ -943,13 +944,13 @@ private:
         }
     }
 
-    model::Precomposition* load_asset_precomp(QJsonObject asset)
+    model::Composition* load_asset_precomp(QJsonObject asset)
     {
-        auto comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
+        auto comp = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
 
         QString id = asset["id"].toString();
         if ( precomp_ids.count(id) )
-            format->warning(io::lottie::LottieFormat::tr("Duplicate Precomposition ID: %1").arg(id));
+            format->warning(io::lottie::LottieFormat::tr("Duplicate Composition ID: %1").arg(id));
         precomp_ids[id] = comp;
 
         comp->name.set(id);
@@ -1074,7 +1075,7 @@ private:
     model::Composition* composition = nullptr;
     app::log::Log logger{"Lottie Import"};
     QMap<QString, model::Bitmap*> bitmap_ids;
-    QMap<QString, model::Precomposition*> precomp_ids;
+    QMap<QString, model::Composition*> precomp_ids;
     QMap<QString, FontInfo> fonts;
     model::Layer* mask = nullptr;
     model::DocumentNode* current_node = nullptr;

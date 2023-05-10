@@ -112,7 +112,7 @@ std::vector<glaxnimate::model::Composition *> glaxnimate::model::CompGraph::poss
     std::unordered_map<glaxnimate::model::Composition*, bool> cache;
     std::vector<glaxnimate::model::Composition*> valid;
 
-    for ( const auto& precomp : document->assets()->precompositions->values )
+    for ( const auto& precomp : document->assets()->compositions->values )
     {
         if ( !recursive_is_ancestor_of(precomp.get(), ancestor, cache, layers) )
             valid.push_back(precomp.get());

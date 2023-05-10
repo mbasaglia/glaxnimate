@@ -26,11 +26,13 @@ QStringList glaxnimate::io::raster::RasterFormat::extensions() const
 
 bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString& filename, model::Document* document, const QVariantMap& settings)
 {
-    document->main()->animation->last_frame.set(document->main()->fps.get());
+    auto main = document->assets()->add_comp_no_undo();
+
+    main->animation->last_frame.set(main->fps.get());
 
 
     model::FrameTime default_time = settings["default_time"].toFloat();
-    document->main()->animation->last_frame.set(default_time == 0 ? default_time : 180);
+    main->animation->last_frame.set(default_time == 0 ? default_time : 180);
 
 #ifndef WITHOUT_POTRACE
     if ( settings.value("trace", {}).toBool() )
@@ -41,7 +43,7 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         if ( image.isNull() )
             return false;
 
-        utils::trace::TraceWrapper trace(document, image, filename);
+        utils::trace::TraceWrapper trace(main, image, filename);
         std::vector<QRgb> colors;
         std::vector<utils::trace::TraceWrapper::TraceResult> result;
         auto preset = trace.preset_suggestion();
@@ -64,8 +66,8 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         img->name.set(QFileInfo(filename).baseName());
     img->transform->anchor_point.set(p);
     img->transform->position.set(p);
-    document->main()->shapes.insert(std::move(img));
-    document->main()->width.set(bmp->pixmap().width());
-    document->main()->height.set(bmp->pixmap().height());
+    main->shapes.insert(std::move(img));
+    main->width.set(bmp->pixmap().width());
+    main->height.set(bmp->pixmap().height());
     return !bmp->pixmap().isNull();
 }

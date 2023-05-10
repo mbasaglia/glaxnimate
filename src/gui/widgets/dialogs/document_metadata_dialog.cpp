@@ -56,7 +56,6 @@ DocumentMetadataDialog::DocumentMetadataDialog(model::Document* document, QWidge
     d->ui.edit_author->setText(d->document->info().author);
     d->ui.edit_description->setText(d->document->info().description);
     d->ui.edit_keywords->setPlainText(d->document->info().keywords.join("\n"));
-    d->ui.edit_title->setText(d->document->main()->name.get());
 
     d->add_placeholder();
 }
@@ -113,7 +112,6 @@ void DocumentMetadataDialog::button_clicked(QAbstractButton* button)
         d->document->info().author = d->ui.edit_author->text();
         d->document->info().description = d->ui.edit_description->text();
         d->document->info().keywords = d->ui.edit_keywords->toPlainText().split("\n");
-        d->document->main()->name.set(d->ui.edit_title->text());
         accept();
     }
     else

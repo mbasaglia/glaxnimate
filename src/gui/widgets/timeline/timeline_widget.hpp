@@ -12,6 +12,7 @@
 
 #include "model/document.hpp"
 #include "item_models/property_model_full.hpp"
+#include "item_models/comp_filter_model.hpp"
 
 
 class QTreeView;
@@ -29,7 +30,7 @@ public:
     
 //     void clear();
 
-    void set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander);
+    void set_model(item_models::CompFilterModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander);
 
     int row_height() const;
     void set_row_height(int w);
@@ -62,6 +63,9 @@ public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
     void reset_view();
+
+private slots:
+    void update_comp(model::Composition* comp);
 
 private:
     void model_rows_added(const QModelIndex& parent, int first, int last);

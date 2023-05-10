@@ -38,7 +38,7 @@ public:
     static GlaxnimateFormat* instance() { return autoreg.registered; }
 
 protected:
-    bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
+    bool on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&) override;
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
 
 private:

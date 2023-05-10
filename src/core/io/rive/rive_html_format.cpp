@@ -10,24 +10,24 @@
 
 
 bool glaxnimate::io::rive::RiveHtmlFormat::on_save(
-    QIODevice& file, const QString&, model::Document* document, const QVariantMap&
+    QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&
 )
 {
-    file.write(lottie::LottieHtmlFormat::html_head(this, document,
+    file.write(lottie::LottieHtmlFormat::html_head(this, comp,
         "<script src='https://unpkg.com/@rive-app/canvas@1.0.79'></script>"
     ));
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
     RiveExporter exp(&buffer, this);
-    exp.write_document(document);
+    exp.write_document(comp->document());
     file.write(QString(R"(
 <body>
 <canvas id="animation" width="%1" height="%2"></canvas>
 
 <script>
     var rive_data = new Uint8Array([)")
-        .arg(document->main()->width.get())
-        .arg(document->main()->height.get())
+        .arg(comp->width.get())
+        .arg(comp->height.get())
         .toUtf8()
     );
 

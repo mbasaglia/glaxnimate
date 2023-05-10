@@ -165,10 +165,11 @@ public:
         clear_document();
 
         current_document = std::make_unique<model::Document>("");
-        current_document->main()->width.set(512);
-        current_document->main()->height.set(512);
-        current_document->main()->animation->last_frame.set(180);
-        current_document->main()->fps.set(60);
+        auto main = current_document->assets()->compositions->values.insert(std::make_unique<model::Composition>(current_document.get()));
+        main->width.set(512);
+        main->height.set(512);
+        main->animation->last_frame.set(180);
+        main->fps.set(60);
 
         auto opts = current_document->io_options();
         opts.format = io::glaxnimate::GlaxnimateFormat::instance();
@@ -179,13 +180,13 @@ public:
         layer->animation->last_frame.set(180);
         layer->name.set(layer->type_name_human());
         QPointF pos(
-            current_document->main()->width.get() / 2.0,
-            current_document->main()->height.get() / 2.0
+            main->width.get() / 2.0,
+            main->height.get() / 2.0
         );
         layer->transform.get()->anchor_point.set(pos);
         layer->transform.get()->position.set(pos);
 
-        current_document->main()->shapes.insert(std::move(layer), 0);
+        main->shapes.insert(std::move(layer), 0);
 
         setup_document();
     }
@@ -211,7 +212,10 @@ public:
     {
         scene.set_document(current_document.get());
         document_node_model.set_document(current_document.get());
-        comp = current_document->main();
+        if ( current_document->assets()->compositions->values.empty() )
+            comp = current_document->assets()->compositions->values.insert(std::make_unique<model::Composition>(current_document.get()));
+        else
+            comp = current_document->assets()->compositions->values[0];
         current_document->set_record_to_keyframe(true);
 
         // Undo Redo
@@ -221,13 +225,13 @@ public:
         connect(&current_document->undo_stack(), &QUndoStack::canRedoChanged, action_redo, &QAction::setEnabled);
 
         // play controls
-        auto first_frame = current_document->main()->animation->first_frame.get();
-        auto last_frame = current_document->main()->animation->last_frame.get();
+        auto first_frame = comp->animation->first_frame.get();
+        auto last_frame = comp->animation->last_frame.get();
         ui.play_controls->set_range(first_frame, last_frame);
         ui.play_controls->set_record_enabled(current_document->record_to_keyframe());
-        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_min);
-        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_max);;
-        QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &gui::FrameControlsWidget::set_fps);
+        QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_min);
+        QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_max);;
+        QObject::connect(comp, &model::MainComposition::fps_changed, ui.play_controls, &gui::FrameControlsWidget::set_fps);
         QObject::connect(ui.play_controls, &gui::FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
         QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &gui::FrameControlsWidget::set_frame);
         QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &gui::FrameControlsWidget::set_record_enabled);
@@ -898,11 +902,11 @@ public:
 
         if ( export_opts && exporting_png )
         {
-            QImage pix(current_document->size(), QImage::Format_RGBA8888);
+            QImage pix(comp->size(), QImage::Format_RGBA8888);
             pix.fill(Qt::transparent);
             QPainter painter(&pix);
             painter.setRenderHint(QPainter::Antialiasing);
-            current_document->main()->paint(&painter, current_document->current_time(), model::VisualNode::Render);
+            comp->paint(&painter, current_document->current_time(), model::VisualNode::Render);
             painter.end();
             QByteArray data;
             QBuffer buf(&data);
@@ -1222,7 +1226,7 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
 
 void MainWindow::set_current_composition(model::Composition* comp)
 {
-    d->comp = comp ? comp : d->current_document->main();
+    d->comp = comp ? comp : d->comp;
     d->scene.set_composition(comp);
     d->layer_view->set_composition(comp);
 }

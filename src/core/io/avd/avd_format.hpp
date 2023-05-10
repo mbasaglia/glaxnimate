@@ -25,7 +25,7 @@ public:
 
 protected:
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap& options) override;
-    bool on_save(QIODevice & file, const QString & filename, model::Document * document, const QVariantMap & setting_values) override;
+    bool on_save(QIODevice & file, const QString & filename, model::Composition* comp, const QVariantMap & setting_values) override;
 
 private:
     static Autoreg<AvdFormat> autoreg;

@@ -147,7 +147,7 @@ public:
         }
 
         if ( bounds.isNull() )
-            bounds = QRectF(QPointF(0, 0), document->size());
+            bounds = QRectF(QPointF(0, 0), window->current_composition()->size());
 
 
         // Insert Gradient

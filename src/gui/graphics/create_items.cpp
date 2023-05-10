@@ -7,7 +7,7 @@
 #include "create_items.hpp"
 
 #include "document_node_graphics_item.hpp"
-#include "main_composition_item.hpp"
+#include "composition_item.hpp"
 #include "model/shapes/group.hpp"
 #include "model/shapes/layer.hpp"
 #include "model/shapes/precomp_layer.hpp"
@@ -40,17 +40,6 @@ static graphics::DocumentNodeGraphicsItem * make_graphics_item_shape(model::Shap
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
-    register_builder<model::MainComposition>(
-        [](model::MainComposition* mcomp){
-            return new MainCompositionItem(mcomp);
-        },
-        [](model::MainComposition* mcomp){
-            auto v = std::make_unique<GraphicsEditor>(mcomp);
-            v->add_child<graphics::MainCompositionTransformItem>(mcomp);
-            return v;
-        }
-    );
-
     auto make_item_for_modifier = [](model::ShapeOperator* shape){
         auto item = GraphicsItemFactory::make_graphics_item_default(shape);
         QObject::connect(shape, &model::ShapeOperator::shape_changed,
@@ -154,12 +143,13 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
-    register_builder<model::Precomposition>(
-        [](model::Precomposition* comp){
+    register_builder<model::Composition>(
+        [](model::Composition* comp){
             return new CompositionItem(comp);
         },
-        [](model::Precomposition* comp){
+        [](model::Composition* comp){
             auto v = std::make_unique<GraphicsEditor>(comp);
+            v->add_child<graphics::CompositionTransformItem>(comp);
             return v;
         }
     );

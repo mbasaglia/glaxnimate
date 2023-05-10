@@ -83,7 +83,7 @@ void GlaxnimateWindow::document_export_as()
 
 void GlaxnimateWindow::document_export_sequence()
 {
-    ExportImageSequenceDialog(d->current_document.get(), d->export_options.path, this).exec();
+    ExportImageSequenceDialog(d->comp, d->export_options.path, this).exec();
 }
 
 void GlaxnimateWindow::document_open_dialog()
@@ -422,9 +422,9 @@ void GlaxnimateWindow::trace_dialog(model::DocumentNode* object)
     return d->trace_dialog(object);
 }
 
-void GlaxnimateWindow::shape_to_precomposition(model::ShapeElement* node)
+void GlaxnimateWindow::shape_to_composition(model::ShapeElement* node)
 {
-    return d->shape_to_precomposition(node);
+    return d->shape_to_composition(node);
 }
 
 void GlaxnimateWindow::set_current_composition(model::Composition* comp)
@@ -558,17 +558,17 @@ void GlaxnimateWindow::ipc_draw_background(QPainter *painter)
         d->ipc_memory->detach();
 
         qreal image_aspect = qreal(image.width()) / image.height();
-        qreal document_aspect = qreal(document()->size().width()) / document()->size().height();
+        qreal document_aspect = qreal(d->comp->width.get()) / d->comp->height.get();
         qreal width, height;
         QRectF draw_rect;
         if (image_aspect >= document_aspect) {
-            height = document()->size().height();
+            height = d->comp->height.get();
             width = image_aspect * height;
-            draw_rect = {(document()->size().width() - width) / 2.0, 0.0, width, height};
+            draw_rect = {(d->comp->width.get() - width) / 2.0, 0.0, width, height};
         } else {
-            width = document()->size().width();
+            width = d->comp->width.get();
             height = width / image_aspect;
-            draw_rect = {0.0, (document()->size().height() - height) / 2.0, width, height};
+            draw_rect = {0.0, (d->comp->height.get() - height) / 2.0, width, height};
         }
         painter->drawImage(draw_rect, image);
     }

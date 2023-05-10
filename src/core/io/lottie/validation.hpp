@@ -22,7 +22,7 @@ protected:
         fmt->message(LottieFormat::tr("%1: %2").arg(node->object_name()).arg(message), severity);
     }
 
-    void on_visit(model::Document * document) override;
+    void on_visit(model::Document * document, model::Composition* main) override;
 
     LottieFormat* fmt;
     QSize fixed_size;
@@ -33,7 +33,7 @@ protected:
 /**
  * \brief Triggers warnings on \p format if \p document isn't suitable for Discord stickers
  */
-void validate_discord(model::Document* document, LottieFormat* format);
+void validate_discord(model::Document* document, model::Composition* main, LottieFormat* format);
 
 
 } // namespace glaxnimate::io::lottie

@@ -194,7 +194,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_move_to, &QAction::triggered, parent, &GlaxnimateWindow::move_to);
     connect(ui.action_validate_tgs, &QAction::triggered, parent, &GlaxnimateWindow::validate_tgs);
     connect(ui.action_validate_discord, &QAction::triggered, parent, [this]{validate_discord();});
-    connect(ui.action_resize, &QAction::triggered, parent, [this]{ ResizeDialog(this->parent).resize_document(current_document.get()); });
+    connect(ui.action_resize, &QAction::triggered, parent, [this]{ ResizeDialog(this->parent).resize_composition(comp); });
     connect(ui.action_donate, &QAction::triggered, parent, &GlaxnimateWindow::help_donate);
     connect(ui.action_new_layer, &QAction::triggered, parent, [this]{layer_new_layer();});
     connect(ui.action_new_group, &QAction::triggered, parent, [this]{layer_new_group();});
@@ -221,7 +221,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_export_sequence, &QAction::triggered, parent, &GlaxnimateWindow::document_export_sequence);
     connect(ui.action_document_cleanup, &QAction::triggered, parent, [this]{cleanup_document();});
     connect(ui.action_timing, &QAction::triggered, parent, [this]{
-        TimingDialog(current_document.get(), this->parent).exec();
+        TimingDialog(comp, this->parent).exec();
     });
 
     connect(ui.action_play, &QAction::triggered, ui.play_controls, &FrameControlsWidget::toggle_play);
@@ -915,15 +915,15 @@ void GlaxnimateWindow::Private::init_menus()
     connect(ui.action_save_as_template, &QAction::triggered, parent, [this]{
         bool ok = true;
 
-        QString old_name = current_document->main()->name.get();
+        QString old_name = comp->name.get();
         QString name = QInputDialog::getText(parent, tr("Save as Template"), tr("Name"), QLineEdit::Normal, old_name, &ok);
         if ( !ok )
             return;
 
-        current_document->main()->name.set(name);
+        comp->name.set(name);
         if ( !settings::DocumentTemplates::instance().save_as_template(current_document.get()) )
             show_warning(tr("Save as Template"), tr("Could not save template"));
-        current_document->main()->name.set(old_name);
+        comp->name.set(old_name);
     });
 }
 
@@ -1236,7 +1236,7 @@ void GlaxnimateWindow::Private::insert_emoji()
     emoji::EmojiSetDialog dialog;
     if ( !dialog.exec() || dialog.selected_svg().isEmpty() )
         return;
-    import_file(dialog.selected_svg(), {{"forced_size", current_document->size()}});
+    import_file(dialog.selected_svg(), {{"forced_size", comp->size()}});
 }
 
 void GlaxnimateWindow::Private::import_from_lottiefiles()

@@ -8,7 +8,7 @@
 #include "lottie_exporter.hpp"
 #include "cbor_write_json.hpp"
 
-QByteArray glaxnimate::io::lottie::LottieHtmlFormat::html_head(ImportExport* ie, model::Document* document, const QString& extra)
+QByteArray glaxnimate::io::lottie::LottieHtmlFormat::html_head(ImportExport* ie,  model::Composition* comp, const QString& extra)
 {
     return QString(
 R"(<!DOCTYPE html>
@@ -32,26 +32,26 @@ R"(<!DOCTYPE html>
     %3
 </head>
 )")
-    .arg(document->main()->width.get())
-    .arg(document->main()->height.get())
+    .arg(comp->width.get())
+    .arg(comp->height.get())
     .arg(extra)
-    .arg(document->main()->object_name())
+    .arg(comp->object_name())
     .arg(ie->name())
     .toUtf8()
     ;
 }
 
 bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
-                                           model::Document* document, const QVariantMap& settings)
+                                                       model::Composition* comp, const QVariantMap& settings)
 {
-    file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.js'></script>"));
+    file.write(html_head(this, comp, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.js'></script>"));
     file.write(R"(
 <body>
 <div id="animation"></div>
 
 <script>
     var lottie_json = )");
-    detail::LottieExporterState exp(this, document, false, false, {{"auto_embed", true}});
+    detail::LottieExporterState exp(this, comp, false, false, {{"auto_embed", true}});
     file.write(cbor_write_json(exp.to_json(), false));
 
 file.write(QString(R"(

@@ -71,6 +71,14 @@ public:
         action_remove_keyframe.setText(tr("Remove Keyframe"));
     }
 
+    model::Composition* comp()
+    {
+        if ( auto shape = property->object()->cast<model::ShapeElement>() )
+            return shape->owner_composition();
+
+        return window->current_composition();
+    }
+
     model::AnimatableBase* property = nullptr;
     QAction* action_title;
     QAction action_kf_loop;
@@ -120,7 +128,7 @@ void glaxnimate::gui::AnimatedPropertyMenu::loop_keyframes()
 
     d->property->object()->push_command(new command::SetKeyframe(
         d->property,
-        d->property->object()->document()->main()->animation->last_frame.get(),
+        d->comp()->animation->last_frame.get(),
         d->property->keyframe(0)->value(),
         true
     ));
@@ -131,7 +139,7 @@ void glaxnimate::gui::AnimatedPropertyMenu::follow_path()
     if ( d->property && d->property->traits().type == model::PropertyTraits::Point )
     {
         auto prop = static_cast<model::AnimatedProperty<QPointF>*>(d->property);
-        FollowPathDialog(prop, d->window->model(), parentWidget()).exec();
+        FollowPathDialog(prop, d->comp(), d->window->model(), parentWidget()).exec();
     }
 }
 

@@ -9,7 +9,7 @@
 #include <QPainter>
 
 #include "model/document.hpp"
-#include "model/assets/precomposition.hpp"
+#include "model/assets/composition.hpp"
 #include "model/assets/assets.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::PreCompLayer)
@@ -50,7 +50,7 @@ std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::PreCompLayer::
 bool glaxnimate::model::PreCompLayer::is_valid_precomp(glaxnimate::model::DocumentNode* node) const
 {
     auto owncomp = owner_composition();
-    if ( auto precomp = qobject_cast<glaxnimate::model::Precomposition*>(node) )
+    if ( auto precomp = qobject_cast<glaxnimate::model::Composition*>(node) )
         return !document()->comp_graph().is_ancestor_of(precomp, owncomp);
     return false;
 }

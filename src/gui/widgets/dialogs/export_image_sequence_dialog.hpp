@@ -18,7 +18,7 @@ class ExportImageSequenceDialog : public QDialog
     Q_OBJECT
 
 public:
-    ExportImageSequenceDialog(model::Document* document, QDir export_path, QWidget* parent = nullptr);
+    ExportImageSequenceDialog(model::Composition* comp, QDir export_path, QWidget* parent = nullptr);
     ~ExportImageSequenceDialog();
 
     QDir export_path() const;

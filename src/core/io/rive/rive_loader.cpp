@@ -40,7 +40,7 @@ struct Artboard
     Identifier child_count = 0;
     VarUint timeline_duration = 0;
     VarUint keyframe_timeline_duration = 0;
-    model::Precomposition* comp = nullptr;
+    model::Composition* comp = nullptr;
     QSizeF size;
 };
 
@@ -146,7 +146,7 @@ struct LoadCotext
         artboards[object] = Artboard(object, &objects.back());
         artboard = &artboards[object];
         artboards_id.push_back(artboard);
-        artboard->comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
+        artboard->comp = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
         artboard->size = QSizeF(
             object->get<Float32>("width"),
             object->get<Float32>("height")
@@ -163,6 +163,7 @@ struct LoadCotext
     LoadCotext(RiveFormat* format, model::Document* document)
         : document(document), format(format)
     {
+        main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
     }
 
     void preprocess_object(Object* object)
@@ -294,15 +295,15 @@ struct LoadCotext
         precomp_layer->composition.set(artboard.comp);
 
         float last_frame = artboard.timeline_duration == 0 ? artboard.keyframe_timeline_duration : artboard.timeline_duration;
-        document->main()->animation->last_frame.set(qMax(document->main()->animation->last_frame.get(), last_frame));
+        main->animation->last_frame.set(qMax(main->animation->last_frame.get(), last_frame));
 
-        if ( document->assets()->precompositions->values.size() == 1 )
+        if ( document->assets()->compositions->values.size() == 1 )
         {
-            document->main()->width.set(precomp_layer->size.get().width());
-            document->main()->height.set(precomp_layer->size.get().height());
+            main->width.set(precomp_layer->size.get().width());
+            main->height.set(precomp_layer->size.get().height());
         }
 
-        document->main()->shapes.insert(std::move(precomp_layer));
+        main->shapes.insert(std::move(precomp_layer));
     }
 
     void add_shapes(Object* parent, model::ObjectListProperty<model::ShapeElement>& prop)
@@ -731,6 +732,7 @@ struct LoadCotext
     RiveFormat* format = nullptr;
     std::vector<Artboard*> artboards_id;
     std::vector<Asset> assets;
+    model::Composition* main = nullptr;
 };
 
 } // namespace

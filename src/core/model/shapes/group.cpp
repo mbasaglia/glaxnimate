@@ -47,7 +47,7 @@ void glaxnimate::model::Group::add_shapes(glaxnimate::model::FrameTime t, math::
 QRectF glaxnimate::model::Group::local_bounding_rect(FrameTime t) const
 {
     if ( shapes.empty() )
-        return QRectF(QPointF(0, 0), document()->size());
+        return owner_composition()->rect();
     return shapes.bounding_rect(t);
 }
 

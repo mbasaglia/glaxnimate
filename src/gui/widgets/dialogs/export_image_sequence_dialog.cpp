@@ -18,21 +18,21 @@ class glaxnimate::gui::ExportImageSequenceDialog::Private
 {
 public:
     Ui::ExportImageSequenceDialog ui;
-    model::Document* document;
+    model::Composition* comp;
 };
 
 glaxnimate::gui::ExportImageSequenceDialog::ExportImageSequenceDialog(
-    model::Document* document, QDir export_path, QWidget* parent
+    model::Composition* comp, QDir export_path, QWidget* parent
 )
     : QDialog(parent), d(std::make_unique<Private>())
 {
-    d->document = document;
+    d->comp = comp;
     if ( !export_path.exists() )
-        export_path = document->io_options().path;
+        export_path = comp->document()->io_options().path;
 
     d->ui.setupUi(this);
-    auto frame_from = document->main()->animation->first_frame.get();
-    auto frame_to = document->main()->animation->last_frame.get();
+    auto frame_from = comp->animation->first_frame.get();
+    auto frame_to = comp->animation->last_frame.get();
     d->ui.input_frame_from->setMinimum(frame_from);
     d->ui.input_frame_from->setMaximum(frame_to);
     d->ui.input_frame_from->setValue(frame_from);
@@ -107,7 +107,7 @@ void glaxnimate::gui::ExportImageSequenceDialog::render()
         basename.replace("{frame}", frame_name);
 
         QImageWriter(path.filePath(basename), format).write(
-            io::raster::RasterMime::frame_to_image(d->document->main(), f)
+            io::raster::RasterMime::frame_to_image(d->comp, f)
         );
 
         d->ui.progress_bar->setValue(f);

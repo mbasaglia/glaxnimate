@@ -174,7 +174,6 @@ public:
     std::unique_ptr<QSharedMemory> ipc_memory;
 
     // document
-    void setup_document(const QString& filename);
     void do_setup_document();
     void setup_document_new(const QString& filename);
     bool setup_document_open(const io::Options& options);
@@ -200,8 +199,7 @@ public:
     void autosave_timer_start(int mins = -1);
     void autosave_timer_tick();
     QString backup_name();
-    QString backup_name(const QUuid& uuid);
-    void load_backup(const QUuid& uuid);
+    void load_backup(model::Document* doc);
     QString drop_event_data(QDropEvent* ev);
     void import_image();
     void import_file();
@@ -285,7 +283,7 @@ public:
         int layer_index
     );
     void on_remove_precomp(int index);
-    void shape_to_precomposition(model::ShapeElement* node);
+    void shape_to_composition(model::ShapeElement* node);
 
     void layer_new_layer();
     void layer_new_fill();

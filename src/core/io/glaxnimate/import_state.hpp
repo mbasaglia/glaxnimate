@@ -11,6 +11,7 @@
 
 #include "math/bezier/bezier.hpp"
 #include "glaxnimate_format.hpp"
+#include "model/assets/assets.hpp"
 
 namespace glaxnimate::io::glaxnimate::detail {
 
@@ -237,6 +238,38 @@ private:
         {
             if ( object["__type__"].toString() == "MaskSettings" )
                 object["mask"] = int(object["mask"].toBool());
+        }
+
+
+        if ( document_version < 8 )
+        {
+            if ( object["__type__"].toString() == "MainComposition" )
+            {
+                object["__type__"].toString() = "Composition";
+            }
+            else if ( object["__type__"].toString() == "Precomposition" )
+            {
+                object["__type__"].toString() = "Composition";
+                if ( !document->assets()->compositions->values.empty() )
+                {
+                    auto main = document->assets()->compositions->values[0];
+                    if ( !object.contains("fps") )
+                        object["fps"] = main->fps.get();
+                    if ( !object.contains("width") )
+                        object["width"] = main->width.get();
+                    if ( !object.contains("height") )
+                        object["height"] = main->height.get();
+                }
+            }
+            else if ( object["__type__"].toString() == "PrecompositionList" )
+            {
+                object["__type__"].toString() = "CompositionList";
+            }
+            else if ( object["__type__"].toString() == "Assets" )
+            {
+                object["compositions"] = object["precompositions"];
+                object.remove("precompositions");
+            }
         }
     }
 
@@ -534,12 +567,6 @@ private:
 
     model::Object* create_object(const QString& type)
     {
-        if ( type == "MainComposition" )
-        {
-            error(GlaxnimateFormat::tr("Objects of type 'MainComposition' can only be at the top level of the document"));
-            return nullptr;
-        }
-
         if ( auto obj = model::Factory::instance().build(type, document) )
         {
             temporaries.emplace_back(obj);

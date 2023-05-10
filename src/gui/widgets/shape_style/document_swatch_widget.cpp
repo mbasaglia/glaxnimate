@@ -44,7 +44,7 @@ public:
     class FetchColorVisitor : public model::Visitor
     {
     private:
-        void on_visit(model::Document * doc) override
+        void on_visit(model::Document * doc, model::Composition*) override
         {
             macro = command::UndoMacroGuard(tr("Gather Document Swatch"), doc);
 
@@ -116,7 +116,7 @@ public:
         }
 
     private:
-        void on_visit(model::Document * doc) override
+        void on_visit(model::Document * doc, model::Composition*) override
         {
             macro = command::UndoMacroGuard(tr("Link Shapes to Swatch"), doc);
         }
@@ -312,7 +312,7 @@ model::NamedColor * DocumentSwatchWidget::current_color() const
 
 void DocumentSwatchWidget::generate()
 {
-    Private::FetchColorVisitor().visit(d->document);
+    Private::FetchColorVisitor().visit(d->document, nullptr);
 }
 
 void DocumentSwatchWidget::open()
@@ -380,14 +380,24 @@ void DocumentSwatchWidget::open()
         d->document->assets()->add_color(p.first, p.second);
 
     if ( check_link.isChecked() )
-        Private::ApplyColorVisitor(d->document).visit(d->document);
+        Private::ApplyColorVisitor(d->document).visit(d->document, nullptr);
 }
 
 void DocumentSwatchWidget::save()
 {
     if ( d->ui.swatch->palette().name().isEmpty() )
     {
-        QString name = QInputDialog::getText(this, tr("Save Palette"), tr("Name"), QLineEdit::Normal, d->document->main()->name.get());
+        QString default_name = tr("Palette");
+        for ( const auto& comp :  d->document->assets()->compositions->values )
+        {
+            if ( comp->name.get() != "" )
+            {
+                default_name = comp->name.get();
+                break;
+            }
+        }
+
+        QString name = QInputDialog::getText(this, tr("Save Palette"), tr("Name"), QLineEdit::Normal, default_name);
         if ( name.isEmpty() )
             return;
 
@@ -521,7 +531,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
                 tr("Link shapes with matching colors"),
                 this,
                 [item, this]{
-                    Private::ApplyColorVisitor({item}).visit(d->document);
+                    Private::ApplyColorVisitor({item}).visit(d->document, nullptr);
                 }
             );
         }

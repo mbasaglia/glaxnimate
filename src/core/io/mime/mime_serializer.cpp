@@ -12,6 +12,7 @@
 #include "json_mime.hpp"
 #include "io/svg/svg_mime.hpp"
 #include "model/document.hpp"
+#include "model/assets/assets.hpp"
 
 
 glaxnimate::io::Autoreg<glaxnimate::io::mime::JsonMime> glaxnimate::io::mime::JsonMime::autoreg;
@@ -48,11 +49,12 @@ glaxnimate::io::mime::DeserializedData::~DeserializedData() = default;
 
 bool glaxnimate::io::mime::DeserializedData::empty() const
 {
-    return !document || document->main()->shapes.empty();
+    return !document || main->shapes.empty();
 }
 
 
 void glaxnimate::io::mime::DeserializedData::initialize_data()
 {
     document = std::make_unique<model::Document>("");
+    main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document.get()));
 }

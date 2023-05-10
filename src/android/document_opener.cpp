@@ -41,12 +41,13 @@ public:
             return {};
 
         auto doc = std::make_unique<model::Document>("");
+        auto main = doc->assets()->add_comp();
         auto asset = doc->assets()->add_image(QImage::fromData(data));
         auto imageu = std::make_unique<model::Image>(doc.get());
         auto image = imageu.get();
-        doc->main()->shapes.insert(std::move(imageu));
-        doc->main()->width.set(asset->width.get());
-        doc->main()->height.set(asset->height.get());
+        main->shapes.insert(std::move(imageu));
+        main->width.set(asset->width.get());
+        main->height.set(asset->height.get());
         QPointF pos(asset->width.get()/2., asset->height.get()/2.);
         image->transform->anchor_point.set(pos);
         image->transform->position.set(pos);
@@ -58,7 +59,7 @@ public:
             return {};
 
         doc->assets()->images->values.remove(0);
-        doc->main()->shapes.remove(doc->main()->shapes.index_of(image));
+        main->shapes.remove(main->shapes.index_of(image));
 
         return doc;
     }

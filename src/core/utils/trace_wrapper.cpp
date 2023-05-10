@@ -21,6 +21,7 @@ public:
     std::vector<QRgb> eem_colors;
     model::Image* image = nullptr;
     model::Document* document;
+    model::Composition* comp;
     QString name;
 
     void set_image(const QImage& image)
@@ -64,16 +65,17 @@ public:
 };
 
 glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Image* image)
-    : TraceWrapper(image->document(), image->image->pixmap().toImage(), image->object_name())
+    : TraceWrapper(image->owner_composition(), image->image->pixmap().toImage(), image->object_name())
 {
     d->image = image;
 
 }
 
-glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Document* document, const QImage& image, const QString& name)
+glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Composition* comp, const QImage& image, const QString& name)
     : d(std::make_unique<Private>())
 {
-    d->document = document;
+    d->comp = comp;
+    d->document = comp->document();
     d->name = name;
     d->set_image(image);
 }
@@ -183,7 +185,7 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     else
     {
         d->document->push_command(new command::AddObject<model::ShapeElement>(
-            &d->document->main()->shapes, std::move(layer)
+            &d->comp->shapes, std::move(layer)
         ));
     }
 

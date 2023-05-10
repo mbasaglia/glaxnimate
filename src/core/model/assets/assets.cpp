@@ -12,7 +12,7 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::NamedColorList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::GradientColorsList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::GradientList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BitmapList)
-GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::PrecompositionList)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::CompositionList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::FontList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Assets)
 
@@ -55,12 +55,12 @@ QIcon glaxnimate::model::BitmapList::tree_icon() const
     return QIcon::fromTheme("folder-images");
 }
 
-QIcon glaxnimate::model::PrecompositionList::tree_icon() const
+QIcon glaxnimate::model::CompositionList::tree_icon() const
 {
     return QIcon::fromTheme("folder-videos");
 }
 
-void glaxnimate::model::PrecompositionList::on_added(glaxnimate::model::Precomposition* obj, int position)
+void glaxnimate::model::CompositionList::on_added(glaxnimate::model::Composition* obj, int position)
 {
     obj->attach();
     document()->comp_graph().add_composition(obj);
@@ -69,7 +69,7 @@ void glaxnimate::model::PrecompositionList::on_added(glaxnimate::model::Precompo
 }
 
 
-void glaxnimate::model::PrecompositionList::on_removed(glaxnimate::model::Precomposition* obj, int position)
+void glaxnimate::model::CompositionList::on_removed(glaxnimate::model::Composition* obj, int position)
 {
     obj->detach();
     document()->comp_graph().remove_composition(obj);
@@ -131,6 +131,20 @@ glaxnimate::model::Gradient* glaxnimate::model::Assets::add_gradient(int index)
     return ptr;
 }
 
+/*glaxnimate::model::Composition* glaxnimate::model::Assets::add_composition()
+{
+    auto comp = std::make_unique<glaxnimate::model::Composition>(document());
+    auto ptr = comp.get();
+    push_command(new command::AddObject(&compositions->values, std::move(comp), compositions->values.size()));
+    return ptr;
+}*/
+
+glaxnimate::model::Composition* glaxnimate::model::Assets::add_comp_no_undo()
+{
+    auto comp = std::make_unique<glaxnimate::model::Composition>(document());
+    return compositions->values.insert(std::move(comp));
+}
+
 QIcon glaxnimate::model::Assets::tree_icon() const
 {
     return QIcon::fromTheme("folder-stash");
@@ -169,7 +183,7 @@ glaxnimate::model::DocumentNode * glaxnimate::model::Assets::docnode_child(int i
         case 3:
             return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(gradients.get()));
         case 4:
-            return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(precompositions.get()));
+            return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(compositions.get()));
         case 5:
             return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(fonts.get()));
         default:
@@ -187,7 +201,7 @@ int glaxnimate::model::Assets::docnode_child_index(glaxnimate::model::DocumentNo
         return 2;
     if ( dn == gradients.get() )
         return 3;
-    if ( dn == precompositions.get() )
+    if ( dn == compositions.get() )
         return 4;
     if ( dn == fonts.get() )
         return 5;

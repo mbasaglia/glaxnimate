@@ -35,9 +35,10 @@ class LottieExporterState
     static constexpr const char* version = "5.7.1";
 
 public:
-    explicit LottieExporterState(ImportExport* format, model::Document* document, bool strip, bool strip_raster, const QVariantMap& settings )
+    explicit LottieExporterState(ImportExport* format, model::Composition* comp, bool strip, bool strip_raster, const QVariantMap& settings )
         : format(format),
-        document(document),
+        main(comp),
+        document(comp->document()),
         strip(strip),
         strip_raster( strip_raster ),
         auto_embed(settings["auto_embed"].toBool()),
@@ -46,7 +47,7 @@ public:
 
     QCborMap to_json()
     {
-        return convert_main(document->main());
+        return convert_main(main);
     }
 
     void convert_animation_container(model::AnimationContainer* animation, QCborMap& json)
@@ -65,7 +66,7 @@ public:
         json["layers"_l] = layers;
     }
 
-    QCborMap convert_main(model::MainComposition* animation)
+    QCborMap convert_main(model::Composition* animation)
     {
         layer_indices.clear();
         QCborMap json;
@@ -633,7 +634,7 @@ public:
             }
         }
 
-        for ( const auto& comp : document->assets()->precompositions->values )
+        for ( const auto& comp : document->assets()->compositions->values )
             assets.push_back(convert_precomp(comp.get()));
 
         return assets;
@@ -668,7 +669,7 @@ public:
         }
         else
         {
-            convert_animation_container(document->main()->animation.get(), json);
+            convert_animation_container(main->animation.get(), json);
         }
     }
 
@@ -704,7 +705,7 @@ public:
         return json;
     }
 
-    QCborMap convert_precomp(model::Precomposition* comp)
+    QCborMap convert_precomp(model::Composition* comp)
     {
         QCborMap out;
         convert_object_basic(comp, out);
@@ -732,6 +733,7 @@ public:
     }
 
     ImportExport* format;
+    model::Composition* main;
     model::Document* document;
     bool strip;
     QMap<QUuid, int> layer_indices;

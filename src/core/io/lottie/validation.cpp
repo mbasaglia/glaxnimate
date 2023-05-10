@@ -7,27 +7,31 @@
 #include "validation.hpp"
 #include "model/visitor.hpp"
 #include "model/shapes/image.hpp"
+#include "model/assets/composition.hpp"
 
 
 using namespace glaxnimate;
 using namespace glaxnimate::io::lottie;
 
-void glaxnimate::io::lottie::ValidationVisitor::on_visit(model::Document* document)
+void glaxnimate::io::lottie::ValidationVisitor::on_visit(model::Document*, model::Composition* main)
 {
+    if ( !main )
+        return;
+
     if ( fixed_size.isValid() )
     {
-        qreal width = document->main()->height.get();
+        qreal width = main->height.get();
         if ( width != fixed_size.width() )
             fmt->error(LottieFormat::tr("Invalid width: %1, should be %2").arg(width).arg(fixed_size.width()));
 
-        qreal height = document->main()->height.get();
+        qreal height = main->height.get();
         if ( height != fixed_size.height() )
             fmt->error(LottieFormat::tr("Invalid height: %1, should be %2").arg(height).arg(fixed_size.height()));
     }
 
     if ( !allowed_fps.empty() )
     {
-        qreal fps = document->main()->fps.get();
+        qreal fps = main->fps.get();
         if ( std::find(allowed_fps.begin(), allowed_fps.end(), fps) == allowed_fps.end() )
         {
             QStringList allowed;
@@ -40,7 +44,7 @@ void glaxnimate::io::lottie::ValidationVisitor::on_visit(model::Document* docume
 
     if ( max_frames > 0 )
     {
-        auto duration = document->main()->animation->duration();
+        auto duration = main->animation->duration();
         if ( duration > max_frames )
             fmt->error(LottieFormat::tr("Too many frames: %1, should be less than %2").arg(duration).arg(max_frames));
     }
@@ -73,8 +77,8 @@ private:
 
 } // namespace
 
-void glaxnimate::io::lottie::validate_discord(model::Document* document, glaxnimate::io::lottie::LottieFormat* format)
+void glaxnimate::io::lottie::validate_discord(model::Document* document, model::Composition* main, glaxnimate::io::lottie::LottieFormat* format)
 {
-    DiscordVisitor(format).visit(document);
+    DiscordVisitor(format).visit(document, main);
 }
 

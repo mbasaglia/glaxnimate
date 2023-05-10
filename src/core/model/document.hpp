@@ -10,26 +10,24 @@
 #include <QDir>
 #include <QUndoStack>
 
-#include "main_composition.hpp"
 #include "io/options.hpp"
 #include "model/comp_graph.hpp"
+#include "model/document_node.hpp"
 
 namespace glaxnimate::model {
 
 class Assets;
 struct PendingAsset;
+class Composition;
 
 class Document : public QObject
 {
     Q_OBJECT
 
     Q_PROPERTY(QString filename READ filename)
-    Q_PROPERTY(MainComposition* main READ main)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
     Q_PROPERTY(Object* assets READ assets_obj)
-    Q_PROPERTY(QSize size READ size)
-    Q_PROPERTY(QRectF rect READ rect)
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE set_metadata)
 
 public:
@@ -49,13 +47,15 @@ public:
     ~Document();
 
     QString filename() const;
+    QUuid uuid() const;
 
     QVariantMap& metadata();
     void set_metadata(const QVariantMap& meta);
 
     DocumentInfo& info();
 
-    MainComposition* main();
+    Composition* current_comp();
+    void set_current_comp(Composition* comp);
 
     QUndoStack& undo_stack();
 
@@ -75,9 +75,6 @@ public:
     FrameTime current_time() const;
     void set_current_time(FrameTime t);
 
-    QSize size() const;
-    QRectF rect() const;
-
     /**
      * \brief Whether animated values should add keyframes when their value changes
      */
@@ -86,9 +83,6 @@ public:
 
     Q_INVOKABLE QString get_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion={}) const;
     Q_INVOKABLE void set_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion={}) const;
-
-    Q_INVOKABLE QImage render_image(float time, QSize size = {}, const QColor& background = {}) const;
-    Q_INVOKABLE QImage render_image() const;
 
     model::Assets* assets() const;
 

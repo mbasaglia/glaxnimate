@@ -44,8 +44,10 @@ public:
     std::unordered_map<quintptr, LineItem*> line_items;
 
     item_models::PropertyModelFull* base_model = nullptr;
-    QAbstractItemModel* model = nullptr;
+    item_models::CompFilterModel* model = nullptr;
     QTreeView* expander = nullptr;
+    model::Composition* comp = nullptr;
+
 
     int rounded_end_time()
     {
@@ -121,7 +123,7 @@ public:
             auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
-        else if ( auto comp = obj->cast<model::MainComposition>() )
+        else if ( auto comp = obj->cast<model::Composition>() )
         {
             auto anim_item = new AnimationContainerItem(comp, comp->animation.get(), row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
@@ -189,13 +191,13 @@ public:
             const QMetaObject* mo = node->metaObject();
             if ( mo->inherits(&model::Layer::staticMetaObject) )
                 return static_cast<model::Layer*>(node)->animation.get();
-            else if ( mo->inherits(&model::MainComposition::staticMetaObject) )
-                return static_cast<model::MainComposition*>(node)->animation.get();
+            else if ( mo->inherits(&model::Composition::staticMetaObject) )
+                return static_cast<model::Composition*>(node)->animation.get();
 
             node = node->docnode_parent();
         }
 
-        return document->main()->animation.get();
+        return comp->animation.get();
     }
 
     QRectF frame_text_rect(int f, TimelineWidget* parent)
@@ -294,23 +296,35 @@ void TimelineWidget::set_document(model::Document* document)
     if ( d->document )
     {
         disconnect(this, nullptr, d->document, nullptr);
-        disconnect(d->document->main()->animation.get(), nullptr, this, nullptr);
         disconnect(d->document, nullptr, viewport(), nullptr);
     }
 
     d->clear();
     d->document = document;
+    update_comp(nullptr);
 
     if ( document )
     {
-        connect(document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
-        connect(document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
-        update_timeline_end(document->main()->animation->last_frame.get());
-        update_timeline_start(document->main()->animation->first_frame.get());
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
     }
 
+}
+
+void TimelineWidget::update_comp(model::Composition* comp)
+{
+    if ( d->comp )
+        disconnect(d->comp->animation.get(), nullptr, this, nullptr);
+
+    d->comp = comp;
+
+    if ( comp )
+    {
+        connect(d->comp->animation.get(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
+        connect(d->comp->animation.get(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
+        update_timeline_end(d->comp->animation->first_frame.get());
+        update_timeline_start(d->comp->animation->last_frame.get());
+    }
 }
 
 void TimelineWidget::update_timeline_end(model::FrameTime end)
@@ -732,7 +746,7 @@ void TimelineWidget::expand(const QModelIndex& index)
     viewport()->update();
 }
 
-void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander)
+void TimelineWidget::set_model(item_models::CompFilterModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander)
 {
     d->model = model;
     d->base_model = base_model;
@@ -741,6 +755,7 @@ void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyM
     connect(model, &QAbstractItemModel::rowsRemoved, this, &TimelineWidget::model_rows_removed);
     connect(model, &QAbstractItemModel::rowsMoved, this, &TimelineWidget::model_rows_moved);
     connect(model, &QAbstractItemModel::modelReset, this, &TimelineWidget::model_reset);
+    connect(model, &item_models::CompFilterModel::composition_changed, this, &TimelineWidget::update_comp);
 }
 
 void TimelineWidget::model_reset()

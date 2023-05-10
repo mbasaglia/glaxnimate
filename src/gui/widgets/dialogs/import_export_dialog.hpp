@@ -33,7 +33,7 @@ public:
         return io_options_;
     }
 
-    bool export_dialog(model::Document* doc)
+    bool export_dialog(model::Composition* comp)
     {
         QFileDialog dialog(parent);
         dialog.setWindowTitle(QObject::tr("Save file"));
@@ -70,8 +70,8 @@ public:
             break;
         }
 
-        auto ok =  options_dialog(io_options_.format->save_settings(doc));
-        io_options_.settings["default_time"] = doc->main()->animation->last_frame.get();
+        auto ok =  options_dialog(io_options_.format->save_settings(comp));
+        io_options_.settings["default_time"] = comp->animation->last_frame.get();
         return ok;
     }
 

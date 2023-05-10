@@ -392,7 +392,7 @@ public:
                            qreal height, QGraphicsItem* parent)
     : TimeRectItem(layer, height, parent),
       timing(layer->timing.get()),
-      animation(timing->document()->main()->animation.get())
+      animation(layer->owner_composition()->animation.get())
 
     {
         handle_ip.set_radius(radius);

@@ -15,7 +15,7 @@
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/assets/brush_style.hpp"
-#include "model/assets/precomposition.hpp"
+#include "model/assets/composition.hpp"
 
 #include "io/mime/mime_serializer.hpp"
 
@@ -84,7 +84,7 @@ public:
 protected:
     virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;
     void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
-    model::PreCompLayer *layer_new_comp(model::Precomposition *comp);
+    model::PreCompLayer *layer_new_comp(model::Composition *comp);
     void delete_shapes_impl(const QString& undo_string, const std::vector<model::VisualNode *> &selection);
 
 private:

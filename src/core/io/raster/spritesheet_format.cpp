@@ -5,6 +5,7 @@
  */
 
 #include "spritesheet_format.hpp"
+#include "model/assets/composition.hpp"
 
 #include <QImage>
 #include <QPainter>
@@ -22,20 +23,20 @@ QStringList glaxnimate::io::raster::SpritesheetFormat::extensions() const
     return formats;
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::raster::SpritesheetFormat::save_settings(model::Document* doc) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::raster::SpritesheetFormat::save_settings(model::Composition* comp) const
 {
-    int first_frame = doc->main()->animation->first_frame.get();
-    int last_frame = doc->main()->animation->last_frame.get();
+    int first_frame = comp->animation->first_frame.get();
+    int last_frame = comp->animation->last_frame.get();
     int frames = last_frame - first_frame;
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        app::settings::Setting("frame_width", tr("Frame Width"), tr("Width of each frame"), doc->main()->width.get(), 1, 999'999),
-        app::settings::Setting("frame_height", tr("Frame Height"), tr("Height of each frame"), doc->main()->height.get(), 1, 999'999),
+        app::settings::Setting("frame_width", tr("Frame Width"), tr("Width of each frame"), comp->width.get(), 1, 999'999),
+        app::settings::Setting("frame_height", tr("Frame Height"), tr("Height of each frame"), comp->height.get(), 1, 999'999),
         app::settings::Setting("columns", tr("Columns"), tr("Number of columns in the sheet"), std::ceil(math::sqrt(frames)), 1, 64),
         app::settings::Setting("frame_step", tr("Time Step"), tr("By how much each rendered frame should increase time (in frames)"), 1, 1, 16),
     });
 }
 
-bool glaxnimate::io::raster::SpritesheetFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values)
+bool glaxnimate::io::raster::SpritesheetFormat::on_save(QIODevice& file, const QString& filename, model::Composition* comp, const QVariantMap& setting_values)
 {
     Q_UNUSED(filename);
 
@@ -47,13 +48,13 @@ bool glaxnimate::io::raster::SpritesheetFormat::on_save(QIODevice& file, const Q
     if ( frame_w <= 0 || frame_h <= 0 || columns <= 0 || frame_step <= 0 )
         return false;
 
-    int first_frame = document->main()->animation->first_frame.get();
-    int last_frame = document->main()->animation->last_frame.get();
+    int first_frame = comp->animation->first_frame.get();
+    int last_frame = comp->animation->last_frame.get();
     int frames = (last_frame - first_frame) / frame_step;
     int rows = frames / columns;
 
-    qreal scale_x = qreal(frame_w) / document->main()->width.get();
-    qreal scale_y = qreal(frame_h) / document->main()->height.get();
+    qreal scale_x = qreal(frame_w) / comp->width.get();
+    qreal scale_y = qreal(frame_h) / comp->height.get();
 
     QImage bmp(frame_w * columns, frame_h * rows, QImage::Format_ARGB32);
     QPainter painter(&bmp);
@@ -63,7 +64,7 @@ bool glaxnimate::io::raster::SpritesheetFormat::on_save(QIODevice& file, const Q
         painter.scale(scale_x, scale_y);
         painter.translate((i % columns) * frame_w, (i / columns) * frame_h);
         painter.setClipRect(0, 0, frame_w, frame_h);
-        document->main()->paint(&painter, i, model::VisualNode::Render);
+        comp->paint(&painter, i, model::VisualNode::Render);
         painter.restore();
     }
 

@@ -10,7 +10,7 @@
 #include <QDialog>
 #include <memory>
 
-#include "model/document.hpp"
+#include "model/assets/composition.hpp"
 
 namespace glaxnimate::gui {
 
@@ -23,7 +23,7 @@ public:
 
     ~ResizeDialog();
 
-    void resize_document(model::Document* doc);
+    void resize_composition(model::Composition* comp);
 
 protected:
     void changeEvent ( QEvent* e ) override;

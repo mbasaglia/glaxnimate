@@ -114,11 +114,11 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
 
         if ( auto shape = qobject_cast<model::ShapeElement*>(obj) )
         {
-            output.document->main()->shapes.emplace(shape);
+            output.main->shapes.emplace(shape);
         }
-        else if ( auto composition = qobject_cast<model::MainComposition*>(obj) )
+        else if ( auto composition = qobject_cast<model::Composition*>(obj) )
         {
-            output.document->main()->assign_from(composition);
+            output.main->assign_from(composition);
             delete composition;
         }
         else if ( auto color = qobject_cast<model::NamedColor*>(obj) )

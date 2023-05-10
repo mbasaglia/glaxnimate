@@ -174,29 +174,37 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
     paste_assets(&model::Assets::images, document, doc);
     paste_assets(&model::Assets::gradient_colors, document, doc);
     paste_assets(&model::Assets::gradients, document, doc);
-    paste_assets(&model::Assets::precompositions, document, doc);
+    paste_assets(&model::Assets::compositions, document, doc);
 
     model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::VisualNode*> select;
 
+    auto& comps = document->assets()->compositions->values;
+    if ( comps.empty() )
+        return;
+    if ( comps.size() > 1 )
+        as_comp = true;
+
+    model::Composition* comp = comps[0];
+
     if ( as_comp )
     {
-        std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(doc);
+        std::unique_ptr<model::Composition> comp = std::make_unique<model::Composition>(doc);
         auto comp_ptr = comp.get();
-        QString name = document->main()->name.get();
+        QString name = comp->name.get();
         if ( name.isEmpty() )
             name = QFileInfo(document->filename()).baseName();
         doc->set_best_name(comp.get(), name);
-        doc->push_command(new command::AddObject(&doc->assets()->precompositions->values, std::move(comp)));
+        doc->push_command(new command::AddObject(&doc->assets()->compositions->values, std::move(comp)));
 
         select.push_back(layer_new_comp(comp_ptr));
         shape_cont = &comp_ptr->shapes;
     }
 
-    if ( !document->main()->shapes.empty() )
+    if ( !comp->shapes.empty() )
     {
         int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : document->main()->shapes.raw() )
+        for ( auto& shape : comp->shapes.raw() )
         {
             auto ptr = shape.get();
             shape->clear_owner();
@@ -236,14 +244,14 @@ void glaxnimate::gui::SelectionManager::layer_new_impl(std::unique_ptr<model::Sh
 }
 
 
-model::PreCompLayer* glaxnimate::gui::SelectionManager::layer_new_comp(model::Precomposition* comp)
+model::PreCompLayer* glaxnimate::gui::SelectionManager::layer_new_comp(model::Composition* comp)
 {
     auto doc = document();
     auto layer = std::make_unique<model::PreCompLayer>(doc);
     layer->composition.set(comp);
     layer->name.set(comp->name.get());
-    layer->size.set(doc->rect().size());
-    QPointF pos = doc->rect().center();
+    layer->size.set(comp->size());
+    QPointF pos = current_composition()->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     auto ptr = layer.get();

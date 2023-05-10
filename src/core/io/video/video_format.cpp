@@ -20,6 +20,7 @@ extern "C" {
 
 #include "app/qstring_exception.hpp"
 #include "app/log/log.hpp"
+#include "model/assets/composition.hpp"
 
 namespace glaxnimate::av {
 
@@ -726,7 +727,7 @@ QStringList glaxnimate::io::video::VideoFormat::extensions() const
 }
 
 
-bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
+bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Composition* comp, const QVariantMap& settings)
 {
     try
     {
@@ -753,7 +754,9 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         // see https://libav.org/documentation/doxygen/master/group__metadata__api.html
         av::DictWrapper metadata(&oc->metadata);
 
-        metadata["title"] = document->main()->name.get();
+        auto document = comp->document();
+
+        metadata["title"] = comp->name.get();
 
         if ( !document->info().author.isEmpty() )
             metadata["artist"] = document->info().author;
@@ -798,11 +801,11 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         // video codecs and allocate the necessary encode buffers.
         int width = settings["width"].toInt();
         if ( width == 0 )
-            width = document->main()->width.get();
+            width = comp->width.get();
         int height = settings["height"].toInt();
         if ( height == 0 )
-            height = document->main()->height.get();
-        int fps = qRound(document->main()->fps.get());
+            height = comp->height.get();
+        int fps = qRound(comp->fps.get());
         av::Video video(oc, opt, codec_id, 7000000, width, height, fps);
 
         // log format info
@@ -820,13 +823,13 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
             return false;
         }
 
-        auto first_frame = document->main()->animation->first_frame.get();
-        auto last_frame = document->main()->animation->last_frame.get();
+        auto first_frame = comp->animation->first_frame.get();
+        auto last_frame = comp->animation->last_frame.get();
         QColor background = settings["background"].value<QColor>();
         emit progress_max_changed(last_frame - first_frame);
         for ( auto i = first_frame; i < last_frame; i++ )
         {
-            video.write_video_frame(document->render_image(i, {width, height}, background));
+            video.write_video_frame(comp->render_image(i, {width, height}, background));
             emit progress(i - first_frame);
         }
 
@@ -847,13 +850,13 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
     }
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Composition* comp) const
 {
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        //                      slug            label             description                                           default                      min max
+        //                      slug            label             description                                           default             min max
         app::settings::Setting{"background",    tr("Background"), tr("Background color"),                               QColor(0, 0, 0, 0)},
-        app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           document->main()->width.get(), 0, 99999},
-        app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           document->main()->height.get(),0, 99999},
+        app::settings::Setting{"width",         tr("Width"),      tr("If not 0, it will overwrite the size"),           comp->width.get(),  0, 99999},
+        app::settings::Setting{"height",        tr("Height"),     tr("If not 0, it will overwrite the size"),           comp->height.get(), 0, 99999},
         app::settings::Setting{"verbose",       tr("Verbose"),    tr("Show verbose information on the conversion"),     false},
     });
 }

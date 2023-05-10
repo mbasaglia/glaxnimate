@@ -45,14 +45,27 @@ public:
         if ( selection.empty() )
             return {};
 
-        QImage image(selection[0]->document()->size(), QImage::Format_ARGB32);
-        image.fill(Qt::transparent);
-        QPainter painter(&image);
-        painter.setRenderHint(QPainter::Antialiasing);
+        std::vector<model::VisualNode*> visual_nodes;
+        visual_nodes.reserve(selection.size());
+        QRectF box;
+
         for ( auto node : selection )
         {
             if ( auto visual = node->cast<model::VisualNode>() )
-                visual->paint(&painter, node->time(), model::VisualNode::Render);
+            {
+                visual_nodes.push_back(visual);
+                box |= visual->local_bounding_rect(visual->time());
+            }
+        }
+
+        QImage image(box.size().toSize(), QImage::Format_ARGB32);
+        image.fill(Qt::transparent);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.translate(-box.topLeft());
+        for ( auto visual : visual_nodes )
+        {
+            visual->paint(&painter, visual->time(), model::VisualNode::Render);
         }
         return image;
     }
@@ -62,7 +75,7 @@ public:
         if ( !node )
             return {};
 
-        QImage image(node->document()->size(), QImage::Format_ARGB32);
+        QImage image(node->local_bounding_rect(time).size().toSize(), QImage::Format_ARGB32);
         image.fill(Qt::transparent);
         QPainter painter(&image);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -81,7 +94,7 @@ public:
         QPointF p(bmp->pixmap().width() / 2.0, bmp->pixmap().height() / 2.0);
         img->transform->anchor_point.set(p);
         img->transform->position.set(p);
-        out.document->main()->shapes.insert(std::move(img));
+        out.main->shapes.insert(std::move(img));
         return out;
     }
 

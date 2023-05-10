@@ -21,6 +21,7 @@
 #include "widgets/spin2d.hpp"
 #include "widgets/enum_combo.hpp"
 #include "model/property/option_list_property.hpp"
+#include "model/property/reference_property.hpp"
 
 using namespace glaxnimate::gui::style;
 using namespace glaxnimate::gui;

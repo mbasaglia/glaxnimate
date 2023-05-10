@@ -12,7 +12,7 @@
 #include "named_color.hpp"
 #include "bitmap.hpp"
 #include "gradient.hpp"
-#include "precomposition.hpp"
+#include "composition.hpp"
 #include "embedded_font.hpp"
 
 
@@ -136,21 +136,21 @@ public:
     QString type_name_human() const override { return tr("Gradients"); }
 };
 
-class PrecompositionList : public AssetListBase<Precomposition, PrecompositionList>
+class CompositionList : public AssetListBase<Composition, CompositionList>
 {
-    GLAXNIMATE_OBJECT(PrecompositionList)
-    ASSET_LIST_CLASS(Precomposition)
+    GLAXNIMATE_OBJECT(CompositionList)
+    ASSET_LIST_CLASS(Composition)
 
 public:
     QIcon tree_icon() const override;
 
 protected:
-    void on_added(model::Precomposition* obj, int position) override;
-    void on_removed(model::Precomposition* obj, int position) override;
-    QString type_name_human() const override { return tr("Precompositions"); }
+    void on_added(model::Composition* obj, int position) override;
+    void on_removed(model::Composition* obj, int position) override;
+    QString type_name_human() const override { return tr("Compositions"); }
 
 signals:
-    void precomp_added(model::Precomposition* obj, int position);
+    void precomp_added(model::Composition* obj, int position);
 };
 
 class FontList : public AssetListBase<EmbeddedFont, FontList>
@@ -181,7 +181,7 @@ class Assets : public DocumentNode
     GLAXNIMATE_SUBOBJECT(BitmapList, images)
     GLAXNIMATE_SUBOBJECT(GradientColorsList, gradient_colors)
     GLAXNIMATE_SUBOBJECT(GradientList, gradients)
-    GLAXNIMATE_SUBOBJECT(PrecompositionList, precompositions)
+    GLAXNIMATE_SUBOBJECT(CompositionList, compositions)
     GLAXNIMATE_SUBOBJECT(FontList, fonts)
 
 public:
@@ -195,6 +195,7 @@ public:
     Q_INVOKABLE glaxnimate::model::EmbeddedFont* add_font(const QByteArray& ttf_data);
     glaxnimate::model::EmbeddedFont* add_font(const CustomFont& font);
     Q_INVOKABLE glaxnimate::model::EmbeddedFont* font_by_index(int database_index) const;
+    glaxnimate::model::Composition* add_comp_no_undo();
 
     DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override;

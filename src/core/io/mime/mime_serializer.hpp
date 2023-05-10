@@ -17,6 +17,7 @@
 
 namespace glaxnimate::model {
     class Document;
+    class Composition;
     class DocumentNode;
 } // namespace glaxnimate::model
 
@@ -32,6 +33,7 @@ struct DeserializedData
     ~DeserializedData();
 
     std::unique_ptr<model::Document> document;
+    model::Composition* main = nullptr;
 
     bool empty() const;
     void initialize_data();

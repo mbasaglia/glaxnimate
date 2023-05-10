@@ -46,11 +46,11 @@ public:
     bool can_open() const override { return service->open.valid(); }
 
     std::unique_ptr<app::settings::SettingsGroup> open_settings() const override;
-    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition*) const override;
 
 protected:
     bool auto_open() const override { return service->auto_open; }
-    bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
+    bool on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&) override;
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
 
 private:

@@ -13,19 +13,19 @@ def _png_gif_prepare(image):
     return image
 
 
-def save_gif(window, document, file, name, import_export, settings):
+def save_gif(window, document, comp, file, name, import_export, settings):
     skip_frames = 1
-    start = int(document.main.animation.first_frame)
-    end = int(document.main.animation.last_frame)
+    start = int(comp.animation.first_frame)
+    end = int(comp.animation.last_frame)
 
     import_export.progress_max_changed(end-start)
 
     frames = []
     for i in range(start, end+1, skip_frames):
         import_export.progress(i-start)
-        frames.append(_png_gif_prepare(document.render_image(i)))
+        frames.append(_png_gif_prepare(comp.render_image(i)))
 
-    duration = int(round(1000 / document.main.fps * skip_frames / 10)) * 10
+    duration = int(round(1000 / comp.fps * skip_frames / 10)) * 10
     frames[0].save(
         file,
         format='GIF',
@@ -38,7 +38,7 @@ def save_gif(window, document, file, name, import_export, settings):
     )
 
 
-def save_webp(window, document, file, name, import_export, settings):
+def save_webp(window, document, comp, file, name, import_export, settings):
     if not features.check("webp_anim"):
         window.warning("WebP animations not supported in this system")
         return
@@ -46,16 +46,16 @@ def save_webp(window, document, file, name, import_export, settings):
     skip_frames = settings["skip_frames"]
     dpi = 96
 
-    start = int(document.main.animation.first_frame)
-    end = int(document.main.animation.last_frame)
+    start = int(comp.animation.first_frame)
+    end = int(comp.animation.last_frame)
     import_export.progress_max_changed(end-start)
 
     frames = []
     for i in range(start, end+1, skip_frames):
         import_export.progress(i-start)
-        frames.append(document.render_image(i))
+        frames.append(comp.render_image(i))
 
-    duration = int(round(1000 / document.main.fps * skip_frames))
+    duration = int(round(1000 / comp.fps * skip_frames))
     frames[0].save(
         file,
         format='WebP',
@@ -72,15 +72,16 @@ def save_webp(window, document, file, name, import_export, settings):
 
 def open_image(window, document, file, name, import_export, settings):
     raster = Image.open(file)
-    document.main.width = raster.width
-    document.main.height = raster.height
+    comp = document.assets.compositions.values[0]
+    comp.width = raster.width
+    comp.height = raster.height
 
     if not hasattr(raster, "is_animated"):
         raster.n_frames = 1
         raster.seek = lambda x: None
 
-    parent_layer = document.main.add_shape("Layer")
-    parent_layer.name = document.main.name = os.path.basename(name)
+    parent_layer = comp.add_shape("Layer")
+    parent_layer.name = comp.name = os.path.basename(name)
     time = 0
 
     for frame in range(raster.n_frames):
@@ -91,7 +92,7 @@ def open_image(window, document, file, name, import_export, settings):
         raster.seek(frame)
 
         if "duration" in raster.info:
-            time += raster.info.get("duration") / 1000 * document.main.fps
+            time += raster.info.get("duration") / 1000 * comp.fps
         else:
             time += 1
         layer.animation.last_frame = time
@@ -102,4 +103,4 @@ def open_image(window, document, file, name, import_export, settings):
         shape.image = asset
         shape.name = "Frame %s" % frame
 
-    document.main.animation.last_frame = parent_layer.animation.last_frame = time
+    comp.animation.last_frame = parent_layer.animation.last_frame = time

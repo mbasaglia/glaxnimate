@@ -21,7 +21,7 @@ class FollowPathDialog : public QDialog
     Q_OBJECT
 
 public:
-    FollowPathDialog(model::AnimatedProperty<QPointF>* property, item_models::DocumentNodeModel* model, QWidget* parent = nullptr);
+    FollowPathDialog(model::AnimatedProperty<QPointF>* property, model::Composition* comp, item_models::DocumentNodeModel* model, QWidget* parent = nullptr);
     ~FollowPathDialog();
 
 protected:

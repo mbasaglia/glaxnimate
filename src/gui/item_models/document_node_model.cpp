@@ -143,8 +143,6 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
     if ( !parent.isValid() )
     {
         if ( row == 0 )
-            return createIndex(row, column, d->document->main());
-        if ( row == 1 )
             return createIndex(row, column, d->document->assets());
         return {};
     }
@@ -182,8 +180,7 @@ Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index )
     {
         if ( n->has("shapes") )
             flags |= Qt::ItemIsDropEnabled;
-        if ( !qobject_cast<model::MainComposition*>(n) )
-            flags |= Qt::ItemIsDragEnabled;
+        flags |= Qt::ItemIsDragEnabled;
     }
 
     return flags;
@@ -305,7 +302,6 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 
     if ( doc )
     {
-        connect_node(doc->main());
         connect_node(doc->assets());
     }
     endResetModel();
@@ -342,16 +338,10 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
 
     if ( !parent )
     {
-        if ( !d->document )
+        if ( !d->document || node != d->document->assets() )
             return {};
 
-        if ( node == d->document->main() )
-            return createIndex(0, 0, node);
-
-        return createIndex(
-            d->document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
-            0, node
-        );
+        return createIndex(0, 0, node);
     }
 
     int rows = parent->docnode_child_count();

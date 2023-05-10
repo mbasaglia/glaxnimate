@@ -42,8 +42,16 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
         warning(tr("Opening a file from a newer version of Glaxnimate"));
 
     state.load_metadata(document, top_level);
-    state.load_object(document->assets(), top_level[document_version < 3 ? "defs" : "assets"].toObject());
-    state.load_object(document->main(), top_level["animation"].toObject());
+    auto assets = top_level[document_version < 3 ? "defs" : "assets"].toObject();
+    if ( document_version < 8 )
+    {
+        QJsonArray precomps;
+        if ( assets.contains("precompositions") )
+            precomps = assets["precompositions"].toArray();
+        precomps.push_front(top_level["animation"]);
+        assets["precompositions"] = precomps;
+    }
+    state.load_object(document->assets(), assets);
     state.resolve();
 
     return true;

@@ -28,7 +28,7 @@
 
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
-#include "model/assets/precomposition.hpp"
+#include "model/assets/composition.hpp"
 
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -65,19 +65,19 @@ void register_animatable(py::module& m)
     py::class_<model::AnimatedProperty<T>, Base>(m, name.c_str());
 }
 
-static QImage doc_to_image(model::Document* doc)
+static QImage doc_to_image(model::Composition* comp)
 {
-    return io::raster::RasterMime::to_image({doc->main()});
+    return io::raster::RasterMime::to_image({comp});
 }
 
-static QByteArray frame_to_svg(model::Document* doc)
+static QByteArray frame_to_svg(model::Composition* comp)
 {
     QByteArray data;
     QBuffer file(&data);
     file.open(QIODevice::WriteOnly);
 
     io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
-    rend.write_document(doc);
+    rend.write_main(comp);
     rend.write(&file, true);
 
     return data;
@@ -202,7 +202,7 @@ public:
     virtual void on_visit_node(model::DocumentNode*){}
 
 private:
-    void on_visit(model::Document * document) override
+    void on_visit(model::Document * document, model::Composition*) override
     {
         on_visit_document(document);
     }
@@ -455,9 +455,8 @@ void register_py_module(py::module& glaxnimate_module)
         .def("to_path", &model::ShapeElement::to_path)
     ;
 
-    auto cls_comp = register_from_meta<model::Composition, model::VisualNode>(model);
+    auto cls_comp = register_from_meta<model::Composition, model::VisualNode, model::AssetBase>(model);
     define_add_shape(cls_comp);
-    register_constructible<model::MainComposition, model::Composition>(model);
 
     define_animatable(model);
     register_from_meta<model::detail::AnimatedPropertyPosition, model::AnimatableBase>(detail);
@@ -472,7 +471,7 @@ void register_py_module(py::module& glaxnimate_module)
 
     py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
         .def(py::init())
-        .def("visit", (void (PyVisitorPublic::*)(model::Document*, bool))&PyVisitorPublic::visit, py::arg("document"), py::arg("skip_locked"))
+        .def("visit", (void (PyVisitorPublic::*)(model::Document*, model::Composition*, bool))&PyVisitorPublic::visit, py::arg("document"), py::arg("composition"), py::arg("skip_locked"))
         .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*, bool))&PyVisitorPublic::visit, py::arg("node"), py::arg("skip_locked"))
         .def("on_visit_document", &PyVisitorPublic::on_visit_document)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
@@ -486,13 +485,12 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::GradientColors, model::Asset>(defs);
     register_constructible<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_constructible<model::Bitmap, model::Asset>(defs);
-    register_constructible<model::Precomposition, model::Composition, model::AssetBase>(defs);
     register_from_meta<model::EmbeddedFont, model::Asset>(defs);
     register_from_meta<model::BitmapList, model::DocumentNode>(defs);
     register_from_meta<model::NamedColorList, model::DocumentNode>(defs);
     register_from_meta<model::GradientList, model::DocumentNode>(defs);
     register_from_meta<model::GradientColorsList, model::DocumentNode>(defs);
-    register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
+    register_from_meta<model::CompositionList, model::DocumentNode>(defs);
     register_from_meta<model::FontList, model::DocumentNode>(defs);
     register_from_meta<model::Assets, model::DocumentNode>(defs);
 

@@ -15,6 +15,7 @@
 #include "graphics/graphics_editor.hpp"
 #include "graphics/item_data.hpp"
 #include "tools/base.hpp"
+#include "model/assets/composition.hpp"
 
 using namespace glaxnimate::gui;
 
@@ -122,7 +123,7 @@ void graphics::DocumentScene::set_document ( model::Document* document )
     auto old = d->document;
 
     d->document = document;
-    set_composition(document ? document->main() : nullptr);
+    set_composition(nullptr);
     if ( document )
     {
         connect(document, &model::Document::graphics_invalidated, this, [this]{update();});
@@ -468,7 +469,7 @@ void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& re
 {
     painter->fillRect(rect, palette().base());
     if ( d->document )
-        painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
+        painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->comp->size())), d->back);
     emit drawing_background(painter, rect);
 }
 
@@ -479,7 +480,7 @@ void graphics::DocumentScene::drawForeground(QPainter* painter, const QRectF&)
     p.setCosmetic(true);
     painter->setPen(p);
     if ( d->document )
-        painter->drawRect(QRectF(QPointF(0, 0), d->document->size()));
+        painter->drawRect(QRectF(QPointF(0, 0), d->comp->size()));
 
 }
 

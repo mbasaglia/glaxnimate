@@ -46,10 +46,10 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     }
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::save_settings(model::Document* document) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::save_settings(model::Composition* comp) const
 {
     CssFontType max = CssFontType::None;
-    for ( const auto & font : document->assets()->fonts->values )
+    for ( const auto & font : comp->document()->assets()->fonts->values )
     {
         auto type = SvgRenderer::suggested_type(font.get());
         if ( type > max )
@@ -74,11 +74,11 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::sa
     });
 }
 
-bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
+bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Composition* comp, const QVariantMap& options)
 {
     auto on_error = [this](const QString& s){warning(s);};
     SvgRenderer rend(SMIL, CssFontType(options["font_type"].toInt()));
-    rend.write_document(document);
+    rend.write_main(comp);
     if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
     {
         utils::gzip::GzipStream compressed(&file, on_error);

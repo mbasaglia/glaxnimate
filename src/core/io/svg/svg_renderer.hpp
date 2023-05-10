@@ -12,7 +12,6 @@
 #include "model/shapes/shape.hpp"
 
 namespace glaxnimate::model {
-    class MainComposition;
     class EmbeddedFont;
 } // namespace glaxnimate::model
 
@@ -38,9 +37,8 @@ public:
     SvgRenderer(AnimationType animated, CssFontType font_type);
     ~SvgRenderer();
 
-    void write_document(model::Document* document);
     void write_composition(model::Composition* comp);
-    void write_main(model::MainComposition* comp);
+    void write_main(model::Composition* comp);
     void write_shape(model::ShapeElement* shape);
     void write_node(model::DocumentNode* node);
 

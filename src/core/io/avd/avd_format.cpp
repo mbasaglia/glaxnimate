@@ -24,7 +24,6 @@ bool glaxnimate::io::avd::AvdFormat::on_open(QIODevice& file, const QString& fil
 
         AvdParser(&file, resource_path, document, on_error, this, forced_size, default_time).parse_to_document();
         return true;
-
     }
     catch ( const svg::SvgParseError& err )
     {
@@ -33,11 +32,11 @@ bool glaxnimate::io::avd::AvdFormat::on_open(QIODevice& file, const QString& fil
     }
 }
 
-bool glaxnimate::io::avd::AvdFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::avd::AvdFormat::on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&)
 {
     auto on_error = [this](const QString& s){warning(s);};
     AvdRenderer rend(on_error);
-    rend.render(document);
+    rend.render(comp);
     auto dom = rend.single_file();
     file.write(dom.toByteArray(4));
     return true;

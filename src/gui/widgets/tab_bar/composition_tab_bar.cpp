@@ -35,27 +35,10 @@ CompositionTabBar::CompositionTabBar(QWidget* parent)
 
 model::Composition * CompositionTabBar::index_to_comp(int index) const
 {
-    if ( !document || index < 0 )
+    if ( !document || index < 0 || index >= document->assets()->compositions->values.size() )
         return nullptr;
 
-    if ( index == 0 )
-        return document->main();
-
-    if ( index - 1 >= document->assets()->precompositions->values.size() )
-        return nullptr;
-
-    return document->assets()->precompositions->values[index - 1];
-}
-
-
-model::Precomposition * CompositionTabBar::index_to_precomp(int index) const
-{
-    index--;
-
-    if ( !document || index < 0 || index >= document->assets()->precompositions->values.size() )
-        return nullptr;
-
-    return document->assets()->precompositions->values[index];
+    return document->assets()->compositions->values[index];
 }
 
 void CompositionTabBar::fw_switch(int i)
@@ -66,17 +49,17 @@ void CompositionTabBar::fw_switch(int i)
 
 void CompositionTabBar::on_close(int index)
 {
-    if ( document && index > 0 && index <= document->assets()->precompositions->values.size() )
+    if ( document && index > 0 && index <= document->assets()->compositions->values.size() )
     {
-        document->push_command(new command::RemoveObject<model::Precomposition>(
-            index-1, &document->assets()->precompositions->values
+        document->push_command(new command::RemoveObject<model::Composition>(
+            index-1, &document->assets()->compositions->values
         ));
     }
 }
 
 void CompositionTabBar::on_menu(int index)
 {
-    if ( auto precomp = index_to_precomp(index) )
+    if ( auto precomp = index_to_comp(index) )
     {
         QMenu menu;
         menu.addSection(precomp->object_name());
@@ -84,15 +67,15 @@ void CompositionTabBar::on_menu(int index)
             on_close(index);
         });
         menu.addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), precomp, [this, precomp]{
-            std::unique_ptr<model::Precomposition> new_comp (
-                static_cast<model::Precomposition*>(precomp->clone().release())
+            std::unique_ptr<model::Composition> new_comp (
+                static_cast<model::Composition*>(precomp->clone().release())
             );
             new_comp->recursive_rename();
             new_comp->set_time(document->current_time());
 
             document->push_command(
                 new command::AddObject(
-                    &document->assets()->precompositions->values,
+                    &document->assets()->compositions->values,
                     std::move(new_comp),
                     -1,
                     nullptr,
@@ -120,7 +103,7 @@ void CompositionTabBar::set_document(model::Document* document)
 
     if ( this->document )
     {
-        disconnect(this->document->assets()->precompositions.get(), nullptr, this, nullptr);
+        disconnect(this->document->assets()->compositions.get(), nullptr, this, nullptr);
     }
 
     while ( count() )
@@ -130,12 +113,11 @@ void CompositionTabBar::set_document(model::Document* document)
 
     if ( document )
     {
-        setup_composition(document->main(), 0);
-        for ( int i = 0; i < document->assets()->precompositions->values.size(); i++ )
-            setup_composition(document->assets()->precompositions->values[i], i+1);
+        for ( int i = 0; i < document->assets()->compositions->values.size(); i++ )
+            setup_composition(document->assets()->compositions->values[i], i);
 
-        connect(document->assets()->precompositions.get(), &model::PrecompositionList::docnode_child_remove_begin, this, &CompositionTabBar::on_precomp_removed);
-        connect(document->assets()->precompositions.get(), &model::PrecompositionList::precomp_added, this, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
+        connect(document->assets()->compositions.get(), &model::CompositionList::docnode_child_remove_begin, this, &CompositionTabBar::on_precomp_removed);
+        connect(document->assets()->compositions.get(), &model::CompositionList::precomp_added, this, [this](model::Composition* node, int row){setup_composition(node, row+1);});
     }
 }
 
@@ -143,9 +125,6 @@ void CompositionTabBar::setup_composition(model::Composition* comp, int index)
 {
     index = insertTab(index, comp->tree_icon(), comp->object_name());
     update_comp_color(index, comp);
-
-    if ( comp != document->main() )
-        TabBarCloseButton::add_button(this, index);
 
     connect(comp, &model::DocumentNode::name_changed, this, [this, index, comp](){
         setTabText(index, comp->object_name());
@@ -168,7 +147,7 @@ void CompositionTabBar::update_comp_color(int index, model::Composition* comp)
 
 void CompositionTabBar::set_current_composition(model::Composition* comp)
 {
-    int index = document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp));
+    int index = document->assets()->compositions->values.index_of(static_cast<model::Composition*>(comp));
     setCurrentIndex(index+1);
 }
 

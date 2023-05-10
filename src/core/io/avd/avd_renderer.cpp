@@ -122,16 +122,16 @@ public:
         }
     };
 
-    void render(model::Document* doc)
+    void render(model::Composition* comp)
     {
-        fps = doc->main()->fps.get();
+        fps = comp->fps.get();
         vector = dom.createElement("vector");
-        vector.setAttribute("android:width", QString("%1dp").arg(doc->main()->width.get()));
-        vector.setAttribute("android:height", QString("%1dp").arg(doc->main()->height.get()));
-        vector.setAttribute("android:viewportWidth", QString::number(doc->main()->width.get()));
-        vector.setAttribute("android:viewportHeight", QString::number(doc->main()->height.get()));
+        vector.setAttribute("android:width", QString("%1dp").arg(comp->width.get()));
+        vector.setAttribute("android:height", QString("%1dp").arg(comp->height.get()));
+        vector.setAttribute("android:viewportWidth", QString::number(comp->width.get()));
+        vector.setAttribute("android:viewportHeight", QString::number(comp->height.get()));
 
-        render_comp(doc->main(), vector);
+        render_comp(comp, vector);
     }
 
     void render_comp(model::Composition* comp, QDomElement& parent)
@@ -592,9 +592,9 @@ glaxnimate::io::avd::AvdRenderer::~AvdRenderer()
 {
 }
 
-void glaxnimate::io::avd::AvdRenderer::render(model::Document* document)
+void glaxnimate::io::avd::AvdRenderer::render(model::Composition* comp)
 {
-    d->render(document);
+    d->render( comp);
 }
 
 QDomElement glaxnimate::io::avd::AvdRenderer::graphics()

@@ -101,7 +101,7 @@ private:
         &model::Group::staticMetaObject,
         &model::Composition::staticMetaObject,
         &model::Assets::staticMetaObject,
-        &model::PrecompositionList::staticMetaObject,
+        &model::CompositionList::staticMetaObject,
     };
     std::vector<const QMetaObject*> allowed;
 };

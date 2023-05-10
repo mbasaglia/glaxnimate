@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
  <class>DocumentMetadataDialog</class>
  <widget class="QDialog" name="DocumentMetadataDialog">
@@ -14,7 +7,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,28 +32,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
       </attribute>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Title</string>
-         </property>
-         <property name="buddy">
-          <cstring>edit_title</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="edit_title"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="edit_author"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="edit_description"/>
-       </item>
-       <item row="3" column="1">
-        <widget class="QPlainTextEdit" name="edit_keywords"/>
-       </item>
-       <item row="1" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Author</string>
@@ -70,7 +41,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="edit_author"/>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Description</string>
@@ -80,7 +54,10 @@ SPDX-License-Identifier: GPL-3.0-or-later
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="edit_description"/>
+       </item>
+       <item row="2" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Keywords</string>
@@ -89,6 +66,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
           <cstring>edit_keywords</cstring>
          </property>
         </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPlainTextEdit" name="edit_keywords"/>
        </item>
       </layout>
      </widget>

@@ -349,10 +349,7 @@ void CompoundTimelineWidget::set_document(model::Document* document)
     d->property_model.set_document(document);
     d->clear_menu_data();
     d->ui.tab_bar->set_document(document);
-    if ( document )
-        d->comp_model.set_composition(document->main());
-    else
-        d->comp_model.set_composition(nullptr);
+    d->comp_model.set_composition(nullptr);
 }
 
 void CompoundTimelineWidget::clear_document()
@@ -577,14 +574,14 @@ TimelineWidget * CompoundTimelineWidget::timeline() const
 
 void CompoundTimelineWidget::rows_removed(const QModelIndex& index, int first, int last)
 {
-    if ( auto document = d->property_model.document() )
+    if ( d->property_model.document() )
     {
         for ( int i = first; i <= last; i++ )
         {
             auto id = d->property_model.index(i, 0, index).internalId();
             if ( id == d->comp_model.get_root_id() )
             {
-                set_composition(document->main());
+                set_composition(d->comp_model.composition());
                 return;
             }
         }

@@ -10,6 +10,7 @@
 #include <QAbstractItemModel>
 
 #include "model/document.hpp"
+#include "model/shapes/shape.hpp"
 
 namespace glaxnimate::gui::item_models {
 

@@ -22,12 +22,12 @@ public:
     QStringList extensions() const override;
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
-    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition*) const override;
 
     static QString library_version();
 
 protected:
-    bool on_save(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&) override;
+    bool on_save(QIODevice& dev, const QString&, model::Composition* comp, const QVariantMap&) override;
 
 private:
     static Autoreg<VideoFormat> autoreg;

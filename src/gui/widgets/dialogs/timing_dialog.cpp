@@ -14,6 +14,7 @@
 #include "command/undo_macro_guard.hpp"
 #include "command/animation_commands.hpp"
 #include "model/simple_visitor.hpp"
+#include "model/assets/composition.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -21,15 +22,15 @@ using namespace glaxnimate;
 class TimingDialog::Private
 {
 public:
-    model::Document* document;
+    model::Composition* comp;
     bool changed = false;
     Ui::TimingDialog ui;
 };
 
-TimingDialog::TimingDialog(model::Document* document, QWidget* parent)
+TimingDialog::TimingDialog(model::Composition* comp, QWidget* parent)
     : QDialog(parent), d(std::make_unique<Private>())
 {
-    d->document = document;
+    d->comp = comp;
     d->ui.setupUi(this);
 
     d->ui.spin_seconds->setMaximum(std::numeric_limits<float>::max());
@@ -39,9 +40,9 @@ TimingDialog::TimingDialog(model::Document* document, QWidget* parent)
     d->ui.spin_fps->blockSignals(true);
     d->ui.spin_frames->blockSignals(true);
 
-    float fps = document->main()->fps.get();
+    float fps = comp->fps.get();
     d->ui.spin_fps->setValue(fps);
-    float n_frames = d->document->main()->animation->last_frame.get() - d->document->main()->animation->first_frame.get();
+    float n_frames = d->comp->animation->last_frame.get() - d->comp->animation->first_frame.get();
     if ( fps != 0 )
         d->ui.spin_seconds->setValue(n_frames / fps);
 
@@ -78,32 +79,31 @@ void TimingDialog::btn_clicked(QAbstractButton* button)
     if ( d->changed )
     {
 
-        qreal last_frame = d->document->main()->animation->first_frame.get() + d->ui.spin_frames->value();
-        command::UndoMacroGuard guard(tr("Change Animation Properties"), d->document);
+        qreal last_frame = d->comp->animation->first_frame.get() + d->ui.spin_frames->value();
+        command::UndoMacroGuard guard(tr("Change Animation Properties"), d->comp->document());
 
         if ( d->ui.check_layer_scale->isChecked() )
         {
             if ( last_frame != 0 )
             {
-                qreal multiplier = last_frame / d->document->main()->animation->last_frame.get();
-                d->document->push_command(new command::StretchTimeCommand(d->document, multiplier));
+                qreal multiplier = last_frame / d->comp->animation->last_frame.get();
+                d->comp->push_command(new command::StretchTimeCommand(d->comp, multiplier));
             }
         }
         else
         {
-
-            d->document->main()->animation->last_frame.set_undoable(last_frame);
+            d->comp->animation->last_frame.set_undoable(last_frame);
 
             if ( d->ui.check_layer_trim->isChecked() )
             {
-                model::simple_visit<model::Layer>(d->document->main(), true, [last_frame](model::Layer* layer){
+                model::simple_visit<model::Layer>(d->comp, true, [last_frame](model::Layer* layer){
                     if ( layer->animation->last_frame.get() > last_frame )
                         layer->animation->last_frame.set(last_frame);
                 });
             }
         }
 
-        d->document->main()->fps.set(d->ui.spin_fps->value());
+        d->comp->fps.set(d->ui.spin_fps->value());
     }
 
     if ( role == QDialogButtonBox::AcceptRole )

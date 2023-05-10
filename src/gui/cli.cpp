@@ -275,7 +275,7 @@ bool cli_export(const app::cli::ParsedArguments& args)
     }
 
     auto document = cli_open(args);
-    if ( !document )
+    if ( !document || document->assets()->compositions->values.empty() )
         return false;
 
     QFile output_file(output_filename);
@@ -286,7 +286,9 @@ bool cli_export(const app::cli::ParsedArguments& args)
     }
 
     QObject::connect(exporter, &io::ImportExport::message, &log_message);
-    if ( !exporter->save(output_file, output_filename, document.get(), io_settings(exporter->save_settings(document.get()))) )
+    /// \todo fix this (pass argument?)
+    auto comp = document->assets()->compositions->values[0];
+    if ( !exporter->save(output_file, output_filename, comp, io_settings(exporter->save_settings(comp))) )
     {
         app::cli::show_message(QApplication::tr("Error converting to the output format"), true);
         return false;
@@ -295,12 +297,12 @@ bool cli_export(const app::cli::ParsedArguments& args)
     return true;
 }
 
-using render_funcptr = void (*)(glaxnimate::model::Document* doc, glaxnimate::model::FrameTime time, QFile& file, const char* format);
+using render_funcptr = void (*)(glaxnimate::model::Composition* comp, glaxnimate::model::FrameTime time, QFile& file, const char* format);
 
 void render_frame(
     const QString& filename,
     const char* format,
-    glaxnimate::model::Document* doc,
+    glaxnimate::model::Composition* comp,
     glaxnimate::model::FrameTime time,
     render_funcptr renderer
 )
@@ -312,21 +314,21 @@ void render_frame(
         return;
     }
 
-    renderer(doc, time, file, format);
+    renderer(comp, time, file, format);
 }
 
-void render_frame_svg(glaxnimate::model::Document* doc, glaxnimate::model::FrameTime time, QFile& file, const char*)
+void render_frame_svg(glaxnimate::model::Composition* comp, glaxnimate::model::FrameTime time, QFile& file, const char*)
 {
     using namespace glaxnimate;
     io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
-    doc->set_current_time(time);
-    rend.write_document(doc);
+    comp->set_time(time);
+    rend.write_main(comp);
     rend.write(&file, true);
 }
 
-void render_frame_img(glaxnimate::model::Document* doc, glaxnimate::model::FrameTime time, QFile& file, const char* format)
+void render_frame_img(glaxnimate::model::Composition* comp, glaxnimate::model::FrameTime time, QFile& file, const char* format)
 {
-    QImage image = glaxnimate::io::raster::RasterMime::frame_to_image(doc->main(), time);
+    QImage image = glaxnimate::io::raster::RasterMime::frame_to_image(comp, time);
     if ( !image.save(&file, format) )
         app::cli::show_message(QApplication::tr("Could not save to %1").arg(file.fileName()), true);
 }
@@ -375,24 +377,27 @@ bool cli_render(const app::cli::ParsedArguments& args)
         dir.cd(name);
     }
 
+    /// \todo fix this (pass argument?)
+    auto comp = document->assets()->compositions->values[0];
+
     QString frame = args.value("frame").toString();
     if ( frame == "all" || frame == "-" || frame == "*" )
     {
 
-        float ip = document->main()->animation->first_frame.get();
-        float op = document->main()->animation->last_frame.get();
+        float ip = comp->animation->first_frame.get();
+        float op = comp->animation->last_frame.get();
         float pad = op != 0 ? std::ceil(std::log(op) / std::log(10)) : 1;
 
         for ( int f = ip; f < op; f += 1 )
         {
             QString frame_name = QString::number(f).rightJustified(pad, '0');
             QString file_name = dir.filePath(finfo.baseName() + frame_name + "." + finfo.completeSuffix());
-            render_frame(file_name, cfmt, document.get(), f, renderer);
+            render_frame(file_name, cfmt, comp, f, renderer);
         }
     }
     else
     {
-        render_frame(output_filename, cfmt, document.get(), frame.toDouble(), renderer);
+        render_frame(output_filename, cfmt, comp, frame.toDouble(), renderer);
     }
 
     return true;

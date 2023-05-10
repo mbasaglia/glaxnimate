@@ -22,11 +22,11 @@ public:
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
 
-    static QByteArray html_head(ImportExport* ie, model::Document* document, const QString& extra);
+    static QByteArray html_head(ImportExport* ie, model::Composition* comp, const QString& extra);
 
 private:
     bool on_save(QIODevice& file, const QString& filename,
-                 model::Document* document, const QVariantMap& setting_values) override;
+                 model::Composition* comp, const QVariantMap& setting_values) override;
 };
 
 

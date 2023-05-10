@@ -9,7 +9,7 @@
 #include "clickable_tab_bar.hpp"
 
 #include "model/document.hpp"
-#include "model/assets/precomposition.hpp"
+#include "model/assets/composition.hpp"
 
 namespace glaxnimate::gui {
 
@@ -21,7 +21,6 @@ public:
     explicit CompositionTabBar(QWidget *parent = nullptr);
 
     model::Composition* index_to_comp(int index) const;
-    model::Precomposition* index_to_precomp(int index) const;
 
     void set_document(model::Document* document);
 

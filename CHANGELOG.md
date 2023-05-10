@@ -3,17 +3,21 @@
 * Editing:
     * New keyframe preset: overshoot
     * More accurate timing for keyframe easing curves
+    * All compositions have the same attributes and features
 * I/O:
     * Fixed error message showing when loading a dotLottie without custom metadata
     * Fixed loading image assets from dotLottie
     * Saving a file sets the default export path
     * Importing non-animated SVG uses the same duration as the current animation
+    * When saving formats supporting a single composition, the active composition is exported
+    * When possible, backup files are saved in the same directory as the file being edited
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
 * Bug Fixes:
     * Fixed button connections in the advanced page of the trace dialog
     * Opening an image file sets the animation to 1 second rather than 0
+    * Fixed several inconsistencies that applied changes to the first composition
 * Other:
     * Added arm64 APK download
 

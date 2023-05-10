@@ -237,13 +237,13 @@ void GlaxnimateWindow::Private::init_debug()
     });
     menu_source->addAction("Current (Lottie)", [this]{
         json_to_pretty_temp(
-            QJsonDocument(io::lottie::LottieFormat().to_json(current_document.get()).toJsonObject())
+            QJsonDocument(io::lottie::LottieFormat().to_json(comp).toJsonObject())
         );
     });
     menu_source->addAction("Current (RIVE)", [this]{
         QBuffer buffer;
         buffer.open(QIODevice::WriteOnly);
-        io::rive::RiveFormat().save(buffer, "", current_document.get(), {});
+        io::rive::RiveFormat().save(buffer, "", comp, {});
         json_to_pretty_temp(io::rive::RiveFormat().to_json(buffer.data()));
     });
 

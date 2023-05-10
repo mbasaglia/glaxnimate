@@ -22,12 +22,12 @@ public:
         Seconds
     };
 
-    Private(model::AnimatedProperty<QPointF>* property, item_models::DocumentNodeModel* model, FollowPathDialog* parent)
-        : select_shape_dialog(model, parent), property(property)
+    Private(model::AnimatedProperty<QPointF>* property, model::Composition* comp, item_models::DocumentNodeModel* model, FollowPathDialog* parent)
+        : select_shape_dialog(model, parent), property(property), comp(comp)
     {
         ui.setupUi(parent);
         set_units(Frames);
-        auto anim = property->object()->document()->main()->animation.get();
+        auto anim = comp->animation.get();
         ui.spin_start->setValue(anim->first_frame.get());
         QSignalBlocker be(ui.spin_end);
         QSignalBlocker bd(ui.spin_duration);
@@ -37,24 +37,22 @@ public:
 
     void set_frames(QDoubleSpinBox* box)
     {
-        auto main = property->object()->document()->main();
         box->setSuffix(tr("f"));
         box->setDecimals(0);
         auto v = box->value();
-        box->setMinimum(main->animation->first_frame.get());
-        box->setMaximum(main->animation->last_frame.get());
-        box->setValue(v * main->fps.get());
+        box->setMinimum(comp->animation->first_frame.get());
+        box->setMaximum(comp->animation->last_frame.get());
+        box->setValue(v * comp->fps.get());
     }
 
     void set_seconds(QDoubleSpinBox* box)
     {
-        auto main = property->object()->document()->main();
-        auto fps = main->fps.get();
+        auto fps = comp->fps.get();
         box->setSuffix(tr("\""));
         box->setDecimals(2);
         auto v = box->value();
-        box->setMinimum(main->animation->first_frame.get() / fps);
-        box->setMaximum(main->animation->last_frame.get() / fps);
+        box->setMinimum(comp->animation->first_frame.get() / fps);
+        box->setMaximum(comp->animation->last_frame.get() / fps);
         box->setValue(v / fps);
     }
 
@@ -81,17 +79,18 @@ public:
     {
         if ( ui.combo_units->currentIndex() == Frames )
             return time;
-        return time * property->object()->document()->main()->fps.get();
+        return time * comp->fps.get();
     }
 
     Ui::FollowPathDialog ui;
     SelectShapeDialog select_shape_dialog;
     model::AnimatedProperty<QPointF>* property;
     model::Shape* shape = nullptr;
+    model::Composition* comp;
 };
 
-glaxnimate::gui::FollowPathDialog::FollowPathDialog(model::AnimatedProperty<QPointF>* property, item_models::DocumentNodeModel* model, QWidget* parent)
-    : QDialog(parent), d(std::make_unique<Private>(property, model, this))
+glaxnimate::gui::FollowPathDialog::FollowPathDialog(model::AnimatedProperty<QPointF>* property, model::Composition* comp, item_models::DocumentNodeModel* model, QWidget* parent)
+    : QDialog(parent), d(std::make_unique<Private>(property, comp, model, this))
 {}
 
 glaxnimate::gui::FollowPathDialog::~FollowPathDialog() = default;

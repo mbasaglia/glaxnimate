@@ -43,10 +43,12 @@ public:
 
     bool operator<(const DocumentTemplate& oth) const;
 
-    static QString name_template(model::Document* document);
+    static QString name_template(model::Composition* comp);
 
     QString aspect_ratio() const;
     static QString aspect_ratio(const QSize& size);
+
+    model::Composition* main_comp() const;
 
 private:
     QString filename;

@@ -21,13 +21,12 @@ public:
     bool can_open() const override { return false; }
 
 private:
-    bool on_save(QIODevice& file, const QString&,
-                 model::Document* document, const QVariantMap&) override
+    bool on_save(QIODevice& file, const QString&, model::Composition* comp, const QVariantMap&) override
     {
-        file.write(lottie::LottieHtmlFormat::html_head(this, document, {}));
+        file.write(lottie::LottieHtmlFormat::html_head(this, comp, {}));
         file.write("<body><div id='animation'>");
         SvgRenderer rend(SMIL, CssFontType::FontFace);
-        rend.write_document(document);
+        rend.write_main(comp);
         rend.write(&file, true);
         file.write("</div></body></html>");
         return true;

@@ -35,7 +35,7 @@ public:
     };
 
     explicit TraceWrapper(model::Image* image);
-    explicit TraceWrapper(model::Document* document, const QImage& image, const QString& name);
+    explicit TraceWrapper(model::Composition* comp, const QImage& image, const QString& name);
     ~TraceWrapper();
 
     void trace_mono(const QColor& color, bool inverted, int alpha_threshold, std::vector<TraceResult>& result);

@@ -34,24 +34,24 @@ using namespace glaxnimate;
 class io::svg::SvgRenderer::Private
 {
 public:
-    void collect_defs(model::Document* doc)
+    void collect_defs(model::Composition* comp)
     {
         if ( !at_start )
             return;
 
-        fps = doc->main()->fps.get();
-        ip = doc->main()->animation->first_frame.get();
-        op = doc->main()->animation->last_frame.get();
+        fps = comp->fps.get();
+        ip = comp->animation->first_frame.get();
+        op = comp->animation->last_frame.get();
         if ( ip >= op )
             animated = NotAnimated;
 
         at_start = false;
         defs = element(svg, "defs");
-        for ( const auto& color : doc->assets()->colors->values )
+        for ( const auto& color : comp->document()->assets()->colors->values )
             write_named_color(defs, color.get());
-        for ( const auto& color : doc->assets()->gradient_colors->values )
+        for ( const auto& color : comp->document()->assets()->gradient_colors->values )
             write_gradient_colors(defs, color.get());
-        for ( const auto& gradient : doc->assets()->gradients->values )
+        for ( const auto& gradient : comp->document()->assets()->gradients->values )
             write_gradient(defs, gradient.get());
 
         auto view = element(svg, "sodipodi:namedview");
@@ -61,21 +61,22 @@ public:
         view.setAttribute("pagecolor", "#ffffff");
         view.setAttribute("inkscape:document-units", "px");
 
-        add_fonts(doc);
+        add_fonts(comp->document());
 
-        write_meta(doc);
+        write_meta(comp);
     }
 
-    void write_meta(model::Document* document)
+    void write_meta(model::Composition* comp)
     {
-        if ( document->info().empty() )
-            return;
-
         auto rdf = element(element(svg, "metadata"), "rdf:RDF");
         auto work = element(rdf, "cc:Work");
         element(work, "dc:format").appendChild(dom.createTextNode("image/svg+xml"));
         element(work, "dc:type").setAttribute("rdf:resource", "http://purl.org/dc/dcmitype/StillImage");
-        element(work, "dc:title").appendChild(dom.createTextNode(document->main()->name.get()));
+        element(work, "dc:title").appendChild(dom.createTextNode(comp->name.get()));
+        auto document = comp->document();
+
+        if ( document->info().empty() )
+            return;
 
         if ( !document->info().author.isEmpty() )
             element(element(element(work, "dc:creator"), "cc:Agent"), "dc:title").appendChild(dom.createTextNode(document->info().author));
@@ -847,7 +848,7 @@ public:
             if ( animated && layer->visible.get() )
             {
                 auto* lay_range = layer->animation.get();
-                auto* doc_range = layer->document()->main()->animation.get();
+                auto* doc_range = layer->owner_composition()->animation.get();
                 bool has_start = lay_range->first_frame.get() > doc_range->first_frame.get();
                 bool has_end = lay_range->last_frame.get() < doc_range->last_frame.get();
 
@@ -1193,20 +1194,15 @@ io::svg::SvgRenderer::~SvgRenderer()
 {
 }
 
-void io::svg::SvgRenderer::write_document(model::Document* document)
-{
-    write_main(document->main());
-}
-
 void io::svg::SvgRenderer::write_composition(model::Composition* comp)
 {
-    d->collect_defs(comp->document());
+    d->collect_defs(comp);
     auto g = d->start_layer(d->svg, comp);
     d->write_composition(g, comp);
 }
 
 
-void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
+void io::svg::SvgRenderer::write_main(model::Composition* comp)
 {
     if ( d->at_start )
     {
@@ -1215,7 +1211,6 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
         d->svg.setAttribute("width", w);
         d->svg.setAttribute("height", h);
         d->svg.setAttribute("viewBox", QString("0 0 %1 %2").arg(w).arg(h));
-        d->collect_defs(comp->document());
         d->svg.appendChild(d->dom.createElement("title")).appendChild(d->dom.createTextNode(comp->name.get()));
         write_composition(comp);
     }
@@ -1227,16 +1222,14 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
 
 void io::svg::SvgRenderer::write_shape(model::ShapeElement* shape)
 {
-    d->collect_defs(shape->document());
+    d->collect_defs(shape->owner_composition());
     d->write_shape(d->svg, shape, true);
 }
 
 void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
 {
-    if ( auto mc = qobject_cast<model::MainComposition*>(node) )
-        write_main(mc);
-    else if ( auto co = qobject_cast<model::Composition*>(node) )
-        write_composition(co);
+    if ( auto co = qobject_cast<model::Composition*>(node) )
+        write_main(co);
     else if ( auto sh = qobject_cast<model::ShapeElement*>(node) )
         write_shape(sh);
 }

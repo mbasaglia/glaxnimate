@@ -6,6 +6,7 @@
 
 #include "io.hpp"
 #include "plugin.hpp"
+#include "model/assets/composition.hpp"
 
 using namespace glaxnimate;
 
@@ -35,11 +36,12 @@ bool plugin::IoFormat::on_open(QIODevice& file, const QString& name, model::Docu
     });
 }
 
-bool plugin::IoFormat::on_save(QIODevice& file, const QString& name, model::Document* document, const QVariantMap& settings)
+bool plugin::IoFormat::on_save(QIODevice& file, const QString& name, model::Composition* comp, const QVariantMap& settings)
 {
     return service->plugin()->run_script(service->save, {
         PluginRegistry::instance().global_parameter("window"),
-        QVariant::fromValue(document),
+        QVariant::fromValue(comp->document()),
+        QVariant::fromValue(comp),
         QVariant::fromValue(&file),
         name,
         QVariant::fromValue(this),
@@ -54,7 +56,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::plugin::IoFormat::open
     return std::make_unique<app::settings::SettingsGroup>(service->open.settings);
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::plugin::IoFormat::save_settings(model::Document*) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::plugin::IoFormat::save_settings(model::Composition*) const
 {
     return std::make_unique<app::settings::SettingsGroup>(service->save.settings);
 }

@@ -22,12 +22,12 @@ public:
     Ui::ResizeDialog ui;
     double ratio = 1;
 
-    void resize(model::Document* doc)
+    void resize(model::Composition* comp)
     {
-        doc->push_command(new command::SetMultipleProperties(
+        comp->push_command(new command::SetMultipleProperties(
             tr("Resize Document"),
             true,
-            {&doc->main()->width, &doc->main()->height},
+            {&comp->width, &comp->height},
             ui.spin_width->value(),
             ui.spin_height->value()
         ));
@@ -72,9 +72,9 @@ void ResizeDialog::height_changed(int h)
     }
 }
 
-void ResizeDialog::resize_document(model::Document* doc)
+void ResizeDialog::resize_composition(model::Composition* comp)
 {
-    auto comp = doc->main();
+    auto doc = comp->document();
     d->ui.spin_width->setValue(comp->width.get());
     d->ui.spin_height->setValue(comp->height.get());
     d->ratio = double(comp->width.get()) / comp->height.get();
@@ -103,11 +103,11 @@ void ResizeDialog::resize_document(model::Document* doc)
         layer->animation->first_frame.set(comp->animation->first_frame.get());
         layer->animation->last_frame.set(comp->animation->last_frame.get());
 
-        d->resize(doc);
+        d->resize(comp);
     }
     else
     {
-        d->resize(doc);
+        d->resize(comp);
     }
 }
 

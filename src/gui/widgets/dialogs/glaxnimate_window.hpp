@@ -124,7 +124,7 @@ public:
 
     void trace_dialog(model::DocumentNode* object);
 
-    void shape_to_precomposition(model::ShapeElement* node);
+    void shape_to_composition(model::ShapeElement* node);
 
     QMenu* create_layer_menu() const;
 

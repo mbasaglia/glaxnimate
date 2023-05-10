@@ -11,7 +11,7 @@
 #include <QDialog>
 #include <QAbstractButton>
 
-namespace glaxnimate::model { class Document; }
+namespace glaxnimate::model { class Composition; }
 
 namespace glaxnimate::gui {
 
@@ -20,7 +20,7 @@ class TimingDialog : public QDialog
     Q_OBJECT
 
 public:
-    TimingDialog(model::Document* document, QWidget* parent = nullptr);
+    TimingDialog(model::Composition* comp, QWidget* parent = nullptr);
     ~TimingDialog();
 
 protected:

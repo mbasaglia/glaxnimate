@@ -47,8 +47,6 @@ math/bezier/cubic_struts.cpp
 math/bezier/meta.cpp
 math/bezier/bezier_length.cpp
 
-model/main_composition.cpp
-model/composition.cpp
 model/document.cpp
 model/document_node.cpp
 model/object.cpp
@@ -75,7 +73,7 @@ model/assets/bitmap.cpp
 model/assets/gradient.cpp
 model/assets/asset_base.cpp
 model/assets/asset.cpp
-model/assets/precomposition.cpp
+model/assets/composition.cpp
 model/assets/embedded_font.cpp
 
 model/shapes/shape.cpp

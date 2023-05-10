@@ -14,7 +14,7 @@
 
 
 namespace glaxnimate::model {
-    class Document;
+    class Composition;
 } // namespace glaxnimate::model
 
 
@@ -27,7 +27,7 @@ public:
     AvdRenderer(const std::function<void(const QString&)>& on_warning);
     ~AvdRenderer();
 
-    void render(model::Document* document);
+    void render(model::Composition* comp);
 
     QDomElement graphics();
     QDomDocument single_file();

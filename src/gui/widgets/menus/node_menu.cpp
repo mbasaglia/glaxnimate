@@ -158,7 +158,7 @@ template<class ToType> void convert_group_apply_settings(ToType*){}
 template<>
 void convert_group_apply_settings<model::Layer>(model::Layer* layer)
 {
-    auto comp = layer->document()->main();
+    auto comp = layer->owner_composition();
     layer->animation->first_frame.set(comp->animation->first_frame.get());
     layer->animation->last_frame.set(comp->animation->last_frame.get());
 }
@@ -259,10 +259,10 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
         menu->addAction(QIcon::fromTheme("timeline-use-zone-on"), NodeMenu::tr("Span All Frames"), menu, [lay]{
             command::UndoMacroGuard guard(NodeMenu::tr("Span All Frames"), lay->document());
             lay->animation->first_frame.set_undoable(
-                lay->document()->main()->animation->first_frame.get()
+                lay->owner_composition()->animation->first_frame.get()
             );
             lay->animation->last_frame.set_undoable(
-                lay->document()->main()->animation->last_frame.get()
+                lay->owner_composition()->animation->last_frame.get()
             );
         });
 
@@ -270,7 +270,7 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
         menu->addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), NodeMenu::tr("Parent"), menu, &lay->parent)->menuAction());
         menu->addAction(QIcon::fromTheme("object-group"), NodeMenu::tr("Convert to Group"), menu, ConvertGroupType<model::Group>(lay));
         menu->addAction(QIcon::fromTheme("component"), NodeMenu::tr("Precompose"), menu, [window, lay]{
-            window->shape_to_precomposition(lay);
+            window->shape_to_composition(lay);
         });
 
         if ( !lay->mask->has_mask() )
@@ -380,7 +380,7 @@ void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
         lay->push_command(new command::RemoveShape(lay, lay->owner()));
 
         if ( comp && comp->users().empty() )
-            lay->push_command(new command::RemoveObject(comp, &lay->document()->assets()->precompositions->values));
+            lay->push_command(new command::RemoveObject(comp, &lay->document()->assets()->compositions->values));
     });
 }
 

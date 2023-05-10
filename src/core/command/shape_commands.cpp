@@ -6,7 +6,7 @@
 
 #include "shape_commands.hpp"
 #include "model/shapes/group.hpp"
-#include "model/composition.hpp"
+#include "model/assets/composition.hpp"
 #include "model/document.hpp"
 
 using namespace glaxnimate;

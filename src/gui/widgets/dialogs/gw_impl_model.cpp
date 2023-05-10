@@ -43,14 +43,14 @@ model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 {
     if ( auto dn = ui.view_document_node->current_node() )
         return dn;
-    return current_document->main();
+    return comp;
 }
 
 void GlaxnimateWindow::Private::layer_new_layer()
 {
     auto layer = std::make_unique<model::Layer>(current_document.get());
-    layer->animation->last_frame.set(current_document->main()->animation->last_frame.get());
-    QPointF pos = current_document->rect().center();
+    layer->animation->last_frame.set(comp->animation->last_frame.get());
+    QPointF pos = comp->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     parent->layer_new_impl(std::move(layer));
@@ -73,7 +73,7 @@ void GlaxnimateWindow::Private::layer_new_stroke()
 void GlaxnimateWindow::Private::layer_new_group()
 {
     auto layer = std::make_unique<model::Group>(current_document.get());
-    QPointF pos = current_document->rect().center();
+    QPointF pos = comp->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     parent->layer_new_impl(std::move(layer));
@@ -363,14 +363,26 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
         ui.tab_bar->setCurrentIndex(i);
     }
 
-    int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(this->comp)) + 1;
+    int old_i = current_document->assets()->compositions->values.index_of(static_cast<model::Composition*>(this->comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )
         comp_selections[old_i].current = ui.view_document_node->current_node();
     else
         comp_selections[old_i].current = comp;
 
+    if ( comp )
+    {
+        QObject::disconnect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+        QObject::disconnect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+        QObject::disconnect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
+    }
+
     comp = new_comp;
+
+    ui.play_controls->set_range(comp->animation->first_frame.get(), comp->animation->last_frame.get());
+    QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+    QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+    QObject::connect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
 
     if ( i == 0 )
     {
@@ -382,7 +394,7 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
         auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
         std::set<model::Composition*> comps(possible.begin(), possible.end());
         for ( QAction* action : ui.menu_new_comp_layer->actions() )
-            action->setEnabled(comps.count(action->data().value<model::Precomposition*>()));
+            action->setEnabled(comps.count(action->data().value<model::Composition*>()));
     }
 
     ui.view_document_node->set_composition(comp);
@@ -410,39 +422,44 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
 
     QAction* action = nullptr;
 
-    if ( comp != current_document->main() )
-    {
-        ui.menu_new_comp_layer->setEnabled(true);
-        action = new QAction(comp->instance_icon(), comp->object_name(), comp);
-        if ( ui.menu_new_comp_layer->actions().empty() || index - 1 >= ui.menu_new_comp_layer->actions().size() )
-            ui.menu_new_comp_layer->addAction(action);
-        else
-            ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
-        action->setData(QVariant::fromValue(comp));
+    ui.menu_new_comp_layer->setEnabled(true);
+    action = new QAction(comp->instance_icon(), comp->object_name(), comp);
+    if ( ui.menu_new_comp_layer->actions().empty() || index - 1 >= ui.menu_new_comp_layer->actions().size() )
+        ui.menu_new_comp_layer->addAction(action);
+    else
+        ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
+    action->setData(QVariant::fromValue(comp));
 
-        connect(comp, &model::DocumentNode::name_changed, action, [this, comp, action](){
-            action->setText(comp->object_name());
-        });
-        connect(comp, &model::VisualNode::docnode_group_color_changed, action, [this, comp, action](){
-                action->setIcon(comp->instance_icon());
-        });
-    }
+    connect(comp, &model::DocumentNode::name_changed, action, [this, comp, action](){
+        action->setText(comp->object_name());
+    });
+    connect(comp, &model::VisualNode::docnode_group_color_changed, action, [this, comp, action](){
+            action->setIcon(comp->instance_icon());
+    });
 
 }
 
 void GlaxnimateWindow::Private::add_composition()
 {
-    std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
+    auto old_comp = this->comp;
+    std::unique_ptr<model::Composition> comp = std::make_unique<model::Composition>(current_document.get());
 
     auto lay = std::make_unique<model::Layer>(current_document.get());
     current_document->set_best_name(lay.get());
-    auto center = current_document->rect().center();
+
+    comp->animation->first_frame.set(old_comp->animation->first_frame.get());
+    comp->animation->last_frame.set(old_comp->animation->last_frame.get());
+    comp->fps.set(old_comp->fps.get());
+    comp->width.set(old_comp->width.get());
+    comp->height.set(old_comp->height.get());
+
+    QPointF center(comp->width.get() / 2, comp->height.get() / 2);
     lay->transform->anchor_point.set(center);
     lay->transform->position.set(center);
     comp->shapes.insert(std::move(lay));
 
     current_document->set_best_name(comp.get());
-    current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(comp)));
+    current_document->push_command(new command::AddObject(&current_document->assets()->compositions->values, std::move(comp)));
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 
@@ -456,16 +473,19 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     if ( objects.empty() )
         return;
 
-    int new_comp_index = current_document->assets()->precompositions->values.size() + 1;
+    int new_comp_index = current_document->assets()->compositions->values.size() + 1;
     command::UndoMacroGuard guard(tr("New Composition from Selection"), current_document.get());
 
-    std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
-    model::Precomposition* new_comp = ucomp.get();
+    auto ucomp = std::make_unique<model::Composition>(current_document.get());
+    model::Composition* new_comp = ucomp.get();
+    new_comp->width.set(comp->width.get());
+    new_comp->height.set(comp->height.get());
+    new_comp->fps.set(comp->fps.get());
     if ( objects.size() > 1 || objects[0]->name.get().isEmpty() )
         current_document->set_best_name(new_comp);
     else
         new_comp->name.set(objects[0]->name.get());
-    current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(ucomp)));
+    current_document->push_command(new command::AddObject(&current_document->assets()->compositions->values, std::move(ucomp)));
 
 
     for ( auto node : objects )
@@ -481,34 +501,41 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
 
     auto pcl = std::make_unique<model::PreCompLayer>(current_document.get());
     pcl->composition.set(new_comp);
-    pcl->size.set(current_document->size());
+    pcl->size.set(new_comp->size());
     current_document->set_best_name(pcl.get());
     auto pcl_ptr = pcl.get();
     current_document->push_command(new command::AddShape(layer_parent, std::move(pcl), layer_index));
 
     switch_composition(new_comp, new_comp_index);
 
-    int old_comp_index = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_comp_index = current_document->assets()->compositions->values.index_of(static_cast<model::Composition*>(comp));
     comp_selections[old_comp_index] = pcl_ptr;
 }
 
 
 void GlaxnimateWindow::Private::on_remove_precomp(int index)
 {
-    model::Precomposition* precomp = current_document->assets()->precompositions->values[index];
+    model::Composition* precomp = current_document->assets()->compositions->values[index];
+
     if ( precomp == comp )
-        switch_composition(current_document->main(), 0);
+    {
+        auto& comps = current_document->assets()->compositions->values;
+        if ( comps.empty() )
+            add_composition();
+
+        switch_composition(comps[qMax(comps.size() - 1, index)], 0);
+    }
 
     delete ui.menu_new_comp_layer->actions()[index];
-    comp_selections.erase(comp_selections.begin()+index+1);
+    comp_selections.erase(comp_selections.begin()+index);
 }
 
 void GlaxnimateWindow::Private::layer_new_comp_action(QAction* action)
 {
-    parent->layer_new_comp(action->data().value<model::Precomposition*>());
+    parent->layer_new_comp(action->data().value<model::Composition*>());
 }
 
-void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* node)
+void GlaxnimateWindow::Private::shape_to_composition(model::ShapeElement* node)
 {
     if ( !node )
         return;
@@ -623,11 +650,11 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
     }
     else if ( ui.action_align_to_canvas->isChecked() )
     {
-        reference = align_point(current_document->rect(), direction, position);
+        reference = align_point(comp->rect(), direction, position);
     }
     else if ( ui.action_align_to_canvas_group->isChecked() )
     {
-        reference = align_point(current_document->rect(), direction, position);
+        reference = align_point(comp->rect(), direction, position);
         QPointF bounds_point = align_point(bounds, direction, bound_pos);
         for ( auto& item : data )
             item.bounds_point = bounds_point;
@@ -688,11 +715,11 @@ void GlaxnimateWindow::Private::dropped(const QMimeData* data)
         {
             std::unique_ptr<model::ShapeElement> element;
 
-            if ( auto precomp = asset->cast<model::Precomposition>() )
+            if ( auto precomp = asset->cast<model::Composition>() )
             {
                 auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
                 layer->composition.set(precomp);
-                layer->size.set(current_document->size());
+                layer->size.set(precomp->size());
                 element = std::move(layer);
             }
             else if ( auto bmp = asset->cast<model::Bitmap>() )

@@ -11,6 +11,7 @@
 
 #include "app/settings/settings.hpp"
 #include "settings/document_templates.hpp"
+#include <model/assets/assets.hpp>
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -57,13 +58,16 @@ public:
 
     void apply_to_document(model::Document* doc)
     {
-        doc->main()->width.set(ui.spin_size->x());
-        doc->main()->height.set(ui.spin_size->y());
-        doc->main()->fps.set(ui.spin_fps->value());
         auto last_frame = duration_frames();
-        doc->main()->animation->last_frame.set(last_frame);
-        for ( auto lay : doc->main()->docnode_find_by_type_name<model::Layer>("Layer") )
-            lay->animation->last_frame.set(last_frame);
+        for ( const auto& comp : doc->assets()->compositions->values )
+        {
+            comp->width.set(ui.spin_size->x());
+            comp->height.set(ui.spin_size->y());
+            comp->fps.set(ui.spin_fps->value());
+            comp->animation->last_frame.set(last_frame);
+            for ( auto lay : comp->docnode_find_by_type_name<model::Layer>("Layer") )
+                lay->animation->last_frame.set(last_frame);
+        }
     }
 };
 
@@ -176,18 +180,19 @@ std::unique_ptr<model::Document> StartupDialog::create() const
     }
 
     auto doc = std::make_unique<model::Document>("");
+    auto comp = doc->assets()->add_comp_no_undo();
     d->apply_to_document(doc.get());
 
     auto layer = std::make_unique<model::Layer>(doc.get());
     layer->animation->last_frame.set(d->duration_frames());
     layer->name.set(layer->type_name_human());
     QPointF pos(
-        doc->main()->width.get() / 2.0,
-        doc->main()->height.get() / 2.0
+        d->ui.spin_size->x() / 2.0,
+        d->ui.spin_size->y() / 2.0
     );
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
-    doc->main()->shapes.insert(std::move(layer), 0);
+    comp->shapes.insert(std::move(layer), 0);
 
     return doc;
 }

@@ -64,11 +64,15 @@ public:
 
     /**
      * @pre @p setting_values contains all the settings correctly && can_open()
+     * @param file File to write to
+     * @param filename Filename for error reporting
+     * @param comp Composition, for formats supporting multiple comps, use comp->document()
+     * @param setting_values Values based on save_settings()
      */
     bool save(QIODevice& file, const QString& filename,
-        model::Document* document, const QVariantMap& setting_values);
+        model::Composition* comp, const QVariantMap& setting_values);
 
-    Q_INVOKABLE QByteArray save(glaxnimate::model::Document* document, const QVariantMap& setting_values={}, const QString& filename = "data");
+    Q_INVOKABLE QByteArray save(model::Composition* comp, const QVariantMap& setting_values={}, const QString& filename = "data");
     Q_INVOKABLE bool load(glaxnimate::model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
 
 
@@ -76,7 +80,7 @@ public:
     virtual QString slug() const = 0;
     virtual QStringList extensions() const = 0;
     virtual std::unique_ptr<app::settings::SettingsGroup> open_settings() const { return {}; }
-    virtual std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document* ) const { return {}; }
+    virtual std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition* ) const { return {}; }
     virtual bool can_open() const = 0;
     virtual bool can_save() const = 0;
     /**
@@ -117,12 +121,15 @@ protected:
         return false;
     }
 
-    virtual bool on_save(QIODevice& file, const QString& filename,
-                      model::Document* document, const QVariantMap& setting_values)
+    virtual bool on_save(
+        QIODevice& file,
+        const QString& filename,
+        model::Composition* comp,
+        const QVariantMap& setting_values)
     {
         Q_UNUSED(file);
         Q_UNUSED(filename);
-        Q_UNUSED(document);
+        Q_UNUSED(comp);
         Q_UNUSED(setting_values);
         return false;
     }

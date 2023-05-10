@@ -400,7 +400,6 @@ void item_models::PropertyModelFull::on_document_reset()
 {
     if ( d->document )
     {
-        d->add_object(d->document->main(), nullptr, false);
         d->add_object(d->document->assets(), nullptr, false);
     }
 }

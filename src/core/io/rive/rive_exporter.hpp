@@ -44,10 +44,9 @@ public:
     {
         write_assets(document->assets()->images.get());
 
-        write_composition(document->main(), document->size());
 
-        for ( const auto& comp : document->assets()->precompositions->values )
-            write_composition(comp.get(), document->size());
+        for ( const auto& comp : document->assets()->compositions->values )
+            write_composition(comp.get(), comp->size());
     }
 
 private:
@@ -266,7 +265,7 @@ private:
         if ( auto comp = shape->composition.get() )
         {
             Identifier comp_index = 1;
-            for ( const auto& declared_comp : shape->document()->assets()->precompositions->values )
+            for ( const auto& declared_comp : shape->document()->assets()->compositions->values )
             {
                 if ( declared_comp.get() == comp )
                     break;

@@ -9,15 +9,14 @@
 #include "model/document_node.hpp"
 #include "model/document.hpp"
 #include "model/assets/assets.hpp"
-#include "model/assets/precomposition.hpp"
+#include "model/assets/composition.hpp"
 
 
-void glaxnimate::model::Visitor::visit(glaxnimate::model::Document* doc, bool skip_locked)
+void glaxnimate::model::Visitor::visit(glaxnimate::model::Document* doc, model::Composition* main, bool skip_locked)
 {
-    on_visit(doc);
+    on_visit(doc, main);
     visit(doc->assets(), skip_locked);
-    visit(doc->main(), skip_locked);
-    on_visit_end(doc);
+    on_visit_end(doc, main);
 }
 
 void glaxnimate::model::Visitor::visit(glaxnimate::model::DocumentNode* node, bool skip_locked)

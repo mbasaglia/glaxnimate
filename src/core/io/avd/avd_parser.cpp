@@ -76,7 +76,7 @@ protected:
 
         if ( root.tagName() == "vector" )
         {
-            parse_vector({root, &document->main()->shapes, default_style, false});
+            parse_vector({root, &main->shapes, default_style, false});
         }
         else
         {
@@ -85,7 +85,7 @@ protected:
                 if ( auto res = get_resource(root.attribute("drawable")) )
                 {
                     if ( res->element.tagName() == "vector" )
-                        parse_vector({res->element, &document->main()->shapes, default_style, false});
+                        parse_vector({res->element, &main->shapes, default_style, false});
                 }
             }
 
@@ -95,12 +95,12 @@ protected:
                 {
                     for ( const auto& e : ElementRange(ch) )
                         if ( e.tagName() == "vector" )
-                            parse_vector({e, &document->main()->shapes, default_style, false});
+                            parse_vector({e, &main->shapes, default_style, false});
                 }
             }
         }
 
-        document->main()->name.set(
+        main->name.set(
             attr(root, "android", "name", "")
         );
     }
