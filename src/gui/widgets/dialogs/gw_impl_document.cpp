@@ -86,9 +86,6 @@ void GlaxnimateWindow::Private::do_setup_document()
     for ( const auto& precomp : current_document->assets()->compositions->values )
         setup_composition(precomp.get());
 
-    if ( !current_document->assets()->compositions->values.empty() )
-        switch_composition(current_document->assets()->compositions->values[0], 0);
-
     // Undo Redo
     parent->undo_group().addStack(&current_document->undo_stack());
     parent->undo_group().setActiveStack(&current_document->undo_stack());
@@ -106,6 +103,8 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     scene.set_document(current_document.get());
 
+    if ( !current_document->assets()->compositions->values.empty() )
+        switch_composition(current_document->assets()->compositions->values[0], 0);
 
     ui.document_swatch_widget->set_document(current_document.get());
     ui.widget_gradients->set_document(current_document.get());
