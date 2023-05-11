@@ -363,15 +363,15 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
         ui.tab_bar->setCurrentIndex(i);
     }
 
-    int old_i = current_document->assets()->compositions->values.index_of(static_cast<model::Composition*>(this->comp)) + 1;
-    comp_selections[old_i].selection = scene.selection();
-    if ( ui.view_document_node->currentIndex().isValid() )
-        comp_selections[old_i].current = ui.view_document_node->current_node();
-    else
-        comp_selections[old_i].current = comp;
-
     if ( comp )
     {
+        int old_i = current_document->assets()->compositions->values.index_of(static_cast<model::Composition*>(comp));
+        comp_selections[old_i].selection = scene.selection();
+        if ( ui.view_document_node->currentIndex().isValid() )
+            comp_selections[old_i].current = ui.view_document_node->current_node();
+        else
+            comp_selections[old_i].current = comp;
+
         QObject::disconnect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
         QObject::disconnect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
         QObject::disconnect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
@@ -424,7 +424,7 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
 
     ui.menu_new_comp_layer->setEnabled(true);
     action = new QAction(comp->instance_icon(), comp->object_name(), comp);
-    if ( ui.menu_new_comp_layer->actions().empty() || index - 1 >= ui.menu_new_comp_layer->actions().size() )
+    if ( ui.menu_new_comp_layer->actions().empty() || index >= ui.menu_new_comp_layer->actions().size() )
         ui.menu_new_comp_layer->addAction(action);
     else
         ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
@@ -473,7 +473,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     if ( objects.empty() )
         return;
 
-    int new_comp_index = current_document->assets()->compositions->values.size() + 1;
+    int new_comp_index = current_document->assets()->compositions->values.size();
     command::UndoMacroGuard guard(tr("New Composition from Selection"), current_document.get());
 
     auto ucomp = std::make_unique<model::Composition>(current_document.get());
@@ -523,7 +523,7 @@ void GlaxnimateWindow::Private::on_remove_precomp(int index)
         if ( comps.empty() )
             add_composition();
 
-        switch_composition(comps[qMax(comps.size() - 1, index)], 0);
+        switch_composition(comps[qMax(comps.size(), index)], 0);
     }
 
     delete ui.menu_new_comp_layer->actions()[index];
