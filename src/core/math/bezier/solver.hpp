@@ -279,10 +279,8 @@ public:
 
         for ( auto root : roots )
         {
-            if ( root >= 0 && root <= 1 )
+            if ( valid_solution(root) )
                 return root;
-            if ( qFuzzyIsNull(root) )
-                return 0;
         }
 
         return -1;
@@ -321,7 +319,7 @@ private:
         if ( d < 0 )
             return;
 
-        if ( a == 0 )
+        if ( qFuzzyIsNull(a) )
         {
             // linear case
             add_bounds_solution(-c / b, solutions);
@@ -335,9 +333,29 @@ private:
         }
     }
 
+    static bool valid_solution(scalar& root)
+    {
+        if ( root >= 0 && root <= 1 )
+            return true;
+
+        if ( qFuzzyIsNull(root) )
+        {
+            root = 0;
+            return true;
+        }
+
+        if ( qFuzzyCompare(root, 1) )
+        {
+            root = 1;
+            return true;
+        }
+
+        return false;
+    }
+
     static void add_bounds_solution(scalar solution, std::vector<argument_type>& solutions)
     {
-        if ( solution >= 0 && solution <= 1 )
+        if ( valid_solution(solution) )
             solutions.push_back(solution);
     }
 
