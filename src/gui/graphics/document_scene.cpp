@@ -468,7 +468,7 @@ void graphics::DocumentScene::node_locked(bool locked)
 void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
     painter->fillRect(rect, palette().base());
-    if ( d->document )
+    if ( d->comp )
         painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->comp->size())), d->back);
     emit drawing_background(painter, rect);
 }
@@ -479,7 +479,7 @@ void graphics::DocumentScene::drawForeground(QPainter* painter, const QRectF&)
     QPen p(palette().mid(), 1);
     p.setCosmetic(true);
     painter->setPen(p);
-    if ( d->document )
+    if ( d->comp )
         painter->drawRect(QRectF(QPointF(0, 0), d->comp->size()));
 
 }

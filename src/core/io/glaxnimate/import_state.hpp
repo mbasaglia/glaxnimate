@@ -133,10 +133,11 @@ public:
 
     void load_object ( model::Object* target, QJsonObject object )
     {
+        version_fixup(object);
         do_load_object(target, object, target);
     }
 
-    void load_metadata(model::Document* document, const QJsonObject& object)
+    void load_metadata(const QJsonObject& object)
     {
         document->metadata() = object["metadata"].toObject().toVariantMap();
         auto info = object["info"];
@@ -144,6 +145,40 @@ public:
         document->info().description = info["description"].toString();
         for ( const auto& kw: info["keywords"].toArray() )
             document->info().keywords.push_back(kw.toString());
+    }
+
+    void load_document(QJsonObject top_level)
+    {
+        auto assets = top_level[document_version < 3 ? "defs" : "assets"].toObject();
+
+        if ( document_version < 8 )
+        {
+            QJsonObject precomps;
+            QJsonArray values;
+            if ( assets.contains("precompositions") )
+            {
+                precomps = assets["precompositions"].toObject();
+                values = precomps["values"].toArray();
+            }
+            else
+            {
+                precomps["__type__"] = "CompositionList";
+            }
+
+            if ( top_level["animation"].isObject() )
+            {
+                QJsonObject main = top_level["animation"].toObject();
+                top_level.remove("animation");
+                values.push_front(main);
+            }
+
+            precomps["values"] = values;
+            assets["precompositions"] = precomps;
+        }
+
+        load_metadata(top_level);
+        load_object(document->assets(), assets);
+        resolve();
     }
 
 private:
@@ -162,7 +197,7 @@ private:
         return fixed;
     }
 
-    void version_fixup(model::Object*, QJsonObject& object)
+    void version_fixup(QJsonObject& object)
     {
         if ( document_version == 1 )
         {
@@ -245,11 +280,11 @@ private:
         {
             if ( object["__type__"].toString() == "MainComposition" )
             {
-                object["__type__"].toString() = "Composition";
+                object["__type__"] = "Composition";
             }
             else if ( object["__type__"].toString() == "Precomposition" )
             {
-                object["__type__"].toString() = "Composition";
+                object["__type__"] = "Composition";
                 if ( !document->assets()->compositions->values.empty() )
                 {
                     auto main = document->assets()->compositions->values[0];
@@ -263,20 +298,19 @@ private:
             }
             else if ( object["__type__"].toString() == "PrecompositionList" )
             {
-                object["__type__"].toString() = "CompositionList";
+                object["__type__"] = "CompositionList";
             }
             else if ( object["__type__"].toString() == "Assets" )
             {
-                object["compositions"] = object["precompositions"];
+                QJsonObject comps = object["precompositions"].toObject();
                 object.remove("precompositions");
+                object["compositions"] = comps;
             }
         }
     }
 
     void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )
     {
-        version_fixup(target, object);
-
         QString type = object["__type__"].toString();
 
         if ( type != target->type_name() )
@@ -473,6 +507,7 @@ private:
                 if ( !val.isObject() )
                     return {};
                 QJsonObject jobj = val.toObject();
+                version_fixup(jobj);
                 model::Object* object = create_object(jobj["__type__"].toString());
                 if ( !object )
                     return {};

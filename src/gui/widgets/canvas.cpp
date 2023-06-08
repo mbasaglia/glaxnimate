@@ -458,10 +458,9 @@ void Canvas::view_fit()
     d->zoom_factor = 1;
     emit rotated(0);
 
-
     QRect fit_target;
 
-    if ( d->tool_target->document() )
+    if ( d->tool_target->current_composition() )
         fit_target = QRect(
             -32,
             -32,
