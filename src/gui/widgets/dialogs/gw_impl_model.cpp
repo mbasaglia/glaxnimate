@@ -384,18 +384,10 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
     QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
 
-    if ( i == 0 )
-    {
-        for ( QAction* action : ui.menu_new_comp_layer->actions() )
-            action->setEnabled(true);
-    }
-    else
-    {
-        auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
-        std::set<model::Composition*> comps(possible.begin(), possible.end());
-        for ( QAction* action : ui.menu_new_comp_layer->actions() )
-            action->setEnabled(comps.count(action->data().value<model::Composition*>()));
-    }
+    auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
+    std::set<model::Composition*> comps(possible.begin(), possible.end());
+    for ( QAction* action : ui.menu_new_comp_layer->actions() )
+        action->setEnabled(comps.count(action->data().value<model::Composition*>()));
 
     ui.view_document_node->set_composition(comp);
     ui.timeline_widget->set_composition(comp);
