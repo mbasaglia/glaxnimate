@@ -204,6 +204,51 @@ private slots:
     {
         QVERIFY_EXCEPTION_THROWN(lex("@"), CosError);
     }
+
+    void test_parse_value()
+    {
+        COS_VALUE(parse("(foo)"), String, "foo");
+        COS_VALUE(parse("<f00d>"), Bytes, "\xf0\x0d"_b);
+        COS_VALUE(parse("null"), Null, nullptr);
+        COS_VALUE(parse("true"), Boolean, true);
+        COS_VALUE(parse("123"), Number, 123);
+    }
+
+    void test_parse_mid_object()
+    {
+        auto value = parse("/foo (bar) /bar 123");
+        QCOMPARE(value.type(), CosValue::Index::Object);
+        auto& obj = value.get<CosValue::Index::Object>();
+        COS_VALUE(obj->at("foo"), String, "bar");
+        COS_VALUE(obj->at("bar"), Number, 123);
+    }
+
+    void test_parse_object()
+    {
+        auto value = parse("<< /foo (bar) /bar 123 >>");
+        QCOMPARE(value.type(), CosValue::Index::Object);
+        auto& obj = value.get<CosValue::Index::Object>();
+        COS_VALUE(obj->at("foo"), String, "bar");
+        COS_VALUE(obj->at("bar"), Number, 123);
+    }
+
+    void test_parse_mid_array()
+    {
+        auto value = parse("(bar) 123");
+        QCOMPARE(value.type(), CosValue::Index::Array);
+        auto& obj = *value.get<CosValue::Index::Array>();
+        COS_VALUE(obj[0], String, "bar");
+        COS_VALUE(obj[1], Number, 123);
+    }
+
+    void test_parse_array()
+    {
+        auto value = parse("[(bar) 123]");
+        QCOMPARE(value.type(), CosValue::Index::Array);
+        auto& obj = *value.get<CosValue::Index::Array>();
+        COS_VALUE(obj[0], String, "bar");
+        COS_VALUE(obj[1], Number, 123);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestCase)

@@ -97,7 +97,7 @@ struct CosValue
 
 
     template<Index Ind>
-    auto get() const
+    const auto& get() const
     {
         if ( Ind != type() )
             throw CosError("Invalid COS value type");
@@ -604,7 +604,7 @@ private:
                 lex();
                 return val;
             default:
-                throw CosError(QString("Expected token COS value, got ").arg(int(lookahead.type)));
+                throw CosError(QString("Expected token COS value, got %1").arg(int(lookahead.type)));
         }
     }
 };
