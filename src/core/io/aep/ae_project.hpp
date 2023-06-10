@@ -6,7 +6,6 @@
 #include <string>
 #include <memory>
 #include <variant>
-#include <optional>
 
 #include <QColor>
 #include <QPointF>
