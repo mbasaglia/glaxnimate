@@ -79,30 +79,46 @@ struct ElementRange
     struct iterator
     {
         auto operator*() const { return range->dom_list.item(index).toElement(); }
+
         iterator& operator++()
         {
             index++;
-            while ( index < range->dom_list.count() && !range->dom_list.item(index).isElement() )
+            while ( index < range->dom_list.count() && !acceptable() )
                 index++;
             return *this;
 
         }
+
         bool operator != (const iterator& it) const
         {
             return range != it.range || index != it.index;
+        }
+
+        bool acceptable() const
+        {
+            if ( !range->dom_list.item(index).isElement() )
+                return false;
+
+            if ( range->tag_name.isEmpty() )
+                return true;
+
+            return range->dom_list.item(index).toElement().tagName() == range->tag_name;
         }
 
         const ElementRange* range;
         int index;
     };
 
-    ElementRange(const QDomNodeList& dom_list) : dom_list(dom_list) {}
-    ElementRange(const QDomElement& el) : dom_list(el.childNodes()) {}
+    ElementRange(const QDomNodeList& dom_list, QString tag_name = {})
+        : dom_list(dom_list), tag_name(std::move(tag_name)) {}
+    ElementRange(const QDomElement& el, QString tag_name = {})
+        : dom_list(el.childNodes()), tag_name(std::move(tag_name)) {}
     iterator begin() const { return {this, 0}; }
     iterator end() const { return {this, dom_list.count()}; }
     int size() const { return dom_list.count(); }
 
     QDomNodeList dom_list;
+    QString tag_name;
 };
 
 } // io::svg::detail
