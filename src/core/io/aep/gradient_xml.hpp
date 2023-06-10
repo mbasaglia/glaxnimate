@@ -193,7 +193,7 @@ QGradientStops parse_gradient_xml(const CosValue& gradient)
 QGradientStops parse_gradient_xml(const QString& xml)
 {
     QDomDocument dom;
-    dom.setContent(xml);
+    dom.setContent(xml.trimmed());
     return parse_gradient_xml(xml_value(dom.documentElement()));
 }
 

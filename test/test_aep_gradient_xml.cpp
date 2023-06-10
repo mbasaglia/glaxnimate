@@ -22,10 +22,30 @@ class TestCase: public QObject
 {
     Q_OBJECT
 
+    void compare(QString error)
+    {
+        QCOMPARE(error, "0:0: ");
+    }
+
     QDomDocument xml(QString xml)
     {
         QDomDocument dom;
-        dom.setContent(xml);
+        QString error;
+        int line = 0, col = 0;
+        dom.setContent(xml.trimmed(), false, &error, &line, &col);
+        if ( error != "" )
+        {
+            auto msg = QString("%1:%2: %3").arg(line).arg(col).arg(error);
+            auto lines = xml.split("\n");
+            int li = line - 1;
+            if ( li >= 0 && li < lines.size() )
+            {
+                msg += "\n" + lines[li];
+                msg += "\n" + QString(col-2, ' ') + '^';
+            }
+            std::string stdmsg = msg.toStdString();
+            QTest::qFail(stdmsg.c_str(), "xml", line);
+        }
         return dom;
     }
 
@@ -161,7 +181,7 @@ private slots:
                                     </prop.pair>
                                 </prop.list>
                             </prop.pair>
-                        <prop.list>
+                        </prop.list>
                     </prop.pair>
                 </prop.list>
             </prop.map>
@@ -171,7 +191,129 @@ private slots:
         COS_VALUE(get(val, "foo", "bar", "array", 2), Number, 3);
     }
 
-    /*
+    void test_gradient_structure()
+    {
+        auto val = xml_value(element(R"(
+<?xml version='1.0'?>
+<prop.map version='4'>
+    <prop.list>
+        <prop.pair>
+            <key>Gradient Color Data</key>
+            <prop.list>
+                <prop.pair>
+                    <key>Alpha Stops</key>
+                    <prop.list>
+                        <prop.pair>
+                            <key>Stops List</key>
+                            <prop.list>
+                                <prop.pair>
+                                    <key>Stop-0</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Alpha</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>0</float>
+                                                <float>0.5</float>
+                                                <float>1</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                                <prop.pair>
+                                    <key>Stop-1</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Alpha</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>1</float>
+                                                <float>0.5</float>
+                                                <float>0</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                            </prop.list>
+                        </prop.pair>
+                        <prop.pair>
+                            <key>Stops Size</key>
+                            <int type='unsigned' size='32'>2</int>
+                        </prop.pair>
+                    </prop.list>
+                </prop.pair>
+                <prop.pair>
+                    <key>Color Stops</key>
+                    <prop.list>
+                        <prop.pair>
+                            <key>Stops List</key>
+                            <prop.list>
+                                <prop.pair>
+                                    <key>Stop-0</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Color</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>0</float>
+                                                <float>0.5</float>
+                                                <float>1</float>
+                                                <float>0</float>
+                                                <float>0</float>
+                                                <float>1</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                                <prop.pair>
+                                    <key>Stop-1</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Color</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>1</float>
+                                                <float>0.5</float>
+                                                <float>0</float>
+                                                <float>1</float>
+                                                <float>0</float>
+                                                <float>1</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                            </prop.list>
+                        </prop.pair>
+                        <prop.pair>
+                            <key>Stops Size</key>
+                            <int type='unsigned' size='32'>2</int>
+                        </prop.pair>
+                    </prop.list>
+                </prop.pair>
+            </prop.list>
+        </prop.pair>
+        <prop.pair>
+            <key>Gradient Colors</key>
+            <string>1.0</string>
+        </prop.pair>
+    </prop.list>
+</prop.map>
+        )"));
+
+        QCOMPARE(int(val.type()), int(CosValue::Index::Object));
+        COS_VALUE(get(val, "Gradient Colors"), String, "1.0");
+        COS_VALUE(get(val, "Gradient Color Data", "Alpha Stops", "Stops List", "Stop-0", "Stops Alpha", 1), Number, 0.5);
+    }
+
+#if 0
     void test_gradient_2c2a()
     {
         auto grad = parse_gradient_xml(QString(R"(
@@ -295,7 +437,7 @@ private slots:
         QCOMPARE(grad[0].second, QColor::fromRgbF(1, 0, 0, 1));
         QCOMPARE(grad[1].second, QColor::fromRgbF(0, 1, 0, 0));
     }
-*/
+#endif
 };
 
 QTEST_GUILESS_MAIN(TestCase)
