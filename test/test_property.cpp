@@ -9,6 +9,7 @@
 #include <QMetaProperty>
 
 #include "model/property/object_list_property.hpp"
+#include "model/property/reference_property.hpp"
 #include "model/document.hpp"
 
 using namespace glaxnimate::model;

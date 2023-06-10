@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #pragma once
 
 #include <unordered_map>
@@ -22,7 +27,8 @@ namespace glaxnimate::io::aep {
 namespace glaxnimate::io::aep {
     QString decode_string(const QByteArray& data)
     {
-        auto encoding = QTextCodec::codecForUtfText(data);
+        auto utf8 = QTextCodec::codecForName("UTF8");
+        auto encoding = QTextCodec::codecForUtfText(data, utf8);
         return encoding->toUnicode(data);
     }
 } // namespace glaxnimate::io::aep
@@ -30,7 +36,7 @@ namespace glaxnimate::io::aep {
 
 namespace glaxnimate::io::aep {
 
-enum class TokenType
+enum class CosTokenType
 {
     // /foo
     Identifier,
@@ -84,6 +90,10 @@ struct CosValue
     template<class T>
     CosValue(T&& v) : value(std::forward<T>(v)) {}
     CosValue() = default;
+    CosValue(CosValue& v) = delete;
+    CosValue(const CosValue& v) = delete;
+    CosValue(CosValue&& v) = default;
+    CosValue& operator=(CosValue&& v) = default;
 
 
     template<Index Ind>
@@ -104,44 +114,22 @@ struct CosValue
 using CosObject = CosValue::Object;
 using CosArray = CosValue::Array;
 
-struct Token
+struct CosToken
 {
-    TokenType type = TokenType::Eof;
+    CosTokenType type = CosTokenType::Eof;
     CosValue value = {};
+
+    CosToken() = default;
+    CosToken(CosToken&&) = default;
+    CosToken& operator=(CosToken&&) = default;
 };
 
-class CosParser
+class CosLexer
 {
 public:
-    CosParser(QByteArray data) : data(std::move(data)) {}
+    CosLexer(QByteArray data) : data(std::move(data)) {}
 
-    CosValue parse()
-    {
-        lex();
-        if ( lookahead.type == TokenType::Identifier )
-            return parse_object_content();
-
-        auto val = parse_value();
-        if ( lookahead.type == TokenType::Eof )
-            return val;
-
-        CosArray arr = parse_array_content();
-        arr->insert(arr->begin(), val);
-        return arr;
-    }
-
-
-private:
-    Token lookahead;
-    QByteArray data;
-    int offset;
-
-    void lex()
-    {
-        lookahead = lex_token();
-    }
-
-    Token lex_token()
+    CosToken next_token()
     {
         int ch;
 
@@ -149,7 +137,7 @@ private:
         {
             ch = get_char();
             if ( ch == -1 )
-                return Token();
+                return CosToken();
             else if ( ch == '%' )
                 lex_comment();
             else if ( !std::isspace(ch) )
@@ -161,7 +149,7 @@ private:
         {
             ch = get_char();
             if ( ch == '<' )
-                return {TokenType::ObjectStart};
+                return {CosTokenType::ObjectStart};
             else if ( ch == -1 )
                 throw_lex("<");
             else if ( std::isxdigit(ch) )
@@ -181,16 +169,16 @@ private:
                     tok += QChar(d);
                 throw_lex(tok, ">>");
             }
-            return {TokenType::ObjectEnd};
+            return {CosTokenType::ObjectEnd};
         }
 
         // [
         if ( ch == '[' )
-            return {TokenType::ArrayStart};
+            return {CosTokenType::ArrayStart};
 
         // ]
         if ( ch == ']' )
-            return {TokenType::ArrayEnd};
+            return {CosTokenType::ArrayEnd};
 
         // /foo
         if ( ch == '/' ) {
@@ -213,7 +201,7 @@ private:
         throw_lex(QString() + QChar(ch));
     }
 
-    void throw_lex(const QString& token, const QString& exp = {})
+    [[noreturn]] void throw_lex(const QString& token, const QString& exp = {})
     {
         QString msg = "Unknown COS token %1";
         msg = msg.arg(token);
@@ -231,7 +219,7 @@ private:
         if ( offset >= data.size() )
             return -1;
 
-        int ch = data[offset];
+        int ch = std::uint8_t(data[offset]);
         offset += 1;
         return ch;
     }
@@ -253,7 +241,7 @@ private:
         }
     }
 
-    Token lex_number(int ch)
+    CosToken lex_number(int ch)
     {
         if ( ch == '.' )
             return lex_number_fract(QString(ch));
@@ -263,17 +251,16 @@ private:
             return lex_number_int(ch, '+');
     }
 
-    Token lex_number_int(int ch, QChar sign)
+    CosToken lex_number_int(int ch, QChar sign)
     {
         QString head;
         head += sign;
-        head += QChar(ch);
 
         while ( true )
         {
             if ( ch == '.' )
             {
-                return lex_number_fract(head);
+                return lex_number_fract(head + ch);
             }
             else if ( ch == -1 )
             {
@@ -291,10 +278,10 @@ private:
             }
         }
 
-        return {TokenType::Number, head.toDouble()};
+        return {CosTokenType::Number, head.toDouble()};
     }
 
-    Token lex_number_fract(QString num)
+    CosToken lex_number_fract(QString num)
     {
         while ( true )
         {
@@ -314,10 +301,10 @@ private:
                 break;
             }
         }
-        return {TokenType::Number, num.toDouble()};
+        return {CosTokenType::Number, num.toDouble()};
     }
 
-    Token lex_keyword(char start)
+    CosToken lex_keyword(char start)
     {
         QString kw(start);
 
@@ -340,16 +327,16 @@ private:
         }
 
         if ( kw == "true" )
-                return {TokenType::Boolean, true};
+                return {CosTokenType::Boolean, true};
         if ( kw == "false" )
-                return {TokenType::Boolean, false};
+                return {CosTokenType::Boolean, false};
         if ( kw == "null")
-                return {TokenType::Null};
+                return {CosTokenType::Null};
 
-            throw CosError("Unknown keyword " + kw);
+        throw CosError("Unknown keyword " + kw);
     }
 
-    Token lex_string()
+    CosToken lex_string()
     {
         QByteArray string;
 
@@ -362,7 +349,7 @@ private:
             string.push_back(ch);
         }
 
-        return {TokenType::String, decode_string(string)};
+        return {CosTokenType::String, decode_string(string)};
     }
 
     int lex_string_char()
@@ -444,7 +431,7 @@ private:
         throw CosError("Invalid escape sequence");
     }
 
-    Token lex_hex_string(char head)
+    CosToken lex_hex_string(char head)
     {
         QByteArray data;
         data.push_back(head);
@@ -471,10 +458,10 @@ private:
             }
         }
 
-        return {TokenType::HexString, QByteArray::fromHex(data)};
+        return {CosTokenType::HexString, QByteArray::fromHex(data)};
     }
 
-    Token lex_identifier()
+    CosToken lex_identifier()
     {
         QString ident = "";
         const QString special = "()[]<>/%";
@@ -512,7 +499,42 @@ private:
             }
         }
 
-        return {TokenType::Identifier, ident};
+        return {CosTokenType::Identifier, ident};
+    }
+
+private:
+    QByteArray data;
+    int offset = 0;
+};
+
+class CosParser
+{
+public:
+    CosParser(QByteArray data) : lexer(std::move(data)) {}
+
+    CosValue parse()
+    {
+        lex();
+        if ( lookahead.type == CosTokenType::Identifier )
+            return parse_object_content();
+
+        auto val = parse_value();
+        if ( lookahead.type == CosTokenType::Eof )
+            return val;
+
+        CosArray arr = parse_array_content();
+        arr->emplace(arr->begin(), std::move(val));
+        return arr;
+    }
+
+
+private:
+    CosToken lookahead;
+    CosLexer lexer;
+
+    void lex()
+    {
+        lookahead = lexer.next_token();
     }
 
     CosObject parse_object_content()
@@ -521,20 +543,20 @@ private:
 
         while ( true )
         {
-            if ( lookahead.type == TokenType::Eof || lookahead.type == TokenType::ObjectEnd )
+            if ( lookahead.type == CosTokenType::Eof || lookahead.type == CosTokenType::ObjectEnd )
                 break;
 
-            expect(TokenType::Identifier);
+            expect(CosTokenType::Identifier);
             auto key = lookahead.value.get<CosValue::Index::String>();
             lex();
             auto val = parse_value();
-            value->emplace(key, val);
+            value->emplace(key, std::move(val));
         }
 
         return value;
     }
 
-    void expect(TokenType token_type)
+    void expect(CosTokenType token_type)
     {
         if ( lookahead.type != token_type )
             throw CosError(QString("Expected token %1, got %2").arg(int(token_type)).arg(int(lookahead.type)));
@@ -546,7 +568,7 @@ private:
 
         while ( true )
         {
-            if ( lookahead.type == TokenType::Eof || lookahead.type == TokenType::ArrayEnd )
+            if ( lookahead.type == CosTokenType::Eof || lookahead.type == CosTokenType::ArrayEnd )
                 break;
 
             value->push_back(parse_value());
@@ -560,25 +582,25 @@ private:
         CosValue val;
         switch ( lookahead.type )
         {
-            case TokenType::String:
-            case TokenType::HexString:
-            case TokenType::Null:
-            case TokenType::Boolean:
-            case TokenType::Identifier:
-            case TokenType::Number:
+            case CosTokenType::String:
+            case CosTokenType::HexString:
+            case CosTokenType::Null:
+            case CosTokenType::Boolean:
+            case CosTokenType::Identifier:
+            case CosTokenType::Number:
                 val = std::move(lookahead.value);
                 lex();
                 return val;
-            case TokenType::ObjectStart:
+            case CosTokenType::ObjectStart:
                 lex();
                 val = parse_object_content();
-                expect(TokenType::ObjectEnd);
+                expect(CosTokenType::ObjectEnd);
                 lex();
                 return val;
-            case TokenType::ArrayStart:
+            case CosTokenType::ArrayStart:
                 lex();
                 val = parse_array_content();
-                expect(TokenType::ArrayEnd);
+                expect(CosTokenType::ArrayEnd);
                 lex();
                 return val;
             default:
