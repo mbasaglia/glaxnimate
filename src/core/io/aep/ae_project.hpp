@@ -17,6 +17,7 @@
 #include <QVector3D>
 
 #include "model/animation/frame_time.hpp"
+#include "math/math.hpp"
 
 namespace glaxnimate::io::aep {
 
@@ -82,15 +83,108 @@ template<class Type>
 struct GradientStop
 {
     double offset;
-    double midPoint;
+    double mid_point;
     Type value;
+};
+
+template<class T>
+class GradientStops : public std::vector<GradientStop<T>>
+{
+public:
+    using Stop = GradientStop<T>;
+    using std::vector<Stop>::vector;
+
+    int size() const
+    {
+        return std::vector<Stop>::size();
+    }
+
+    T value_at(double t, int& index) const
+    {
+        if ( this->empty() )
+            return 1;
+
+        if ( this->size() == 1 )
+            return this->front().value;
+
+        if ( t >= this->back().offset || index + 1 >= this->size() )
+        {
+            index = this->size();
+            return this->back().value;
+        }
+
+        while ( t >= (*this)[index+1].offset )
+            index++;
+
+        if ( index + 1 >= this->size() )
+            return this->back().value;
+
+        const auto& before = (*this)[index];
+        const auto& after = (*this)[index+1];
+        auto factor = math::unlerp(before.offset, after.offset, t);
+
+        if ( !qFuzzyCompare(before.mid_point, 0.5) )
+        {
+            auto vbefore = before.value;
+            auto vafter = after.value;
+            auto vmid = math::lerp(before.value, after.value, before.mid_point);
+            if ( factor < after.mid_point )
+            {
+                factor = math::unlerp(0., before.mid_point, factor);
+                vafter = vmid;
+            }
+            else
+            {
+                factor = math::unlerp(before.mid_point, 1., factor);
+                vbefore = vmid;
+            }
+            return math::lerp(vbefore, vafter, factor);
+        }
+
+        return math::lerp(before.value, after.value, factor);
+    }
+
+    GradientStops split_midpoints() const
+    {
+        double midpoint = 0.5;
+        Stop previous;
+        GradientStops stops;
+        for ( const auto& stop : *this )
+        {
+            if ( !qFuzzyCompare(midpoint, 0.5) )
+            {
+                auto midoffset = math::lerp(previous.offset, stop.offset, midpoint);
+                auto midvalue = math::lerp(previous.value, stop.value, midpoint);
+                stops.push_back({midoffset, 0.5, midvalue});
+            }
+
+            midpoint = stop.mid_point;
+            stops.push_back({stop.offset, 0.5, stop.value});
+        }
+
+        return stops;
+    }
 };
 
 
 struct Gradient
 {
-    GradientStop<double> alpha_stops;
-    GradientStop<QColor> color_stops;
+    GradientStops<double> alpha_stops;
+    GradientStops<QColor> color_stops;
+
+    QGradientStops to_qt() const
+    {
+        QGradientStops stops;
+        int index = 0;
+        for ( const auto& stop : color_stops )
+        {
+            auto alpha = alpha_stops.value_at(stop.offset, index);
+            auto color = stop.value;
+            color.setAlphaF(alpha);
+            stops.push_back({stop.offset, color});
+        }
+        return stops;
+    }
 };
 
 enum class LabelColors

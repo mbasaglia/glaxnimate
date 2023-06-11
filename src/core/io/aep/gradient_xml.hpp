@@ -11,6 +11,7 @@
 #include "cos.hpp"
 #include "io/svg/detail.hpp"
 #include "math/vector.hpp"
+#include "ae_project.hpp"
 
 namespace glaxnimate::io::aep {
 
@@ -108,110 +109,63 @@ const auto& get_as(const V& v, const T&... keys)
     return get(v, keys...).template get<Ind>();
 }
 
-
-QGradientStops get_gradient_stops(const CosValue& data, bool alpha)
+struct GradientStopAlpha
 {
-    QGradientStops colors;
+    static constexpr const char* const name1 = "Alpha Stops";
+    static constexpr const char* const name2 = "Stops Alpha";
+    using Value = double;
 
-    QGradientStop previous;
-    qreal midpoint = 0;
-    bool first = true;
-    const char* name = alpha ? "Stops Alpha" : "Stops Color";
-
-    using Stop = std::pair<qreal, CosArray::element_type*>;
-    std::vector<Stop> stops;
-    for ( auto& stop : *get_as<CosValue::Index::Object>(data, alpha ? "Alpha Stops" : "Color Stops", "Stops List") )
+    static Value get(const CosArray::element_type* arr)
     {
-        auto& stop_arr = get(stop.second, name);
-        auto ptr = stop_arr.get<CosValue::Index::Array>().get();
+        return arr->at(2).get<CosValue::Index::Number>();
+    }
+};
+
+struct GradientStopColor
+{
+    static constexpr const char* const name1 = "Color Stops";
+    static constexpr const char* const name2 = "Stops Color";
+    using Value = QColor;
+
+    static Value get(const CosArray::element_type* arr)
+    {
+        return arr->at(2).get<CosValue::Index::Number>();
+    }
+};
+
+template<class Policy>
+GradientStops<typename Policy::Value> get_gradient_stops(const CosValue& data)
+{
+    using Stop = GradientStop<typename Policy::Value>;
+    GradientStops<typename Policy::Value> stops;
+
+    for ( auto& stop : *get_as<CosValue::Index::Object>(data, Policy::name1, "Stops List") )
+    {
+        auto& stop_arr = get(stop.second, Policy::name2);
+        auto ptr = stop_arr.template get<CosValue::Index::Array>().get();
         qreal offset = get_as<CosValue::Index::Number>(stop_arr, 0);
-        stops.push_back({offset, ptr});
+        qreal midpoint = get_as<CosValue::Index::Number>(stop_arr, 1);
+        auto value = Policy::get(ptr);
+        stops.push_back(Stop{offset, midpoint, value});
     }
 
     std::sort(stops.begin(), stops.end(), [](const Stop& a, const Stop& b) {
-        return a.first <= b.first;
+        return a.offset <= b.offset;
     });
 
-    for ( auto stop : stops )
-    {
-        const auto& color_arr = *stop.second;
-        qreal pos = stop.first;
-
-        QColor color;
-        if ( alpha )
-        {
-            color = QColor::fromRgbF(1, 1, 1, color_arr.at(2).get<CosValue::Index::Number>());
-        }
-        else
-        {
-            color = QColor::fromRgbF(
-                color_arr.at(2).get<CosValue::Index::Number>(),
-                color_arr.at(3).get<CosValue::Index::Number>(),
-                color_arr.at(4).get<CosValue::Index::Number>()
-            );
-        }
-
-        if ( !first && !qFuzzyCompare(midpoint, 0.5) )
-        {
-            qreal midoffset = math::lerp(previous.first, pos, midpoint);
-            auto midcolor = math::lerp(previous.second, color, midpoint);
-            colors.push_back({midoffset, midcolor});
-        }
-
-        midpoint = color_arr.at(1).get<CosValue::Index::Number>();
-        first = false;
-        colors.push_back({pos, color});
-    }
-
-    return colors;
+    return stops;
 }
 
-qreal get_alpha_at(const QGradientStops& alpha_stops, qreal t, int& index)
+Gradient parse_gradient_xml(const CosValue& value)
 {
-    if ( alpha_stops.size() == 0 )
-        return 1;
-
-    if ( alpha_stops.size() == 1 )
-        return alpha_stops[0].second.alphaF();
-
-    if ( t >= alpha_stops.back().first || index + 1 >= alpha_stops.size() )
-    {
-        index = alpha_stops.size();
-        return alpha_stops.back().second.alphaF();
-    }
-
-    while ( t >= alpha_stops[index+1].first )
-        index++;
-
-    if ( index + 1 >= alpha_stops.size() )
-        return alpha_stops.back().second.alphaF();
-
-    qreal delta = alpha_stops[index+1].first - alpha_stops[index].first;
-    qreal factor = (t - alpha_stops[index].first) / delta;
-    return math::lerp(
-        alpha_stops[index].second.alphaF(),
-        alpha_stops[index+1].second.alphaF(),
-        factor
-    );
+    Gradient gradient;
+    auto& data = get(value, "Gradient Color Data");
+    gradient.color_stops = get_gradient_stops<GradientStopColor>(data);
+    gradient.alpha_stops = get_gradient_stops<GradientStopAlpha>(data);
+    return gradient;
 }
 
-QGradientStops parse_gradient_xml(const CosValue& gradient)
-{
-    QVector<QPair<qreal, qreal>> alpha;
-
-    auto& data = get(gradient, "Gradient Color Data");
-    QGradientStops color_stops = get_gradient_stops(data, false);
-    QGradientStops alpha_stops = get_gradient_stops(data, true);
-    int index = 0;
-    for ( auto& stop : color_stops )
-    {
-        qreal alpha = get_alpha_at(alpha_stops, stop.first, index);
-        stop.second.setAlphaF(alpha);
-    }
-    return color_stops;
-}
-
-QGradientStops parse_gradient_xml(const QString& xml)
+Gradient parse_gradient_xml(const QString& xml)
 {
     QDomDocument dom;
     dom.setContent(xml.trimmed());
