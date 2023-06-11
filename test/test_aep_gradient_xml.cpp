@@ -27,7 +27,7 @@ class TestCase: public QObject
         QCOMPARE(error, "0:0: ");
     }
 
-    QDomDocument xml(QString xml)
+    QDomDocument xml(QString xml, int local_line = 0)
     {
         QDomDocument dom;
         QString error;
@@ -44,28 +44,30 @@ class TestCase: public QObject
                 msg += "\n" + QString(col-2, ' ') + '^';
             }
             std::string stdmsg = msg.toStdString();
-            QTest::qFail(stdmsg.c_str(), "xml", line);
+            QTest::qFail(stdmsg.c_str(), line == 0 ? "xml" : __FILE__, line + local_line);
         }
         return dom;
     }
 
-    QDomElement element(QString xml)
+    QDomElement element(QString xml, int local_line = 0)
     {
-        return this->xml(xml).documentElement();
+        return this->xml(xml, local_line).documentElement();
     }
+
+#define Element(xml) element(xml, __LINE__)
 
 
 private slots:
     void test_xml_value_scalar()
     {
-        COS_VALUE(xml_value(element("<float>2.5</float>")), Number, 2.5);
-        COS_VALUE(xml_value(element("<int>25</int>")), Number, 25);
-        COS_VALUE(xml_value(element("<string>2.5</string>")), String, "2.5");
+        COS_VALUE(xml_value(Element("<float>2.5</float>")), Number, 2.5);
+        COS_VALUE(xml_value(Element("<int>25</int>")), Number, 25);
+        COS_VALUE(xml_value(Element("<string>2.5</string>")), String, "2.5");
     }
 
     void test_xml_array()
     {
-        auto arr = xml_array(element(R"(
+        auto arr = xml_array(Element(R"(
             <array>
                 <array.type>
                     <int/>
@@ -89,7 +91,7 @@ private slots:
     void test_xml_list()
     {
 
-        auto list = xml_list(element(R"(
+        auto list = xml_list(Element(R"(
             <prop.list>
                 <prop.pair><key>a</key><int>1</int></prop.pair>
                 <prop.pair><key>b</key><int>2</int></prop.pair>
@@ -112,7 +114,7 @@ private slots:
 
     void test_xml_value_array()
     {
-        auto val = xml_value(element(R"(
+        auto val = xml_value(Element(R"(
             <array>
                 <array.type>
                     <int/>
@@ -131,7 +133,7 @@ private slots:
 
     void test_xml_value_list()
     {
-        auto list = xml_value(element(R"(
+        auto list = xml_value(Element(R"(
             <prop.list>
                 <prop.pair><key>a</key><int>1</int></prop.pair>
                 <prop.pair><key>b</key><int>2</int></prop.pair>
@@ -148,7 +150,7 @@ private slots:
 
     void test_xml_value_map()
     {
-        auto val = xml_value(element(R"(
+        auto val = xml_value(Element(R"(
             <prop.map>
                 <prop.list>
                     <prop.pair>
@@ -193,7 +195,7 @@ private slots:
 
     void test_gradient_structure()
     {
-        auto val = xml_value(element(R"(
+        auto val = xml_value(Element(R"(
 <?xml version='1.0'?>
 <prop.map version='4'>
     <prop.list>
@@ -311,9 +313,165 @@ private slots:
         QCOMPARE(int(val.type()), int(CosValue::Index::Object));
         COS_VALUE(get(val, "Gradient Colors"), String, "1.0");
         COS_VALUE(get(val, "Gradient Color Data", "Alpha Stops", "Stops List", "Stop-0", "Stops Alpha", 1), Number, 0.5);
+        auto& data = get(val, "Gradient Color Data");
+        QCOMPARE(int(data.type()), int(CosValue::Index::Object));
     }
 
-#if 0
+    void test_get_gradient_stops_color()
+    {
+        auto data = xml_value(Element(R"(
+            <prop.list>
+                <prop.pair>
+                    <key>Color Stops</key>
+                    <prop.list>
+                        <prop.pair>
+                            <key>Stops List</key>
+                            <prop.list>
+                                <prop.pair>
+                                    <key>Stop-0</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Color</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>0.4</float>
+                                                <float>0.5</float>
+                                                <float>0.1</float>
+                                                <float>0.2</float>
+                                                <float>0.3</float>
+                                                <float>0.23</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                                <prop.pair>
+                                    <key>Stop-1</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Color</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>0.6</float>
+                                                <float>0.5</float>
+                                                <float>0.7</float>
+                                                <float>0.8</float>
+                                                <float>0.9</float>
+                                                <float>0.34</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                            </prop.list>
+                        </prop.pair>
+                        <prop.pair>
+                            <key>Stops Size</key>
+                            <int type='unsigned' size='32'>2</int>
+                        </prop.pair>
+                    </prop.list>
+                </prop.pair>
+            </prop.list>
+        )"));
+
+        QCOMPARE(int(data.type()), int(CosValue::Index::Object));
+        QCOMPARE(int(get(data, "Color Stops").type()), int(CosValue::Index::Object));
+        QCOMPARE(int(get(data, "Color Stops", "Stops List").type()), int(CosValue::Index::Object));
+        auto& stop = get_as<CosValue::Index::Object>(data, "Color Stops", "Stops List", "Stop-0");
+        auto& color_arr = get_as<CosValue::Index::Array>(stop, "Stops Color");
+        COS_VALUE(get(color_arr, 0), Number, 0.4);
+        auto stops = get_gradient_stops(data, false);
+        QCOMPARE(stops.size(), 2);
+        QCOMPARE(stops[0].first, 0.4);
+        QCOMPARE(stops[0].second, QColor::fromRgbF(0.1, 0.2, 0.3));
+    }
+
+    void test_get_gradient_stops_alpha()
+    {
+        auto data = xml_value(Element(R"(
+            <prop.list>
+                <prop.pair>
+                    <key>Alpha Stops</key>
+                    <prop.list>
+                        <prop.pair>
+                            <key>Stops List</key>
+                            <prop.list>
+                                <prop.pair>
+                                    <key>Stop-0</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Alpha</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>0</float>
+                                                <float>0.5</float>
+                                                <float>0.6</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                                <prop.pair>
+                                    <key>Stop-1</key>
+                                    <prop.list>
+                                        <prop.pair>
+                                            <key>Stops Alpha</key>
+                                            <array>
+                                                <array.type>
+                                                    <float/>
+                                                </array.type>
+                                                <float>1</float>
+                                                <float>0.5</float>
+                                                <float>0.5</float>
+                                            </array>
+                                        </prop.pair>
+                                    </prop.list>
+                                </prop.pair>
+                            </prop.list>
+                        </prop.pair>
+                        <prop.pair>
+                            <key>Stops Size</key>
+                            <int type='unsigned' size='32'>2</int>
+                        </prop.pair>
+                    </prop.list>
+                </prop.pair>
+            </prop.list>
+        )"));
+
+        QCOMPARE(int(data.type()), int(CosValue::Index::Object));
+        QCOMPARE(int(get(data, "Alpha Stops").type()), int(CosValue::Index::Object));
+        QCOMPARE(int(get(data, "Alpha Stops", "Stops List").type()), int(CosValue::Index::Object));
+        auto& stop = get_as<CosValue::Index::Object>(data, "Alpha Stops", "Stops List", "Stop-0");
+        auto& color_arr = get_as<CosValue::Index::Array>(stop, "Stops Alpha");
+        COS_VALUE(get(color_arr, 0), Number, 0);
+        COS_VALUE(get(color_arr, 1), Number, 0.5);
+        COS_VALUE(get(color_arr, 2), Number, 0.6);
+        auto stops = get_gradient_stops(data, true);
+        QCOMPARE(stops.size(), 2);
+        QCOMPARE(stops[0].first, 0);
+        QCOMPARE(float(stops[0].second.alphaF()), 0.6f);
+        QCOMPARE(stops[1].first, 1);
+        QCOMPARE(stops[1].second.alpha(), qRound(255 * 0.5));
+    }
+
+    void test_get_alpha_at_2()
+    {
+        QGradientStops stops;
+        stops.push_back({0, QColor::fromRgbF(0, 0, 0, 0.6)});
+        stops.push_back({1, QColor::fromRgbF(0, 0, 0, 0.5)});
+        int index = 0;
+        QCOMPARE(qRound(255 * get_alpha_at(stops, 0, index)), qRound(255 * 0.6));
+        QCOMPARE(index, 0);
+        QCOMPARE(qRound(255 * get_alpha_at(stops, 1, index)), qRound(255 * 0.5));
+        QCOMPARE(index, 2);
+        index = 0;
+        QCOMPARE(qRound(255 * get_alpha_at(stops, 0.5, index)), qRound(255 * 0.55));
+        QCOMPARE(index, 0);
+    }
+
     void test_gradient_2c2a()
     {
         auto grad = parse_gradient_xml(QString(R"(
@@ -340,7 +498,7 @@ private slots:
                                                 </array.type>
                                                 <float>0</float>
                                                 <float>0.5</float>
-                                                <float>1</float>
+                                                <float>0.6</float>
                                             </array>
                                         </prop.pair>
                                     </prop.list>
@@ -356,7 +514,7 @@ private slots:
                                                 </array.type>
                                                 <float>1</float>
                                                 <float>0.5</float>
-                                                <float>0</float>
+                                                <float>0.5</float>
                                             </array>
                                         </prop.pair>
                                     </prop.list>
@@ -386,10 +544,10 @@ private slots:
                                                 </array.type>
                                                 <float>0</float>
                                                 <float>0.5</float>
-                                                <float>1</float>
-                                                <float>0</float>
-                                                <float>0</float>
-                                                <float>1</float>
+                                                <float>0.1</float>
+                                                <float>0.2</float>
+                                                <float>0.3</float>
+                                                <float>0.4</float>
                                             </array>
                                         </prop.pair>
                                     </prop.list>
@@ -405,9 +563,9 @@ private slots:
                                                 </array.type>
                                                 <float>1</float>
                                                 <float>0.5</float>
-                                                <float>0</float>
-                                                <float>1</float>
-                                                <float>0</float>
+                                                <float>0.7</float>
+                                                <float>0.8</float>
+                                                <float>0.9</float>
                                                 <float>1</float>
                                             </array>
                                         </prop.pair>
@@ -433,11 +591,10 @@ private slots:
 
         QCOMPARE(grad.size(), 2);
         QCOMPARE(grad[0].first, 0);
-        QCOMPARE(grad[1].first, 0);
-        QCOMPARE(grad[0].second, QColor::fromRgbF(1, 0, 0, 1));
-        QCOMPARE(grad[1].second, QColor::fromRgbF(0, 1, 0, 0));
+        QCOMPARE(grad[1].first, 1);
+        QCOMPARE(grad[0].second, QColor::fromRgbF(0.1, 0.2, 0.3, 0.6));
+        QCOMPARE(grad[1].second, QColor::fromRgbF(0.7, 0.8, 0.9, 0.5));
     }
-#endif
 };
 
 QTEST_GUILESS_MAIN(TestCase)

@@ -118,22 +118,36 @@ QGradientStops get_gradient_stops(const CosValue& data, bool alpha)
     bool first = true;
     const char* name = alpha ? "Stops Alpha" : "Stops Color";
 
-    for ( auto& stop : *get_as<CosValue::Index::Array>(data, alpha ? "Alpha Stops" : "Color Stops", "Stops List") )
+    using Stop = std::pair<qreal, CosArray::element_type*>;
+    std::vector<Stop> stops;
+    for ( auto& stop : *get_as<CosValue::Index::Object>(data, alpha ? "Alpha Stops" : "Color Stops", "Stops List") )
     {
-        const auto& color_arr = get_as<CosValue::Index::Array>(stop, name);
-        qreal pos = get_as<CosValue::Index::Number>(color_arr, 0);
+        auto& stop_arr = get(stop.second, name);
+        auto ptr = stop_arr.get<CosValue::Index::Array>().get();
+        qreal offset = get_as<CosValue::Index::Number>(stop_arr, 0);
+        stops.push_back({offset, ptr});
+    }
+
+    std::sort(stops.begin(), stops.end(), [](const Stop& a, const Stop& b) {
+        return a.first <= b.first;
+    });
+
+    for ( auto stop : stops )
+    {
+        const auto& color_arr = *stop.second;
+        qreal pos = stop.first;
 
         QColor color;
         if ( alpha )
         {
-            color = QColor::fromRgbF(1, 1, 1, get_as<CosValue::Index::Number>(color_arr, 2));
+            color = QColor::fromRgbF(1, 1, 1, color_arr.at(2).get<CosValue::Index::Number>());
         }
         else
         {
             color = QColor::fromRgbF(
-                get_as<CosValue::Index::Number>(color_arr, 2),
-                get_as<CosValue::Index::Number>(color_arr, 3),
-                get_as<CosValue::Index::Number>(color_arr, 4)
+                color_arr.at(2).get<CosValue::Index::Number>(),
+                color_arr.at(3).get<CosValue::Index::Number>(),
+                color_arr.at(4).get<CosValue::Index::Number>()
             );
         }
 
@@ -144,7 +158,7 @@ QGradientStops get_gradient_stops(const CosValue& data, bool alpha)
             colors.push_back({midoffset, midcolor});
         }
 
-        midpoint = get_as<CosValue::Index::Number>(color_arr, 1);
+        midpoint = color_arr.at(1).get<CosValue::Index::Number>();
         first = false;
         colors.push_back({pos, color});
     }
@@ -160,18 +174,25 @@ qreal get_alpha_at(const QGradientStops& alpha_stops, qreal t, int& index)
     if ( alpha_stops.size() == 1 )
         return alpha_stops[0].second.alphaF();
 
-    if ( t >= alpha_stops.back().first || index >= alpha_stops.size() )
+    if ( t >= alpha_stops.back().first || index + 1 >= alpha_stops.size() )
     {
         index = alpha_stops.size();
         return alpha_stops.back().second.alphaF();
     }
 
-    while ( t > alpha_stops[index+1].first )
+    while ( t >= alpha_stops[index+1].first )
         index++;
+
+    if ( index + 1 >= alpha_stops.size() )
+        return alpha_stops.back().second.alphaF();
 
     qreal delta = alpha_stops[index+1].first - alpha_stops[index].first;
     qreal factor = (t - alpha_stops[index].first) / delta;
-    return math::lerp(alpha_stops[index].first, alpha_stops[index+1].first, factor);
+    return math::lerp(
+        alpha_stops[index].second.alphaF(),
+        alpha_stops[index+1].second.alphaF(),
+        factor
+    );
 }
 
 QGradientStops parse_gradient_xml(const CosValue& gradient)
