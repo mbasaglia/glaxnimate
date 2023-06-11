@@ -13,26 +13,7 @@
 #include <QByteArray>
 #include <QString>
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#   include <QStringConverter>
-namespace glaxnimate::io::aep {
-    QString decode_string(const QByteArray& data)
-    {
-        auto encoding = QStringConverter::encodingForData(data);
-        return QStringDecoder(encoding).decode(data);
-    }
-} // namespace glaxnimate::io::aep
-#else
-#   include <QTextCodec>
-namespace glaxnimate::io::aep {
-    QString decode_string(const QByteArray& data)
-    {
-        auto utf8 = QTextCodec::codecForName("UTF8");
-        auto encoding = QTextCodec::codecForUtfText(data, utf8);
-        return encoding->toUnicode(data);
-    }
-} // namespace glaxnimate::io::aep
-#endif
+#include "string_decoder.hpp"
 
 namespace glaxnimate::io::aep {
 

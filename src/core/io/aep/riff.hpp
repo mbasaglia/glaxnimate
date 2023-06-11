@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #pragma once
 
 #include <variant>
@@ -261,6 +266,11 @@ public:
     std::int64_t available() const
     {
         return length_left;
+    }
+
+    QString read_utf8(std::uint32_t length)
+    {
+        return QString::fromUtf8(read(length));
     }
 
 private:
