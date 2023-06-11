@@ -17,14 +17,14 @@ protected:
         if ( chunk.header == "tdsn" || chunk.header == "fnam" || chunk.header == "pdnm" )
             chunk.children = read_chunks(reader);
         else
-            chunk.data = reader.read(chunk.length);
+            chunk.data = reader.sub_reader(chunk.length);
     }
 
     void on_list(BinaryReader& reader, RiffChunk& chunk) override
     {
         chunk.subheader = reader.read(4);
         if ( chunk.subheader == "btdk" )
-            chunk.data = reader.read(chunk.length);
+            chunk.data = reader.sub_reader(chunk.length);
         else
             chunk.children = read_chunks(reader);
     }

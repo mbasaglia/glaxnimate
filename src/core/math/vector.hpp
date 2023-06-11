@@ -12,7 +12,7 @@
 #include <QMetaType>
 #include <QColor>
 
-
+#include "math/math.hpp"
 class QVector2D; class QVector3D; class QVector4D; class QPointF;
 
 namespace glaxnimate::math {
@@ -73,12 +73,6 @@ struct LengthHelper<VecT, 1>
 
 using detail::scalar_type;
 using detail::get;
-
-template<class T>
-constexpr T lerp(const T& a, const T& b, double factor)
-{
-    return a * (1-factor) + b * factor;
-}
 
 inline QColor lerp(const QColor& a, const QColor& b, double factor)
 {

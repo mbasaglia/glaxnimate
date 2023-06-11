@@ -9,7 +9,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
-namespace glaxnimate::io::avd {
+namespace glaxnimate::io::aep {
 
 
 class AepFormat : public ImportExport
@@ -21,6 +21,7 @@ public:
     QString name() const override { return tr("Adobe After Effects Project"); }
     QStringList extensions() const override { return {"aep"}; }
     bool can_save() const override { return false; }
+    bool can_open() const override { return true; }
 
 protected:
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap& options) override;
@@ -39,15 +40,16 @@ public:
     QString name() const override { return tr("Adobe After Effects Project XML"); }
     QStringList extensions() const override { return {"aepx"}; }
     bool can_save() const override { return false; }
+    bool can_open() const override { return true; }
 
 protected:
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap& options) override;
 
 private:
-    static Autoreg<AepFormat> autoreg;
+    static Autoreg<AepxFormat> autoreg;
 };
 
-} // namespace glaxnimate::io::avd
+} // namespace glaxnimate::io::aep
 
 
 

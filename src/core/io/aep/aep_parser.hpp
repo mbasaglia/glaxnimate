@@ -38,7 +38,7 @@ public:
 
         Project project;
         Chunk fold = nullptr, efdg = nullptr;
-        root.find_multiple({fold, efdg}, {"Fold", "EfdG"});
+        root.find_multiple({&fold, &efdg}, {"Fold", "EfdG"});
 
         if ( efdg )
             parse_effects(efdg->find_all("EfDf"), project);
@@ -67,7 +67,7 @@ private:
             {
                 Chunk item = nullptr;
                 Chunk name_chunk = nullptr;
-                child->find_multiple({item, name_chunk}, {"idta", "Utf8"});
+                child->find_multiple({&item, &name_chunk}, {"idta", "Utf8"});
                 current_item = nullptr;
 
                 if ( !item )
@@ -117,7 +117,48 @@ private:
 
     void parse_composition(Chunk chunk, Composition& comp, Project& project)
     {
-        /// \todo
+        auto cdta = chunk->child("cdta");
+        if ( !cdta )
+            warning(AepFormat::tr("Missing composition data"));
+
+        // Time stuff
+        cdta->data.skip(5);
+        comp.time_scale = cdta->data.read_uint<2>();
+        cdta->data.skip(14);
+        comp.playhead_time = comp.time_to_frames(cdta->data.read_uint<2>());
+        cdta->data.skip(6);
+        comp.in_time = comp.time_to_frames(cdta->data.read_uint<2>());
+        cdta->data.skip(6);
+        auto out_time = cdta->data.read_uint<2>();
+        cdta->data.skip(6);
+        comp.duration = comp.time_to_frames(cdta->data.read_uint<2>());
+        if ( out_time == 0xffff )
+            comp.out_time = comp.duration;
+        else
+            comp.out_time = comp.time_to_frames(out_time);
+        cdta->data.skip(5);
+
+        // Background
+        comp.color.setRed(cdta->data.read_uint<1>());
+        comp.color.setGreen(cdta->data.read_uint<1>());
+        comp.color.setBlue(cdta->data.read_uint<1>());
+
+        // Lottie
+        cdta->data.skip(85);
+        comp.width = cdta->data.read_uint<2>();
+        comp.height = cdta->data.read_uint<2>();
+        cdta->data.skip(12);
+        comp.framerate = cdta->data.read_uint<2>();
+
+        for ( const auto& child : chunk->children )
+        {
+            if ( *child == "Layr" )
+                comp.layers.push_back(parse_layer(child.get(), comp));
+            else if ( load_unecessary && *child == "SecL" )
+                comp.markers = parse_layer(child.get(), comp);
+            else if ( load_unecessary && (*child == "CLay" || *child == "DLay" || *child == "SLay") )
+                comp.views.push_back(parse_layer(child.get(), comp));
+        }
     }
 
     QString utf8_to_name(Chunk utf8)
@@ -148,6 +189,7 @@ private:
         auto width = sspc->data.read_uint<2>();
         sspc->data.skip(2);
         auto height = sspc->data.read_uint<2>();
+        Asset* asset;
 
         if ( opti->data.read(4) == "Soli" )
         {
@@ -157,8 +199,7 @@ private:
             solid->color.setGreenF(opti->data.read_float32());
             solid->color.setBlueF(opti->data.read_float32());
             solid->name = opti->data.read_utf8_nul(256);
-            project.assets[id] = solid;
-            return solid;
+            asset = solid;
         }
         else
         {
@@ -174,13 +215,29 @@ private:
             auto file = folder.add<FileAsset>();
             file->path = QFileInfo(path);
             file->name = name.isEmpty() ? file->path.fileName() : name;
-            project.assets[id] = file;
-            return file;
+            asset = file;
         }
+
+        asset->width = width;
+        asset->height = height;
+        project.assets[id] = asset;
+        return asset;
+    }
+
+    std::unique_ptr<Layer> parse_layer(Chunk chunk, Composition& comp)
+    {
+        auto layer = std::make_unique<Layer>();
+        /// \todo
+        return layer;
     }
 
     static constexpr const char* const placeholder = "-_0_/-";
     std::unordered_map<Id, Chunk> comp_chunks;
+    // For loading into the object model stuff Glaxnimate doesn't support
+    // I'm adding the code to load them just in case someone wants to do
+    // something else with them and so that if Glaxnimate ever supports given
+    // features, it's easier to add
+    bool load_unecessary = false;
 };
 
 } // namespace glaxnimate::io::aep

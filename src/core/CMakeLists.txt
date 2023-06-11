@@ -36,6 +36,7 @@ io/svg/svg_renderer.cpp
 io/avd/avd_parser.cpp
 io/avd/avd_format.cpp
 io/avd/avd_renderer.cpp
+io/aep/aep_format.cpp
 
 math/geom.cpp
 math/polynomial.cpp

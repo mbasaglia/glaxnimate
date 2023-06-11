@@ -81,4 +81,11 @@ template<class T> constexpr qreal unlerp(const T& a, const T& b, const T& c)
     return qreal(c-a) / qreal(b-a);
 }
 
+
+template<class T>
+constexpr T lerp(const T& a, const T& b, double factor)
+{
+    return a * (1-factor) + b * factor;
+}
+
 } // namespace glaxnimate::math

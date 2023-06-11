@@ -421,6 +421,4 @@ protected:
     }
 };
 
-
-
 } // namespace glaxnimate::io::aep

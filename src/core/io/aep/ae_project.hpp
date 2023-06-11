@@ -16,6 +16,8 @@
 #include <QColor>
 #include <QPointF>
 #include <QVector3D>
+#include <QFileInfo>
+#include <QGradientStops>
 
 #include "model/animation/frame_time.hpp"
 #include "math/math.hpp"
@@ -492,7 +494,7 @@ struct FolderItem
 
 struct Composition : FolderItem
 {
-    std::vector<Layer> layers;
+    std::vector<std::unique_ptr<Layer>> layers;
     double time_scale = 0;
     model::FrameTime playhead_time = 0;
     model::FrameTime in_time = 0;
@@ -502,11 +504,12 @@ struct Composition : FolderItem
     double width = 0;
     double height = 0;
     double framerate = 0;
-    Layer markers;
-    std::vector<Layer> views;
+    std::unique_ptr<Layer> markers;
+    std::vector<std::unique_ptr<Layer>> views;
 
     Type type() const noexcept override { return FolderItem::Composition; }
-    model::FrameTime timeToFrame(model::FrameTime time) const
+
+    model::FrameTime time_to_frames(model::FrameTime time) const
     {
         return time / time_scale;
     };
