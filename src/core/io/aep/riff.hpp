@@ -15,86 +15,13 @@
 #include <QSysInfo>
 #include <QBuffer>
 
-
 namespace glaxnimate::io::aep {
-
-struct ChunkId
-{
-    char name[4] = "";
-
-    ChunkId(const QByteArray& arr)
-    {
-        std::memcpy(name, (void*)arr.data(), std::min(4, arr.size()));
-    }
-
-    bool operator==(const char* ch) const {
-        return std::strncmp(name, ch, 4) == 0;
-    }
-
-    bool operator!=(const char* ch) const {
-        return std::strncmp(name, ch, 4) != 0;
-    }
-};
-
-struct RiffChunk
-{
-    ChunkId header;
-    std::uint32_t length = 0;
-    ChunkId subheader = {""};
-    QByteArray data = {};
-    std::vector<std::unique_ptr<RiffChunk>> children = {};
-
-    using iterator = std::vector<std::unique_ptr<RiffChunk>>::const_iterator;
-
-    bool operator==(const char* name) const
-    {
-        if ( header == name )
-            return true;
-
-        if ( header == "LIST" )
-            return subheader == name;
-
-        return false;
-    }
-
-    iterator find(const char* name) const
-    {
-        return find(name, children.begin());
-    }
-
-    iterator find(const char* name, iterator from) const
-    {
-        return std::find_if(from, children.end(), [name](const std::unique_ptr<RiffChunk>& c){ return *c == name; });
-    }
-
-    std::vector<const RiffChunk*> find_multiple(const std::vector<const char*> names) const
-    {
-        std::vector<const RiffChunk*> out;
-        out.resize(names.size());
-        std::size_t found = 0;
-        for ( const auto& child: children )
-        {
-            for ( std::size_t i = 0; i < names.size(); i++ )
-            {
-                if ( !out[i] && *child == names[i] )
-                {
-                    out[i] = child.get();
-                    found++;
-                    if ( found == names.size() )
-                        return out;
-                }
-            }
-        }
-        return out;
-    }
-};
 
 template<int size> struct IntSize;
 template<> struct IntSize<1> { using uint = std::uint8_t;  using sint = std::int8_t; };
 template<> struct IntSize<2> { using uint = std::uint16_t; using sint = std::int16_t; };
 template<> struct IntSize<4> { using uint = std::uint32_t; using sint = std::int32_t; };
 template<> struct IntSize<8> { using uint = std::uint64_t; using sint = std::int64_t; };
-
 
 class Endianness
 {
@@ -207,11 +134,11 @@ public:
     BinaryReader(Endianness endian, QIODevice* file, std::uint32_t length)
         : endian(endian), file(file), length_left(length)
     {}
-
+/*
     BinaryReader(Endianness endian, QByteArray& data, std::uint32_t length)
         : endian(endian), buffer(std::make_unique<QBuffer>(&data)), file(buffer.get()), length_left(length)
     {}
-
+*/
     BinaryReader sub_reader(std::uint32_t length)
     {
         if ( length > length_left )
@@ -223,6 +150,11 @@ public:
     void set_endianness(const Endianness& endian)
     {
         this->endian = endian;
+    }
+
+    QByteArray read()
+    {
+        return read(length_left);
     }
 
     QByteArray read(std::uint32_t length)
@@ -273,13 +205,152 @@ public:
         return QString::fromUtf8(read(length));
     }
 
+    /**
+     * \brief Read a NUL-terminated UTF-8 string
+     */
+    QString read_utf8_nul(std::uint32_t length)
+    {
+        auto data = read(length);
+        int str_len = data.indexOf('\0');
+        return QString::fromUtf8(data.data(), str_len == -1 ? str_len : length);
+    }
+
 private:
     Endianness endian;
-    std::unique_ptr<QBuffer> buffer;
+//     std::unique_ptr<QBuffer> buffer;
     QIODevice* file;
     std::int64_t length_left;
 };
 
+struct ChunkId
+{
+    char name[4] = "";
+
+    ChunkId(const QByteArray& arr)
+    {
+        std::memcpy(name, (void*)arr.data(), std::min(4, arr.size()));
+    }
+
+    bool operator==(const char* ch) const {
+        return std::strncmp(name, ch, 4) == 0;
+    }
+
+    bool operator!=(const char* ch) const {
+        return std::strncmp(name, ch, 4) != 0;
+    }
+};
+
+struct RiffChunk
+{
+    ChunkId header;
+    std::uint32_t length = 0;
+    ChunkId subheader = {""};
+    mutable BinaryReader data = {};
+    std::vector<std::unique_ptr<RiffChunk>> children = {};
+
+    using iterator = std::vector<std::unique_ptr<RiffChunk>>::const_iterator;
+
+    struct RangeIterator
+    {
+    public:
+        constexpr RangeIterator(const iterator& internal, const char* name, const RiffChunk* chunk)
+            : internal(internal), name(name), chunk(chunk)
+        {}
+
+        RangeIterator& operator++()
+        {
+            internal = chunk->find(name, internal);
+            return *this;
+        }
+
+        const RiffChunk& operator*() const
+        {
+            return **internal;
+        }
+
+        const RiffChunk* operator->() const
+        {
+            return internal->get();
+        }
+
+        bool operator==(const RangeIterator& other) const
+        {
+            return other.internal == internal;
+        }
+
+        bool operator!=(const RangeIterator& other) const
+        {
+            return other.internal != internal;
+        }
+
+    private:
+        iterator internal;
+        const char* name;
+        const RiffChunk* chunk;
+    };
+
+    struct FindRange
+    {
+        RangeIterator a, b;
+        RangeIterator begin() const { return a; }
+        RangeIterator end() const { return b; }
+    };
+
+    bool operator==(const char* name) const
+    {
+        if ( header == name )
+            return true;
+
+        if ( header == "LIST" )
+            return subheader == name;
+
+        return false;
+    }
+
+    iterator find(const char* name) const
+    {
+        return find(name, children.begin());
+    }
+
+    iterator find(const char* name, iterator from) const
+    {
+        return std::find_if(from, children.end(), [name](const std::unique_ptr<RiffChunk>& c){ return *c == name; });
+    }
+
+    const RiffChunk* child(const char* name) const
+    {
+        auto it = find(name);
+        if ( it == children.end() )
+            return nullptr;
+        return it->get();
+    }
+
+    FindRange find_all(const char* name) const
+    {
+        return {{find(name), name, this}, {children.end(), name, this}};
+    }
+
+    void find_multiple(
+        const std::vector<const RiffChunk**>& out,
+        const std::vector<const char*> names
+    ) const
+    {
+        std::size_t found = 0;
+        for ( const auto& child: children )
+        {
+            for ( std::size_t i = 0; i < names.size(); i++ )
+            {
+                if ( !*out[i] && *child == names[i] )
+                {
+                    *out[i] = child.get();
+                    found++;
+                    if ( found == names.size() )
+                        return;
+                }
+            }
+        }
+    }
+};
 
 class RiffReader
 {
@@ -346,7 +417,7 @@ protected:
 
     virtual void on_chunk(BinaryReader& reader, RiffChunk& chunk)
     {
-        chunk.data = reader.read(chunk.length);
+        chunk.data = reader.sub_reader(chunk.length);
     }
 };
 

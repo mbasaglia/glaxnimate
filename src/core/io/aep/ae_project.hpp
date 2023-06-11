@@ -33,7 +33,7 @@ struct PropertyBase
 
 struct PropertyPair
 {
-    std::string match_name;
+    QString match_name;
     std::unique_ptr<PropertyBase> value;
 };
 
@@ -41,12 +41,12 @@ struct PropertyGroup : PropertyBase
 {
     bool visible = true;
     bool splitPosition = false;
-    std::string name = "";
+    QString name = "";
     std::vector<PropertyPair> properties;
 
     Type class_type() const noexcept override { return PropertyBase::PropertyGroup; }
 
-    PropertyBase* property(const std::string& match_name)
+    PropertyBase* property(const QString& match_name)
     {
         for ( const auto& prop : properties )
         {
@@ -213,12 +213,12 @@ struct Marker
     model::FrameTime duration = 0;
     LabelColors label_color = LabelColors::None;
     bool is_protected = false;
-    std::string name = "";
+    QString name = "";
 };
 
 struct Font
 {
-    std::string family;
+    QString family;
 };
 
 enum class TextTransform
@@ -274,7 +274,7 @@ struct CharacterStyle
 
 struct TextDocument
 {
-    std::string text;
+    QString text;
     std::vector<LineStyle> line_styles;
     std::vector<CharacterStyle> character_styles;
 };
@@ -350,7 +350,7 @@ struct Property : PropertyBase
     PropertyValue value;
     std::vector<Keyframe> keyframes;
     PropertyType type = PropertyType::MultiDimensional;
-    std::optional<std::string> expression;
+    std::optional<QString> expression;
 
     Type class_type() const noexcept override { return PropertyBase::Property; }
 };
@@ -411,7 +411,7 @@ struct Layer
     bool continuously_rasterize = false;
     Id asset_id = 0;
     LabelColors label_color = LabelColors::None;
-    std::string name = "";
+    QString name = "";
     LayerType type = LayerType::ShapeLayer;
     Id parent_id = 0;
     PropertyGroup properties;
@@ -436,8 +436,8 @@ enum class EffectParameterType
 
 struct EffectParameter
 {
-    std::string matchName = "";
-    std::string name = "";
+    QString matchName = "";
+    QString name = "";
     EffectParameterType type = EffectParameterType::Unknown;
     PropertyValue defaultValue;
     PropertyValue lastValue;
@@ -445,15 +445,15 @@ struct EffectParameter
 
 struct EffectDefinition
 {
-    std::string matchName;
-    std::string name;
+    QString matchName;
+    QString name;
     std::vector<EffectParameter*> parameters;
-    std::map<std::string, EffectParameter> parameter_map;
+    std::map<QString, EffectParameter> parameter_map;
 };
 
 struct EffectInstance : PropertyBase
 {
-    std::string name;
+    QString name;
     aep::PropertyGroup parameters;
 
     Type class_type() const noexcept override { return PropertyBase::EffectInstance; }
@@ -484,7 +484,7 @@ struct FolderItem
 {
     enum Type { Composition, Folder, Asset, Solid };
     Id id;
-    std::string name = "";
+    QString name = "";
 
     virtual ~FolderItem() noexcept = default;
     virtual Type type() const noexcept = 0;
@@ -512,20 +512,24 @@ struct Composition : FolderItem
     };
 };
 
+
 struct Asset : FolderItem
 {
-    std::string full_path;
     int width = 0;
     int height = 0;
+
+};
+
+struct FileAsset : Asset
+{
+    QFileInfo path;
 
     Type type() const noexcept override { return FolderItem::Asset; }
 };
 
-struct Solid : FolderItem
+struct Solid : Asset
 {
     QColor color;
-    int width = 0;
-    int height = 0;
 
     Type type() const noexcept override { return FolderItem::Solid; }
 };
@@ -533,6 +537,15 @@ struct Solid : FolderItem
 struct Folder : FolderItem
 {
     std::vector<std::unique_ptr<FolderItem>> items;
+
+    template<class T>
+    T* add()
+    {
+        auto item = std::make_unique<T>();
+        auto ptr = item.get();
+        items.push_back(std::move(item));
+        return ptr;
+    }
 
     Type type() const noexcept override { return FolderItem::Folder; }
 };
@@ -542,7 +555,7 @@ struct Project
     std::unordered_map<Id, FolderItem*> assets;
     Folder folder;
     std::vector<Composition*> compositions;
-    std::unordered_map<std::string, EffectDefinition> effects;
+    std::unordered_map<QString, EffectDefinition> effects;
     FolderItem* current_item = nullptr;
 };
 

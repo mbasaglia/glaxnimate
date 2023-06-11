@@ -176,6 +176,4 @@ Gradient parse_gradient_xml(const QString& xml)
     return parse_gradient_xml(xml_value(dom.documentElement()));
 }
 
-
 } // namespace glaxnimate::io::aep
-
