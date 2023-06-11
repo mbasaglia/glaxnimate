@@ -129,7 +129,11 @@ struct GradientStopColor
 
     static Value get(const CosArray::element_type* arr)
     {
-        return arr->at(2).get<CosValue::Index::Number>();
+        return QColor::fromRgbF(
+            arr->at(2).get<CosValue::Index::Number>(),
+            arr->at(3).get<CosValue::Index::Number>(),
+            arr->at(4).get<CosValue::Index::Number>()
+        );
     }
 };
 

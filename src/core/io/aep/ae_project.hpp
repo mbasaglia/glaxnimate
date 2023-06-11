@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 #include <variant>
+#include <optional>
 
 #include <QColor>
 #include <QPointF>
@@ -165,7 +166,6 @@ public:
         return stops;
     }
 };
-
 
 struct Gradient
 {

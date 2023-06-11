@@ -382,10 +382,10 @@ private slots:
         auto& stop = get_as<CosValue::Index::Object>(data, "Color Stops", "Stops List", "Stop-0");
         auto& color_arr = get_as<CosValue::Index::Array>(stop, "Stops Color");
         COS_VALUE(get(color_arr, 0), Number, 0.4);
-        auto stops = get_gradient_stops(data, false);
+        auto stops = get_gradient_stops<GradientStopColor>(data);
         QCOMPARE(stops.size(), 2);
-        QCOMPARE(stops[0].first, 0.4);
-        QCOMPARE(stops[0].second, QColor::fromRgbF(0.1, 0.2, 0.3));
+        QCOMPARE(stops[0].offset, 0.4);
+        QCOMPARE(stops[0].value, QColor::fromRgbF(0.1, 0.2, 0.3));
     }
 
     void test_get_gradient_stops_alpha()
@@ -449,32 +449,32 @@ private slots:
         COS_VALUE(get(color_arr, 0), Number, 0);
         COS_VALUE(get(color_arr, 1), Number, 0.5);
         COS_VALUE(get(color_arr, 2), Number, 0.6);
-        auto stops = get_gradient_stops(data, true);
+        auto stops = get_gradient_stops<GradientStopAlpha>(data);
         QCOMPARE(stops.size(), 2);
-        QCOMPARE(stops[0].first, 0);
-        QCOMPARE(float(stops[0].second.alphaF()), 0.6f);
-        QCOMPARE(stops[1].first, 1);
-        QCOMPARE(stops[1].second.alpha(), qRound(255 * 0.5));
+        QCOMPARE(stops[0].offset, 0);
+        QCOMPARE(stops[0].value, 0.6);
+        QCOMPARE(stops[1].offset, 1);
+        QCOMPARE(stops[1].value, 0.5);
     }
 
     void test_get_alpha_at_2()
     {
-        QGradientStops stops;
-        stops.push_back({0, QColor::fromRgbF(0, 0, 0, 0.6)});
-        stops.push_back({1, QColor::fromRgbF(0, 0, 0, 0.5)});
+        GradientStops<double> stops;
+        stops.push_back({0, 0.5, 0.6});
+        stops.push_back({1, 0.5, 0.5});
         int index = 0;
-        QCOMPARE(qRound(255 * get_alpha_at(stops, 0, index)), qRound(255 * 0.6));
+        QCOMPARE(qRound(255 * stops.value_at(0, index)), qRound(255 * 0.6));
         QCOMPARE(index, 0);
-        QCOMPARE(qRound(255 * get_alpha_at(stops, 1, index)), qRound(255 * 0.5));
+        QCOMPARE(qRound(255 * stops.value_at(1, index)), qRound(255 * 0.5));
         QCOMPARE(index, 2);
         index = 0;
-        QCOMPARE(qRound(255 * get_alpha_at(stops, 0.5, index)), qRound(255 * 0.55));
+        QCOMPARE(qRound(255 * stops.value_at(0.5, index)), qRound(255 * 0.55));
         QCOMPARE(index, 0);
     }
 
     void test_gradient_2c2a()
     {
-        auto grad = parse_gradient_xml(QString(R"(
+        auto aegrad = parse_gradient_xml(QString(R"(
            <?xml version='1.0'?>
 <prop.map version='4'>
     <prop.list>
@@ -589,6 +589,7 @@ private slots:
 </prop.map>
         )"));
 
+        auto grad = aegrad.to_qt();
         QCOMPARE(grad.size(), 2);
         QCOMPARE(grad[0].first, 0);
         QCOMPARE(grad[1].first, 1);
