@@ -38,8 +38,15 @@ private slots:
         auto it2 = parent.find("rept", it1);
         QVERIFY(it2 != parent.children.end());
         QCOMPARE((*it2)->header, "rept");
+        QCOMPARE(parent.child("itm3")->header, "itm3");
+        QCOMPARE(parent.child("itm7"), nullptr);
 
-        auto items = parent.find_multiple({"rept", "itm1", "itm2", "itm3", "itm4"});
+        std::vector<const RiffChunk*> items(5);
+        std::vector<const RiffChunk**> ptrs;
+        for ( auto& p : items )
+            ptrs.push_back(&p);
+
+        parent.find_multiple(ptrs, {"rept", "itm1", "itm2", "itm3", "itm4"});
         QCOMPARE(items[0]->length, 1);
         QCOMPARE(items[1]->header, "itm1");
         QCOMPARE(items[2]->header, "itm2");
@@ -242,7 +249,7 @@ private slots:
         QCOMPARE(chunk.header, "RIFX");
         QCOMPARE(chunk.length, 4);
         QCOMPARE(chunk.subheader, "rawr");
-        QCOMPARE(chunk.data.size(), 0);
+        QCOMPARE(chunk.data().size(), 0);
         QCOMPARE(chunk.children.size(), 0);
     }
 
@@ -258,25 +265,25 @@ private slots:
         QCOMPARE(chunk.header, "RIFX");
         QCOMPARE(chunk.length, 40);
         QCOMPARE(chunk.subheader, "rawr");
-        QCOMPARE(chunk.data.size(), 0);
+        QCOMPARE(chunk.data().size(), 0);
         QCOMPARE(chunk.children.size(), 3);
 
         auto child = chunk.children[0].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
 
         child = chunk.children[1].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 3);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3"));
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3"));
         QCOMPARE(child->children.size(), 0);
 
         child = chunk.children[2].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
     }
 
@@ -293,35 +300,37 @@ private slots:
         QCOMPARE(chunk.header, "RIFX");
         QCOMPARE(chunk.length, 52);
         QCOMPARE(chunk.subheader, "rawr");
-        QCOMPARE(chunk.data.size(), 0);
+        QCOMPARE(chunk.data().size(), 0);
         QCOMPARE(chunk.children.size(), 1);
 
         auto list = chunk.children[0].get();
         QCOMPARE(list->header, "LIST");
         QCOMPARE(list->subheader, "list");
         QCOMPARE(list->length, 40);
-        QCOMPARE(list->data.size(), 0);
+        QCOMPARE(list->data().size(), 0);
         QCOMPARE(list->children.size(), 3);
 
         auto child = list->children[0].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().size(), 4);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
 
         child = list->children[1].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 3);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3"));
+        QCOMPARE(child->data().size(), 3);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3"));
         QCOMPARE(child->children.size(), 0);
 
         child = list->children[2].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().size(), 4);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
     }
-
 
     void test_riff_reader_list()
     {
@@ -335,32 +344,35 @@ private slots:
         QCOMPARE(chunk.header, "RIFF");
         QCOMPARE(chunk.length, 52);
         QCOMPARE(chunk.subheader, "rawr");
-        QCOMPARE(chunk.data.size(), 0);
+        QCOMPARE(chunk.data().size(), 0);
         QCOMPARE(chunk.children.size(), 1);
 
         auto list = chunk.children[0].get();
         QCOMPARE(list->header, "LIST");
         QCOMPARE(list->subheader, "list");
         QCOMPARE(list->length, 40);
-        QCOMPARE(list->data.size(), 0);
+        QCOMPARE(list->data().size(), 0);
         QCOMPARE(list->children.size(), 3);
 
         auto child = list->children[0].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().size(), 4);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
 
         child = list->children[1].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 3);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3"));
+        QCOMPARE(child->data().size(), 3);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3"));
         QCOMPARE(child->children.size(), 0);
 
         child = list->children[2].get();
         QCOMPARE(child->header, "awoo");
         QCOMPARE(child->length, 4);
-        QCOMPARE(child->data, QByteArrayLiteral("\1\2\3\4"));
+        QCOMPARE(child->data().size(), 4);
+        QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
     }
 };

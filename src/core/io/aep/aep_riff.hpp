@@ -12,21 +12,24 @@ namespace glaxnimate::io::aep {
 class AepRiff : public RiffReader
 {
 protected:
-    void on_chunk(BinaryReader & reader, RiffChunk & chunk) override
+    void on_chunk(RiffChunk & chunk) override
     {
         if ( chunk.header == "tdsn" || chunk.header == "fnam" || chunk.header == "pdnm" )
-            chunk.children = read_chunks(reader);
+        {
+            chunk.children = read_chunks(chunk.reader);
+        }
+        else if ( chunk.header == "LIST" )
+        {
+            chunk.subheader = chunk.reader.read(4);
+            if ( chunk.subheader != "btdk" )
+                chunk.children = read_chunks(chunk.reader);
+            else
+                chunk.reader.defer();
+        }
         else
-            chunk.data = reader.sub_reader(chunk.length);
-    }
-
-    void on_list(BinaryReader& reader, RiffChunk& chunk) override
-    {
-        chunk.subheader = reader.read(4);
-        if ( chunk.subheader == "btdk" )
-            chunk.data = reader.sub_reader(chunk.length);
-        else
-            chunk.children = read_chunks(reader);
+        {
+            chunk.reader.defer();
+        }
     }
 };
 

@@ -128,11 +128,17 @@ class BinaryReader
 {
 public:
     BinaryReader()
-        : endian(Endianness::Big()), file(nullptr), length_left(0)
+        : endian(Endianness::Big()),
+        file(nullptr),
+        file_pos(0),
+        length_left(0)
     {}
 
     BinaryReader(Endianness endian, QIODevice* file, std::uint32_t length)
-        : endian(endian), file(file), length_left(length)
+        : endian(endian),
+        file(file),
+        file_pos(file->pos()),
+        length_left(length)
     {}
 /*
     BinaryReader(Endianness endian, QByteArray& data, std::uint32_t length)
@@ -143,7 +149,7 @@ public:
     {
         if ( length > length_left )
             throw RiffError(QObject::tr("Not enough data"));
-        this->length_left -= length;
+        length_left -= length;
         return {endian, file, length};
     }
 
@@ -159,7 +165,8 @@ public:
 
     QByteArray read(std::uint32_t length)
     {
-        this->length_left -= length;
+        length_left -= length;
+        file_pos += length;
         auto data = file->read(length);
         if ( std::uint32_t(data.size()) < length )
             throw RiffError(QObject::tr("Not enough data"));
@@ -190,7 +197,8 @@ public:
 
     void skip(std::uint32_t length)
     {
-        this->length_left -= length;
+        length_left -= length;
+        file_pos += length;
         if ( file->skip(length) < length )
             throw RiffError(QObject::tr("Not enough data"));
     }
@@ -215,10 +223,29 @@ public:
         return QString::fromUtf8(data.data(), str_len == -1 ? str_len : length);
     }
 
+    int size() const
+    {
+        return length_left;
+    }
+
+    void prepare()
+    {
+        file->seek(file_pos);
+    }
+
+    /**
+     * \brief Defer data reading to a later point
+     */
+    void defer()
+    {
+        file->skip(length_left);
+    }
+
 private:
     Endianness endian;
 //     std::unique_ptr<QBuffer> buffer;
     QIODevice* file;
+    qint64 file_pos;
     std::int64_t length_left;
 };
 
@@ -245,7 +272,7 @@ struct RiffChunk
     ChunkId header;
     std::uint32_t length = 0;
     ChunkId subheader = {""};
-    mutable BinaryReader data = {};
+    BinaryReader reader = {};
     std::vector<std::unique_ptr<RiffChunk>> children = {};
 
     using iterator = std::vector<std::unique_ptr<RiffChunk>>::const_iterator;
@@ -305,6 +332,13 @@ struct RiffChunk
             return subheader == name;
 
         return false;
+    }
+
+    BinaryReader data() const
+    {
+        BinaryReader data = reader;
+        data.prepare();
+        return data;
     }
 
     iterator find(const char* name) const
@@ -372,7 +406,8 @@ public:
         BinaryReader reader = BinaryReader(endian, file, length);
         ChunkId format = reader.read(4);
         RiffChunk chunk{header, length, format};
-        on_root(reader, chunk);
+        chunk.reader = reader;
+        on_root(chunk);
         return chunk;
     }
 
@@ -383,12 +418,9 @@ protected:
         auto length = reader.read_uint<4>();
         RiffChunk chunk{header, length};
 
-        auto sub_reader = reader.sub_reader(length);
+        chunk.reader = reader.sub_reader(length);
 
-        if ( chunk.header == "LIST" )
-            on_list(sub_reader, chunk);
-        else
-            on_chunk(sub_reader, chunk);
+        on_chunk(chunk);
 
         if ( length % 2 )
             reader.skip(1);
@@ -404,20 +436,22 @@ protected:
         return chunks;
     }
 
-    virtual void on_root(BinaryReader& reader, RiffChunk& chunk)
+    virtual void on_root(RiffChunk& chunk)
     {
-        chunk.children = read_chunks(reader);
+        chunk.children = read_chunks(chunk.reader);
     }
 
-    virtual void on_list(BinaryReader& reader, RiffChunk& chunk)
+    virtual void on_chunk(RiffChunk& chunk)
     {
-        chunk.subheader = reader.read(4);
-        chunk.children = read_chunks(reader);
-    }
-
-    virtual void on_chunk(BinaryReader& reader, RiffChunk& chunk)
-    {
-        chunk.data = reader.sub_reader(chunk.length);
+        if ( chunk.header == "LIST" )
+        {
+            chunk.subheader = chunk.reader.read(4);
+            chunk.children = read_chunks(chunk.reader);
+        }
+        else
+        {
+            chunk.reader.defer();
+        }
     }
 };
 
