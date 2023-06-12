@@ -676,7 +676,14 @@ private:
     {
         if ( !load_unecessary )
             return {};
-        /// \todo
+        auto effect = std::make_unique<EffectInstance>();
+        Chunk fnam, tdgp;
+        fnam = tdgp = nullptr;
+        chunk->find_multiple({&fnam, &tdgp}, {"fnam", "tdgp"});
+        if ( fnam )
+           effect->name = to_string(fnam->child("Utf8"));
+        parse_property_group(tdgp, effect->parameters, context);
+        return effect;
     }
 
     static constexpr const char* const placeholder = "-_0_/-";
