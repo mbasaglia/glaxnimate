@@ -307,7 +307,7 @@ struct ChunkId
 
     QString to_string() const
     {
-        return QString::fromUtf8(QByteArray(chunk->name().name, 4));
+        return QString::fromLatin1(QByteArray(name, 4));
     }
 };
 
