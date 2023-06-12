@@ -150,6 +150,13 @@ public:
         length_left(0)
     {}
 
+    BinaryReader(Endianness endian, QIODevice* file, std::uint32_t length, qint64 pos)
+        : endian(endian),
+        file(file),
+        file_pos(pos),
+        length_left(length)
+    {}
+
     BinaryReader(Endianness endian, QIODevice* file, std::uint32_t length)
         : endian(endian),
         file(file),
@@ -166,7 +173,18 @@ public:
         if ( length > length_left )
             throw RiffError(QObject::tr("Not enough data"));
         length_left -= length;
-        return {endian, file, length};
+        return sub_reader(length, 0);
+    }
+
+    /**
+     * \brief Creates a sub-reader without affecting the current reader
+     */
+    BinaryReader sub_reader(std::uint32_t length, std::uint32_t offset) const
+    {
+        if ( length + offset > length_left )
+            throw RiffError(QObject::tr("Not enough data"));
+
+        return {endian, file, length, file_pos + offset};
     }
 
     void set_endianness(const Endianness& endian)
@@ -244,7 +262,7 @@ public:
         return read_utf8_nul(length_left);
     }
 
-    int size() const
+    std::uint32_t size() const
     {
         return length_left;
     }
@@ -285,6 +303,11 @@ struct ChunkId
 
     bool operator!=(const char* ch) const {
         return std::strncmp(name, ch, 4) != 0;
+    }
+
+    QString to_string() const
+    {
+        return QString::fromUtf8(QByteArray(chunk->name().name, 4));
     }
 };
 

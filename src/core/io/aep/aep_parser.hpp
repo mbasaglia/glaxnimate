@@ -83,7 +83,7 @@ private:
                 if ( !item )
                     continue;
 
-                auto name = utf8_to_name(name_chunk);
+                auto name = to_string(name_chunk);
                 auto type = item->data.read_uint<2>();
                 item->data.skip(14);
                 auto id = item->data.read_uint<4>();
@@ -175,14 +175,19 @@ private:
         }
     }
 
-    QString utf8_to_name(Chunk utf8)
+    QString to_string(Chunk chunk)
     {
-        if ( !utf8 )
+        if ( !chunk )
             return "";
-        auto data = utf8->data().read();
+        auto data = chunk->data().read();
         if ( data == placeholder )
             return "";
-        return QString::fromUtf8(data);
+
+        if ( chunk->header == "Utf8" )
+            return QString::fromUtf8(data);
+
+        warning(AepFormat::tr("Unknown encoding for %1").arg(chunk->header.to_string()));
+        return "";
     }
 
     void warning(const QString& msg) const
@@ -201,7 +206,7 @@ private:
             return nullptr;
         }
 
-        auto name = utf8_to_name(utf8);
+        auto name = to_string(utf8);
         auto asset_reader = sspc->data();
         asset_reader.skip(32);
         auto width = asset_reader.read_uint<2>();
@@ -260,7 +265,7 @@ private:
         auto data = ldta->data();
         PropertyContext context{&comp, layer.get()};
 
-        layer->name = utf8_to_name(utf8);
+        layer->name = to_string(utf8);
         layer->id = data.read_uint<4>();
         layer->quality = LayerQuality(data.read_uint<2>());
         data.skip(7);
@@ -321,7 +326,7 @@ private:
             }
             else if ( *child == "tdsn" )
             {
-                group.name = utf8_to_name(child->child("Utf8"));
+                group.name = to_string(child->child("Utf8"));
             }
             else if ( *child == "mkif" )
             {
@@ -371,24 +376,22 @@ private:
         else if ( *chunk == "tdbs" )
             return parse_animated_property(chunk, context, {});
         else if ( *chunk == "om-s" )
-            return parse_animated_shape(chunk, context);
+            return parse_animated_with_values(chunk, context, "omks", "shap", &AepParser::parse_bezier);
         else if ( *chunk == "GCst" )
-            return parse_animated_gradient(chunk, context);
+            return parse_animated_with_values(chunk, context, "GCky", "Utf8", &AepParser::parse_gradient);
         else if ( *chunk == "btds" )
             return parse_animated_text(chunk, context);
         else if ( *chunk == "sspc" )
             return parse_effect_instance(chunk, context);
         else if ( *chunk == "otst" )
-            return parse_animated_orientation(chunk, context);
+            return load_unecessary ? parse_animated_with_values(chunk, context, "otky", "otda", &AepParser::parse_orientation) : nullptr;
         else if ( *chunk == "mrst" )
-            return parse_animated_marker(chunk, context);
+            return load_unecessary ? parse_animated_with_values(chunk, context, "mrky", "Nmrd", &AepParser::parse_marker) : nullptr;
         // I've seen these in files but I'm not sure how to parse them
         else if ( *chunk == "OvG2" || *chunk == "blsi" || *chunk == "blsv" )
             return {};
 
-        warning(AepFormat::tr("Unknown property type: %1").arg(
-            QString::fromUtf8(QByteArray(chunk->name().name, 4))
-        ));
+        warning(AepFormat::tr("Unknown property type: %1").arg(chunk->name().to_string()));
     }
 
     std::unique_ptr<Property> parse_animated_property(Chunk chunk, const PropertyContext& context, const std::vector<PropertyValue>& values)
@@ -396,43 +399,104 @@ private:
         /// \todo
     }
 
-    std::unique_ptr<Property> parse_animated_shape(Chunk chunk, const PropertyContext& context)
+    template<class T>
+    std::unique_ptr<Property> parse_animated_with_values(
+        Chunk chunk, const PropertyContext& context,
+        const char* container, const char* value_name,
+        T (AepParser::*parse)(Chunk chunk)
+    )
     {
-        Chunk value, tdbs;
-        value = tdbs = nullptr;
-        chunk->find_multiple({&value, &tdbs}, {"omks", "tdbs"});
+        Chunk value_container, tdbs;
+        value_container = tdbs = nullptr;
+        chunk->find_multiple({&value_container, &tdbs}, {container, "tdbs"});
         std::vector<PropertyValue> values;
-        for ( const RiffChunk& value_chunk : value->find_all("shap") )
-            values.emplace_back(parse_bezier(&value_chunk));
+        for ( const RiffChunk& value_chunk : value_container->find_all(value_name) )
+            values.emplace_back((this->*parse)(&value_chunk));
         return parse_animated_property(tdbs, context, values);
+    }
+
+    std::vector<BinaryReader> list_values(Chunk list)
+    {
+        Chunk head, vals;
+        head = vals = nullptr;
+        list->find_multiple({&head, &vals}, {"lhd3", "ldat"});
+        if ( !head || !vals )
+        {
+            warning(AepFormat::tr("Missing list data"));
+            return {};
+        }
+
+        auto data = head->data();
+        data.skip(10);
+        std::uint32_t count = data.read_uint<2>();
+        data.skip(6);
+        std::uint32_t size = data.read_uint<2>();
+        std::uint32_t total_size = count * size;
+        if ( vals->reader.size() < total_size )
+        {
+            warning(AepFormat::tr("Not enough data in list"));
+            return {};
+        }
+
+        std::vector<BinaryReader> values;
+        values.reserve(count);
+        for ( std::uint32_t i = 0; i < count; i++ )
+            values.push_back(vals->reader.sub_reader(size, i * size));
+        return values;
     }
 
     BezierData parse_bezier(Chunk chunk)
     {
-        /// \todo
+        BezierData data;
+        auto bounds = chunk->child("shph")->data();
+        bounds.skip(3);
+        data.closed = Flags(bounds.read_uint<1>()).get(0, 3);
+        data.minimum.setX(bounds.read_float32());
+        data.minimum.setY(bounds.read_float32());
+        data.maximum.setX(bounds.read_float32());
+        data.maximum.setY(bounds.read_float32());
+
+        for ( auto& pt : list_values(chunk->child("list")) )
+        {
+            float x = pt.read_float32();
+            float y = pt.read_float32();
+            data.points.push_back({x, y});
+        }
+
+        return data;
     }
 
-    std::unique_ptr<Property> parse_animated_gradient(Chunk chunk, const PropertyContext& context)
+    Gradient parse_gradient(Chunk chunk)
     {
-        /// \todo
+        return parse_gradient_xml(to_string(chunk));
+    }
+
+    QVector3D parse_orientation(Chunk chunk)
+    {
+        auto data = chunk->data();
+        QVector3D v;
+        v.setX(data.read_float64());
+        v.setY(data.read_float64());
+        v.setZ(data.read_float64());
+        return v;
+    }
+
+    Marker parse_marker(Chunk chunk)
+    {
+        Marker marker;
+        marker.name = to_string(chunk->child("Utf8"));
+        auto data = chunk->child("NmHd")->data();
+        data.skip(4);
+        marker.is_protected = data.read_uint<1>() & 2;
+        data.skip(4);
+        marker.duration = data.read_uint<4>();
+        data.skip(4);
+        marker.label_color = LabelColors(data.read_uint<1>());
+        return marker;
     }
 
     std::unique_ptr<Property> parse_animated_text(Chunk chunk, const PropertyContext& context)
     {
-        /// \todo
-    }
-
-    std::unique_ptr<Property> parse_animated_orientation(Chunk chunk, const PropertyContext& context)
-    {
-        if ( !load_unecessary )
-            return {};
-        /// \todo
-    }
-
-    std::unique_ptr<Property> parse_animated_marker(Chunk chunk, const PropertyContext& context)
-    {
-        if ( !load_unecessary )
-            return {};
         /// \todo
     }
 
