@@ -41,6 +41,8 @@ private:
     };
 
 public:
+    AepParser(ImportExport* io) : io(io) {}
+
     Project parse(const RiffChunk& root)
     {
         if ( root.subheader != "Egg!" )
@@ -51,12 +53,12 @@ public:
         root.find_multiple({&fold, &efdg}, {"Fold", "EfdG"});
 
         if ( load_unecessary && efdg )
-            parse_effects(efdg->find_all("EfDf"), project);
+            parse_effect_definitions(efdg->find_all("EfDf"), project);
 
         parse_folder(fold, project.folder, project);
 
         for ( auto& comp : project.compositions )
-            parse_composition(comp_chunks[comp->id], *comp, project);
+            parse_composition(comp_chunks[comp->id], *comp);
 
         return project;
     }
@@ -121,12 +123,7 @@ private:
         }
     }
 
-    void parse_effects(const ChunkRange& range, Project& project)
-    {
-        /// \todo
-    }
-
-    void parse_composition(Chunk chunk, Composition& comp, Project& project)
+    void parse_composition(Chunk chunk, Composition& comp)
     {
         auto cdta = chunk->child("cdta");
         if ( !cdta )
@@ -193,7 +190,7 @@ private:
 
     void warning(const QString& msg) const
     {
-        /// \todo
+        io->warning(msg);
     }
 
     FolderItem* parse_asset(Id id, Chunk chunk, Folder& folder, Project& project)
@@ -270,7 +267,7 @@ private:
         layer->id = data.read_uint32();
         layer->quality = LayerQuality(data.read_uint16());
         data.skip(7);
-        layer->start_time = comp.time_to_frames(data.read_sint<2>());
+        layer->start_time = comp.time_to_frames(data.read_sint16());
         data.skip(6);
         layer->in_time = context.time_to_frames(data.read_uint16());
         data.skip(6);
@@ -437,7 +434,7 @@ private:
             LayerSelection val;
             val.layer_id = tdpi->data().read_uint32();
             if ( tdps )
-                val.layer_source = LayerSource(tdps->data().read_sint<4>());
+                val.layer_source = LayerSource(tdps->data().read_sint32());
             prop->value = val;
         }
         else if ( integer && tdli )
@@ -672,6 +669,115 @@ private:
         /// \todo
     }
 
+    void parse_effect_definitions(const ChunkRange& range, Project& project)
+    {
+        for ( const auto& chunk : range )
+        {
+            Chunk tdmn, sspc;
+            tdmn = sspc = nullptr;
+            chunk.find_multiple({&tdmn, &sspc}, {"tdmn", "sspc"});
+            if ( !tdmn || !sspc )
+                continue;
+
+            auto mn = tdmn->data().read_utf8_nul();
+            EffectDefinition& effect = project.effects[mn];
+            effect.match_name = mn;
+
+            Chunk fnam, part;
+            fnam = part = nullptr;
+            chunk.find_multiple({&fnam, &part}, {"fnam", "parT"});
+            if ( fnam )
+                effect.name = to_string(fnam->child("Utf8"));
+
+            QString param_mn;
+            for ( const auto& param_chunk : part->children )
+            {
+                if ( *param_chunk == "tdmn" )
+                {
+                    param_mn = param_chunk->data().read_utf8_nul();
+                }
+                else
+                {
+                    auto& param = effect.parameter_map[param_mn];
+                    param.match_name = param_mn;
+                    effect.parameters.push_back(&param);
+                    parse_effect_parameter(param, param_chunk->data());
+                }
+            }
+        }
+    }
+
+    void parse_effect_parameter(EffectParameter& param, BinaryReader data)
+    {
+        data.skip(15);
+        param.type = EffectParameterType(data.read_uint8());
+        param.name = data.read_utf8_nul(32);
+        data.skip(8);
+
+        switch ( param.type )
+        {
+            case EffectParameterType::Layer:
+                param.last_value = LayerSelection();
+                param.default_value = LayerSelection();
+                break;
+            case EffectParameterType::Scalar:
+            case EffectParameterType::Angle:
+                param.last_value = data.read_sint32() / 0x10000;
+                param.default_value = 0;
+                break;
+            case EffectParameterType::Boolean:
+                param.last_value = data.read_uint32();
+                param.default_value = data.read_uint8();
+                break;
+            case EffectParameterType::Color:
+            {
+                auto a = data.read_uint8();
+                auto r = data.read_uint8();
+                auto g = data.read_uint8();
+                auto b = data.read_uint8();
+                param.last_value = QColor(r, g, b, a);
+                data.skip(1);
+                a = 255;
+                r = data.read_uint8();
+                g = data.read_uint8();
+                b = data.read_uint8();
+                param.default_value = QColor(r, g, b, a);
+                break;
+            }
+            case EffectParameterType::Vector2D:
+            {
+                qreal x = data.read_sint32();
+                qreal y = data.read_sint32();
+                param.last_value = QPointF(x / 0x80, y / 0x80);
+                param.default_value = QPointF();
+                break;
+            }
+            case EffectParameterType::Enum:
+                param.last_value = data.read_uint32();
+                data.skip(2); // Number of enum values
+                param.default_value = data.read_uint16();
+                break;
+            case EffectParameterType::Slider:
+                param.last_value = data.read_float64();
+                param.default_value = 0;
+                break;
+            case EffectParameterType::Vector3D:
+            {
+                auto x3 = data.read_float64() * 512;
+                auto y3 = data.read_float64() * 512;
+                auto z3 = data.read_float64() * 512;
+                param.last_value = QVector3D(x3, y3, z3);
+                param.default_value = QVector3D(0, 0, 0);
+                break;
+            }
+            default:
+                param.last_value = 0;
+                param.default_value = 0;
+                break;
+        }
+
+    }
+
     std::unique_ptr<EffectInstance> parse_effect_instance(Chunk chunk, const PropertyContext& context)
     {
         if ( !load_unecessary )
@@ -693,6 +799,7 @@ private:
     // something else with them and so that if Glaxnimate ever supports given
     // features, it's easier to add
     const bool load_unecessary = false;
+    ImportExport* io;
 };
 
 } // namespace glaxnimate::io::aep

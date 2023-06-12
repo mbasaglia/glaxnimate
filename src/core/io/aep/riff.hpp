@@ -223,6 +223,9 @@ public:
     std::uint16_t read_uint16() { return read_uint<2>(); }
     std::uint32_t read_uint32() { return read_uint<4>(); }
 
+    std::uint32_t read_sint16() { return read_sint<2>(); }
+    std::uint32_t read_sint32() { return read_sint<4>(); }
+
     float read_float32()
     {
         return endian.read_float32(read(4));

@@ -448,16 +448,16 @@ enum class EffectParameterType
 
 struct EffectParameter
 {
-    QString matchName = "";
+    QString match_name = "";
     QString name = "";
     EffectParameterType type = EffectParameterType::Unknown;
-    PropertyValue defaultValue;
-    PropertyValue lastValue;
+    PropertyValue default_value;
+    PropertyValue last_value;
 };
 
 struct EffectDefinition
 {
-    QString matchName;
+    QString match_name;
     QString name;
     std::vector<EffectParameter*> parameters;
     std::map<QString, EffectParameter> parameter_map;
