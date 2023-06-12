@@ -121,34 +121,35 @@ private:
         if ( !cdta )
             warning(AepFormat::tr("Missing composition data"));
 
+        auto data = cdta->data();
         // Time stuff
-        cdta->data.skip(5);
-        comp.time_scale = cdta->data.read_uint<2>();
-        cdta->data.skip(14);
-        comp.playhead_time = comp.time_to_frames(cdta->data.read_uint<2>());
-        cdta->data.skip(6);
-        comp.in_time = comp.time_to_frames(cdta->data.read_uint<2>());
-        cdta->data.skip(6);
-        auto out_time = cdta->data.read_uint<2>();
-        cdta->data.skip(6);
-        comp.duration = comp.time_to_frames(cdta->data.read_uint<2>());
+        data.skip(5);
+        comp.time_scale = data.read_uint<2>();
+        data.skip(14);
+        comp.playhead_time = comp.time_to_frames(data.read_uint<2>());
+        data.skip(6);
+        comp.in_time = comp.time_to_frames(data.read_uint<2>());
+        data.skip(6);
+        auto out_time = data.read_uint<2>();
+        data.skip(6);
+        comp.duration = comp.time_to_frames(data.read_uint<2>());
         if ( out_time == 0xffff )
             comp.out_time = comp.duration;
         else
             comp.out_time = comp.time_to_frames(out_time);
-        cdta->data.skip(5);
+        data.skip(5);
 
         // Background
-        comp.color.setRed(cdta->data.read_uint<1>());
-        comp.color.setGreen(cdta->data.read_uint<1>());
-        comp.color.setBlue(cdta->data.read_uint<1>());
+        comp.color.setRed(data.read_uint<1>());
+        comp.color.setGreen(data.read_uint<1>());
+        comp.color.setBlue(data.read_uint<1>());
 
         // Lottie
-        cdta->data.skip(85);
-        comp.width = cdta->data.read_uint<2>();
-        comp.height = cdta->data.read_uint<2>();
-        cdta->data.skip(12);
-        comp.framerate = cdta->data.read_uint<2>();
+        data.skip(85);
+        comp.width = data.read_uint<2>();
+        comp.height = data.read_uint<2>();
+        data.skip(12);
+        comp.framerate = data.read_uint<2>();
 
         for ( const auto& child : chunk->children )
         {
@@ -165,7 +166,7 @@ private:
     {
         if ( !utf8 )
             return "";
-        auto data = utf8->data.read();
+        auto data = utf8->data().read();
         if ( data == placeholder )
             return "";
         return QString::fromUtf8(data);
@@ -185,25 +186,28 @@ private:
             return nullptr;
 
         auto name = utf8_to_name(utf8);
-        sspc->data.skip(32);
-        auto width = sspc->data.read_uint<2>();
-        sspc->data.skip(2);
-        auto height = sspc->data.read_uint<2>();
+        auto asset_reader = sspc->data();
+        asset_reader.skip(32);
+        auto width = asset_reader.read_uint<2>();
+        asset_reader.skip(2);
+        auto height = asset_reader.read_uint<2>();
         Asset* asset;
 
-        if ( opti->data.read(4) == "Soli" )
+        auto data = opti->data();
+
+        if ( data.read(4) == "Soli" )
         {
             auto solid = folder.add<Solid>();
-            solid->color.setAlphaF(opti->data.read_float32());
-            solid->color.setRedF(opti->data.read_float32());
-            solid->color.setGreenF(opti->data.read_float32());
-            solid->color.setBlueF(opti->data.read_float32());
-            solid->name = opti->data.read_utf8_nul(256);
+            solid->color.setAlphaF(data.read_float32());
+            solid->color.setRedF(data.read_float32());
+            solid->color.setGreenF(data.read_float32());
+            solid->color.setBlueF(data.read_float32());
+            solid->name = data.read_utf8_nul(256);
             asset = solid;
         }
         else
         {
-            auto doc = QJsonDocument::fromJson(als2->child("alas")->data.read());
+            auto doc = QJsonDocument::fromJson(als2->child("alas")->data().read());
             QString path = doc.object()["fullpath"].toString();
             // Handle weird windows paths
             if ( path.contains('\\') && QDir::separator() == '/' )
