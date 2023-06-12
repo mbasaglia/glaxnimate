@@ -332,9 +332,9 @@ struct Keyframe
     PropertyValue value;
     model::FrameTime time = 0;
     std::vector<double> in_influence;
-    std::vector<double> inSpeed;
-    std::vector<double> outInfluence;
-    std::vector<double> outSpeed;
+    std::vector<double> in_speed;
+    std::vector<double> out_influence;
+    std::vector<double> out_speed;
     QPointF in_tangent;
     QPointF out_tangent;
     KeyframeTransitionType transition_type = KeyframeTransitionType::Linear;

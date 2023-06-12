@@ -70,7 +70,7 @@ private:
         {
             if ( *child == "fiac" )
             {
-                if ( current_item && child->data.read_uint<1>() )
+                if ( current_item && child->data().read_uint8() )
                     project.current_item = current_item;
             }
             else if ( *child == "Item" )
@@ -84,9 +84,10 @@ private:
                     continue;
 
                 auto name = to_string(name_chunk);
-                auto type = item->data.read_uint<2>();
-                item->data.skip(14);
-                auto id = item->data.read_uint<4>();
+                auto data = item->data();
+                auto type = data.read_uint16();
+                data.skip(14);
+                auto id = data.read_uint32();
 
                 switch ( type )
                 {
@@ -137,15 +138,15 @@ private:
         auto data = cdta->data();
         // Time stuff
         data.skip(5);
-        comp.time_scale = data.read_uint<2>();
+        comp.time_scale = data.read_uint16();
         data.skip(14);
-        comp.playhead_time = comp.time_to_frames(data.read_uint<2>());
+        comp.playhead_time = comp.time_to_frames(data.read_uint16());
         data.skip(6);
-        comp.in_time = comp.time_to_frames(data.read_uint<2>());
+        comp.in_time = comp.time_to_frames(data.read_uint16());
         data.skip(6);
-        auto out_time = data.read_uint<2>();
+        auto out_time = data.read_uint16();
         data.skip(6);
-        comp.duration = comp.time_to_frames(data.read_uint<2>());
+        comp.duration = comp.time_to_frames(data.read_uint16());
         if ( out_time == 0xffff )
             comp.out_time = comp.duration;
         else
@@ -153,16 +154,16 @@ private:
         data.skip(5);
 
         // Background
-        comp.color.setRed(data.read_uint<1>());
-        comp.color.setGreen(data.read_uint<1>());
-        comp.color.setBlue(data.read_uint<1>());
+        comp.color.setRed(data.read_uint8());
+        comp.color.setGreen(data.read_uint8());
+        comp.color.setBlue(data.read_uint8());
 
         // Lottie
         data.skip(85);
-        comp.width = data.read_uint<2>();
-        comp.height = data.read_uint<2>();
+        comp.width = data.read_uint16();
+        comp.height = data.read_uint16();
         data.skip(12);
-        comp.framerate = data.read_uint<2>();
+        comp.framerate = data.read_uint16();
 
         for ( const auto& child : chunk->children )
         {
@@ -209,9 +210,9 @@ private:
         auto name = to_string(utf8);
         auto asset_reader = sspc->data();
         asset_reader.skip(32);
-        auto width = asset_reader.read_uint<2>();
+        auto width = asset_reader.read_uint16();
         asset_reader.skip(2);
-        auto height = asset_reader.read_uint<2>();
+        auto height = asset_reader.read_uint16();
         Asset* asset;
 
         auto data = opti->data();
@@ -266,14 +267,14 @@ private:
         PropertyContext context{&comp, layer.get()};
 
         layer->name = to_string(utf8);
-        layer->id = data.read_uint<4>();
-        layer->quality = LayerQuality(data.read_uint<2>());
+        layer->id = data.read_uint32();
+        layer->quality = LayerQuality(data.read_uint16());
         data.skip(7);
         layer->start_time = comp.time_to_frames(data.read_sint<2>());
         data.skip(6);
-        layer->in_time = context.time_to_frames(data.read_uint<2>());
+        layer->in_time = context.time_to_frames(data.read_uint16());
         data.skip(6);
-        layer->out_time = context.time_to_frames(data.read_uint<2>());
+        layer->out_time = context.time_to_frames(data.read_uint16());
         data.skip(6);
         Flags flags = data.read_uint<3>();
         layer->is_guide = flags.get(2, 1);
@@ -289,18 +290,18 @@ private:
         layer->locked = flags.get(0, 5);
         layer->shy = flags.get(0, 6);
         layer->continuously_rasterize = flags.get(0, 7);
-        layer->asset_id = data.read_uint<4>();
+        layer->asset_id = data.read_uint32();
         data.skip(17);
-        layer->label_color = LabelColors(data.read_uint<1>());
+        layer->label_color = LabelColors(data.read_uint8());
         data.skip(2);
         data.skip(32); // Name, we get it from Utf8 instead
         data.skip(11);
-        layer->matte_mode = TrackMatteType(data.read_uint<1>());
+        layer->matte_mode = TrackMatteType(data.read_uint8());
         data.skip(23);
-        layer->type = LayerType(data.read_uint<1>());
-        layer->parent_id = data.read_uint<4>();
+        layer->type = LayerType(data.read_uint8());
+        layer->parent_id = data.read_uint32();
         data.skip(24);
-        layer->matte_id = data.read_uint<4>();
+        layer->matte_id = data.read_uint32();
 
         parse_property_group(tdgp, layer->properties, context);
 
@@ -320,7 +321,7 @@ private:
             }
             else if ( *child == "tdsb" )
             {
-                Flags flags = child->data().read_uint<4>();
+                Flags flags = child->data().read_uint32();
                 group.visible = flags.get(0, 0);
                 group.split_position = flags.get(0, 1);
             }
@@ -332,10 +333,10 @@ private:
             {
                 auto mask = std::make_unique<Mask>();
                 auto data = child->data();
-                mask->inverted = data.read_uint<1>();
-                mask->locked = data.read_uint<1>();
+                mask->inverted = data.read_uint8();
+                mask->locked = data.read_uint8();
                 data.skip(4);
-                mask->mode = MaskMode(data.read_uint<2>());
+                mask->mode = MaskMode(data.read_uint16());
                 ++it;
                 if ( it == chunk->children.end() )
                 {
@@ -394,9 +395,180 @@ private:
         warning(AepFormat::tr("Unknown property type: %1").arg(chunk->name().to_string()));
     }
 
-    std::unique_ptr<Property> parse_animated_property(Chunk chunk, const PropertyContext& context, const std::vector<PropertyValue>& values)
+    std::unique_ptr<Property> parse_animated_property(
+        Chunk chunk, const PropertyContext& context, std::vector<PropertyValue> values
+    )
     {
-        /// \todo
+        auto prop = std::make_unique<Property>();
+        Chunk header, value, keyframes, expression, tdpi, tdps, tdli;
+        header = value = keyframes = expression = tdpi = tdps = tdli = nullptr;
+        chunk->find_multiple(
+            {&header, &value, &keyframes, &expression, &tdpi, &tdps, &tdli},
+            {"tdb4", "cdat", "list", "Utf8", "tdpi", "tdps", "tdli"}
+        );
+        auto data = header->data();
+        data.skip(2);
+        prop->components = data.read_uint16();
+
+        bool position = Flags(data.read_uint16()).get(0, 3);
+        data.skip(10+8*5);
+        Flags type = data.read_uint32();
+        bool no_value = type.get(2, 0);
+        bool color = type.get(0, 0);
+        bool integer = type.get(0, 2);
+        data.skip(8);
+
+        if ( position )
+            prop->type = PropertyType::Position;
+        else if ( color )
+            prop->type = PropertyType::Color;
+        else if ( no_value )
+            prop->type = PropertyType::NoValue;
+        else if ( integer )
+            prop->type = PropertyType::Integer;
+        else
+            prop->type = PropertyType::MultiDimensional;
+
+        prop->animated = data.read_uint8() == 1;
+
+        if ( integer && tdpi )
+        {
+            prop->type = PropertyType::LayerSelection;
+            LayerSelection val;
+            val.layer_id = tdpi->data().read_uint32();
+            if ( tdps )
+                val.layer_source = LayerSource(tdps->data().read_sint<4>());
+            prop->value = val;
+        }
+        else if ( integer && tdli )
+        {
+            prop->type = PropertyType::MaskIndex;
+            prop->value = tdli->data().read_uint32();
+        }
+        else if ( keyframes )
+        {
+            auto raw_keys = list_values(keyframes);
+            for ( std::size_t i = 0; i < raw_keys.size(); i++ ) {
+                prop->keyframes.push_back(load_keyframe(i, raw_keys[i], *prop, context, values));
+            }
+        }
+        else if ( value )
+        {
+            auto vdat = value->data();
+            auto raw_value = vdat.read_array(&BinaryReader::read_float64, prop->components);
+            prop->value = property_value(0, raw_value, values, prop->type);
+        }
+
+        if ( expression )
+            prop->expression = to_string(expression);
+
+        return prop;
+    }
+
+    PropertyValue property_value(
+        int index,
+        const std::vector<qreal>& raw_value,
+        std::vector<PropertyValue>& values,
+        PropertyType type
+    )
+    {
+        switch ( type )
+        {
+            case PropertyType::NoValue:
+                if ( index < int(values.size()) )
+                    return std::move(values[index]);
+                return nullptr;
+            case PropertyType::Color:
+                if ( raw_value.size() < 4 )
+                    return QColor();
+                return QColor(raw_value[1], raw_value[2], raw_value[3], raw_value[0]);
+            default:
+                return vector_value(raw_value);
+        }
+    }
+
+    PropertyValue vector_value(const std::vector<qreal>& raw_value)
+    {
+        switch ( raw_value.size() )
+        {
+            case 0:
+                return nullptr;
+            case 1:
+                return raw_value[0];
+            case 2:
+                return QPointF(raw_value[0], raw_value[1]);
+            case 3:
+            default:
+                return QVector3D(raw_value[0], raw_value[1], raw_value[2]);
+        }
+    }
+
+    Keyframe load_keyframe(int index, BinaryReader& reader, Property& prop, const PropertyContext& context, std::vector<PropertyValue>& values)
+    {
+        Keyframe kf;
+
+        reader.skip(1);
+        kf.time = context.time_to_frames(reader.read_uint16());
+        reader.skip(2);
+
+        kf.transition_type = KeyframeTransitionType(reader.read_uint8());
+
+        kf.label_color = LabelColors(reader.read_uint8());
+
+        Flags flags  = reader.read_uint8();
+        kf.roving = flags.get(0, 5);
+        if ( flags.get(0, 3) )
+            kf.bezier_mode = KeyframeBezierMode::Continuous;
+        else if ( flags.get(0, 4) )
+            kf.bezier_mode = KeyframeBezierMode::Auto;
+        else
+            kf.bezier_mode = KeyframeBezierMode::Normal;
+
+        if ( prop.type == PropertyType::NoValue )
+        {
+            reader.skip(16);
+            kf.in_speed.push_back(reader.read_float64());
+            kf.in_influence.push_back(reader.read_float64());
+            kf.out_speed.push_back(reader.read_float64());
+            kf.out_influence.push_back(reader.read_float64());
+            kf.value = std::move(values[index]);
+        }
+        else if ( prop.type == PropertyType::MultiDimensional || prop.type == PropertyType::Integer )
+        {
+            kf.value = vector_value(reader.read_array(&BinaryReader::read_float64, prop.components));
+            kf.in_speed = reader.read_array(&BinaryReader::read_float64, prop.components);
+            kf.in_influence = reader.read_array(&BinaryReader::read_float64, prop.components);
+            kf.out_speed = reader.read_array(&BinaryReader::read_float64, prop.components);
+            kf.out_influence = reader.read_array(&BinaryReader::read_float64, prop.components);
+        }
+        else if ( prop.type == PropertyType::Position )
+        {
+            reader.skip(16);
+            kf.in_speed.push_back(reader.read_float64());
+            kf.in_influence.push_back(reader.read_float64());
+            kf.out_speed.push_back(reader.read_float64());
+            kf.out_influence.push_back(reader.read_float64());
+            kf.value = vector_value(reader.read_array(&BinaryReader::read_float64, prop.components));
+            auto it = reader.read_array(&BinaryReader::read_float64, prop.components);
+            auto ot = reader.read_array(&BinaryReader::read_float64, prop.components);
+            if ( prop.components >= 2 )
+            {
+                kf.in_tangent = {it[0], it[1]};
+                kf.out_tangent = {ot[0], ot[1]};
+            }
+        }
+        else if ( prop.type == PropertyType::Color )
+        {
+            reader.skip(16);
+            kf.in_speed.push_back(reader.read_float64());
+            kf.in_influence.push_back(reader.read_float64());
+            kf.out_speed.push_back(reader.read_float64());
+            kf.out_influence.push_back(reader.read_float64());
+            auto value = reader.read_array(&BinaryReader::read_float64, prop.components);
+            kf.value = QColor(value[1], value[2], value[3], value[0]);
+        }
+
+        return kf;
     }
 
     template<class T>
@@ -412,7 +584,7 @@ private:
         std::vector<PropertyValue> values;
         for ( const RiffChunk& value_chunk : value_container->find_all(value_name) )
             values.emplace_back((this->*parse)(&value_chunk));
-        return parse_animated_property(tdbs, context, values);
+        return parse_animated_property(tdbs, context, std::move(values));
     }
 
     std::vector<BinaryReader> list_values(Chunk list)
@@ -428,9 +600,9 @@ private:
 
         auto data = head->data();
         data.skip(10);
-        std::uint32_t count = data.read_uint<2>();
+        std::uint32_t count = data.read_uint16();
         data.skip(6);
-        std::uint32_t size = data.read_uint<2>();
+        std::uint32_t size = data.read_uint16();
         std::uint32_t total_size = count * size;
         if ( vals->reader.size() < total_size )
         {
@@ -450,7 +622,7 @@ private:
         BezierData data;
         auto bounds = chunk->child("shph")->data();
         bounds.skip(3);
-        data.closed = Flags(bounds.read_uint<1>()).get(0, 3);
+        data.closed = Flags(bounds.read_uint8()).get(0, 3);
         data.minimum.setX(bounds.read_float32());
         data.minimum.setY(bounds.read_float32());
         data.maximum.setX(bounds.read_float32());
@@ -487,11 +659,11 @@ private:
         marker.name = to_string(chunk->child("Utf8"));
         auto data = chunk->child("NmHd")->data();
         data.skip(4);
-        marker.is_protected = data.read_uint<1>() & 2;
+        marker.is_protected = data.read_uint8() & 2;
         data.skip(4);
-        marker.duration = data.read_uint<4>();
+        marker.duration = data.read_uint32();
         data.skip(4);
-        marker.label_color = LabelColors(data.read_uint<1>());
+        marker.label_color = LabelColors(data.read_uint8());
         return marker;
     }
 

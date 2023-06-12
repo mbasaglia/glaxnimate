@@ -219,6 +219,10 @@ public:
         return endian.read_sint<size>(read(size));
     }
 
+    std::uint8_t read_uint8() { return read_uint<1>(); }
+    std::uint16_t read_uint16() { return read_uint<2>(); }
+    std::uint32_t read_uint32() { return read_uint<4>(); }
+
     float read_float32()
     {
         return endian.read_float32(read(4));
@@ -278,6 +282,16 @@ public:
     void defer()
     {
         file->skip(length_left);
+    }
+
+    template<class T>
+    std::vector<T> read_array(T (BinaryReader::*read_fn)(), int count)
+    {
+        std::vector<T> out;
+        out.reserve(count);
+        for ( int i = 0; i < count; i++ )
+            out.push_back((this->*read_fn)());
+        return out;
     }
 
 private:
