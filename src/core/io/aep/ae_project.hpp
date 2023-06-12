@@ -42,7 +42,7 @@ struct PropertyPair
 struct PropertyGroup : PropertyBase
 {
     bool visible = true;
-    bool splitPosition = false;
+    bool split_position = false;
     QString name = "";
     std::vector<PropertyPair> properties;
 
@@ -296,6 +296,7 @@ struct LayerSelection
 
 class PropertyValue
 {
+public:
     enum Index
     {
         None,
@@ -309,6 +310,14 @@ class PropertyValue
         TextDocument,
         LayerSelection
     };
+
+    template<class T>
+    PropertyValue(T&& v) : value(std::forward<T>(v)) {}
+    PropertyValue() = default;
+    PropertyValue(PropertyValue& v) = delete;
+    PropertyValue(const PropertyValue& v) = delete;
+    PropertyValue(PropertyValue&& v) = default;
+    PropertyValue& operator=(PropertyValue&& v) = default;
 
     Index type() const { return Index(value.index()); }
 
@@ -407,7 +416,7 @@ struct Layer
     bool is_null = false;
     bool visible = true;
     bool effects_enabled = false;
-    bool motion_blurenabled = false;
+    bool motion_blur = false;
     bool locked = false;
     bool shy = false;
     bool continuously_rasterize = false;
@@ -416,9 +425,10 @@ struct Layer
     QString name = "";
     LayerType type = LayerType::ShapeLayer;
     Id parent_id = 0;
-    PropertyGroup properties;
     TrackMatteType matte_mode = TrackMatteType::None;
     Id matte_id = 0;
+
+    PropertyGroup properties;
 };
 
 enum class EffectParameterType

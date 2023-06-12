@@ -375,6 +375,28 @@ private slots:
         QCOMPARE(child->data().read(), QByteArrayLiteral("\1\2\3\4"));
         QCOMPARE(child->children.size(), 0);
     }
+
+    void test_flags()
+    {
+        Flags flag(0b1000'0100'0010'0001);
+        QCOMPARE(flag.get(1, 7), true);
+        QCOMPARE(flag.get(1, 6), false);
+        QCOMPARE(flag.get(1, 5), false);
+        QCOMPARE(flag.get(1, 4), false);
+        QCOMPARE(flag.get(1, 3), false);
+        QCOMPARE(flag.get(1, 2), true);
+        QCOMPARE(flag.get(1, 1), false);
+        QCOMPARE(flag.get(1, 0), false);
+
+        QCOMPARE(flag.get(0, 7), false);
+        QCOMPARE(flag.get(0, 6), false);
+        QCOMPARE(flag.get(0, 5), true);
+        QCOMPARE(flag.get(0, 4), false);
+        QCOMPARE(flag.get(0, 3), false);
+        QCOMPARE(flag.get(0, 2), false);
+        QCOMPARE(flag.get(0, 1), false);
+        QCOMPARE(flag.get(0, 0), true);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestCase)

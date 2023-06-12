@@ -20,6 +20,7 @@ namespace glaxnimate::io::aep {
 template<int size> struct IntSize;
 template<> struct IntSize<1> { using uint = std::uint8_t;  using sint = std::int8_t; };
 template<> struct IntSize<2> { using uint = std::uint16_t; using sint = std::int16_t; };
+template<> struct IntSize<3> { using uint = std::uint32_t; using sint = std::int32_t; };
 template<> struct IntSize<4> { using uint = std::uint32_t; using sint = std::int32_t; };
 template<> struct IntSize<8> { using uint = std::uint64_t; using sint = std::int64_t; };
 
@@ -123,6 +124,21 @@ public:
     QString message;
 };
 
+class Flags
+{
+public:
+    constexpr Flags(std::uint32_t data) noexcept
+    : data(data) {}
+
+    constexpr bool get(int byte, int bit) const noexcept
+    {
+        return (data >> (8*byte)) & (1 << bit);
+    }
+
+private:
+    std::uint32_t data;
+};
+
 
 class BinaryReader
 {
@@ -221,6 +237,11 @@ public:
         auto data = read(length);
         int str_len = data.indexOf('\0');
         return QString::fromUtf8(data.data(), str_len == -1 ? str_len : length);
+    }
+
+    QString read_utf8_nul()
+    {
+        return read_utf8_nul(length_left);
     }
 
     int size() const
@@ -334,6 +355,11 @@ struct RiffChunk
         return false;
     }
 
+    bool operator!=(const char* name) const
+    {
+        return !(*this == name);
+    }
+
     BinaryReader data() const
     {
         BinaryReader data = reader;
@@ -383,6 +409,13 @@ struct RiffChunk
                 }
             }
         }
+    }
+
+    const ChunkId& name() const
+    {
+        if ( header == "LIST" )
+            return subheader;
+        return header;
     }
 };
 
