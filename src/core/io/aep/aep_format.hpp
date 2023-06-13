@@ -11,6 +11,7 @@
 
 namespace glaxnimate::io::aep {
 
+struct RiffChunk;
 
 class AepFormat : public ImportExport
 {
@@ -26,12 +27,14 @@ public:
 protected:
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap& options) override;
 
+    bool riff_to_document(const RiffChunk& chunk, model::Document* document, const QString& filename);
+
 private:
     static Autoreg<AepFormat> autoreg;
 };
 
 
-class AepxFormat : public ImportExport
+class AepxFormat : public AepFormat
 {
     Q_OBJECT
 

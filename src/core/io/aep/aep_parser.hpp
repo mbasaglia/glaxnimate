@@ -46,7 +46,7 @@ public:
     Project parse(const RiffChunk& root)
     {
         if ( root.subheader != "Egg!" )
-            throw AepError("Not an AEP file");
+            throw AepError(AepFormat::tr("Not an AEP file"));
 
         Project project;
         Chunk fold = nullptr, efdg = nullptr;
