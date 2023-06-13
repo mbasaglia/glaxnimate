@@ -390,6 +390,7 @@ private:
             return {};
 
         warning(AepFormat::tr("Unknown property type: %1").arg(chunk->name().to_string()));
+        return {};
     }
 
     std::unique_ptr<Property> parse_animated_property(
@@ -739,12 +740,12 @@ private:
                 values.push_back(parse_text_document(doc));
 
             parse_animated_property(&property->documents, tdbs, context, std::move(values));
+            return property;
 
         } catch ( const CosError& err ) {
             warning(AepFormat::tr("Invalid text document: %1").arg(err.message));
             return {};
         }
-        /// \todo
     }
 
     void parse_effect_definitions(const ChunkRange& range, Project& project)

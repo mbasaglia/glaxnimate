@@ -11,10 +11,16 @@ namespace glaxnimate::io::aep {
 
 class AepRiff : public RiffReader
 {
+public:
+    static bool is_fake_list(const ChunkId& header)
+    {
+        return header == "tdsn" || header == "fnam" || header == "pdnm";
+    }
+
 protected:
     void on_chunk(RiffChunk & chunk) override
     {
-        if ( chunk.header == "tdsn" || chunk.header == "fnam" || chunk.header == "pdnm" )
+        if ( is_fake_list(chunk.header) )
         {
             chunk.children = read_chunks(chunk.reader);
         }

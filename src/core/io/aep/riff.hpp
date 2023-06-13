@@ -40,7 +40,7 @@ public:
 
             for ( int i = 0; i < arr.size(); i++ )
             {
-                int j = swap ? arr.size() - i - 1 : i;
+                int j = swap() ? arr.size() - i - 1 : i;
                 v <<= 8;
                 v |= std::uint8_t(arr[j]);
             }
@@ -68,7 +68,6 @@ public:
 
         return -sint_t(~uint + 1);
     }
-
 
     template<class T>
     constexpr T read_sint(const QByteArray& arr) const noexcept
@@ -100,19 +99,64 @@ public:
         return x.valf;
     }
 
+    template<class T>
+    QByteArray write_uint(T val) const
+    {
+        QByteArray out(sizeof(T), 0);
+        for ( int i = 0; i < out.size(); i++ )
+        {
+            int j = i;
+            if ( byte_order == QSysInfo::Endian::BigEndian )
+                j = sizeof(T) - 1 - i;
+
+            out[j] = val & 0xff;
+            val >>= 8;
+        }
+
+        return out;
+    }
+
+    /**
+     * \note Expects IEEE 754 floats
+     */
+    QByteArray write_float32(float val) const noexcept
+    {
+        union {
+            float valf;
+            std::uint32_t vali;
+        } x {val};
+        return write_uint(x.vali);
+    }
+
+    /**
+     * \note Expects IEEE 754 floats
+     */
+    QByteArray write_float64(double val) const noexcept
+    {
+        union {
+            double valf;
+            std::uint64_t vali;
+        } x {val};
+        return write_uint(x.vali);
+    }
+
     static constexpr const Endianness Big() noexcept
     {
-        return {QSysInfo::ByteOrder == QSysInfo::BigEndian};
+        return {QSysInfo::BigEndian};
     }
 
     static constexpr const Endianness Little() noexcept
     {
-        return {QSysInfo::ByteOrder == QSysInfo::LittleEndian};
+        return {QSysInfo::LittleEndian};
     }
 
 private:
-    constexpr Endianness(bool swap) noexcept : swap(swap) {}
-    bool swap;
+    constexpr bool swap() const noexcept
+    {
+        return QSysInfo::ByteOrder == byte_order;
+    }
+    constexpr Endianness(QSysInfo::Endian byte_order) noexcept : byte_order(byte_order) {}
+    QSysInfo::Endian byte_order;
 };
 
 class RiffError : public std::runtime_error
