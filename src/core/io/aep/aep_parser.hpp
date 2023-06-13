@@ -393,10 +393,18 @@ private:
     }
 
     std::unique_ptr<Property> parse_animated_property(
-        Chunk chunk, const PropertyContext& context, std::vector<PropertyValue> values
+        Chunk chunk, const PropertyContext& context, std::vector<PropertyValue>&& values
     )
     {
         auto prop = std::make_unique<Property>();
+        parse_animated_property(prop.get(), chunk, context, std::move(values));
+        return prop;
+    }
+
+    void parse_animated_property(
+        Property* prop, Chunk chunk, const PropertyContext& context, std::vector<PropertyValue> values
+    )
+    {
         Chunk header, value, keyframes, expression, tdpi, tdps, tdli;
         header = value = keyframes = expression = tdpi = tdps = tdli = nullptr;
         chunk->find_multiple(
@@ -458,8 +466,6 @@ private:
 
         if ( expression )
             prop->expression = to_string(expression);
-
-        return prop;
     }
 
     PropertyValue property_value(
@@ -664,8 +670,80 @@ private:
         return marker;
     }
 
-    std::unique_ptr<Property> parse_animated_text(Chunk chunk, const PropertyContext& context)
+    QColor cos_color(const CosValue& cos)
     {
+        const auto& arr = *cos.get<CosValue::Index::Array>();
+        if ( arr.size() < 4 )
+            throw CosError("Not enough components for color");
+
+        return QColor::fromRgbF(
+            arr[1].get<CosValue::Index::Number>(),
+            arr[2].get<CosValue::Index::Number>(),
+            arr[3].get<CosValue::Index::Number>(),
+            arr[0].get<CosValue::Index::Number>()
+        );
+    }
+
+    TextDocument parse_text_document(const CosValue& cos)
+    {
+        TextDocument doc;
+        doc.text = get_as<CosValue::Index::String>(cos, 0, 0);
+
+        for ( const auto& cs : *get_as<CosValue::Index::Array>(cos, 0, 5, 0) )
+        {
+            LineStyle style;
+            style.character_count = get_as<CosValue::Index::Number>(cs, 1);
+            const auto& data = get(cs, 0, 0, 5);
+            style.text_justify = TextJustify(get_as<CosValue::Index::Number>(data, 0));
+            doc.line_styles.emplace_back(std::move(style));
+        }
+
+        for ( const auto& cs : *get_as<CosValue::Index::Array>(cos, 0, 6, 0) )
+        {
+            CharacterStyle style;
+            style.character_count = get_as<CosValue::Index::Number>(cs, 1);
+            const auto& data = get(cs, 0, 0, 6);
+            style.font_index = get_as<CosValue::Index::Number>(data, 0);
+            style.size = get_as<CosValue::Index::Number>(data, 1);
+            style.faux_bold = get_as<CosValue::Index::Boolean>(data, 2);
+            style.faux_italic = get_as<CosValue::Index::Boolean>(data, 3);
+            style.text_transform = TextTransform(get_as<CosValue::Index::Number>(data, 12));
+            style.vertical_align = TextVerticalAlign(get_as<CosValue::Index::Number>(data, 13));
+            style.fill_color = cos_color(get(data, 53, 0, 1));
+            style.stroke_color = cos_color(get(data, 54, 0, 1));
+            style.stroke_enabled = get_as<CosValue::Index::Boolean>(data, 57);
+            style.stroke_over_fill = get_as<CosValue::Index::Boolean>(data, 58);
+            style.stroke_width = get_as<CosValue::Index::Number>(data, 63);
+            doc.character_styles.emplace_back(std::move(style));
+        }
+
+        return doc;
+    }
+
+    std::unique_ptr<PropertyBase> parse_animated_text(Chunk chunk, const PropertyContext& context)
+    {
+        Chunk text_data, tdbs;
+        text_data = tdbs = nullptr;
+        chunk->find_multiple({&text_data, &tdbs}, {"btdk", "tdbs"});
+        try {
+            auto val = CosParser(text_data->data().read()).parse();
+            if ( val.type() != CosValue::Index::Object )
+                throw CosError("Expected Object");
+
+            auto property = std::make_unique<TextProperty>();
+            for ( const auto& font : *get_as<CosValue::Index::Array>(val, 0, 1, 0) )
+                property->fonts.push_back({get_as<CosValue::Index::String>(font, 0, 0, 0)});
+
+            std::vector<PropertyValue> values;
+            for ( const auto& doc : *get_as<CosValue::Index::Array>(val, 1, 1) )
+                values.push_back(parse_text_document(doc));
+
+            parse_animated_property(&property->documents, tdbs, context, std::move(values));
+
+        } catch ( const CosError& err ) {
+            warning(AepFormat::tr("Invalid text document: %1").arg(err.message));
+            return {};
+        }
         /// \todo
     }
 

@@ -230,7 +230,7 @@ enum class TextTransform
     AllCaps
 };
 
-enum class TextVericalAlign
+enum class TextVerticalAlign
 {
     Normal,
     Superscript,
@@ -264,7 +264,7 @@ struct CharacterStyle
     bool faux_bold = false;
     bool faux_italic = false;
     TextTransform text_transform = TextTransform::Normal;
-    TextVericalAlign vertical_align = TextVericalAlign::Normal;
+    TextVerticalAlign vertical_align = TextVerticalAlign::Normal;
     QColor fill_color;
     QColor stroke_color;
     bool stroke_enabled = false;
