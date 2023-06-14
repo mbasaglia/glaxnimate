@@ -21,16 +21,38 @@
 
 #include "model/animation/frame_time.hpp"
 #include "math/math.hpp"
+#include "utils/iterator.hpp"
 
 namespace glaxnimate::io::aep {
 
 using Id = std::uint32_t;
 
+struct PropertyIterator;
+
 struct PropertyBase
 {
-    enum Type { PropertyGroup, Property, TextProperty, EffectInstance, Mask };
+    enum Type { Null, PropertyGroup, Property, TextProperty, EffectInstance, Mask };
     virtual ~PropertyBase() noexcept = default;
-    virtual Type class_type() const noexcept = 0;
+    virtual Type class_type() const noexcept { return Null; }
+
+    virtual const PropertyBase* get(const QString& key) const { return nullptr; }
+
+    explicit operator bool() const
+    {
+        return class_type() != Null;
+    }
+
+    const PropertyBase& operator[](const QString& key) const
+    {
+        auto prop = get(key);
+        if ( prop )
+            return *prop;
+
+        static PropertyBase null_property;
+        return null_property;
+    }
+    virtual PropertyIterator begin() const;
+    virtual PropertyIterator end() const;
 };
 
 struct PropertyPair
@@ -38,6 +60,17 @@ struct PropertyPair
     QString match_name;
     std::unique_ptr<PropertyBase> value;
 };
+
+struct PropertyIterator : public utils::RandomAccessIteratorWrapper<PropertyIterator, std::vector<PropertyPair>::const_iterator>
+{
+public:
+    PropertyIterator(InternalIterator it = {}) : Parent(it) {}
+    const PropertyPair* operator->() const { return iter.operator->(); }
+    const PropertyPair& operator*() const { return *iter; }
+};
+
+inline PropertyIterator PropertyBase::begin() const { return {}; }
+inline PropertyIterator PropertyBase::end() const { return {}; }
 
 struct PropertyGroup : PropertyBase
 {
@@ -48,7 +81,7 @@ struct PropertyGroup : PropertyBase
 
     Type class_type() const noexcept override { return PropertyBase::PropertyGroup; }
 
-    PropertyBase* property(const QString& match_name)
+    const PropertyBase* property(const QString& match_name) const
     {
         for ( const auto& prop : properties )
         {
@@ -56,6 +89,21 @@ struct PropertyGroup : PropertyBase
                 return prop.value.get();
         }
         return nullptr;
+    }
+
+    const PropertyBase* get(const QString& key) const override
+    {
+        return property(key);
+    }
+
+    PropertyIterator begin() const override
+    {
+        return properties.begin();
+    }
+
+    PropertyIterator end() const override
+    {
+        return properties.end();
     }
 };
 
@@ -322,7 +370,7 @@ public:
     Index type() const { return Index(value.index()); }
 
     std::variant<
-        std::nullptr_t, QPointF, QVector3D, QColor,  double, aep::Gradient,
+        std::nullptr_t, QPointF, QVector3D, QColor, qreal, aep::Gradient,
         aep::BezierData, aep::Marker, aep::TextDocument, aep::LayerSelection
     > value = nullptr;
 };
