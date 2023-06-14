@@ -208,8 +208,27 @@ template<> QSizeF convert_value(const PropertyValue& v)
 
 template<> math::bezier::Bezier convert_value(const PropertyValue& v)
 {
+    const auto& aebez = std::get<BezierData>(v.value);
     math::bezier::Bezier bez;
-    /// \todo
+    int count = aebez.points.size();
+    for ( int i = 0; i < count; i += 4 )
+    {
+        /// \todo smooth etc?
+        math::bezier::Point p(aebez.convert_point(aebez.points[i]));
+        if ( i > 0 )
+            p.tan_in = aebez.convert_point(aebez.points[i-1]);
+        else if ( i < count - 1 )
+            p.tan_out = aebez.convert_point(aebez.points[i-1]);
+
+        if ( i == count - 1 && aebez.closed && math::fuzzy_compare(bez[0].pos, p.pos) )
+        {
+            bez[0].tan_in = p.tan_in;
+            break;
+        }
+
+        bez.push_back(p);
+    }
+    bez.set_closed(aebez.closed);
     return bez;
 }
 

@@ -128,6 +128,22 @@ struct BezierData
     QPointF minimum;
     QPointF maximum;
     std::vector<QPointF> points;
+
+    /**
+     * \brief Converts points from the weird bounding box notation to absolute
+     */
+    QPointF convert_point(const QPointF& p) const
+    {
+        return {
+            math::lerp(minimum.x(), maximum.x(), p.x()),
+            math::lerp(minimum.y(), maximum.y(), p.y()),
+        };
+    }
+
+    QPointF converted_point(int index) const
+    {
+        return convert_point(points[index]);
+    }
 };
 
 template<class Type>
