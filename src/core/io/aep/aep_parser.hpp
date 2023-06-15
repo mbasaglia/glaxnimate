@@ -236,7 +236,7 @@ private:
                     path = '/' + path;
             }
             auto file = folder.add<FileAsset>();
-            file->path = parse_path(path);
+            file->path = path;
             file->name = name.isEmpty() ? file->path.fileName() : name;
             asset = file;
         }

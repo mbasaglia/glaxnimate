@@ -35,7 +35,7 @@ struct PropertyBase
     virtual ~PropertyBase() noexcept = default;
     virtual Type class_type() const noexcept { return Null; }
 
-    virtual const PropertyBase* get(const QString& key) const { return nullptr; }
+    virtual const PropertyBase* get(const QString& key) const { Q_UNUSED(key); return nullptr; }
 
     explicit operator bool() const
     {

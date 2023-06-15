@@ -551,3 +551,8 @@ void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const glaxn
 {
     /// \todo
 }
+
+void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, const QString& infix)
+{
+    /// \todo
+}
