@@ -16,8 +16,8 @@ public:
 
     void load_project();
 
-private:
     struct CompData;
+private:
     struct ColorInfo
     {
         model::NamedColor* asset;

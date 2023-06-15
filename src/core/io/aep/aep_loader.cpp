@@ -53,6 +53,7 @@ void glaxnimate::io::aep::AepLoader::load_asset(const glaxnimate::io::aep::Folde
         auto solid = static_cast<const Solid*>(item);
         color->color.set(solid->color);
         colors[item->id] = {color.get(), solid};
+        document->assets()->colors->values.insert(std::move(color));
 
     }
 }
@@ -232,11 +233,41 @@ template<> math::bezier::Bezier convert_value(const PropertyValue& v)
     return bez;
 }
 
+template<> QGradientStops convert_value(const PropertyValue& v)
+{
+    return convert_value<Gradient>(v).to_qt();
+}
+
 template<class T> struct DefaultConverter
 {
     T operator()(const PropertyValue& v) const { return convert_value<T>(v); }
 };
+/*
+template<class T, class Converter=DefaultConverter<T>>
+T get_property_static_value(const Property& ae_prop, const T& defval = {}, const Converter& conv = {}, bool* ok = nullptr)
+{
+    if ( ok )
+        *ok = true;
 
+    if ( ae_prop.value.type() )
+        return conv(ae_prop.value);
+    else if ( !ae_prop.keyframes.empty() && ae_prop.keyframes[0].value.type() )
+        return conv(ae_prop.keyframes[0].value);
+
+    if ( ok )
+        *ok = false;
+
+    return defval;
+}
+
+template<class T, class Converter=DefaultConverter<T>>
+T get_property_static_value(const PropertyBase& ae_prop, const T& defval = {}, const Converter& conv = {})
+{
+    if ( ae_prop.class_type() != PropertyBase::Property )
+        return defval;
+    return get_property_static_value(static_cast<const Property&>(ae_prop), defval, conv);
+}
+*/
 template<class T, class Converter=DefaultConverter<T>>
 bool load_static_property(model::Property<T>& prop, const Property& ae_prop, const Converter& conv = {})
 {
@@ -251,8 +282,9 @@ bool load_static_property(model::Property<T>& prop, const Property& ae_prop, con
 }
 
 template<class T, class Converter=DefaultConverter<T>>
-bool load_property(ImportExport* io, model::Property<T>& prop, const char* match_name,
-                   const PropertyPair& ae_prop, const Converter& conv = {})
+bool load_property(
+    ImportExport* io, model::Property<T>& prop, const PropertyPair& ae_prop,
+    const char* match_name, const Converter& conv = {})
 {
     if ( ae_prop.match_name != match_name )
         return false;
@@ -293,8 +325,8 @@ bool load_animated_property(
 }
 
 template<class T, class Converter=DefaultConverter<T>>
-bool load_property(ImportExport* io, model::AnimatedProperty<T>& prop, const char* match_name,
-                   const PropertyPair& ae_prop, const Converter& conv = {})
+bool load_property(ImportExport* io, model::AnimatedProperty<T>& prop,
+                   const PropertyPair& ae_prop, const char* match_name, const Converter& conv = {})
 {
     if ( ae_prop.match_name != match_name )
         return false;
@@ -316,15 +348,69 @@ bool convert_shape_reverse(const PropertyValue& v)
     return convert_value<int>(v) == 3;
 }
 
+qreal convert_percent(const PropertyValue& v)
+{
+    return convert_value<qreal>(v) / 100;
+}
+
 template<class T>
 T convert_enum(const PropertyValue& v)
 {
     return T(convert_value<int>(v));
 }
 
+template<>
+model::Fill::Rule convert_enum(const PropertyValue& v)
+{
+    if ( convert_value<int>(v) == 2 )
+        return model::Fill::Rule::EvenOdd;
+    return model::Fill::Rule::NonZero;
+}
+
+template<>
+model::Stroke::Cap convert_enum(const PropertyValue& v)
+{
+    switch ( convert_value<int>(v) )
+    {
+        default:
+        case 1: return model::Stroke::Cap::ButtCap;
+        case 2: return model::Stroke::Cap::RoundCap;
+        case 3: return model::Stroke::Cap::SquareCap;
+    }
+}
+
+template<>
+model::Stroke::Join convert_enum(const PropertyValue& v)
+{
+    switch ( convert_value<int>(v) )
+    {
+        default:
+        case 1: return model::Stroke::Join::MiterJoin;
+        case 2: return model::Stroke::Join::RoundJoin;
+        case 3: return model::Stroke::Join::BevelJoin;
+    }
+}
+
 } // namespace
 
-std::unique_ptr<model::ShapeElement> glaxnimate::io::aep::AepLoader::load_shape(const glaxnimate::io::aep::PropertyPair& prop, glaxnimate::io::aep::AepLoader::CompData& data)
+// hacky macros to minimize boilerplate and be more declarative
+#define OBJ(mn, type) \
+    else if ( prop.match_name == mn ) { \
+        auto shape = std::make_unique<model::type>(document); \
+        for ( const auto& p : *prop.value ) {
+
+#define PROP_OF(obj, name, ...) \
+    load_property(io, obj->name, p, __VA_ARGS__) ||
+
+#define PROP(name, ...) \
+    PROP_OF(shape, name, __VA_ARGS__)
+
+#define IGNORE(name) (p.match_name == name) ||
+
+#define END \
+    unknown_mn(prop.match_name, p.match_name); } return shape; }
+
+std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& prop, AepLoader::CompData& data)
 {
     if ( prop.match_name == "ADBE Vector Group" )
     {
@@ -339,65 +425,113 @@ std::unique_ptr<model::ShapeElement> glaxnimate::io::aep::AepLoader::load_shape(
 
         return gp;
     }
-    else if ( prop.match_name == "ADBE Vector Shape - Rect" )
-    {
-        auto shape = std::make_unique<model::Rect>(document);
+    OBJ("ADBE Vector Shape - Rect", Rect)
+        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+        PROP(position, "ADBE Vector Rect Position")
+        PROP(size, "ADBE Vector Rect Size")
+        PROP(rounded, "ADBE Vector Rect Roundness")
+    END
+    OBJ("ADBE Vector Shape - Ellipse", Ellipse)
+        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+        PROP(position, "ADBE Vector Ellipse Position")
+        PROP(size, "ADBE Vector Ellipse Size")
+    END
+    OBJ("ADBE Vector Shape - Star", PolyStar)
+        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+        PROP(position, "ADBE Vector Star Position")
+        PROP(type, "ADBE Vector Star Type", &convert_enum<model::PolyStar::StarType>)
+        PROP(points, "ADBE Vector Star Points")
+        PROP(angle, "ADBE Vector Star Rotation")
+        PROP(inner_radius, "ADBE Vector Inner Radius")
+        PROP(outer_radius, "ADBE Vector Star Outer Radius")
+        PROP(inner_roundness, "ADBE Vector Star Inner Roundess")
+        PROP(outer_roundness, "ADBE Vector Star Outer Roundess")
+    END
+    OBJ("ADBE Vector Shape - Group", Path)
+        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+        PROP(shape, "ADBE Vector Shape")
+    END
+    OBJ("ADBE Vector Graphic - Fill", Fill)
+        IGNORE("ADBE Vector Blend Mode")
+        PROP(color, "ADBE Vector Fill Color")
+        PROP(opacity, "ADBE Vector Fill Opacity", &convert_percent)
+        PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
+        IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
+    END
+    OBJ("ADBE Vector Graphic - Stroke", Stroke)
+        IGNORE("ADBE Vector Blend Mode")
+        PROP(color, "ADBE Vector Stroke Color")
+        PROP(opacity, "ADBE Vector Stroke Opacity", &convert_percent)
+        PROP(width, "ADBE Vector Stroke Width")
+        PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
+        PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
+        PROP(miter_limit, "ADBE Vector Stroke Miter Limit")
+        IGNORE("ADBE Vector Stroke Dashes")
+        IGNORE("ADBE Vector Stroke Taper")
+        IGNORE("ADBE Vector Stroke Wave")
+        IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
+    END
+    else if ( prop.match_name == "ADBE Vector Graphic - G-Fill" ) {
+        auto shape = std::make_unique<model::Fill>(document);
+        auto grad_colors = document->assets()->gradient_colors->values.insert(
+            std::make_unique<glaxnimate::model::GradientColors>(document)
+        );
+        auto grad = document->assets()->gradients->values.insert(
+            std::make_unique<glaxnimate::model::Gradient>(document)
+        );
 
         for ( const auto& p : *prop.value )
         {
-            load_property(io, shape->reversed, "ADBE Vector Shape Direction", p, &convert_shape_reverse) ||
-            load_property(io, shape->position, "ADBE Vector Rect Position", p) ||
-            load_property(io, shape->size, "ADBE Vector Rect Size", p) ||
-            load_property(io, shape->rounded, "ADBE Vector Rect Roundness", p) ||
+            IGNORE("ADBE Vector Blend Mode")
+            PROP(opacity, "ADBE Vector Fill Opacity", &convert_percent)
+            PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
+            IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
+
+            PROP_OF(grad, type, "ADBE Vector Grad Type", &convert_enum<model::Gradient::GradientType>)
+            PROP_OF(grad, start_point, "ADBE Vector Grad Start Pt")
+            PROP_OF(grad, end_point, "ADBE Vector Grad End Pt")
+            IGNORE("ADBE Vector Grad HiLite Length") /// \todo
+            IGNORE("ADBE Vector Grad HiLite Angle") /// \todo
+            PROP_OF(grad_colors, colors, "ADBE Vector Grad Colors")
             unknown_mn(prop.match_name, p.match_name);
         }
+
+        grad->highlight.set(grad->start_point.get());
 
         return shape;
     }
-    else if ( prop.match_name == "ADBE Vector Shape - Ellipse" )
-    {
-        auto shape = std::make_unique<model::Ellipse>(document);
+    else if ( prop.match_name == "ADBE Vector Graphic - G-Stroke" ) {
+        auto shape = std::make_unique<model::Stroke>(document);
+        auto grad_colors = document->assets()->gradient_colors->values.insert(
+            std::make_unique<glaxnimate::model::GradientColors>(document)
+        );
+        auto grad = document->assets()->gradients->values.insert(
+            std::make_unique<glaxnimate::model::Gradient>(document)
+        );
 
         for ( const auto& p : *prop.value )
         {
-            load_property(io, shape->reversed, "ADBE Vector Shape Direction", p, &convert_shape_reverse) ||
-            load_property(io, shape->position, "ADBE Vector Ellipse Position", p) ||
-            load_property(io, shape->size, "ADBE Vector Ellipse Size", p) ||
+            IGNORE("ADBE Vector Blend Mode")
+            PROP(opacity, "ADBE Vector Stroke Opacity", &convert_percent)
+            PROP(width, "ADBE Vector Stroke Width")
+            PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
+            PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
+            PROP(miter_limit, "ADBE Vector Stroke Miter Limit")
+            IGNORE("ADBE Vector Stroke Dashes")
+            IGNORE("ADBE Vector Stroke Taper")
+            IGNORE("ADBE Vector Stroke Wave")
+            IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
+
+            PROP_OF(grad, type, "ADBE Vector Grad Type", &convert_enum<model::Gradient::GradientType>)
+            PROP_OF(grad, start_point, "ADBE Vector Grad Start Pt")
+            PROP_OF(grad, end_point, "ADBE Vector Grad End Pt")
+            IGNORE("ADBE Vector Grad HiLite Length") /// \todo
+            IGNORE("ADBE Vector Grad HiLite Angle") /// \todo
+            PROP_OF(grad_colors, colors, "ADBE Vector Grad Colors")
             unknown_mn(prop.match_name, p.match_name);
         }
 
-        return shape;
-    }
-    else if ( prop.match_name == "ADBE Vector Shape - Star" )
-    {
-        auto shape = std::make_unique<model::PolyStar>(document);
-
-        for ( const auto& p : *prop.value )
-        {
-            load_property(io, shape->reversed, "ADBE Vector Shape Direction", p, &convert_shape_reverse) ||
-            load_property(io, shape->position, "ADBE Vector Star Position", p) ||
-            load_property(io, shape->type, "ADBE Vector Star Type", p, &convert_enum<model::PolyStar::StarType>) ||
-            load_property(io, shape->points, "ADBE Vector Star Points", p) ||
-            load_property(io, shape->angle, "ADBE Vector Star Rotation", p) ||
-            load_property(io, shape->inner_radius, "ADBE Vector Inner Radius", p) ||
-            load_property(io, shape->outer_radius, "ADBE Vector Star Outer Radius", p) ||
-            load_property(io, shape->inner_roundness, "ADBE Vector Star Inner Roundess", p) ||
-            load_property(io, shape->outer_roundness, "ADBE Vector Star Outer Roundess", p) ||
-            unknown_mn(prop.match_name, p.match_name);
-        }
-
-        return shape;
-    }
-    else if ( prop.match_name == "ADBE Vector Shape - Group" )
-    {
-        auto shape = std::make_unique<model::Path>(document);
-
-        for ( const auto& p : *prop.value )
-        {
-            load_property(io, shape->reversed, "ADBE Vector Shape Direction", p, &convert_shape_reverse) ||
-            load_property(io, shape->shape, "ADBE Vector Shape", p) ||
-            unknown_mn(prop.match_name, p.match_name);
-        }
+        grad->highlight.set(grad->start_point.get());
 
         return shape;
     }
