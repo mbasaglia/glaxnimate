@@ -153,7 +153,6 @@ void glaxnimate::io::aep::AepLoader::load_comp(const glaxnimate::io::aep::Compos
     data.resolve();
 }
 
-
 void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer& ae_layer, CompData& data)
 {
 

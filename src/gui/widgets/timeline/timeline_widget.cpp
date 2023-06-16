@@ -322,8 +322,8 @@ void TimelineWidget::update_comp(model::Composition* comp)
     {
         connect(d->comp->animation.get(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
         connect(d->comp->animation.get(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
-        update_timeline_end(d->comp->animation->first_frame.get());
-        update_timeline_start(d->comp->animation->last_frame.get());
+        update_timeline_end(d->comp->animation->last_frame.get());
+        update_timeline_start(d->comp->animation->first_frame.get());
     }
 }
 
