@@ -371,9 +371,10 @@ bool convert_shape_reverse(const PropertyValue& v)
     return convert_value<int>(v) == 3;
 }
 
-qreal convert_percent(const PropertyValue& v)
+template<int Divisor>
+qreal convert_divide(const PropertyValue& v)
 {
-    return convert_value<qreal>(v) / 100;
+    return convert_value<qreal>(v) / Divisor;
 }
 
 template<class T>
@@ -477,14 +478,14 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
     OBJ("ADBE Vector Graphic - Fill", Fill)
         IGNORE("ADBE Vector Blend Mode")
         PROP(color, "ADBE Vector Fill Color")
-        PROP(opacity, "ADBE Vector Fill Opacity", &convert_percent)
+        PROP(opacity, "ADBE Vector Fill Opacity", &convert_divide<100>)
         PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
         IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
     END
     OBJ("ADBE Vector Graphic - Stroke", Stroke)
         IGNORE("ADBE Vector Blend Mode")
         PROP(color, "ADBE Vector Stroke Color")
-        PROP(opacity, "ADBE Vector Stroke Opacity", &convert_percent)
+        PROP(opacity, "ADBE Vector Stroke Opacity", &convert_divide<100>)
         PROP(width, "ADBE Vector Stroke Width")
         PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
         PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
@@ -506,7 +507,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         for ( const auto& p : *prop.value )
         {
             IGNORE("ADBE Vector Blend Mode")
-            PROP(opacity, "ADBE Vector Fill Opacity", &convert_percent)
+            PROP(opacity, "ADBE Vector Fill Opacity", &convert_divide<100>)
             PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
             IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
 
@@ -535,7 +536,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         for ( const auto& p : *prop.value )
         {
             IGNORE("ADBE Vector Blend Mode")
-            PROP(opacity, "ADBE Vector Stroke Opacity", &convert_percent)
+            PROP(opacity, "ADBE Vector Stroke Opacity", &convert_divide<100>)
             PROP(width, "ADBE Vector Stroke Width")
             PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
             PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
@@ -561,7 +562,25 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
     OBJ("ADBE Vector Filter - RC", RoundCorners)
         PROP(radius, "ADBE Vector RoundCorner Radius")
     END
-    /// \todo More shapes
+    OBJ("ADBE Vector Filter - Trim", Trim)
+        PROP(start, "ADBE Vector Trim Start", &convert_divide<100>)
+        PROP(end, "ADBE Vector Trim End", &convert_divide<100>)
+        PROP(offset, "ADBE Vector Trim Offset", &convert_divide<360>)
+    END
+    OBJ("ADBE Vector Filter - Offset", OffsetPath)
+        PROP(amount, "ADBE Vector Offset Amount")
+        PROP(join, "ADBE Vector Offset Line Join", &convert_enum<model::Stroke::Join>)
+        PROP(miter_limit, "ADBE Vector Offset Miter Limit")
+    END
+    OBJ("ADBE Vector Filter - PB", InflateDeflate)
+        PROP(amount, "ADBE Vector PuckerBloat Amount")
+    END
+    OBJ("ADBE Vector Filter - Zigzag", ZigZag)
+        PROP(amplitude, "ADBE Vector Zigzag Size")
+        PROP(frequency, "ADBE Vector Zigzag Detail")
+        PROP(style, "ADBE Vector Zigzag Points", &convert_enum<model::ZigZag::Style>)
+    END
+    /// \todo More shapes (ADBE Vector Filter - Repeater)
     else
     {
         info(AepFormat::tr("Unknown shape %1").arg(prop.match_name));
