@@ -10,6 +10,7 @@
 #include "model/shapes/offset_path.hpp"
 #include "model/shapes/inflate_deflate.hpp"
 #include "model/shapes/zig_zag.hpp"
+#include "model/shapes/round_corners.hpp"
 
 
 using namespace glaxnimate::io::aep;
@@ -557,6 +558,10 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
 
         return shape;
     }
+    OBJ("ADBE Vector Filter - RC", RoundCorners)
+        PROP(radius, "ADBE Vector RoundCorner Radius")
+    END
+    /// \todo More shapes
     else
     {
         info(AepFormat::tr("Unknown shape %1").arg(prop.match_name));
