@@ -530,6 +530,7 @@ private:
 
     Keyframe load_keyframe(int index, BinaryReader& reader, Property& prop, const PropertyContext& context, std::vector<PropertyValue>& values)
     {
+        reader.prepare();
         Keyframe kf;
 
         reader.skip(1);
