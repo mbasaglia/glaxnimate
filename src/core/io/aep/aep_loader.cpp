@@ -17,7 +17,7 @@ using namespace glaxnimate;
 using glaxnimate::io::ImportExport;
 
 static constexpr std::array<QRgb, 17> label_colors = {
-    0, // None
+    0x00000000, // None
     0xffb4393b, // Red
     0xffe2d759, // Yellow
     0xffabcbc8, // Aqua

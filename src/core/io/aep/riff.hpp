@@ -217,7 +217,9 @@ public:
         if ( length > length_left )
             throw RiffError(QObject::tr("Not enough data"));
         length_left -= length;
-        return sub_reader(length, 0);
+        BinaryReader reader{endian, file, length, file_pos};
+        file_pos += length;
+        return reader;
     }
 
     /**

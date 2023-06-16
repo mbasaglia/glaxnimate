@@ -261,10 +261,10 @@ private:
             return {};
         }
 
-        auto data = ldta->data();
         PropertyContext context{&comp, layer.get()};
-
         layer->name = to_string(utf8);
+
+        auto data = ldta->data();
         layer->id = data.read_uint32();
         layer->quality = LayerQuality(data.read_uint16());
         data.skip(7);
