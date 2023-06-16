@@ -141,7 +141,7 @@ void glaxnimate::io::aep::AepLoader::load_comp(const glaxnimate::io::aep::Compos
     comp->height.set(ae_comp.height);
     comp->fps.set(ae_comp.framerate);
     comp->animation->first_frame.set(ae_comp.in_time);
-    comp->animation->first_frame.set(ae_comp.out_time);
+    comp->animation->last_frame.set(ae_comp.out_time);
     comp->group_color.set(ae_comp.color);
     /// \todo
 //     comp->group_color.set(label_colors[int(ae_comp.label_color)]);
@@ -168,7 +168,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
     layer->name.set(ae_layer.name);
     layer->render.set(!ae_layer.is_guide);
     layer->animation->first_frame.set(ae_layer.start_time);
-    layer->animation->first_frame.set(ae_layer.out_time);
+    layer->animation->last_frame.set(ae_layer.out_time);
     layer->visible.set(ae_layer.properties.visible);
     layer->group_color.set(label_colors[int(ae_layer.label_color)]);
 
@@ -196,7 +196,7 @@ void glaxnimate::io::aep::AepLoader::shape_layer(model::Layer* layer, const glax
     for ( const auto& prop : ae_layer.properties["ADBE Root Vectors Group"] )
     {
         if ( auto shape = load_shape(prop, data) )
-            layer->shapes.insert(std::move(shape));
+            layer->shapes.insert(std::move(shape), 0);
     }
 }
 
@@ -337,7 +337,7 @@ bool load_animated_property(
 
     for ( const auto& aekf : ae_prop.keyframes )
     {
-        auto kf = prop.set_keyframe(aekf.time, conv(aekf.time));
+        auto kf = prop.set_keyframe(aekf.time, conv(aekf.value));
         /// \todo easing
         /// \todo position bezier
         if ( aekf.transition_type == KeyframeTransitionType::Hold )
@@ -443,7 +443,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
         {
             if ( auto shape = load_shape(prop, data) )
-                gp->shapes.insert(std::move(shape));
+                gp->shapes.insert(std::move(shape), 0);
         }
 
         return gp;
@@ -465,7 +465,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         PROP(type, "ADBE Vector Star Type", &convert_enum<model::PolyStar::StarType>)
         PROP(points, "ADBE Vector Star Points")
         PROP(angle, "ADBE Vector Star Rotation")
-        PROP(inner_radius, "ADBE Vector Inner Radius")
+        PROP(inner_radius, "ADBE Vector Star Inner Radius")
         PROP(outer_radius, "ADBE Vector Star Outer Radius")
         PROP(inner_roundness, "ADBE Vector Star Inner Roundess")
         PROP(outer_roundness, "ADBE Vector Star Outer Roundess")

@@ -307,7 +307,7 @@ public:
     {
         auto data = read(length);
         int str_len = data.indexOf('\0');
-        return QString::fromUtf8(data.data(), str_len == -1 ? str_len : length);
+        return QString::fromUtf8(data.data(), str_len == -1 ? length : str_len);
     }
 
     QString read_utf8_nul()

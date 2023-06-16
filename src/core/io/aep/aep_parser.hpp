@@ -134,8 +134,10 @@ private:
 
         /// \todo label color?
         auto data = cdta->data();
+        comp.resolution_x = data.read_uint16();
+        comp.resolution_y = data.read_uint16();
+        data.skip(1);
         // Time stuff
-        data.skip(5);
         comp.time_scale = data.read_uint16();
         data.skip(14);
         comp.playhead_time = comp.time_to_frames(data.read_uint16());
@@ -156,12 +158,30 @@ private:
         comp.color.setGreen(data.read_uint8());
         comp.color.setBlue(data.read_uint8());
 
+        // Flags
+        data.skip(84);
+        Flags attr(data.read_uint8());
+        comp.shy = attr.get(0, 0);
+        comp.motion_blur = attr.get(0, 3);
+        comp.frame_blending = attr.get(0, 4);
+        comp.preserve_framerate = attr.get(0, 5);
+        comp.preserve_resolution = attr.get(0, 7);
+
         // Lottie
-        data.skip(85);
         comp.width = data.read_uint16();
         comp.height = data.read_uint16();
-        data.skip(12);
+        comp.pixel_ratio_width = data.read_uint32();
+        comp.pixel_ratio_height = data.read_uint32();
+        data.skip(4);
         comp.framerate = data.read_uint16();
+
+        // Misc
+        data.skip(16);
+        comp.shutter_angle = data.read_uint16();
+        comp.shutter_phase = data.read_sint32();
+        data.skip(16);
+        comp.samples_limit = data.read_uint32();
+        comp.samples_per_frame = data.read_uint32();
 
         for ( const auto& child : chunk->children )
         {
