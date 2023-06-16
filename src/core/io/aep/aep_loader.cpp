@@ -16,6 +16,26 @@ using namespace glaxnimate::io::aep;
 using namespace glaxnimate;
 using glaxnimate::io::ImportExport;
 
+static constexpr std::array<QRgb, 17> label_colors = {
+    0, // None
+    0xffb4393b, // Red
+    0xffe2d759, // Yellow
+    0xffabcbc8, // Aqua
+    0xffe5bcca, // Pink
+    0xffa9aac9, // Lavender
+    0xffe5c19f, // Peach
+    0xffb4c7b4, // Sea Foam
+    0xff687fdd, // Blue
+    0xff4ea350, // Green
+    0xff8d3299, // Purple
+    0xffe79228, // Orange
+    0xff7e442c, // Brown
+    0xfff371d5, // Fuchsia
+    0xff43a2a4, // Cyan
+    0xffa7967a, // Sandstone
+    0xff203f1f // Dark Green
+};
+
 void glaxnimate::io::aep::AepLoader::load_project()
 {
     for ( const auto& pair : project.assets )
@@ -123,6 +143,8 @@ void glaxnimate::io::aep::AepLoader::load_comp(const glaxnimate::io::aep::Compos
     comp->animation->first_frame.set(ae_comp.in_time);
     comp->animation->first_frame.set(ae_comp.out_time);
     comp->group_color.set(ae_comp.color);
+    /// \todo
+//     comp->group_color.set(label_colors[int(ae_comp.label_color)]);
 
     CompData data{comp, &ae_comp};
     for ( const auto& layer : ae_comp.layers )
@@ -148,6 +170,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
     layer->animation->first_frame.set(ae_layer.start_time);
     layer->animation->first_frame.set(ae_layer.out_time);
     layer->visible.set(ae_layer.properties.visible);
+    layer->group_color.set(label_colors[int(ae_layer.label_color)]);
 
     layer->transform->position.set({
         data.comp->width.get() / 2.,

@@ -132,6 +132,7 @@ private:
             return;
         }
 
+        /// \todo label color?
         auto data = cdta->data();
         // Time stuff
         data.skip(5);
