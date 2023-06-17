@@ -171,6 +171,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
     layer->animation->first_frame.set(ae_layer.start_time);
     layer->animation->last_frame.set(ae_layer.out_time);
     layer->visible.set(ae_layer.properties.visible);
+    /// \todo could be nice to toggle visibility based on solo/shy
     layer->group_color.set(label_colors[int(ae_layer.label_color)]);
 
     layer->transform->position.set({
@@ -295,6 +296,23 @@ bool load_property(model::Property<T>& prop, const Property& ae_prop, const Conv
     return true;
 }
 
+template<class T> void kf_extra_data(model::Keyframe<T>* kf, const Keyframe& aekf)
+{
+    (void)kf;
+    (void)aekf;
+}
+
+template<>
+void kf_extra_data(model::Keyframe<QPointF>* kf, const Keyframe& aekf)
+{
+    auto p = kf->get();
+    kf->set_point(math::bezier::Point(
+        p,
+        p + aekf.in_tangent,
+        p + aekf.out_tangent
+    ));
+}
+
 template<class T, class Converter=DefaultConverter<T>>
 bool load_property(
     model::AnimatedProperty<T>& prop, const Property& ae_prop, const Converter& conv = {}
@@ -309,8 +327,10 @@ bool load_property(
     for ( const auto& aekf : ae_prop.keyframes )
     {
         auto kf = prop.set_keyframe(aekf.time, conv(aekf.value));
+
+        kf_extra_data(kf, aekf);
+
         /// \todo easing
-        /// \todo position bezier
         if ( aekf.transition_type == KeyframeTransitionType::Hold )
             kf->set_transition(model::KeyframeTransition(model::KeyframeTransition::Hold));
     }
