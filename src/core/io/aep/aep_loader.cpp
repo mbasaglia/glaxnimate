@@ -11,6 +11,7 @@
 #include "model/shapes/inflate_deflate.hpp"
 #include "model/shapes/zig_zag.hpp"
 #include "model/shapes/round_corners.hpp"
+#include "model/shapes/repeater.hpp"
 
 
 using namespace glaxnimate::io::aep;
@@ -177,7 +178,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
         data.comp->height.get() / 2.,
     });
 
-    load_transform(layer->transform.get(), ae_layer.properties["ADBE Transform Group"], "");
+    load_transform(layer->transform.get(), ae_layer.properties["ADBE Transform Group"]);
     /// \todo auto-orient
     /// \todo masks "ADBE Mask Parade"
 
@@ -224,6 +225,21 @@ template<> QPointF convert_value(const PropertyValue& v)
     return {p.x(), p.y()};
 }
 
+
+template<> QVector2D convert_value(const PropertyValue& v)
+{
+    if ( v.type() == PropertyValue::Vector2D )
+    {
+        auto p = std::get<QPointF>(v.value);
+        return QVector2D(p.x(), p.y());
+    }
+    else
+    {
+        auto p = convert_value<QVector3D>(v.value);
+        return {p.x(), p.y()};
+    }
+}
+
 template<> QSizeF convert_value(const PropertyValue& v)
 {
     auto p = convert_value<QPointF>(v.value);
@@ -265,34 +281,9 @@ template<class T> struct DefaultConverter
 {
     T operator()(const PropertyValue& v) const { return convert_value<T>(v); }
 };
-/*
-template<class T, class Converter=DefaultConverter<T>>
-T get_property_static_value(const Property& ae_prop, const T& defval = {}, const Converter& conv = {}, bool* ok = nullptr)
-{
-    if ( ok )
-        *ok = true;
-
-    if ( ae_prop.value.type() )
-        return conv(ae_prop.value);
-    else if ( !ae_prop.keyframes.empty() && ae_prop.keyframes[0].value.type() )
-        return conv(ae_prop.keyframes[0].value);
-
-    if ( ok )
-        *ok = false;
-
-    return defval;
-}
 
 template<class T, class Converter=DefaultConverter<T>>
-T get_property_static_value(const PropertyBase& ae_prop, const T& defval = {}, const Converter& conv = {})
-{
-    if ( ae_prop.class_type() != PropertyBase::Property )
-        return defval;
-    return get_property_static_value(static_cast<const Property&>(ae_prop), defval, conv);
-}
-*/
-template<class T, class Converter=DefaultConverter<T>>
-bool load_static_property(model::Property<T>& prop, const Property& ae_prop, const Converter& conv = {})
+bool load_property(model::Property<T>& prop, const Property& ae_prop, const Converter& conv = {})
 {
     if ( ae_prop.value.type() )
         prop.set(conv(ae_prop.value));
@@ -306,26 +297,6 @@ bool load_static_property(model::Property<T>& prop, const Property& ae_prop, con
 
 template<class T, class Converter=DefaultConverter<T>>
 bool load_property(
-    ImportExport* io, model::Property<T>& prop, const PropertyPair& ae_prop,
-    const char* match_name, const Converter& conv = {})
-{
-    if ( ae_prop.match_name != match_name )
-        return false;
-
-    if ( ae_prop.value->class_type() != PropertyBase::Property )
-    {
-        io->warning(AepFormat::tr("Expected property for %1").arg(match_name));
-        return true;
-    }
-
-    if ( !load_static_property(prop, static_cast<const Property&>(*ae_prop.value), conv) )
-        io->warning(AepFormat::tr("Could not find value for %1").arg(match_name));
-
-    return true;
-}
-
-template<class T, class Converter=DefaultConverter<T>>
-bool load_animated_property(
     model::AnimatedProperty<T>& prop, const Property& ae_prop, const Converter& conv = {}
 )
 {
@@ -347,22 +318,40 @@ bool load_animated_property(
     return true;
 }
 
-template<class T, class Converter=DefaultConverter<T>>
-bool load_property(ImportExport* io, model::AnimatedProperty<T>& prop,
+template<class PropT, class Converter=DefaultConverter<typename PropT::value_type>>
+void load_property_check(
+    ImportExport* io,
+    PropT& prop,
+    const PropertyBase& ae_prop,
+    const QString& match_name,
+    const Converter& conv = {}
+)
+{
+    if ( ae_prop.class_type() != PropertyBase::Property )
+    {
+        io->warning(AepFormat::tr("Expected property for %1").arg(match_name));
+        return;
+    }
+
+    try
+    {
+        if ( !load_property(prop, static_cast<const Property&>(ae_prop), conv) )
+            io->warning(AepFormat::tr("Could convert %1").arg(match_name));
+    }
+    catch ( const std::bad_variant_access& )
+    {
+        io->error(AepFormat::tr("Invalid value for %1").arg(match_name));
+    }
+}
+
+template<class PropT, class Converter=DefaultConverter<typename PropT::value_type>>
+bool load_property(ImportExport* io, PropT& prop,
                    const PropertyPair& ae_prop, const char* match_name, const Converter& conv = {})
 {
     if ( ae_prop.match_name != match_name )
         return false;
 
-    if ( ae_prop.value->class_type() != PropertyBase::Property )
-    {
-        io->warning(AepFormat::tr("Expected property for %1").arg(match_name));
-        return true;
-    }
-
-    if ( !load_animated_property(prop, static_cast<const Property&>(*ae_prop.value), conv) )
-        io->warning(AepFormat::tr("Could convert %1").arg(match_name));
-
+    load_property_check(io, prop, *ae_prop.value, ae_prop.match_name, conv);
     return true;
 }
 
@@ -439,7 +428,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
     if ( prop.match_name == "ADBE Vector Group" )
     {
         auto gp = std::make_unique<model::Group>(document);
-        load_transform(gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], "Vector ");
+        load_transform(gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"]);
 
         for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
         {
@@ -495,7 +484,8 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         IGNORE("ADBE Vector Stroke Wave")
         IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
     END
-    else if ( prop.match_name == "ADBE Vector Graphic - G-Fill" ) {
+    else if ( prop.match_name == "ADBE Vector Graphic - G-Fill" )
+    {
         auto shape = std::make_unique<model::Fill>(document);
         auto grad_colors = document->assets()->gradient_colors->values.insert(
             std::make_unique<glaxnimate::model::GradientColors>(document)
@@ -524,7 +514,8 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
 
         return shape;
     }
-    else if ( prop.match_name == "ADBE Vector Graphic - G-Stroke" ) {
+    else if ( prop.match_name == "ADBE Vector Graphic - G-Stroke" )
+    {
         auto shape = std::make_unique<model::Stroke>(document);
         auto grad_colors = document->assets()->gradient_colors->values.insert(
             std::make_unique<glaxnimate::model::GradientColors>(document)
@@ -580,7 +571,29 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
         PROP(frequency, "ADBE Vector Zigzag Detail")
         PROP(style, "ADBE Vector Zigzag Points", &convert_enum<model::ZigZag::Style>)
     END
-    /// \todo More shapes (ADBE Vector Filter - Repeater)
+    else if ( prop.match_name == "ADBE Vector Filter - Repeater" )
+    {
+        auto shape = std::make_unique<model::Repeater>(document);
+        if ( auto tf = prop.value->get("ADBE Vector Repeater Transform") )
+        {
+            load_transform(shape->transform.get(), *tf);
+            const char* pmn = "ADBE Vector Repeater Start Opacity";
+            if ( auto o = tf->get(pmn) )
+                load_property_check(io, shape->start_opacity, *o, pmn, &convert_divide<100>);
+            pmn = "ADBE Vector Repeater End Opacity";
+            if ( auto o = tf->get(pmn) )
+                load_property_check(io, shape->end_opacity, *o, pmn, &convert_divide<100>);
+        }
+
+        for ( const auto& p : *prop.value )
+        {
+            IGNORE("ADBE Vector Repeater Transform")
+            PROP(copies, "ADBE Vector Repeater Copies")
+            unknown_mn(prop.match_name, p.match_name);
+        }
+
+        return shape;
+    }
     else
     {
         info(AepFormat::tr("Unknown shape %1").arg(prop.match_name));
@@ -598,7 +611,53 @@ void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const glaxn
     /// \todo
 }
 
-void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, const QString& infix)
+void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop)
 {
-    /// \todo
+    if ( prop.class_type() != PropertyBase::PropertyGroup )
+    {
+        warning(AepFormat::tr("Expected property group for transform"));
+        return;
+    }
+
+    const PropertyGroup& g = static_cast<const PropertyGroup&>(prop);
+    if ( g.split_position )
+    {
+        /// \todo
+        warning("Split position currently not supported");
+    }
+
+    bool is_3d = false;
+    for ( const auto& p : g.properties )
+    {
+        if ( p.match_name.endsWith("Anchor Point") || p.match_name.endsWith("Anchor") )
+            load_property_check(io, tf->anchor_point, *p.value, p.match_name);
+        else if ( p.match_name.endsWith("Position") )
+            load_property_check(io, tf->position, *p.value, p.match_name);
+        else if ( p.match_name.endsWith("Scale") )
+            load_property_check(io, tf->scale, *p.value, p.match_name);
+        else if ( p.match_name.endsWith("Rotation") || p.match_name.endsWith("Rotate Z") )
+            load_property_check(io, tf->rotation, *p.value, p.match_name);
+        else if (
+            p.match_name.endsWith("Rotate X") ||
+            p.match_name.endsWith("Rotate Y") ||
+            p.match_name.endsWith("Orientation") ||
+            p.match_name.endsWith("Position_2")
+        )
+            is_3d = true;
+        else if ( !p.match_name.endsWith("Position_1") &&
+            !p.match_name.endsWith("Position_0") &&
+            !p.match_name.endsWith("Opacity") &&
+            !p.match_name.endsWith("Envir Appear in Reflect")
+        )
+            info(AepFormat::tr("Unknown property \"%1\"").arg(p.match_name));
+        /// \todo
+    }
+
+    if ( is_3d )
+    {
+        /// \todo figure a way of determining whether the transform is actually 3D
+        /// as layer transfoms seem to often have the 3D properties
+        (void)is_3d;
+//         warning(AepFormat::tr("3D transforms are not supported"));
+    }
 }
