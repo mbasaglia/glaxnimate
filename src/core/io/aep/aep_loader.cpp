@@ -12,6 +12,7 @@
 #include "model/shapes/zig_zag.hpp"
 #include "model/shapes/round_corners.hpp"
 #include "model/shapes/repeater.hpp"
+#include "model/shapes/precomp_layer.hpp"
 
 
 using namespace glaxnimate::io::aep;
@@ -621,9 +622,51 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
     }
 }
 
-void glaxnimate::io::aep::AepLoader::asset_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData& data)
+void glaxnimate::io::aep::AepLoader::asset_layer(
+    model::Layer* layer, const Layer& ae_layer, CompData&
+)
 {
-    /// \todo
+    auto img_it = images.find(ae_layer.asset_id);
+    if ( img_it != images.end() )
+    {
+        auto image = std::make_unique<model::Image>(document);
+        image->image.set(img_it->second);
+        layer->shapes.insert(std::move(image));
+        return;
+    }
+
+    auto comp_it = comps.find(ae_layer.asset_id);
+    if ( comp_it != comps.end() )
+    {
+        /// \todo ADBE Time Remapping
+        /// \todo Time stretch / start_time
+        auto precomp = std::make_unique<model::PreCompLayer>(document);
+        precomp->composition.set(comp_it->second);
+        precomp->name.set(comp_it->second->name.get());
+        precomp->size.set(comp_it->second->size());
+        layer->shapes.insert(std::move(precomp));
+        return;
+    }
+
+
+    auto solid_it = colors.find(ae_layer.asset_id);
+    if ( solid_it != colors.end() )
+    {
+        auto rect = std::make_unique<model::Rect>(document);
+        rect->size.set(QSizeF(
+            solid_it->second.solid->width,
+            solid_it->second.solid->height
+        ));
+        layer->shapes.insert(std::move(rect));
+
+        auto fill = std::make_unique<model::Fill>(document);
+        fill->color.set(solid_it->second.asset->color.get());
+        fill->use.set(solid_it->second.asset);
+        layer->shapes.insert(std::move(fill));
+        return;
+    }
+
+    warning(AepFormat::tr("Unknown asset type for %1").arg(ae_layer.name));
 }
 
 void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData& data)
