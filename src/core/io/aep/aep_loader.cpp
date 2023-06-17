@@ -160,7 +160,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
 
     auto ulayer = std::make_unique<model::Layer>(document);
     auto layer = ulayer.get();
-    data.comp->shapes.insert(std::move(ulayer));
+    data.comp->shapes.insert(std::move(ulayer), 0);
     data.layers[ae_layer.id] = layer;
 
     if ( ae_layer.parent_id || ae_layer.matte_id )
@@ -650,7 +650,6 @@ void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop)
             !p.match_name.endsWith("Envir Appear in Reflect")
         )
             info(AepFormat::tr("Unknown property \"%1\"").arg(p.match_name));
-        /// \todo
     }
 
     if ( is_3d )
