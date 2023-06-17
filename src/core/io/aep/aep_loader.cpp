@@ -18,6 +18,7 @@
 #include "model/shapes/round_corners.hpp"
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/text.hpp"
 
 
 using namespace glaxnimate::io::aep;
@@ -674,9 +675,90 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
     warning(AepFormat::tr("Unknown asset type for %1").arg(ae_layer.name));
 }
 
-void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData& data)
+namespace {
+
+std::unique_ptr<model::ShapeElement> text_to_shapes(
+    const TextDocument& doc, const std::vector<Font>& fonts, model::Document* document
+)
 {
-    /// \todo
+    auto group = std::make_unique<model::Group>(document);
+    auto pt = std::make_unique<model::TextShape>(document);
+    auto text = pt.get();
+    group->shapes.insert(std::move(pt));
+    text->text.set(doc.text);
+    if ( !doc.character_styles.empty() )
+    {
+        /// \todo Style text spans
+        const auto& style = doc.character_styles[0];
+        /// \todo figure out weight etc
+        if ( style.font_index >= 0 && style.font_index < int(fonts.size()) )
+            text->font->family.set(fonts[style.font_index].family);
+        text->font->size.set(style.size);
+
+        std::unique_ptr<model::Fill> fill;
+        std::unique_ptr<model::Stroke> stroke;
+
+        if ( style.stroke_enabled )
+        {
+            stroke = std::make_unique<model::Stroke>(document);
+            stroke->color.set(style.stroke_color);
+            stroke->width.set(style.stroke_width);
+        }
+
+        /// \todo fill enabled?
+        fill = std::make_unique<model::Fill>(document);
+        fill->color.set(style.fill_color);
+
+        if ( style.stroke_over_fill )
+        {
+            if ( fill )
+                group->shapes.insert(std::move(fill));
+            if ( stroke )
+                group->shapes.insert(std::move(stroke));
+        }
+        else
+        {
+            if ( stroke )
+                group->shapes.insert(std::move(stroke));
+            if ( fill )
+                group->shapes.insert(std::move(fill));
+        }
+    }
+
+    return group;
+}
+
+} // namespace
+
+void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const Layer& ae_layer, CompData&)
+{
+    auto prop = ae_layer.properties["ADBE Text Properties"]["ADBE Text Document"];
+    if ( prop.class_type() != PropertyBase::TextProperty )
+        return;
+
+    const auto& tprop = static_cast<const TextProperty&>(prop);
+
+    if ( tprop.documents.value.type() == PropertyValue::TextDocument )
+    {
+        layer->shapes.insert(text_to_shapes(
+            std::get<TextDocument>(tprop.documents.value.value), tprop.fonts, document
+        ));
+        return;
+    }
+
+    if ( tprop.documents.keyframes.empty() )
+        return;
+
+    /// \todo animated text
+    const auto& kf = tprop.documents.keyframes[0];
+
+    if ( kf.value.type() == PropertyValue::TextDocument )
+    {
+        layer->shapes.insert(text_to_shapes(
+            std::get<TextDocument>(kf.value.value), tprop.fonts, document
+        ));
+        return;
+    }
 }
 
 void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop)
