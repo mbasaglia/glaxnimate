@@ -773,7 +773,7 @@ void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop)
     if ( g.split_position )
     {
         /// \todo
-        warning("Split position currently not supported");
+        warning(AepFormat::tr("Split position currently not supported"));
     }
 
     bool is_3d = false;
