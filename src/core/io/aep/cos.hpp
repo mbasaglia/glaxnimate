@@ -227,7 +227,7 @@ public:
         if ( ch == '.' )
             return lex_number_fract(QString(QChar(ch)));
         else if ( ch == '+' || ch == '-' )
-            return lex_number_int(get_char(), ch);
+            return lex_number_int(get_char(), QChar(ch));
         else
             return lex_number_int(ch, '+');
     }
@@ -241,7 +241,7 @@ public:
         {
             if ( ch == '.' )
             {
-                return lex_number_fract(head + ch);
+                return lex_number_fract(head + QChar(ch));
             }
             else if ( ch == -1 )
             {
@@ -249,7 +249,7 @@ public:
             }
             else if ( std::isdigit(ch) )
             {
-                head += ch;
+                head += QChar(ch);
                 ch = get_char();
             }
             else
@@ -274,7 +274,7 @@ public:
             }
             else if ( std::isdigit(ch) )
             {
-                num += ch;
+                num += QChar(ch);
             }
             else
             {
@@ -298,7 +298,7 @@ public:
             }
             else if ( std::isalpha(ch) )
             {
-                kw += ch;
+                kw += QChar(ch);
             }
             else
             {
@@ -390,7 +390,7 @@ public:
 
         if ( is_octal(ch) )
         {
-            QString octal(ch);
+            QString octal{QChar(ch)};
             for ( auto i = 0; i < 2; i++ )
             {
                 ch = get_char();
@@ -403,7 +403,7 @@ public:
                     break;
                 }
 
-                octal += ch;
+                octal += QChar(ch);
             }
 
             return octal.toInt(nullptr, 8);
@@ -465,11 +465,11 @@ public:
                     ch = get_char();
                     if ( ch == -1 || !std::isxdigit(ch) )
                         throw CosError("Invalid Identifier");
-                    hexstr += ch;
+                    hexstr += std::uint8_t(ch);
                 }
                 ident += hexstr.toInt(nullptr, 16);
             }
-            else if ( special.indexOf(ch) != -1 )
+            else if ( special.indexOf(QChar(ch)) != -1 )
             {
                 unget();
                 break;

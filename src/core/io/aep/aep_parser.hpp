@@ -257,7 +257,7 @@ private:
                     path = '/' + path;
             }
             auto file = folder.add<FileAsset>();
-            file->path = path;
+            file->path = QFileInfo(path);
             file->name = name.isEmpty() ? file->path.fileName() : name;
             asset = file;
         }
