@@ -357,7 +357,7 @@ struct ChunkId
 
     ChunkId(const QByteArray& arr)
     {
-        std::memcpy(name, (void*)arr.data(), std::min(4, arr.size()));
+        std::memcpy(name, (void*)arr.data(), std::min<std::size_t>(4, arr.size()));
     }
 
     bool operator==(const char* ch) const {

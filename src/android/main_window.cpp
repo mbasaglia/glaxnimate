@@ -199,7 +199,7 @@ public:
         document_node_model.set_document(nullptr);
         scene.set_document(nullptr);
         action_redo->setEnabled(false);
-        action_undo->setEnabled(false);        
+        action_undo->setEnabled(false);
         clear_property_widgets();
         ui.stroke_style_widget->set_current(nullptr);
         ui.fill_style_widget->set_current(nullptr);
@@ -919,7 +919,7 @@ public:
         }
 
         io::Options options = export_opts ? export_options : current_document->io_options();
-        if ( document_opener.save(url, current_document.get(), options) )
+        if ( document_opener.save(url, comp, options) )
         {
             save_document_set_opts(options, export_opts);
             return true;

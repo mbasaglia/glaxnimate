@@ -24,9 +24,9 @@ class glaxnimate::android::DocumentOpener::Private
 public:
     QWidget* widget_parent;
 
-    bool do_save_document(model::Document *document, const io::Options& opts, QIODevice& file)
+    bool do_save_document(model::Composition *comp, const io::Options& opts, QIODevice& file)
     {
-        return opts.format->save(file, opts.filename, document, opts.settings);
+        return opts.format->save(file, opts.filename, comp, opts.settings);
     }
 
     std::unique_ptr<model::Document> from_raster(const QByteArray& data)
@@ -41,7 +41,7 @@ public:
             return {};
 
         auto doc = std::make_unique<model::Document>("");
-        auto main = doc->assets()->add_comp();
+        auto main = doc->assets()->add_comp_no_undo();
         auto asset = doc->assets()->add_image(QImage::fromData(data));
         auto imageu = std::make_unique<model::Image>(doc.get());
         auto image = imageu.get();
@@ -77,7 +77,7 @@ glaxnimate::android::DocumentOpener::~DocumentOpener()
 
 }
 
-bool glaxnimate::android::DocumentOpener::save(const QUrl &url, model::Document *document, io::Options &options) const
+bool glaxnimate::android::DocumentOpener::save(const QUrl &url, model::Composition* composition, io::Options &options) const
 {
     if ( !url.isValid() )
         return false;
@@ -94,14 +94,14 @@ bool glaxnimate::android::DocumentOpener::save(const QUrl &url, model::Document 
         options.path = finfo.absoluteDir();
 
         QFile file(options.filename);
-        return d->do_save_document(document, options, file);
+        return d->do_save_document(composition, options, file);
     }
     else
     {
         options.filename = url.toString();
         QByteArray data;
         QBuffer buf(&data);
-        bool ok = d->do_save_document(document, options, buf);
+        bool ok = d->do_save_document(composition, options, buf);
         if ( !ok || !AndroidFilePicker::write_content_uri(url, data) )
         {
             QMessageBox::warning(d->widget_parent, QObject::tr("Save File"), QObject::tr("Could not save the file"));

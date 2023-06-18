@@ -21,7 +21,7 @@ public:
     DocumentOpener(QWidget* widget_parent);
     ~DocumentOpener();
 
-    bool save(const QUrl& url, model::Document* document, io::Options& options) const;
+    bool save(const QUrl& url, model::Composition* composition, io::Options& options) const;
 
     std::unique_ptr<model::Document> open(const QUrl& url) const;
 
