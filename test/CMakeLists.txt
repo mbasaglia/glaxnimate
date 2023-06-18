@@ -50,7 +50,9 @@ target_link_libraries(test_trace PRIVATE ${LIB_NAME_CORE})
 
 test_case(test_riff)
 
-test_case(test_cos_parser)
+test_case(test_cos_parser
+../src/core/io/aep/string_decoder.cpp
+)
 
 test_case(test_aep_gradient_xml)
 target_link_libraries(test_aep_gradient_xml PRIVATE ${LIB_NAME_CORE})
