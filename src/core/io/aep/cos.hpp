@@ -145,7 +145,7 @@ public:
             auto d = get_char();
             if ( d != '>' )
             {
-                QString tok(ch);
+                QString tok{QChar(ch)};
                 if ( d != -1 )
                     tok += QChar(d);
                 throw_lex(tok, ">>");

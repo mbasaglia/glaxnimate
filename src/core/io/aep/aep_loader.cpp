@@ -67,7 +67,7 @@ void glaxnimate::io::aep::AepLoader::load_asset(const glaxnimate::io::aep::Folde
         else
         {
             // Handle collected assets
-            QFileInfo path = asset_path.filePath(asset->path.fileName());
+            QFileInfo path(asset_path.filePath(asset->path.fileName()));
             if ( !path.exists() )
                 warning(AepFormat::tr("External asset not found: %1").arg(asset->path.filePath()));
             else
