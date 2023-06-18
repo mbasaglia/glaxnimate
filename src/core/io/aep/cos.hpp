@@ -225,7 +225,7 @@ public:
     CosToken lex_number(int ch)
     {
         if ( ch == '.' )
-            return lex_number_fract(QString(ch));
+            return lex_number_fract(QString(QChar(ch)));
         else if ( ch == '+' || ch == '-' )
             return lex_number_int(get_char(), ch);
         else
@@ -435,7 +435,7 @@ public:
             }
             else if ( !std::isspace(ch) )
             {
-                throw CosError(QString("Invalid character in hex string: ") + ch);
+                throw CosError(QString("Invalid character in hex string: ") + QChar(ch));
             }
         }
 
