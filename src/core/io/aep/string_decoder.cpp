@@ -13,7 +13,9 @@
 QString glaxnimate::io::aep::decode_string(const QByteArray& data)
 {
     auto encoding = QStringConverter::encodingForData(data);
-    return QStringDecoder(encoding).decode(data);
+    if ( encoding )
+        return QStringDecoder(encoding).decode(data);
+    return QStringDecoder(QStringConverter::Utf8).decode(data);
 }
 
 QString glaxnimate::io::aep::decode_utf16(const QByteArray& data, bool big_endian)
