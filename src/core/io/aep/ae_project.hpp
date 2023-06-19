@@ -561,6 +561,7 @@ struct FolderItem
     enum Type { Composition, Folder, Asset, Solid };
     Id id;
     QString name = "";
+    LabelColors label_color = LabelColors::None;
 
     virtual ~FolderItem() noexcept = default;
     virtual Type type() const noexcept = 0;

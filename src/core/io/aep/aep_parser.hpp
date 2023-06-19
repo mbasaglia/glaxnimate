@@ -90,6 +90,8 @@ private:
                 auto type = data.read_uint16();
                 data.skip(14);
                 auto id = data.read_uint32();
+                data.skip(38);
+                auto color = LabelColors(data.read_uint8());
 
                 switch ( type )
                 {
@@ -119,6 +121,9 @@ private:
                     default:
                         warning(QObject::tr("Unknown Item type %s").arg(type));
                 }
+
+                if ( current_item )
+                    current_item->label_color = color;
             }
         }
     }

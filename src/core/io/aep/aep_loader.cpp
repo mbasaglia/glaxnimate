@@ -152,8 +152,7 @@ void glaxnimate::io::aep::AepLoader::load_comp(const glaxnimate::io::aep::Compos
     comp->animation->first_frame.set(ae_comp.in_time);
     comp->animation->last_frame.set(ae_comp.out_time);
     comp->group_color.set(ae_comp.color);
-    /// \todo
-//     comp->group_color.set(label_colors[int(ae_comp.label_color)]);
+    comp->group_color.set(label_colors[int(ae_comp.label_color)]);
 
     CompData data{comp, &ae_comp};
     for ( const auto& layer : ae_comp.layers )
