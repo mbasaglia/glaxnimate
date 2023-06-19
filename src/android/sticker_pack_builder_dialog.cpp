@@ -17,6 +17,7 @@
 
 #include "io/lottie/tgs_format.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "model/assets/assets.hpp"
 
 #include "emoji/emoji_set.hpp"
 #include "emoji/emoji_dialog.hpp"

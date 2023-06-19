@@ -103,7 +103,7 @@ QSize glaxnimate::android::AndroidStyle::sizeFromContents(ContentsType type, con
     QSize sz = QProxyStyle::sizeFromContents(type, option, size, widget);
     if ( type == CT_ItemViewItem && size.isValid() )
     {
-        if ( const QStyleOptionViewItem *vopt = qstyleoption_cast<const QStyleOptionViewItem *>(option) )
+        if ( qstyleoption_cast<const QStyleOptionViewItem *>(option) )
             return sz.expandedTo({80, 80});
     }
 
@@ -114,7 +114,7 @@ QRect glaxnimate::android::AndroidStyle::subElementRect(SubElement element, cons
 {
     auto rect = QProxyStyle::subElementRect(element, option, widget);
     if ( element == SE_ItemViewItemDecoration )
-        if (const QStyleOptionViewItem *vopt = qstyleoption_cast<const QStyleOptionViewItem *>(option))
+        if ( qstyleoption_cast<const QStyleOptionViewItem *>(option) )
             return QRect(option->rect.topLeft(), QSize(80, 80));
     return rect;
 }

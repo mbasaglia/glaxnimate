@@ -72,6 +72,11 @@ public:
     bool save(QIODevice& file, const QString& filename,
         model::Composition* comp, const QVariantMap& setting_values);
 
+    /**
+     * \brief Will save the first comp in the document
+     */
+    bool save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values);
+
     Q_INVOKABLE QByteArray save(model::Composition* comp, const QVariantMap& setting_values={}, const QString& filename = "data");
     Q_INVOKABLE bool load(glaxnimate::model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
 

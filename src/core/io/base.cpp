@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 #include "base.hpp"
+#include "model/assets/assets.hpp"
 
 QString glaxnimate::io::ImportExport::name_filter() const
 {
@@ -43,6 +43,12 @@ QByteArray glaxnimate::io::ImportExport::save(model::Composition* comp, const QV
     return data;
 }
 
+bool glaxnimate::io::ImportExport::save ( QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values )
+{
+    if ( document->assets()->compositions->values.empty() )
+        return false;
+    return save(file, filename, document->assets()->compositions->values[0], setting_values);
+}
 
 bool glaxnimate::io::ImportExport::open(QIODevice& file, const QString& filename,
                     model::Document* document, const QVariantMap& setting_values)

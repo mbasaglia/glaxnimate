@@ -231,7 +231,7 @@ public:
         ui.play_controls->set_record_enabled(current_document->record_to_keyframe());
         QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_min);
         QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_max);;
-        QObject::connect(comp, &model::MainComposition::fps_changed, ui.play_controls, &gui::FrameControlsWidget::set_fps);
+        QObject::connect(comp, &model::Composition::fps_changed, ui.play_controls, &gui::FrameControlsWidget::set_fps);
         QObject::connect(ui.play_controls, &gui::FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
         QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &gui::FrameControlsWidget::set_frame);
         QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &gui::FrameControlsWidget::set_record_enabled);
@@ -633,7 +633,7 @@ public:
 
             gui::ImportExportDialog dialog(opts, parent);
 
-            if ( !dialog.export_dialog(current_document.get()) )
+            if ( !dialog.export_dialog(comp) )
                 return false;
 
             opts = dialog.io_options();
