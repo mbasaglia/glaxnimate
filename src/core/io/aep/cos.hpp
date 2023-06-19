@@ -467,7 +467,7 @@ public:
                         throw CosError("Invalid Identifier");
                     hexstr += std::uint8_t(ch);
                 }
-                ident += hexstr.toInt(nullptr, 16);
+                ident += QChar(hexstr.toInt(nullptr, 16));
             }
             else if ( special.indexOf(QChar(ch)) != -1 )
             {
@@ -476,7 +476,7 @@ public:
             }
             else
             {
-                ident += ch;
+                ident += QChar(ch);
             }
         }
 
