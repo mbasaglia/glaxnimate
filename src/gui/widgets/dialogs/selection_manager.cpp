@@ -169,6 +169,10 @@ void glaxnimate::gui::SelectionManager::paste_impl(bool as_comp)
 void glaxnimate::gui::SelectionManager::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
 {
     auto doc = this->document();
+
+    auto& comps = document->assets()->compositions->values;
+    model::Composition* comp = comps[0];
+
     command::UndoMacroGuard macro(macro_name, doc);
     paste_assets(&model::Assets::colors, document, doc);
     paste_assets(&model::Assets::images, document, doc);
@@ -179,13 +183,10 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
     model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::VisualNode*> select;
 
-    auto& comps = document->assets()->compositions->values;
     if ( comps.empty() )
         return;
     if ( comps.size() > 1 )
         as_comp = true;
-
-    model::Composition* comp = comps[0];
 
     if ( as_comp )
     {

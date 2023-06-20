@@ -80,12 +80,10 @@ public:
         if ( document )
             this->document = document;
 
-
-        model::Composition* main;
-        if ( document->assets()->compositions->values.empty() )
-            main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
+        if ( this->document->assets()->compositions->values.empty() )
+            main = this->document->assets()->compositions->values.insert(std::make_unique<model::Composition>(this->document));
         else
-            main = document->assets()->compositions->values[0];
+            main = this->document->assets()->compositions->values[0];
         animate_parser.fps = main->fps.get();
 
         size = main->size();
@@ -99,8 +97,6 @@ public:
         {
             size = get_size(root);
         }
-
-        main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
 
         to_process = 0;
         on_parse_prepare(root);
