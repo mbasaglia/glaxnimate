@@ -44,9 +44,6 @@ public:
 
     static QString temp_path();
 
-protected:
-    bool event(QEvent *event) override;
-
 private:
     std::unique_ptr<QMimeData> clipboard = std::make_unique<QMimeData>();
 };

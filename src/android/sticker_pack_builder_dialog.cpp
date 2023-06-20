@@ -35,7 +35,7 @@ public:
     {
         Item(std::unique_ptr<model::Document> doc, Private* d)
             : document(std::move(doc)),
-              emoji(emoji::EmojiGroup::table[0].first().unicode),
+              emoji(emoji::EmojiGroup::table[0]->first().unicode),
               d(d)
         {
             int row = d->ui.layout_items->rowCount();

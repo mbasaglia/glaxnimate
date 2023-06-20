@@ -276,6 +276,15 @@ void glaxnimate::gui::GlaxnimateApp::on_initialize_translations()
 {
     app::TranslationService::instance().initialize("en_US");
 }
+
+bool GlaxnimateApp::event(QEvent *event)
+{
+    if ( event->type() == QEvent::ApplicationPaletteChange )
+        icon_theme_fixup();
+
+    return app::Application::event(event);
+}
+
 #endif
 
 
@@ -295,13 +304,4 @@ QString GlaxnimateApp::temp_path()
 QString GlaxnimateApp::backup_path(const QString& file) const
 {
     return writable_data_path("backup/"+file);
-}
-
-
-bool GlaxnimateApp::event(QEvent *event)
-{
-    if ( event->type() == QEvent::ApplicationPaletteChange )
-        icon_theme_fixup();
-
-    return app::Application::event(event);
 }

@@ -140,7 +140,7 @@ public:
 
     void load_step()
     {
-        const auto& grp = EmojiGroup::table[curr_group];
+        const auto& grp = *EmojiGroup::table[curr_group];
 
 
         if ( curr_subgroup == 0 )
@@ -188,8 +188,8 @@ public:
     {
         for ( const auto& grp : EmojiGroup::table )
         {
-            auto first = grp.children[0].emoji[0];
-            auto group_label = scene.addSimpleText(grp.name);
+            auto first = grp->children[0].emoji[0];
+            auto group_label = scene.addSimpleText(grp->name);
             section_headers.push_back(group_label);
             group_label->setVisible(false);
             group_label->setFont(font);

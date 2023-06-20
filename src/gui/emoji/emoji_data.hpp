@@ -30,7 +30,7 @@ struct EmojiGroup
     QString name;
     std::vector<EmojiSubGroup> children;
 
-    static const std::vector<EmojiGroup> table;
+    static const std::vector<const EmojiGroup*> table;
 
     const Emoji& first() const
     {
