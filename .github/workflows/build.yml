@@ -107,15 +107,15 @@ jobs:
                 (cd ./data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
                 ./deploy/win_build.sh build
-            - name: Build Python
-              run: |
-                cd build
-                CI_COMMIT_BRANCH="${GITHUB_REF#refs/*/}"
-                CI_COMMIT_SHORT_SHA="${GITHUB_SHA:0:8}"
-                cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
-                cd ..
-                ./deploy/win_build.sh pypi
-                cp build/checksum.txt build/checksum-win.txt
+            #- name: Build Python
+              #run: |
+                #cd build
+                #CI_COMMIT_BRANCH="${GITHUB_REF#refs/*/}"
+                #CI_COMMIT_SHORT_SHA="${GITHUB_SHA:0:8}"
+                #cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
+                #cd ..
+                #./deploy/win_build.sh pypi
+                #cp build/checksum.txt build/checksum-win.txt
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
             - name: Job Artifacts
               uses: actions/upload-artifact@v2
@@ -124,7 +124,7 @@ jobs:
                 path: |
                     build/checksum.txt
                     build/glaxnimate-x86_64.zip
-                    build/bin/python/dist/
+                #     build/bin/python/dist/
             - name: Update Release
               uses: johnwbyrd/update-release@v1.0.0
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' || startsWith(github.ref, 'refs/tags/') }}
@@ -141,12 +141,12 @@ jobs:
                 chmod 600 privkey
                 branch="${GITHUB_REF#refs/*/}"
                 ./deploy/win_build.sh deploy "$branch" "-i $PWD/privkey"
-            - name: Upload Pypi
-              env:
-                TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_GITLAB }}
-                TWINE_USERNAME: __token__
-              run: |
-                python3 -m twine upload build/bin/python/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
+            #- name: Upload Pypi
+              #env:
+                #TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_GITLAB }}
+                #TWINE_USERNAME: __token__
+              #run: |
+                #python3 -m twine upload build/bin/python/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
             - name: Notify Gitlab Finish
               if: ${{ always() }}
               env:
