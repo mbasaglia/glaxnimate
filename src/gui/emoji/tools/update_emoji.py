@@ -235,6 +235,8 @@ def to_cxx_model(table):
     for name in groups:
         print("    &%s," % name)
     print("};")
+    print("#else")
+    print("const std::vector<const glaxnimate::emoji::EmojiGroup*> glaxnimate::emoji::EmojiGroup::table = {};")
     print("#endif")
 
 

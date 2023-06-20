@@ -9363,4 +9363,6 @@ const std::vector<const glaxnimate::emoji::EmojiGroup*> glaxnimate::emoji::Emoji
     &group_7,
     &group_8,
 };
+#else
+const std::vector<const glaxnimate::emoji::EmojiGroup*> glaxnimate::emoji::EmojiGroup::table = {};
 #endif
