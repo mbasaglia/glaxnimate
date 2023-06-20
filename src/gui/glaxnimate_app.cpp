@@ -245,7 +245,6 @@ void GlaxnimateApp::on_initialize_settings()
     }));
     app::settings::Settings::instance().add_group(std::make_unique<settings::ClipboardSettings>());
 
-    connect(this, &QGuiApplication::paletteChanged, this, &icon_theme_fixup);
     auto palette_settings = std::make_unique<app::settings::PaletteSettings>();
     load_themes(this, palette_settings.get());
     app::settings::Settings::instance().add_group(std::move(palette_settings));
@@ -296,4 +295,13 @@ QString GlaxnimateApp::temp_path()
 QString GlaxnimateApp::backup_path(const QString& file) const
 {
     return writable_data_path("backup/"+file);
+}
+
+
+bool GlaxnimateApp::event(QEvent *event)
+{
+    if ( event->type() == QEvent::ApplicationPaletteChange )
+        icon_theme_fixup();
+
+    return app::Application::event(event);
 }
