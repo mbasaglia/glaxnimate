@@ -175,42 +175,50 @@ def version_tuple(version_string):
     return tuple(map(int, version_string.split(".")))
 
 
-def _group_to_cxx_model(grp, indent, groups):
-
-    if groups is not None:
-        name = "group_%s" % len(groups)
-        sys.stdout.write('static const glaxnimate::emoji::EmojiGroup %s {\n' % name)
-        groups.append(name)
-    else:
-        sys.stdout.write(indent * ' ')
-        sys.stdout.write('{\n')
+def write_line(x, indent, comma=True):
+    sys.stdout.write((indent + 4) * ' ')
+    sys.stdout.write(x)
+    if comma:
+        sys.stdout.write(",")
+    sys.stdout.write("\n")
 
 
-    def write_line(x, comma=True):
-        sys.stdout.write((indent + 4) * ' ')
-        sys.stdout.write(x)
-        if comma:
-            sys.stdout.write(",")
-        sys.stdout.write("\n")
-
-    if isinstance(grp, EmojiGroup):
-        write_line(json.dumps(grp.name))
-        write_line('{', False)
-        for child in grp.children:
-            _group_to_cxx_model(child, indent + 8, None)
-        write_line('}', False)
-    elif isinstance(grp, Emoji):
-        write_line(json.dumps(grp.name))
-        write_line('"%s"' % "".join("\\x%02x" % c for c in grp.emoji.encode("utf8")))
-        write_line(json.dumps(grp.slug))
-
+def _emoji_to_cxx_model(grp, indent):
     sys.stdout.write(indent * ' ')
+    sys.stdout.write('{\n')
+    write_line(json.dumps(grp.name), indent)
+    write_line('"%s"' % "".join("\\x%02x" % c for c in grp.emoji.encode("utf8")), indent)
+    write_line(json.dumps(grp.slug), indent)
+    sys.stdout.write(indent * ' ')
+    sys.stdout.write('},\n')
 
+def _subgroup_to_cxx_model(grp, groups, prefix):
+    name = "%s_%s" % (prefix, len(groups))
+    sys.stdout.write('static const glaxnimate::emoji::EmojiSubGroup %s {\n' % name)
+    groups.append(name)
+    indent = 0
+    write_line(json.dumps(grp.name), indent)
+    write_line('{', indent, False)
+    for child in grp.children:
+        _emoji_to_cxx_model(child, indent + 8)
+    write_line('}', indent, False)
+    sys.stdout.write('};\n')
 
-    if groups is not None:
-        sys.stdout.write('};\n')
-    else:
-        sys.stdout.write('},\n')
+def _group_to_cxx_model(grp, indent, groups):
+    name = "group_%s" % len(groups)
+    subgroups = []
+    for child in grp.children:
+        _subgroup_to_cxx_model(child, subgroups, name)
+
+    sys.stdout.write('static const glaxnimate::emoji::EmojiGroup %s {\n' % name)
+    groups.append(name)
+
+    write_line(json.dumps(grp.name), indent)
+    write_line('{', indent, False)
+    for i in range(len(grp.children)):
+        write_line("&%s_%s" % (name, i), indent + 4, True)
+    write_line('}', indent, False)
+    sys.stdout.write('};\n')
 
 
 def to_cxx_model(table):

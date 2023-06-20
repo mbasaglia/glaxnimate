@@ -152,7 +152,7 @@ public:
 
         const auto& sub = grp.children[curr_subgroup];
 
-        for ( const auto& emoji : sub.emoji )
+        for ( const auto& emoji : sub->emoji )
         {
             auto item = create_item(emoji);
 
@@ -188,7 +188,7 @@ public:
     {
         for ( const auto& grp : EmojiGroup::table )
         {
-            auto first = grp->children[0].emoji[0];
+            auto first = grp->children[0]->emoji[0];
             auto group_label = scene.addSimpleText(grp->name);
             section_headers.push_back(group_label);
             group_label->setVisible(false);

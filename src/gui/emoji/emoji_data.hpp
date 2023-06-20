@@ -28,13 +28,13 @@ struct EmojiSubGroup
 struct EmojiGroup
 {
     QString name;
-    std::vector<EmojiSubGroup> children;
+    std::vector<const EmojiSubGroup*> children;
 
     static const std::vector<const EmojiGroup*> table;
 
     const Emoji& first() const
     {
-        return children[0].emoji[0];
+        return children[0]->emoji[0];
     }
 };
 
