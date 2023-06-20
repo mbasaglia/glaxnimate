@@ -14,7 +14,7 @@ QString glaxnimate::io::aep::decode_string(const QByteArray& data)
 {
     auto encoding = QStringConverter::encodingForData(data);
     if ( encoding )
-        return QStringDecoder(encoding).decode(data);
+        return QStringDecoder(*encoding).decode(data);
     return QStringDecoder(QStringConverter::Utf8).decode(data);
 }
 
