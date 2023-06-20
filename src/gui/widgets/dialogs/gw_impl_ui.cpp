@@ -303,6 +303,13 @@ void GlaxnimateWindow::Private::init_actions()
         ui.action_undo->setText(undo_text.arg(s));
     });
     ui.view_undo->setGroup(&parent->undo_group());
+
+
+#ifdef Q_OS_WIN32
+    // Can't get emoji_data.cpp to compile on windows for qt6 for some reason
+    // the compiler errors out without message
+    ui.action_insert_emoji->setEnabled(false);
+#endif
 }
 
 tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
