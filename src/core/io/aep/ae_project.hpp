@@ -21,6 +21,7 @@
 
 #include "model/animation/frame_time.hpp"
 #include "math/math.hpp"
+#include "math/vector.hpp"
 #include "utils/iterator.hpp"
 
 namespace glaxnimate::io::aep {
@@ -389,6 +390,27 @@ public:
         std::nullptr_t, QPointF, QVector3D, QColor, qreal, aep::Gradient,
         aep::BezierData, aep::Marker, aep::TextDocument, aep::LayerSelection
     > value = nullptr;
+
+    qreal magnitude() const
+    {
+        switch ( type() )
+        {
+            default:
+            case None:
+                return 0;
+            case Vector2D:
+                return math::length(std::get<QPointF>(value));
+            case Vector3D:
+                return math::length(std::get<QVector3D>(value));
+            case Color:
+            {
+                const auto& c = std::get<QColor>(value);
+                return math::hypot(c.red(), c.green(), c.blue(), c.alpha());
+            }
+            case Number:
+                return std::get<qreal>(value);
+        }
+    }
 };
 
 struct Keyframe

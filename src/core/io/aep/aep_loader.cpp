@@ -319,6 +319,76 @@ void kf_extra_data(model::Keyframe<QPointF>* kf, const Keyframe& aekf)
     ));
 }
 
+qreal vector_length(const std::vector<double>& v)
+{
+    qreal len = 0;
+    for ( double a : v )
+        len += a * a;
+    return math::sqrt(len);
+}
+
+model::KeyframeTransition keyframe_transition(const Property& prop, const Keyframe& kf, const Keyframe& next_kf)
+{
+    qreal duration = next_kf.time - kf.time;
+    if ( qFuzzyIsNull(duration) )
+        return model::KeyframeTransition(model::KeyframeTransition::Linear);
+
+    qreal average_speed = 0;
+    if ( prop.type == PropertyType::Position )
+    {
+        math::bezier::BezierSegment bez;
+        if ( kf.value.type() == PropertyValue::Vector2D )
+        {
+            bez[0] = std::get<QPointF>(kf.value.value);
+            bez[3] = std::get<QPointF>(next_kf.value.value);
+        }
+        else
+        {
+            auto p = std::get<QVector3D>(kf.value.value);
+            bez[0] = {p.x(), p.y()};
+            p = std::get<QVector3D>(next_kf.value.value);
+            bez[3] = {p.x(), p.y()};
+        }
+
+        bez[1] = kf.out_tangent;
+        bez[2] = kf.in_tangent;
+
+        average_speed = math::bezier::LengthData(math::bezier::CubicBezierSolver(bez), 20).length();
+
+    }
+    else if ( prop.type == PropertyType::NoValue )
+    {
+        average_speed = 1;
+    }
+    else
+    {
+        average_speed = math::abs(kf.value.magnitude() - next_kf.value.magnitude());
+    }
+
+    average_speed /= duration;
+    qreal out_influence = vector_length(kf.out_influence);
+    qreal in_influence = vector_length(kf.in_influence);
+    qreal out_speed = vector_length(kf.out_speed);
+    qreal in_speed = vector_length(kf.in_speed);
+
+    QPointF ease_out;
+    QPointF ease_in;
+    ease_out.setX(out_influence);
+    ease_in.setX(1 - in_influence);
+    if ( qFuzzyIsNull(average_speed) )
+    {
+        ease_out.setY(out_influence);
+        ease_in.setY(1 - in_influence);
+    }
+    else
+    {
+        ease_out.setY(out_influence * out_speed / average_speed);
+        ease_in.setY(1 - in_influence * in_speed / average_speed);
+    }
+
+    return model::KeyframeTransition(ease_out, ease_in);
+}
+
 template<class T, class Converter=DefaultConverter<T>>
 bool load_property(
     model::AnimatedProperty<T>& prop, const Property& ae_prop, const Converter& conv = {}
@@ -330,8 +400,9 @@ bool load_property(
         return true;
     }
 
-    for ( const auto& aekf : ae_prop.keyframes )
+    for ( std::size_t i = 0; i < ae_prop.keyframes.size(); i++ )
     {
+        const auto& aekf = ae_prop.keyframes[i];
         auto kf = prop.set_keyframe(aekf.time, conv(aekf.value));
 
         kf_extra_data(kf, aekf);
@@ -339,6 +410,10 @@ bool load_property(
         /// \todo easing
         if ( aekf.transition_type == KeyframeTransitionType::Hold )
             kf->set_transition(model::KeyframeTransition(model::KeyframeTransition::Hold));
+        else if ( aekf.transition_type == KeyframeTransitionType::Linear )
+            kf->set_transition(model::KeyframeTransition(model::KeyframeTransition::Linear));
+        else if ( i + 1 < ae_prop.keyframes.size() )
+            kf->set_transition(keyframe_transition(ae_prop, aekf, ae_prop.keyframes[i+1]));
     }
 
     return true;

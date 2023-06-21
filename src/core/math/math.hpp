@@ -27,11 +27,6 @@ using std::atan;
 using std::atan2;
 using std::pow;
 
-inline qreal hypot(qreal x, qreal y)
-{
-    return sqrt(x*x + y*y);
-}
-
 template<class Numeric>
 constexpr Numeric sign(Numeric x) noexcept
 {
@@ -86,6 +81,20 @@ template<class T>
 constexpr T lerp(const T& a, const T& b, double factor)
 {
     return a * (1-factor) + b * factor;
+}
+
+inline qreal sum_squared() { return 0; }
+
+template<class H, class... T>
+inline qreal sum_squared(H head, T... args)
+{
+    return qreal(head) * head + sum_squared(args...);
+}
+
+template<class... T>
+inline qreal hypot(T... args)
+{
+    return sqrt(sum_squared(args...));
 }
 
 } // namespace glaxnimate::math
