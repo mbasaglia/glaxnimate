@@ -72,14 +72,15 @@ case "$ACTION" in
         cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
         cp ../deploy/glaxnimate.vbs $PACKDIR
         mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
+        pacman --noconfirm -S mingw-w64-x86_64-python3-pillow
         cp -r \
             /mingw64/lib/python$PY_VERSION/*.py \
             /mingw64/lib/python$PY_VERSION/lib-dynload/* \
             /mingw64/lib/python$PY_VERSION/{json,collections,encodings,logging,urllib} \
             $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
-        mkdir /tmp/PyInstall
-        pip install pillow --prefix /tmp/PyInstall
-        mv /tmp/PyInstall/lib/python$PY_VERSION/site-packages/PIL $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
+#         mkdir /tmp/PyInstall
+#         pip install pillow --prefix /tmp/PyInstall
+#         mv /tmp/PyInstall/lib/python$PY_VERSION/site-packages/PIL $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
         # Create Artifacts
         zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
