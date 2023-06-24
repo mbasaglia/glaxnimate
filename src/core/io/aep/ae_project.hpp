@@ -228,6 +228,7 @@ public:
 
             midpoint = stop.mid_point;
             stops.push_back({stop.offset, 0.5, stop.value});
+            previous = stop;
         }
 
         return stops;
@@ -243,7 +244,7 @@ struct Gradient
     {
         QGradientStops stops;
         int index = 0;
-        for ( const auto& stop : color_stops )
+        for ( const auto& stop : color_stops.split_midpoints() )
         {
             auto alpha = alpha_stops.value_at(stop.offset, index);
             auto color = stop.value;
