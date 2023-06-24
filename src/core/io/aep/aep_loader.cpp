@@ -73,6 +73,7 @@ void glaxnimate::io::aep::AepLoader::load_asset(const glaxnimate::io::aep::Folde
             else
                 image->filename.set(path.filePath());
         }
+        image->name.set(item->name);
         images[item->id] = image.get();
         document->assets()->images->values.insert(std::move(image));
     }
@@ -81,6 +82,7 @@ void glaxnimate::io::aep::AepLoader::load_asset(const glaxnimate::io::aep::Folde
         auto color = std::make_unique<glaxnimate::model::NamedColor>(document);
         auto solid = static_cast<const Solid*>(item);
         color->color.set(solid->color);
+        color->name.set(solid->name);
         colors[item->id] = {color.get(), solid};
         document->assets()->colors->values.insert(std::move(color));
 
@@ -728,6 +730,9 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
     {
         auto image = std::make_unique<model::Image>(document);
         image->image.set(img_it->second);
+        image->name.set(img_it->second->name.get());
+        if ( layer->name.get().isEmpty() )
+            layer->name.set(image->name.get());
         layer->shapes.insert(std::move(image));
         return;
     }
@@ -741,6 +746,8 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
         precomp->composition.set(comp_it->second);
         precomp->name.set(comp_it->second->name.get());
         precomp->size.set(comp_it->second->size());
+        if ( layer->name.get().isEmpty() )
+            layer->name.set(precomp->name.get());
         layer->shapes.insert(std::move(precomp));
         return;
     }
@@ -749,6 +756,11 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
     auto solid_it = colors.find(ae_layer.asset_id);
     if ( solid_it != colors.end() )
     {
+        auto fill = std::make_unique<model::Fill>(document);
+        fill->color.set(solid_it->second.asset->color.get());
+        fill->use.set(solid_it->second.asset);
+        layer->shapes.insert(std::move(fill));
+
         auto rect = std::make_unique<model::Rect>(document);
         rect->size.set(QSizeF(
             solid_it->second.solid->width,
@@ -756,14 +768,12 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
         ));
         layer->shapes.insert(std::move(rect));
 
-        auto fill = std::make_unique<model::Fill>(document);
-        fill->color.set(solid_it->second.asset->color.get());
-        fill->use.set(solid_it->second.asset);
-        layer->shapes.insert(std::move(fill));
+        if ( layer->name.get().isEmpty() )
+            layer->name.set(solid_it->second.asset->name.get());
         return;
     }
 
-    warning(AepFormat::tr("Unknown asset type for %1").arg(ae_layer.name));
+    warning(AepFormat::tr("Unknown asset type for %1").arg(ae_layer.name.isEmpty() ? "Layer" : ae_layer.name));
 }
 
 namespace {

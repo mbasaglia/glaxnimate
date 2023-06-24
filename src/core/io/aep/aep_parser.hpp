@@ -101,7 +101,8 @@ private:
                         child_item->id = id;
                         child_item->name = name;
                         current_item = child_item;
-                        parse_folder(child.get(), *child_item, project);
+                        if ( auto contents = child->child("Sfdr") )
+                            parse_folder(contents, *child_item, project);
                         break;
                     }
                     case 4: // Composition
@@ -242,6 +243,7 @@ private:
 
         if ( data.read(4) == "Soli" )
         {
+            data.skip(6);
             auto solid = folder.add<Solid>();
             solid->color.setAlphaF(data.read_float32());
             solid->color.setRedF(data.read_float32());
@@ -269,6 +271,7 @@ private:
 
         asset->width = width;
         asset->height = height;
+        asset->id = id;
         project.assets[id] = asset;
         return asset;
     }
