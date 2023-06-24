@@ -36,6 +36,7 @@ private:
     void shape_layer(model::Layer* layer, const Layer& ae_layer, CompData& data);
     void text_layer(model::Layer* layer, const Layer& ae_layer, CompData& data);
     std::unique_ptr<model::ShapeElement> load_shape(const PropertyPair& prop, CompData& data);
+    std::unique_ptr<model::ShapeElement> create_shape(const PropertyPair& prop, CompData& data);
     void load_transform(model::Transform* tf, const PropertyBase& prop);
 
     void warning(const QString& msg);

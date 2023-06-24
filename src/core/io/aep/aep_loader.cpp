@@ -526,6 +526,17 @@ model::Stroke::Join convert_enum(const PropertyValue& v)
 
 std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& prop, AepLoader::CompData& data)
 {
+    auto shape = create_shape(prop, data);
+    if ( shape && prop.value->class_type() == PropertyBase::PropertyGroup )
+    {
+        const auto& gp = static_cast<const PropertyGroup&>(*prop.value);
+        shape->visible.set(gp.visible);
+    }
+    return shape;
+}
+
+std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair& prop, CompData& data)
+{
     if ( prop.match_name == "ADBE Vector Group" )
     {
         auto gp = std::make_unique<model::Group>(document);
