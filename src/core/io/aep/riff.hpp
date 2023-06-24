@@ -393,7 +393,7 @@ struct RiffChunk
 
         RangeIterator& operator++()
         {
-            internal = chunk->find(name, internal);
+            internal = chunk->find(name, internal + 1);
             return *this;
         }
 

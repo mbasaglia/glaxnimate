@@ -605,6 +605,9 @@ std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair&
         auto grad = document->assets()->gradients->values.insert(
             std::make_unique<glaxnimate::model::Gradient>(document)
         );
+        grad->end_point.set({100, 0}); // default value
+        grad->colors.set(grad_colors);
+        shape->use.set(grad);
 
         for ( const auto& p : *prop.value )
         {
@@ -635,6 +638,9 @@ std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair&
         auto grad = document->assets()->gradients->values.insert(
             std::make_unique<glaxnimate::model::Gradient>(document)
         );
+        grad->end_point.set({100, 0}); // default value
+        grad->colors.set(grad_colors);
+        shape->use.set(grad);
 
         for ( const auto& p : *prop.value )
         {
