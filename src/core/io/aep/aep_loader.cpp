@@ -569,8 +569,8 @@ std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair&
         PROP(angle, "ADBE Vector Star Rotation")
         PROP(inner_radius, "ADBE Vector Star Inner Radius")
         PROP(outer_radius, "ADBE Vector Star Outer Radius")
-        PROP(inner_roundness, "ADBE Vector Star Inner Roundess")
-        PROP(outer_roundness, "ADBE Vector Star Outer Roundess")
+        PROP(inner_roundness, "ADBE Vector Star Inner Roundess", &convert_divide<100>)
+        PROP(outer_roundness, "ADBE Vector Star Outer Roundess", &convert_divide<100>)
     END
     OBJ("ADBE Vector Shape - Group", Path)
         PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
