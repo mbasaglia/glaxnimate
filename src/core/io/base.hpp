@@ -14,6 +14,7 @@
 #include "app/log/log_line.hpp"
 
 #include "model/document.hpp"
+#include "model/assets/composition.hpp"
 
 namespace glaxnimate::io {
 
@@ -77,7 +78,7 @@ public:
      */
     bool save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& setting_values);
 
-    Q_INVOKABLE QByteArray save(model::Composition* comp, const QVariantMap& setting_values={}, const QString& filename = "data");
+    Q_INVOKABLE QByteArray save(glaxnimate::model::Composition* comp, const QVariantMap& setting_values={}, const QString& filename = "data");
     Q_INVOKABLE bool load(glaxnimate::model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
 
 

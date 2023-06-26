@@ -386,8 +386,6 @@ void register_py_module(py::module& glaxnimate_module)
         qMetaTypeId<io::ImportExport::Direction>(),
     };
 
-    define_io(glaxnimate_module);
-
     py::module model = glaxnimate_module.def_submodule("model", "");
     py::class_<model::Object, QObject>(model, "Object")
         .def(
@@ -455,8 +453,12 @@ void register_py_module(py::module& glaxnimate_module)
         .def("to_path", &model::ShapeElement::to_path)
     ;
 
+    py::module defs = model.def_submodule("assets", "");
+    py::class_<model::AssetBase>(defs, "AssetBase");
     auto cls_comp = register_from_meta<model::Composition, model::VisualNode, model::AssetBase>(model);
     define_add_shape(cls_comp);
+
+    define_io(glaxnimate_module);
 
     define_animatable(model);
     register_from_meta<model::detail::AnimatedPropertyPosition, model::AnimatableBase>(detail);
@@ -477,8 +479,6 @@ void register_py_module(py::module& glaxnimate_module)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
     ;
 
-    py::module defs = model.def_submodule("assets", "");
-    py::class_<model::AssetBase>(defs, "AssetBase");
     register_from_meta<model::Asset, model::DocumentNode, model::AssetBase>(defs);
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_constructible<model::NamedColor, model::BrushStyle>(defs);
