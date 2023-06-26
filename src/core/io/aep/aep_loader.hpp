@@ -37,7 +37,7 @@ private:
     void text_layer(model::Layer* layer, const Layer& ae_layer, CompData& data);
     std::unique_ptr<model::ShapeElement> load_shape(const PropertyPair& prop, CompData& data);
     std::unique_ptr<model::ShapeElement> create_shape(const PropertyPair& prop, CompData& data);
-    void load_transform(model::Transform* tf, const PropertyBase& prop);
+    void load_transform(model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult);
 
     void warning(const QString& msg);
     void info(const QString& msg);
@@ -51,6 +51,7 @@ private:
     std::unordered_map<Id, ColorInfo> colors;
     std::unordered_map<Id, model::Composition*> comps;
     std::unordered_map<Id, model::Bitmap*> images;
+    std::unordered_map<Id, QPointF> asset_size;
 };
 
 } // namespace glaxnimate::io::aep
