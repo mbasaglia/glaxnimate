@@ -938,6 +938,8 @@ private:
 
         apply_common_style(g_node, args.element, args.parent_style);
         set_name(g_node, args.element);
+        // Avoid doubling opacity values
+        style.map.erase("opacity");
         parse_children(args);
         parse_transform(args.element, g_node, transform);
     }
