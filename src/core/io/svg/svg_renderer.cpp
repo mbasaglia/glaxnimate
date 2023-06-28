@@ -27,7 +27,6 @@
 #include "font_weight.hpp"
 #include "io/utils.hpp"
 
-
 using namespace glaxnimate::io::svg::detail;
 using namespace glaxnimate;
 
@@ -455,6 +454,10 @@ public:
         model::FrameTime time = star->time();
 
         auto e = write_bezier(parent, star, style);
+
+        if ( star->outer_roundness.animated() || !qFuzzyIsNull(star->outer_roundness.get()) ||
+             star->inner_roundness.animated() || !qFuzzyIsNull(star->inner_roundness.get()) )
+            return;
 
         set_attribute(e, "sodipodi:type", "star");
         set_attribute(e, "inkscape:randomized", "0");

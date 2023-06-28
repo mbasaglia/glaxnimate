@@ -120,7 +120,7 @@ private:
         io_options_.path = dialog.directory();
 
         int filter = filters.indexOf(dialog.selectedNameFilter());
-        if ( filter < int(formats.size()) )
+        if ( filter > 0 && filter < int(formats.size()) )
         {
             io_options_.format = formats[filter];
         }
