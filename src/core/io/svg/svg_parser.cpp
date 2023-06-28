@@ -915,14 +915,15 @@ private:
     void parse_g_to_shape(const ParseFuncArgs& args)
     {
         Style style = parse_style(args.element, args.parent_style);
-        auto group = std::make_unique<model::Group>(document);
+        auto ugroup = std::make_unique<model::Group>(document);
+        auto group = ugroup.get();
+        args.shape_parent->insert(std::move(ugroup));
         parse_g_common(
             {args.element, &group->shapes, style, true},
-            group.get(),
+            group,
             group->transform.get(),
             style
         );
-        args.shape_parent->insert(std::move(group));
     }
 
     void parse_g_common(
