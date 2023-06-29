@@ -20,6 +20,7 @@
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/text.hpp"
 
+#include <QDebug>
 
 using namespace glaxnimate::io::aep;
 using namespace glaxnimate;
@@ -105,9 +106,9 @@ void glaxnimate::io::aep::AepLoader::info(const QString& msg)
     io->information(msg);
 }
 
-bool glaxnimate::io::aep::AepLoader::unknown_mn(const QString& context, const QString& mn)
+static bool unknown_mn(glaxnimate::io::ImportExport* io, const QString& context, const QString& mn)
 {
-    info(AepFormat::tr("Unknown property \"%1\" of \"%2\"").arg(mn).arg(context));
+    io->information(AepFormat::tr("Unknown property \"%1\" of \"%2\"").arg(mn).arg(context));
     return true;
 }
 
@@ -167,60 +168,6 @@ void glaxnimate::io::aep::AepLoader::load_comp(const glaxnimate::io::aep::Compos
         load_layer(*layer, data);
 
     data.resolve();
-}
-
-void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer& ae_layer, CompData& data)
-{
-
-    auto ulayer = std::make_unique<model::Layer>(document);
-    auto layer = ulayer.get();
-    data.comp->shapes.insert(std::move(ulayer), 0);
-    data.layers[ae_layer.id] = layer;
-
-    if ( ae_layer.parent_id || ae_layer.matte_id )
-        data.pending.push_back({layer, ae_layer.parent_id, ae_layer.matte_id});
-
-    layer->name.set(ae_layer.name);
-    layer->render.set(!ae_layer.is_guide);
-    layer->animation->first_frame.set(ae_layer.start_time);
-    layer->animation->last_frame.set(ae_layer.out_time);
-    layer->visible.set(ae_layer.properties.visible);
-    /// \todo could be nice to toggle visibility based on solo/shy
-    layer->group_color.set(label_colors[int(ae_layer.label_color)]);
-
-    layer->transform->position.set({
-        data.comp->width.get() / 2.,
-        data.comp->height.get() / 2.,
-    });
-
-    QPointF anchor{1, 1};
-    auto it = asset_size.find(ae_layer.asset_id);
-    if ( it != asset_size.end() )
-    {
-        anchor = it->second;
-        layer->transform->anchor_point.set(anchor / 2);
-    }
-    load_transform(layer->transform.get(), ae_layer.properties["ADBE Transform Group"], &layer->opacity, anchor, false);
-    /// \todo auto-orient
-    /// \todo masks "ADBE Mask Parade"
-
-    if ( ae_layer.is_null )
-        return;
-    else if ( ae_layer.asset_id )
-        asset_layer(layer, ae_layer, data);
-    else if ( ae_layer.type == LayerType::ShapeLayer )
-        shape_layer(layer, ae_layer, data);
-    else if ( ae_layer.type == LayerType::TextLayer )
-        text_layer(layer, ae_layer, data);
-}
-
-void glaxnimate::io::aep::AepLoader::shape_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData& data)
-{
-    for ( const auto& prop : ae_layer.properties["ADBE Root Vectors Group"] )
-    {
-        if ( auto shape = load_shape(prop, data) )
-            layer->shapes.insert(std::move(shape), 0);
-    }
 }
 
 namespace {
@@ -523,28 +470,272 @@ model::Stroke::Join convert_enum(const PropertyValue& v)
     }
 }
 
-} // namespace
-
-// hacky macros to minimize boilerplate and be more declarative
-#define OBJ(mn, type) \
-    else if ( prop.match_name == mn ) { \
-        auto shape = std::make_unique<model::type>(document); \
-        for ( const auto& p : *prop.value ) {
-
-#define PROP_OF(obj, name, ...) \
-    load_property(io, obj->name, p, __VA_ARGS__) ||
-
-#define PROP(name, ...) \
-    PROP_OF(shape, name, __VA_ARGS__)
-
-#define IGNORE(name) (p.match_name == name) ||
-
-#define END \
-    unknown_mn(prop.match_name, p.match_name); } return shape; }
-
-std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& prop, AepLoader::CompData& data)
+struct AnchorMult
 {
-    auto shape = create_shape(prop, data);
+    QPointF operator()(const PropertyValue& v) const
+    {
+        auto a = convert_value<QPointF>(v);
+        return {a.x() * p.x(), a.y() * p.y()};
+    }
+    QPointF p;
+};
+
+void load_transform(io::ImportExport* io, model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult, bool divide_100)
+{
+    if ( prop.class_type() != PropertyBase::PropertyGroup )
+    {
+        io->warning(AepFormat::tr("Expected property group for transform"));
+        return;
+    }
+
+    const PropertyGroup& g = static_cast<const PropertyGroup&>(prop);
+    if ( g.split_position )
+    {
+        /// \todo
+        io->warning(AepFormat::tr("Split position currently not supported"));
+    }
+
+    bool is_3d = false;
+
+    for ( const auto& p : g.properties )
+    {
+        if ( p.match_name.endsWith("Anchor Point") || p.match_name.endsWith("Anchor") )
+            load_property_check(io, tf->anchor_point, *p.value, p.match_name, AnchorMult{anchor_mult});
+        else if ( p.match_name.endsWith("Position") )
+            load_property_check(io, tf->position, *p.value, p.match_name);
+        else if ( p.match_name.endsWith("Scale") )
+            load_property_check(io, tf->scale, *p.value, p.match_name, divide_100 ? &convert_divide<100, QVector2D> : &convert_divide<1, QVector2D>);
+        else if ( p.match_name.endsWith("Rotation") || p.match_name.endsWith("Rotate Z") )
+            load_property_check(io, tf->rotation, *p.value, p.match_name);
+        else if ( opacity && p.match_name.endsWith("Opacity") )
+            load_property_check(io, *opacity, *p.value, p.match_name, divide_100 ? &convert_divide<100> : &convert_divide<1>);
+        else if (
+            p.match_name.endsWith("Rotate X") ||
+            p.match_name.endsWith("Rotate Y") ||
+            p.match_name.endsWith("Orientation") ||
+            p.match_name.endsWith("Position_2")
+        )
+            is_3d = true;
+        else if ( !p.match_name.endsWith("Position_1") &&
+            !p.match_name.endsWith("Position_0") &&
+            !p.match_name.endsWith("Opacity") &&
+            !p.match_name.endsWith("Envir Appear in Reflect")
+        )
+            io->information(AepFormat::tr("Unknown property \"%1\"").arg(p.match_name));
+    }
+
+    if ( is_3d )
+    {
+        /// \todo figure a way of determining whether the transform is actually 3D
+        /// as layer transfoms seem to often have the 3D properties
+        (void)is_3d;
+//         warning(AepFormat::tr("3D transforms are not supported"));
+    }
+}
+
+template<class Obj>
+struct PropertyConverterBase
+{
+    virtual ~PropertyConverterBase() noexcept = default;
+
+    virtual void load(ImportExport* io, Obj* object, const PropertyBase& ae_prop) const = 0;
+    virtual void set_default(Obj* object) const = 0;
+};
+
+template<class Obj, class Base, class PropT, class T = typename PropT::value_type, class Converter=DefaultConverter<T>>
+struct PropertyConverter : PropertyConverterBase<Obj>
+{
+    PropertyConverter(PropT (Base::*prop), const char* match_name, const Converter& converter, const std::optional<T>& default_value = {})
+        : prop(prop), match_name(match_name), converter(converter), default_value(default_value)
+    {}
+
+    void load(ImportExport* io, Obj* object, const PropertyBase& ae_prop) const override
+    {
+        load_property_check(io, object->*prop, ae_prop, match_name, converter);
+    }
+
+    void set_default(Obj* object) const override
+    {
+        if ( default_value )
+            (object->*prop).set(*default_value);
+    }
+
+    PropT Base::*prop;
+    QString match_name;
+    Converter converter = {};
+    std::optional<T> default_value ;
+};
+
+template<class Base>
+struct ObjectConverterBase
+{
+    virtual ~ObjectConverterBase() noexcept = default;
+    virtual std::unique_ptr<Base> load(ImportExport* io, model::Document* document, const PropertyPair& prop) const = 0;
+};
+
+template<class Obj, class Base, class FuncT>
+struct ObjectConverterFunctor : public ObjectConverterBase<Base>
+{
+    template<class F>
+    ObjectConverterFunctor(F&& functor) : functor(std::forward<F>(functor)) {}
+
+    std::unique_ptr<Base> load(ImportExport* io, model::Document* document, const PropertyPair& prop) const override
+    {
+        return functor(io, document, prop);
+    }
+
+    FuncT functor;
+};
+
+struct FallbackConverterBase
+{
+    virtual ~FallbackConverterBase() noexcept = default;
+    virtual void set_default() const = 0;
+    virtual void load_property(ImportExport* io, model::Document* document, const PropertyPair& prop_parent, const PropertyPair& prop) const = 0;
+};
+
+template<class Obj, class Base> struct FallbackConverter;
+
+
+template<class Obj, class Base>
+struct ObjectConverter : public ObjectConverterBase<Base>
+{
+    std::unique_ptr<Base> load(ImportExport* io, model::Document* document, const PropertyPair& prop) const override
+    {
+        return load_object(io, document, prop);
+    }
+
+    void set_default(Obj* object, FallbackConverterBase* fallback) const
+    {
+        for ( const auto& conv : converters )
+            if ( conv.second )
+                conv.second->set_default(object);
+
+        if ( fallback )
+            fallback->set_default();
+    }
+
+    void load_property(Obj* object, ImportExport* io, model::Document* document, const PropertyPair& prop_parent, const PropertyPair& prop, FallbackConverterBase* fallback) const
+    {
+        auto it = converters.find(prop.match_name);
+        if ( it == converters.end() )
+        {
+            if ( fallback )
+                fallback->load_property(io, document, prop_parent, prop);
+            else
+                unknown_mn(io, prop_parent.match_name, prop.match_name);
+        }
+        else if ( it->second )
+        {
+            it->second->load(io, object, *prop.value);
+        }
+    }
+
+    void load_properties(Obj* object, ImportExport* io, model::Document* document, const PropertyPair& prop, FallbackConverterBase* fallback = nullptr) const
+    {
+        set_default(object, fallback);
+
+        for ( const auto& p : *prop.value )
+            this->load_property(object, io, document, prop, p, fallback);
+    }
+
+    std::unique_ptr<Obj> load_object(ImportExport* io, model::Document* document, const PropertyPair& prop) const
+    {
+        auto object = std::make_unique<Obj>(document);
+        load_properties(object.get(), io, document, prop);
+        return object;
+    }
+
+    template<class O2, class PropT, class T = typename PropT::value_type, class Converter=DefaultConverter<T>>
+    ObjectConverter& prop(PropT O2::* property, const char* match_name, const Converter& conv = {})
+    {
+        auto ptr = std::make_unique<PropertyConverter<Obj, O2, PropT, T, Converter>>(property, match_name, conv);
+        converters.emplace(match_name, std::move(ptr));
+        return *this;
+    }
+
+    template<class O2, class PropT, class T = typename PropT::value_type, class Converter=DefaultConverter<T>>
+    ObjectConverter& prop(PropT O2::*property, const char* match_name, const Converter& conv, const T& default_value)
+    {
+        converters.emplace(match_name, std::make_unique<PropertyConverter<Obj, O2, PropT, T, Converter>>(property, match_name, conv, default_value));
+        return *this;
+    }
+
+    ObjectConverter& ignore(const char* match_name)
+    {
+        converters.emplace(match_name, nullptr);
+        return *this;
+    }
+
+    FallbackConverter<Obj, Base> fallback(Obj* object, FallbackConverterBase* next) const
+    {
+        return {object, this, next};
+    }
+
+    std::unordered_map<QString, std::unique_ptr<PropertyConverterBase<Obj>>> converters;
+};
+
+
+template<class Obj, class Base>
+struct FallbackConverter : public FallbackConverterBase
+{
+    FallbackConverter(Obj* object, const ObjectConverter<Obj, Base>* converter, FallbackConverterBase* next)
+        : object(object), converter(converter), next(next)
+    {}
+
+    void set_default() const override
+    {
+        converter->set_default(object, next);
+    }
+
+    void load_property(ImportExport* io, model::Document* document, const PropertyPair& prop_parent, const PropertyPair& prop) const override
+    {
+        converter->load_property(object, io, document, prop_parent, prop, next);
+    }
+
+    Obj* object;
+    const ObjectConverter<Obj, Base>* converter;
+    FallbackConverterBase* next;
+};
+
+template<class Base>
+struct ObjectFactory
+{
+    std::unique_ptr<Base> load(ImportExport* io, model::Document* document, const PropertyPair& prop) const
+    {
+        auto it = converters.find(prop.match_name);
+        if ( it == converters.end() )
+            return {};
+        return it->second->load(io, document, prop);
+    }
+
+    template<class Obj, class FuncT>
+    void obj(const char* match_name, FuncT&& func)
+    {
+        assert(converters.count(match_name) == 0);
+        auto up = std::make_unique<ObjectConverterFunctor<Obj, Base, std::decay_t<FuncT>>>(std::forward<FuncT>(func));
+        converters.emplace(match_name, std::move(up));
+    }
+
+    template<class Obj>
+    ObjectConverter<Obj, Base>& obj(const char* match_name)
+    {
+        assert(converters.count(match_name) == 0);
+        auto up = std::make_unique<ObjectConverter<Obj, Base>>();
+        auto ptr = up.get();
+        converters.emplace(match_name, std::move(up));
+        return *ptr;
+    }
+
+    std::unordered_map<QString, std::unique_ptr<ObjectConverterBase<Base>>> converters;
+};
+
+
+std::unique_ptr<model::ShapeElement> create_shape(ImportExport* io, model::Document* document, const PropertyPair& prop);
+
+std::unique_ptr<model::ShapeElement> load_shape(ImportExport* io, model::Document* document, const PropertyPair& prop)
+{
+    auto shape = create_shape(io, document, prop);
     if ( shape && prop.value->class_type() == PropertyBase::PropertyGroup )
     {
         const auto& gp = static_cast<const PropertyGroup&>(*prop.value);
@@ -553,187 +744,244 @@ std::unique_ptr<model::ShapeElement> AepLoader::load_shape(const PropertyPair& p
     return shape;
 }
 
-std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair& prop, CompData& data)
+const ObjectConverter<model::Gradient, model::Gradient>& gradient_converter()
 {
-    if ( prop.match_name == "ADBE Vector Group" )
+    static ObjectConverter<model::Gradient, model::Gradient> gradient;
+    static bool initialized = false;
+    if ( !initialized )
     {
-        auto gp = std::make_unique<model::Group>(document);
-        load_transform(gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], &gp->opacity, {1, 1}, true);
-
-        for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
-        {
-            if ( auto shape = load_shape(prop, data) )
-                gp->shapes.insert(std::move(shape), 0);
-        }
-
-        return gp;
+        initialized = true;
+        gradient
+            .prop(&model::Gradient::type, "ADBE Vector Grad Type", &convert_enum<model::Gradient::GradientType>)
+            .prop(&model::Gradient::start_point, "ADBE Vector Grad Start Pt")
+            .prop(&model::Gradient::end_point, "ADBE Vector Grad End Pt")
+            .ignore("ADBE Vector Grad HiLite Length") /// \todo
+            .ignore("ADBE Vector Grad HiLite Angle") /// \todo
+        ;
     }
-    OBJ("ADBE Vector Shape - Rect", Rect)
-        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
-        PROP(position, "ADBE Vector Rect Position")
-        PROP(size, "ADBE Vector Rect Size")
-        PROP(rounded, "ADBE Vector Rect Roundness")
-    END
-    OBJ("ADBE Vector Shape - Ellipse", Ellipse)
-        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
-        PROP(position, "ADBE Vector Ellipse Position")
-        PROP(size, "ADBE Vector Ellipse Size")
-    END
-    OBJ("ADBE Vector Shape - Star", PolyStar)
-        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
-        PROP(position, "ADBE Vector Star Position")
-        PROP(type, "ADBE Vector Star Type", &convert_enum<model::PolyStar::StarType>)
-        PROP(points, "ADBE Vector Star Points")
-        PROP(angle, "ADBE Vector Star Rotation")
-        PROP(inner_radius, "ADBE Vector Star Inner Radius")
-        PROP(outer_radius, "ADBE Vector Star Outer Radius")
-        PROP(inner_roundness, "ADBE Vector Star Inner Roundess", &convert_divide<100>)
-        PROP(outer_roundness, "ADBE Vector Star Outer Roundess", &convert_divide<100>)
-    END
-    OBJ("ADBE Vector Shape - Group", Path)
-        PROP(reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
-        PROP(shape, "ADBE Vector Shape")
-    END
-    OBJ("ADBE Vector Graphic - Fill", Fill)
-        IGNORE("ADBE Vector Blend Mode")
-        PROP(color, "ADBE Vector Fill Color")
-        PROP(opacity, "ADBE Vector Fill Opacity", &convert_divide<100>)
-        PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
-        IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
-    END
-    OBJ("ADBE Vector Graphic - Stroke", Stroke)
-        IGNORE("ADBE Vector Blend Mode")
-        PROP(color, "ADBE Vector Stroke Color")
-        PROP(opacity, "ADBE Vector Stroke Opacity", &convert_divide<100>)
-        PROP(width, "ADBE Vector Stroke Width")
-        PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
-        PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
-        PROP(miter_limit, "ADBE Vector Stroke Miter Limit")
-        IGNORE("ADBE Vector Stroke Dashes")
-        IGNORE("ADBE Vector Stroke Taper")
-        IGNORE("ADBE Vector Stroke Wave")
-        IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
-    END
-    else if ( prop.match_name == "ADBE Vector Graphic - G-Fill" )
+
+    return gradient;
+}
+
+const ObjectConverter<model::GradientColors, model::GradientColors>& gradient_stop_converter()
+{
+    static ObjectConverter<model::GradientColors, model::GradientColors> gradient;
+    static bool initialized = false;
+    if ( !initialized )
     {
-        auto shape = std::make_unique<model::Fill>(document);
-        auto grad_colors = document->assets()->gradient_colors->values.insert(
-            std::make_unique<glaxnimate::model::GradientColors>(document)
-        );
-        auto grad = document->assets()->gradients->values.insert(
-            std::make_unique<glaxnimate::model::Gradient>(document)
-        );
-        grad->end_point.set({100, 0}); // default value
-        grad->colors.set(grad_colors);
-        shape->use.set(grad);
+        initialized = true;
+        gradient
+            .prop(&model::GradientColors::colors, "ADBE Vector Grad Colors")
+        ;
+    }
 
-        for ( const auto& p : *prop.value )
-        {
-            IGNORE("ADBE Vector Blend Mode")
-            PROP(opacity, "ADBE Vector Fill Opacity", &convert_divide<100>)
-            PROP(fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
-            IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
+    return gradient;
+}
 
-            PROP_OF(grad, type, "ADBE Vector Grad Type", &convert_enum<model::Gradient::GradientType>)
-            PROP_OF(grad, start_point, "ADBE Vector Grad Start Pt")
-            PROP_OF(grad, end_point, "ADBE Vector Grad End Pt")
-            IGNORE("ADBE Vector Grad HiLite Length") /// \todo
-            IGNORE("ADBE Vector Grad HiLite Angle") /// \todo
-            PROP_OF(grad_colors, colors, "ADBE Vector Grad Colors")
-            unknown_mn(prop.match_name, p.match_name);
-        }
+template<class T>
+std::unique_ptr<model::ShapeElement> load_gradient(const ObjectConverter<T, model::ShapeElement>* base_converter, ImportExport* io, model::Document* document, const PropertyPair& prop)
+{
+    auto shape = std::make_unique<T>(document);
+    auto grad_colors = document->assets()->gradient_colors->values.insert(
+        std::make_unique<glaxnimate::model::GradientColors>(document)
+    );
+    auto grad = document->assets()->gradients->values.insert(
+        std::make_unique<glaxnimate::model::Gradient>(document)
+    );
+    grad->end_point.set({100, 0}); // default value
+    grad->colors.set(grad_colors);
+    shape->use.set(grad);
 
-        grad->highlight.set(grad->start_point.get());
+    auto f1 = gradient_stop_converter().fallback(grad_colors, nullptr);
+    auto f2 = gradient_converter().fallback(grad, &f1);
+    base_converter->load_properties(shape.get(), io, document, prop, &f2);
 
+    grad->highlight.set(grad->start_point.get());
+
+    return shape;
+}
+
+const ObjectFactory<model::ShapeElement>& shape_factory()
+{
+    static ObjectFactory<model::ShapeElement> factory;
+    static bool initialized = false;
+    if ( !initialized )
+    {
+        initialized = true;
+        factory.obj<model::Group>("ADBE Vector Group", [](ImportExport* io, model::Document* document, const PropertyPair& prop) {
+            auto gp = std::make_unique<model::Group>(document);
+            load_transform(io, gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], &gp->opacity, {1, 1}, true);
+
+            for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
+            {
+                if ( auto shape = load_shape(io, document, prop) )
+                    gp->shapes.insert(std::move(shape), 0);
+            }
+
+            return gp;
+        });
+        factory.obj<model::Rect>("ADBE Vector Shape - Rect")
+            .prop(&model::Rect::reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+            .prop(&model::Rect::position, "ADBE Vector Rect Position")
+            .prop(&model::Rect::size, "ADBE Vector Rect Size")
+            .prop(&model::Rect::rounded, "ADBE Vector Rect Roundness")
+        ;
+        factory.obj<model::Ellipse>("ADBE Vector Shape - Ellipse")
+            .prop(&model::Ellipse::reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+            .prop(&model::Ellipse::position, "ADBE Vector Ellipse Position")
+            .prop(&model::Ellipse::size, "ADBE Vector Ellipse Size")
+        ;
+        factory.obj<model::PolyStar>("ADBE Vector Shape - Star")
+            .prop(&model::PolyStar::reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+            .prop(&model::PolyStar::position, "ADBE Vector Star Position")
+            .prop(&model::PolyStar::type, "ADBE Vector Star Type", &convert_enum<model::PolyStar::StarType>)
+            .prop(&model::PolyStar::points, "ADBE Vector Star Points")
+            .prop(&model::PolyStar::angle, "ADBE Vector Star Rotation")
+            .prop(&model::PolyStar::inner_radius, "ADBE Vector Star Inner Radius")
+            .prop(&model::PolyStar::outer_radius, "ADBE Vector Star Outer Radius")
+            .prop(&model::PolyStar::inner_roundness, "ADBE Vector Star Inner Roundess", &convert_divide<100>)
+            .prop(&model::PolyStar::outer_roundness, "ADBE Vector Star Outer Roundess", &convert_divide<100>)
+        ;
+        factory.obj<model::Path>("ADBE Vector Shape - Group")
+            .prop(&model::Path::reversed, "ADBE Vector Shape Direction", &convert_shape_reverse)
+            .prop(&model::Path::shape, "ADBE Vector Shape")
+        ;
+        const auto* fill = &factory.obj<model::Fill>("ADBE Vector Graphic - Fill")
+            .ignore("ADBE Vector Blend Mode")
+            .prop(&model::Fill::color, "ADBE Vector Fill Color", {}, QColor(255, 0, 0))
+            .prop(&model::Fill::opacity, "ADBE Vector Fill Opacity", &convert_divide<100>)
+            .prop(&model::Fill::fill_rule, "ADBE Vector Fill Rule", &convert_enum<model::Fill::Rule>)
+            .ignore("ADBE Vector Composite Order") /// \todo could be parsed
+        ;
+        const auto* stroke = &factory.obj<model::Stroke>("ADBE Vector Graphic - Stroke")
+            .ignore("ADBE Vector Blend Mode")
+            .prop(&model::Stroke::color, "ADBE Vector Stroke Color", {}, QColor(255, 255, 255))
+            .prop(&model::Stroke::opacity, "ADBE Vector Stroke Opacity", &convert_divide<100>)
+            .prop(&model::Stroke::width, "ADBE Vector Stroke Width", {}, 2)
+            .prop(&model::Stroke::cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
+            .prop(&model::Stroke::join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
+            .prop(&model::Stroke::miter_limit, "ADBE Vector Stroke Miter Limit")
+            .ignore("ADBE Vector Stroke Dashes")
+            .ignore("ADBE Vector Stroke Taper")
+            .ignore("ADBE Vector Stroke Wave")
+            .ignore("ADBE Vector Composite Order") /// \todo could be parsed
+        ;
+        factory.obj<model::RoundCorners>("ADBE Vector Filter - RC")
+            .prop(&model::RoundCorners::radius, "ADBE Vector RoundCorner Radius")
+        ;
+        factory.obj<model::Trim>("ADBE Vector Filter - Trim")
+            .prop(&model::Trim::start, "ADBE Vector Trim Start", &convert_divide<100>)
+            .prop(&model::Trim::end, "ADBE Vector Trim End", &convert_divide<100>)
+            .prop(&model::Trim::offset, "ADBE Vector Trim Offset", &convert_divide<360>)
+        ;
+        factory.obj<model::OffsetPath>("ADBE Vector Filter - Offset")
+            .prop(&model::OffsetPath::amount, "ADBE Vector Offset Amount")
+            .prop(&model::OffsetPath::join, "ADBE Vector Offset Line Join", &convert_enum<model::Stroke::Join>)
+            .prop(&model::OffsetPath::miter_limit, "ADBE Vector Offset Miter Limit")
+        ;
+        factory.obj<model::InflateDeflate>("ADBE Vector Filter - PB")
+            .prop(&model::InflateDeflate::amount, "ADBE Vector PuckerBloat Amount")
+        ;
+        factory.obj<model::ZigZag>("ADBE Vector Filter - Zigzag")
+            .prop(&model::ZigZag::amplitude, "ADBE Vector Zigzag Size")
+            .prop(&model::ZigZag::frequency, "ADBE Vector Zigzag Detail")
+            .prop(&model::ZigZag::style, "ADBE Vector Zigzag Points", &convert_enum<model::ZigZag::Style>)
+        ;
+        factory.obj<model::Fill>("ADBE Vector Graphic - G-Fill", [fill](ImportExport* io, model::Document* document, const PropertyPair& prop) {
+            return load_gradient(fill, io, document, prop);
+        });
+        factory.obj<model::Stroke>("ADBE Vector Graphic - G-Stroke", [stroke](ImportExport* io, model::Document* document, const PropertyPair& prop) {
+            return load_gradient(stroke, io, document, prop);
+        });
+        factory.obj<model::Repeater>("ADBE Vector Filter - Repeater", [](ImportExport* io, model::Document* document, const PropertyPair& prop) {
+            auto shape = std::make_unique<model::Repeater>(document);
+            if ( auto tf = prop.value->get("ADBE Vector Repeater Transform") )
+            {
+                load_transform(io, shape->transform.get(), *tf, nullptr, {1, 1}, false);
+                const char* pmn = "ADBE Vector Repeater Start Opacity";
+                if ( auto o = tf->get(pmn) )
+                    load_property_check(io, shape->start_opacity, *o, pmn, &convert_divide<100>);
+                pmn = "ADBE Vector Repeater End Opacity";
+                if ( auto o = tf->get(pmn) )
+                    load_property_check(io, shape->end_opacity, *o, pmn, &convert_divide<100>);
+            }
+
+            if ( auto copies = prop.value->get("ADBE Vector Repeater Copies") )
+            {
+                load_property_check(io, shape->copies, *copies, "ADBE Vector Repeater Copies");
+            }
+
+            return shape;
+        });
+    }
+
+    return factory;
+};
+
+
+std::unique_ptr<model::ShapeElement> create_shape(ImportExport* io, model::Document* document, const PropertyPair& prop)
+{
+    if ( auto shape = shape_factory().load(io, document, prop) )
         return shape;
-    }
-    else if ( prop.match_name == "ADBE Vector Graphic - G-Stroke" )
+
+    io->information(AepFormat::tr("Unknown shape %1").arg(prop.match_name));
+    return nullptr;
+}
+
+} // namespace
+
+
+void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer& ae_layer, CompData& data)
+{
+
+    auto ulayer = std::make_unique<model::Layer>(document);
+    auto layer = ulayer.get();
+    data.comp->shapes.insert(std::move(ulayer), 0);
+    data.layers[ae_layer.id] = layer;
+
+    if ( ae_layer.parent_id || ae_layer.matte_id )
+        data.pending.push_back({layer, ae_layer.parent_id, ae_layer.matte_id});
+
+    layer->name.set(ae_layer.name);
+    layer->render.set(!ae_layer.is_guide);
+    layer->animation->first_frame.set(ae_layer.start_time);
+    layer->animation->last_frame.set(ae_layer.out_time);
+    layer->visible.set(ae_layer.properties.visible);
+    /// \todo could be nice to toggle visibility based on solo/shy
+    layer->group_color.set(label_colors[int(ae_layer.label_color)]);
+
+    layer->transform->position.set({
+        data.comp->width.get() / 2.,
+        data.comp->height.get() / 2.,
+    });
+
+    QPointF anchor{1, 1};
+    auto it = asset_size.find(ae_layer.asset_id);
+    if ( it != asset_size.end() )
     {
-        auto shape = std::make_unique<model::Stroke>(document);
-        auto grad_colors = document->assets()->gradient_colors->values.insert(
-            std::make_unique<glaxnimate::model::GradientColors>(document)
-        );
-        auto grad = document->assets()->gradients->values.insert(
-            std::make_unique<glaxnimate::model::Gradient>(document)
-        );
-        grad->end_point.set({100, 0}); // default value
-        grad->colors.set(grad_colors);
-        shape->use.set(grad);
-
-        for ( const auto& p : *prop.value )
-        {
-            IGNORE("ADBE Vector Blend Mode")
-            PROP(opacity, "ADBE Vector Stroke Opacity", &convert_divide<100>)
-            PROP(width, "ADBE Vector Stroke Width")
-            PROP(cap, "ADBE Vector Stroke Line Cap", &convert_enum<model::Stroke::Cap>)
-            PROP(join, "ADBE Vector Stroke Line Join", &convert_enum<model::Stroke::Join>)
-            PROP(miter_limit, "ADBE Vector Stroke Miter Limit")
-            IGNORE("ADBE Vector Stroke Dashes")
-            IGNORE("ADBE Vector Stroke Taper")
-            IGNORE("ADBE Vector Stroke Wave")
-            IGNORE("ADBE Vector Composite Order") /// \todo could be parsed
-
-            PROP_OF(grad, type, "ADBE Vector Grad Type", &convert_enum<model::Gradient::GradientType>)
-            PROP_OF(grad, start_point, "ADBE Vector Grad Start Pt")
-            PROP_OF(grad, end_point, "ADBE Vector Grad End Pt")
-            IGNORE("ADBE Vector Grad HiLite Length") /// \todo
-            IGNORE("ADBE Vector Grad HiLite Angle") /// \todo
-            PROP_OF(grad_colors, colors, "ADBE Vector Grad Colors")
-            unknown_mn(prop.match_name, p.match_name);
-        }
-
-        grad->highlight.set(grad->start_point.get());
-
-        return shape;
+        anchor = it->second;
+        layer->transform->anchor_point.set(anchor / 2);
     }
-    OBJ("ADBE Vector Filter - RC", RoundCorners)
-        PROP(radius, "ADBE Vector RoundCorner Radius")
-    END
-    OBJ("ADBE Vector Filter - Trim", Trim)
-        PROP(start, "ADBE Vector Trim Start", &convert_divide<100>)
-        PROP(end, "ADBE Vector Trim End", &convert_divide<100>)
-        PROP(offset, "ADBE Vector Trim Offset", &convert_divide<360>)
-    END
-    OBJ("ADBE Vector Filter - Offset", OffsetPath)
-        PROP(amount, "ADBE Vector Offset Amount")
-        PROP(join, "ADBE Vector Offset Line Join", &convert_enum<model::Stroke::Join>)
-        PROP(miter_limit, "ADBE Vector Offset Miter Limit")
-    END
-    OBJ("ADBE Vector Filter - PB", InflateDeflate)
-        PROP(amount, "ADBE Vector PuckerBloat Amount")
-    END
-    OBJ("ADBE Vector Filter - Zigzag", ZigZag)
-        PROP(amplitude, "ADBE Vector Zigzag Size")
-        PROP(frequency, "ADBE Vector Zigzag Detail")
-        PROP(style, "ADBE Vector Zigzag Points", &convert_enum<model::ZigZag::Style>)
-    END
-    else if ( prop.match_name == "ADBE Vector Filter - Repeater" )
-    {
-        auto shape = std::make_unique<model::Repeater>(document);
-        if ( auto tf = prop.value->get("ADBE Vector Repeater Transform") )
-        {
-            load_transform(shape->transform.get(), *tf, nullptr, {1, 1}, false);
-            const char* pmn = "ADBE Vector Repeater Start Opacity";
-            if ( auto o = tf->get(pmn) )
-                load_property_check(io, shape->start_opacity, *o, pmn, &convert_divide<100>);
-            pmn = "ADBE Vector Repeater End Opacity";
-            if ( auto o = tf->get(pmn) )
-                load_property_check(io, shape->end_opacity, *o, pmn, &convert_divide<100>);
-        }
+    load_transform(io, layer->transform.get(), ae_layer.properties["ADBE Transform Group"], &layer->opacity, anchor, false);
+    /// \todo auto-orient
+    /// \todo masks "ADBE Mask Parade"
 
-        for ( const auto& p : *prop.value )
-        {
-            IGNORE("ADBE Vector Repeater Transform")
-            PROP(copies, "ADBE Vector Repeater Copies")
-            unknown_mn(prop.match_name, p.match_name);
-        }
+    if ( ae_layer.is_null )
+        return;
+    else if ( ae_layer.asset_id )
+        asset_layer(layer, ae_layer, data);
+    else if ( ae_layer.type == LayerType::ShapeLayer )
+        shape_layer(layer, ae_layer, data);
+    else if ( ae_layer.type == LayerType::TextLayer )
+        text_layer(layer, ae_layer, data);
+}
 
-        return shape;
-    }
-    else
+void glaxnimate::io::aep::AepLoader::shape_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData&)
+{
+    for ( const auto& prop : ae_layer.properties["ADBE Root Vectors Group"] )
     {
-        info(AepFormat::tr("Unknown shape %1").arg(prop.match_name));
-        return {};
+        if ( auto shape = load_shape(io, document, prop) )
+            layer->shapes.insert(std::move(shape), 0);
     }
 }
 
@@ -848,16 +1096,6 @@ std::unique_ptr<model::ShapeElement> text_to_shapes(
     return group;
 }
 
-struct AnchorMult
-{
-    QPointF operator()(const PropertyValue& v) const
-    {
-        auto a = convert_value<QPointF>(v);
-        return {a.x() * p.x(), a.y() * p.y()};
-    }
-    QPointF p;
-};
-
 } // namespace
 
 void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const Layer& ae_layer, CompData&)
@@ -891,55 +1129,3 @@ void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const Layer
     }
 }
 
-void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult, bool divide_100)
-{
-    if ( prop.class_type() != PropertyBase::PropertyGroup )
-    {
-        warning(AepFormat::tr("Expected property group for transform"));
-        return;
-    }
-
-    const PropertyGroup& g = static_cast<const PropertyGroup&>(prop);
-    if ( g.split_position )
-    {
-        /// \todo
-        warning(AepFormat::tr("Split position currently not supported"));
-    }
-
-    bool is_3d = false;
-
-    for ( const auto& p : g.properties )
-    {
-        if ( p.match_name.endsWith("Anchor Point") || p.match_name.endsWith("Anchor") )
-            load_property_check(io, tf->anchor_point, *p.value, p.match_name, AnchorMult{anchor_mult});
-        else if ( p.match_name.endsWith("Position") )
-            load_property_check(io, tf->position, *p.value, p.match_name);
-        else if ( p.match_name.endsWith("Scale") )
-            load_property_check(io, tf->scale, *p.value, p.match_name, divide_100 ? &convert_divide<100, QVector2D> : &convert_divide<1, QVector2D>);
-        else if ( p.match_name.endsWith("Rotation") || p.match_name.endsWith("Rotate Z") )
-            load_property_check(io, tf->rotation, *p.value, p.match_name);
-        else if ( opacity && p.match_name.endsWith("Opacity") )
-            load_property_check(io, *opacity, *p.value, p.match_name, divide_100 ? &convert_divide<100> : &convert_divide<1>);
-        else if (
-            p.match_name.endsWith("Rotate X") ||
-            p.match_name.endsWith("Rotate Y") ||
-            p.match_name.endsWith("Orientation") ||
-            p.match_name.endsWith("Position_2")
-        )
-            is_3d = true;
-        else if ( !p.match_name.endsWith("Position_1") &&
-            !p.match_name.endsWith("Position_0") &&
-            !p.match_name.endsWith("Opacity") &&
-            !p.match_name.endsWith("Envir Appear in Reflect")
-        )
-            info(AepFormat::tr("Unknown property \"%1\"").arg(p.match_name));
-    }
-
-    if ( is_3d )
-    {
-        /// \todo figure a way of determining whether the transform is actually 3D
-        /// as layer transfoms seem to often have the 3D properties
-        (void)is_3d;
-//         warning(AepFormat::tr("3D transforms are not supported"));
-    }
-}
