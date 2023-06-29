@@ -648,6 +648,7 @@ private:
         values.reserve(count);
         for ( std::uint32_t i = 0; i < count; i++ )
             values.push_back(vals->reader.sub_reader(size, i * size));
+        vals->reader.prepare();
         return values;
     }
 
@@ -656,7 +657,7 @@ private:
         BezierData data;
         auto bounds = chunk->child("shph")->data();
         bounds.skip(3);
-        data.closed = Flags(bounds.read_uint8()).get(0, 3);
+        data.closed = !Flags(bounds.read_uint8()).get(0, 3);
         data.minimum.setX(bounds.read_float32());
         data.minimum.setY(bounds.read_float32());
         data.maximum.setX(bounds.read_float32());

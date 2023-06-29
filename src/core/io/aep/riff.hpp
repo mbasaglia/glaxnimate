@@ -320,7 +320,7 @@ public:
         return length_left;
     }
 
-    void prepare()
+    void prepare() const
     {
         file->seek(file_pos);
     }
@@ -341,6 +341,11 @@ public:
         for ( int i = 0; i < count; i++ )
             out.push_back((this->*read_fn)());
         return out;
+    }
+
+    QIODevice* device() const
+    {
+        return file;
     }
 
 private:
