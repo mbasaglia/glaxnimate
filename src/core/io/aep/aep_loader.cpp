@@ -200,7 +200,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
         anchor = it->second;
         layer->transform->anchor_point.set(anchor / 2);
     }
-    load_transform(layer->transform.get(), ae_layer.properties["ADBE Transform Group"], &layer->opacity, anchor);
+    load_transform(layer->transform.get(), ae_layer.properties["ADBE Transform Group"], &layer->opacity, anchor, false);
     /// \todo auto-orient
     /// \todo masks "ADBE Mask Parade"
 
@@ -476,10 +476,10 @@ bool convert_shape_reverse(const PropertyValue& v)
     return convert_value<int>(v) == 3;
 }
 
-template<int Divisor>
-qreal convert_divide(const PropertyValue& v)
+template<int Divisor, class T = qreal>
+T convert_divide(const PropertyValue& v)
 {
-    return convert_value<qreal>(v) / Divisor;
+    return convert_value<T>(v) / Divisor;
 }
 
 template<class T>
@@ -555,7 +555,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair&
     if ( prop.match_name == "ADBE Vector Group" )
     {
         auto gp = std::make_unique<model::Group>(document);
-        load_transform(gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], &gp->opacity, {1, 1});
+        load_transform(gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], &gp->opacity, {1, 1}, true);
 
         for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
         {
@@ -709,7 +709,7 @@ std::unique_ptr<model::ShapeElement> AepLoader::create_shape(const PropertyPair&
         auto shape = std::make_unique<model::Repeater>(document);
         if ( auto tf = prop.value->get("ADBE Vector Repeater Transform") )
         {
-            load_transform(shape->transform.get(), *tf, nullptr, {1, 1});
+            load_transform(shape->transform.get(), *tf, nullptr, {1, 1}, false);
             const char* pmn = "ADBE Vector Repeater Start Opacity";
             if ( auto o = tf->get(pmn) )
                 load_property_check(io, shape->start_opacity, *o, pmn, &convert_divide<100>);
@@ -888,7 +888,7 @@ void glaxnimate::io::aep::AepLoader::text_layer(model::Layer* layer, const Layer
     }
 }
 
-void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult)
+void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult, bool divide_100)
 {
     if ( prop.class_type() != PropertyBase::PropertyGroup )
     {
@@ -904,6 +904,7 @@ void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, m
     }
 
     bool is_3d = false;
+
     for ( const auto& p : g.properties )
     {
         if ( p.match_name.endsWith("Anchor Point") || p.match_name.endsWith("Anchor") )
@@ -911,11 +912,11 @@ void AepLoader::load_transform(model::Transform* tf, const PropertyBase& prop, m
         else if ( p.match_name.endsWith("Position") )
             load_property_check(io, tf->position, *p.value, p.match_name);
         else if ( p.match_name.endsWith("Scale") )
-            load_property_check(io, tf->scale, *p.value, p.match_name);
+            load_property_check(io, tf->scale, *p.value, p.match_name, divide_100 ? &convert_divide<100, QVector2D> : &convert_divide<1, QVector2D>);
         else if ( p.match_name.endsWith("Rotation") || p.match_name.endsWith("Rotate Z") )
             load_property_check(io, tf->rotation, *p.value, p.match_name);
         else if ( opacity && p.match_name.endsWith("Opacity") )
-            load_property_check(io, *opacity, *p.value, p.match_name);
+            load_property_check(io, *opacity, *p.value, p.match_name, divide_100 ? &convert_divide<100> : &convert_divide<1>);
         else if (
             p.match_name.endsWith("Rotate X") ||
             p.match_name.endsWith("Rotate Y") ||
