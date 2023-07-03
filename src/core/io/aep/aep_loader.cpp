@@ -944,7 +944,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
 
     layer->name.set(ae_layer.name);
     layer->render.set(!ae_layer.is_guide);
-    layer->animation->first_frame.set(ae_layer.start_time);
+    layer->animation->first_frame.set(ae_layer.in_time);
     layer->animation->last_frame.set(ae_layer.out_time);
     layer->visible.set(ae_layer.properties.visible);
     /// \todo could be nice to toggle visibility based on solo/shy
