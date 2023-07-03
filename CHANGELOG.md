@@ -12,8 +12,9 @@
     * When saving formats supporting a single composition, the active composition is exported
     * When possible, backup files are saved in the same directory as the file being edited
     * Improved SVG star output
-    * Improved svg group opacity import
-    * Added support of AEP files
+    * Improved SVG group opacity import
+    * Added support for AEP files
+    * Added support for SVGs with animations within `<defs>`
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console

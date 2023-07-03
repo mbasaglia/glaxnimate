@@ -321,7 +321,7 @@ protected:
     }
 
     template<class KfCollection>
-    KfCollection add_keyframes(KfCollection&& kfs)
+    std::decay_t<KfCollection> add_keyframes(KfCollection&& kfs)
     {
         if ( !kfs.empty() && kfs.back().time > max_time)
             max_time = kfs.back().time;

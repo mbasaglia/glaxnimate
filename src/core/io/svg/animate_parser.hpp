@@ -334,47 +334,48 @@ public:
             prop.keyframes.push_back({times[i], values[i], transitions[i]});
     }
 
-    AnimatedProperties parse_animated_properties(const QDomElement& parent)
+    void store_animate(const QString& target, const QDomElement& animate)
+    {
+        stored_animate[target].push_back(animate);
+    }
+
+    template<class FuncT>
+    AnimatedProperties parse_animated_elements(const QDomElement& parent, const FuncT& func)
     {
         AnimatedProperties props;
         props.element = parent;
 
-        for ( const auto& domnode : ItemCountRange(parent.childNodes()) )
-        {
-            if ( domnode.isElement() )
-            {
-                auto child = domnode.toElement();
+        for ( const auto& child: ElementRange(parent) )
+            func(child, props);
 
-                if ( child.tagName() == "animate" )
-                {
-                    if ( child.hasAttribute("attributeName") )
-                        parse_animate(child, props.properties[child.attribute("attributeName")]);
-                }
+        if ( parent.hasAttribute("id") )
+        {
+            auto it = stored_animate.find(parent.attribute("id"));
+            if ( it != stored_animate.end() )
+            {
+                for ( const auto& child: it->second )
+                    func(child, props);
             }
         }
 
         return props;
     }
 
+
+    AnimatedProperties parse_animated_properties(const QDomElement& parent)
+    {
+        return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
+            if ( child.tagName() == "animate" && child.hasAttribute("attributeName") )
+                parse_animate(child, props.properties[child.attribute("attributeName")]);
+        });
+    }
+
     AnimatedProperties parse_animated_transform(const QDomElement& parent)
     {
-        AnimatedProperties props;
-        props.element = parent;
-
-        for ( const auto& domnode : ItemCountRange(parent.childNodes()) )
-        {
-            if ( domnode.isElement() )
-            {
-                auto child = domnode.toElement();
-                if ( child.tagName() == "animateTransform" )
-                {
-                    if ( child.hasAttribute("type") && child.attribute("attributeName") == "transform" )
-                        parse_animate(child, props.properties[child.attribute("type")]);
-                }
-            }
-        }
-
-        return props;
+        return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
+            if ( child.tagName() == "animateTransform" && child.hasAttribute("type") && child.attribute("attributeName") == "transform" )
+                parse_animate(child, props.properties[child.attribute("type")]);
+        });
     }
 
     void warning(const QString& msg)
@@ -385,6 +386,7 @@ public:
 
     qreal fps = 60;
     std::function<void(const QString&)> on_warning;
+    std::unordered_map<QString, std::vector<QDomElement>> stored_animate;
     static const QRegularExpression separator;
     static const QRegularExpression clock_re;
     static const QRegularExpression frame_separator_re;

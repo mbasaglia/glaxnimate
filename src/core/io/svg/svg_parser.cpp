@@ -90,7 +90,7 @@ protected:
         }
 
         parse_css();
-        parse_defs();
+        parse_assets();
         parse_metadata();
 
         model::Layer* parent_layer = add_layer(&main->shapes);
@@ -141,7 +141,25 @@ private:
         std::stable_sort(css_blocks.begin(), css_blocks.end());
     }
 
-    void parse_defs()
+    void parse_defs(const QDomNode& node)
+    {
+        if ( !node.isElement() )
+            return;
+
+        auto defs = node.toElement();
+        for ( const auto& def : ElementRange(defs) )
+        {
+            if ( def.tagName().startsWith("animate") )
+            {
+                QString link = attr(def, "xlink", "href");
+                if ( link.isEmpty() || link[0] != "#" )
+                    continue;
+                animate_parser.store_animate(link.mid(1), def);
+            }
+        }
+    }
+
+    void parse_assets()
     {
         std::vector<QDomElement> later;
 
@@ -161,6 +179,10 @@ private:
 
             std::swap(later, unprocessed);
         }
+
+
+        for ( const auto& defs : ItemCountRange(dom.elementsByTagName("defs")) )
+            parse_defs(defs);
     }
 
     void parse_gradient_node(const QDomNode& domnode, std::vector<QDomElement>& later)
@@ -935,10 +957,15 @@ private:
         Style& style
     )
     {
+        apply_common_style(g_node, args.element, args.parent_style);
+
         auto anim = parse_animated(args.element);
+
+        for ( const auto& kf : add_keyframes(anim.single("opacity")) )
+            g_node->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
+
         display_to_opacity(g_node, anim, g_node->opacity, &style);
 
-        apply_common_style(g_node, args.element, args.parent_style);
         set_name(g_node, args.element);
         // Avoid doubling opacity values
         style.map.erase("opacity");
