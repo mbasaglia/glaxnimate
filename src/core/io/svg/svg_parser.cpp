@@ -18,9 +18,11 @@ public:
         ImportExport* io,
         QSize forced_size,
         model::FrameTime default_time,
-        GroupMode group_mode
+        GroupMode group_mode,
+        QDir default_asset_path
     ) : SvgParserPrivate(document, on_warning, io, forced_size, default_time),
-        group_mode(group_mode)
+        group_mode(group_mode),
+        default_asset_path(default_asset_path)
     {}
 
 protected:
@@ -1118,15 +1120,57 @@ private:
         args.shape_parent->insert(std::move(group));
     }
 
+    QString find_asset_file(const QString& path)
+    {
+        QFileInfo finfo(path);
+        if ( finfo.exists() )
+            return path;
+        else if ( default_asset_path.exists(path) )
+            return default_asset_path.filePath(path);
+        else if ( default_asset_path.exists(finfo.fileName()) )
+            return default_asset_path.filePath(finfo.fileName());
+
+        return {};
+    }
+
+    bool open_asset_file(model::Bitmap* image, const QString& path)
+    {
+        if ( path.isEmpty() )
+            return false;
+
+        auto file = find_asset_file(path);
+        if ( file.isEmpty() )
+            return false;
+
+        return image->from_file(file);
+    }
+
     void parseshape_image(const ParseFuncArgs& args)
     {
         auto bitmap = std::make_unique<model::Bitmap>(document);
-        if ( !bitmap->from_url(attr(args.element, "xlink", "href")) )
+
+        bool open = false;
+        QString href = attr(args.element, "xlink", "href");
+        QUrl url = href;
+
+        if ( url.isRelative() )
+            open = open_asset_file(bitmap.get(), href);
+        if ( !open )
+        {
+            if ( url.isLocalFile() )
+                open = open_asset_file(bitmap.get(), url.toLocalFile());
+            else
+                open = bitmap->from_url(url);
+        }
+
+        if ( !open )
         {
             QString path = attr(args.element, "sodipodi", "absref");
-            if ( !bitmap->from_file(path) )
-                return;
+            open = open_asset_file(bitmap.get(), path);
         }
+        if ( !open )
+            warning(QString("Could not load image %1").arg(href));
+
         auto image = std::make_unique<model::Image>(document);
         image->image.set(document->assets()->images->values.insert(std::move(bitmap)));
 
@@ -1324,6 +1368,7 @@ private:
 
     GroupMode group_mode;
     std::vector<CssStyleBlock> css_blocks;
+    QDir default_asset_path;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression transform_re;
@@ -1357,9 +1402,10 @@ glaxnimate::io::svg::SvgParser::SvgParser(
     const std::function<void(const QString&)>& on_warning,
     ImportExport* io,
     QSize forced_size,
-    model::FrameTime default_time
+    model::FrameTime default_time,
+    QDir default_asset_path
 )
-    : d(std::make_unique<Private>(document, on_warning, io, forced_size, default_time, group_mode))
+    : d(std::make_unique<Private>(document, on_warning, io, forced_size, default_time, group_mode, default_asset_path))
 {
     d->load(device);
 }

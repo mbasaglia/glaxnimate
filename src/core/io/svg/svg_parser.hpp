@@ -45,7 +45,8 @@ public:
         const std::function<void(const QString&)>& on_warning = {},
         ImportExport* io = nullptr,
         QSize forced_size = {},
-        model::FrameTime default_time = 180
+        model::FrameTime default_time = 180,
+        QDir default_asset_path = {}
     );
     ~SvgParser();
 
