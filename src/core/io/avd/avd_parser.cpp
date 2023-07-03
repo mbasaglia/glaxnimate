@@ -166,6 +166,7 @@ private:
     {
         model::FrameTime start_time = qRound(anim.attribute("startOffset", "0").toDouble() / 1000 * animate_parser.fps);
         model::FrameTime end_time = qRound(start_time + anim.attribute("duration", "0").toDouble() / 1000 * animate_parser.fps);
+        animate_parser.register_time_range(start_time, end_time);
         std::vector<AnimatedProperty*> updated_props;
 
         QString name = anim.attribute("propertyName");
@@ -404,13 +405,13 @@ private:
         stroke->miter_limit.set(parse_unit(style.get("strokeMiterLimit", "4")));
 
         auto anim = get_animations(args.element);
-        for ( const auto& kf : add_keyframes(anim.single("strokeColor")) )
+        for ( const auto& kf : anim.single("strokeColor") )
             stroke->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("strokeAlpha")) )
+        for ( const auto& kf : anim.single("strokeAlpha") )
             stroke->opacity.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("strokeWidth")) )
+        for ( const auto& kf : anim.single("strokeWidth") )
             stroke->width.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
         shapes->insert(std::move(stroke));
@@ -432,10 +433,10 @@ private:
             fill->fill_rule.set(model::Fill::EvenOdd);
 
         auto anim = get_animations(args.element);
-        for ( const auto& kf : add_keyframes(anim.single("fillColor")) )
+        for ( const auto& kf : anim.single("fillColor") )
             fill->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("fillAlpha")) )
+        for ( const auto& kf : anim.single("fillAlpha") )
             fill->opacity.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
         shapes->insert(std::move(fill));
@@ -451,13 +452,13 @@ private:
 
         auto anim = get_animations(args.element);
 
-        for ( const auto& kf : add_keyframes(anim.single("trimPathStart")) )
+        for ( const auto& kf : anim.single("trimPathStart") )
             trim->start.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("trimPathEnd")) )
+        for ( const auto& kf : anim.single("trimPathEnd") )
             trim->end.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("trimPathOffset")) )
+        for ( const auto& kf : anim.single("trimPathOffset") )
             trim->offset.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
 
         shapes->insert(std::move(trim));
@@ -544,7 +545,7 @@ private:
 
         auto anim = get_animations(args.element);
 
-        for ( const auto& kf : add_keyframes(anim.joined({"pivotX", "pivotY", "translateX", "translateY"})) )
+        for ( const auto& kf : anim.joined({"pivotX", "pivotY", "translateX", "translateY"}) )
         {
             anchor = QPointF(kf.values[0].scalar(), kf.values[1].scalar());
             trans->anchor_point.set_keyframe(kf.time, anchor)->set_transition(kf.transition);
@@ -552,13 +553,13 @@ private:
             trans->position.set_keyframe(kf.time, anchor + pos)->set_transition(kf.transition);
         }
 
-        for ( const auto& kf : add_keyframes(anim.joined({"scaleX", "scaleY"})) )
+        for ( const auto& kf : anim.joined({"scaleX", "scaleY"}) )
         {
             QVector2D scale(kf.values[0].scalar(), kf.values[1].scalar());
             trans->scale.set_keyframe(kf.time, scale)->set_transition(kf.transition);
         }
 
-        for ( const auto& kf : add_keyframes(anim.single("rotation")) )
+        for ( const auto& kf : anim.single("rotation") )
             trans->rotation.set_keyframe(kf.time, kf.values.scalar())->set_transition(kf.transition);
     }
 

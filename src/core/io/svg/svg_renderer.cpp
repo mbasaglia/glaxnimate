@@ -217,6 +217,11 @@ public:
         return g;
     }
 
+    QString unlerp_time(model::FrameTime time) const
+    {
+        return QString::number(math::unlerp(ip, op, time), 'f');
+    }
+
     struct AnimationData
     {
         struct Attribute
@@ -252,11 +257,6 @@ public:
                 attributes[i].values.push_back(vals[i]);
         }
 
-        QString unlerp_time(model::FrameTime time) const
-        {
-            return QString::number(math::unlerp(parent->ip, parent->op, time), 'f');
-        }
-
         void add_keyframe(model::FrameTime time, const std::vector<QString>& vals,
                           const model::KeyframeTransition& trans)
         {
@@ -272,14 +272,14 @@ public:
             else if ( hold && last + 1 < time )
             {
 
-                key_times.push_back(unlerp_time(time - 1));
+                key_times.push_back(parent->unlerp_time(time - 1));
                 key_splines.push_back("0 0 1 1");
                 for ( std::size_t i = 0; i != attributes.size(); i++ )
                     attributes[i].values.push_back(attributes[i].values.back());
 
             }
 
-            key_times.push_back(unlerp_time(time));
+            key_times.push_back(parent->unlerp_time(time));
             key_splines.push_back(key_spline(trans));
 
             for ( std::size_t i = 0; i != attributes.size(); i++ )
@@ -866,12 +866,12 @@ public:
                     QString times;
                     QString vals;
 
-                    times += clock(ip) + ";";
+                    times += "0;";
 
                     if ( has_start )
                     {
                         vals += "none;inline;";
-                        times += clock(lay_range->first_frame.get()) + ";";
+                        times += unlerp_time(lay_range->first_frame.get()) + ";";
                     }
                     else
                     {
@@ -881,7 +881,7 @@ public:
                     if ( has_end )
                     {
                         vals += "none;";
-                        times += clock(lay_range->last_frame.get()) + ";";
+                        times += unlerp_time(lay_range->last_frame.get()) + ";";
                     }
 
                     animation.setAttribute("values", vals);

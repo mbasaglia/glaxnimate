@@ -270,7 +270,7 @@ private:
             brush_styles["#"+id] = col.get();
             auto anim = parse_animated(gradient.firstChildElement("stop"));
 
-            for ( const auto& kf : add_keyframes(anim.single("stop-color")) )
+            for ( const auto& kf : anim.single("stop-color") )
                 col->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
             document->assets()->colors->values.insert(std::move(col));
@@ -312,9 +312,9 @@ private:
             )));
 
             auto anim = parse_animated(element);
-            for ( const auto& kf : add_keyframes(anim.joined({"x1", "y1"})) )
+            for ( const auto& kf : anim.joined({"x1", "y1"}) )
                 gradient->start_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-            for ( const auto& kf : add_keyframes(anim.joined({"x2", "y2"})) )
+            for ( const auto& kf : anim.joined({"x2", "y2"}) )
                 gradient->end_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         }
         else if ( element.tagName() == "radialGradient" )
@@ -344,17 +344,17 @@ private:
 
 
             auto anim = parse_animated(element);
-            for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+            for ( const auto& kf : anim.joined({"cx", "cy"}) )
                 gradient->start_point.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
-            for ( const auto& kf : add_keyframes(anim.joined({"fx", "fy"})) )
+            for ( const auto& kf : anim.joined({"fx", "fy"}) )
                 gradient->highlight.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
-            for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy", "r"})) )
+            for ( const auto& kf : anim.joined({"cx", "cy", "r"}) )
                 gradient->end_point.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0] + kf.values[2].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
@@ -550,13 +550,13 @@ private:
 
         auto anim = animate_parser.parse_animated_transform(element);
 
-        for ( const auto& kf : add_keyframes(anim.single("translate")) )
+        for ( const auto& kf : anim.single("translate") )
             transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("scale")) )
+        for ( const auto& kf : anim.single("scale") )
             transform->scale.set_keyframe(kf.time, QVector2D(kf.values.vector()[0], kf.values.vector()[1]))->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("rotate")) )
+        for ( const auto& kf : anim.single("rotate") )
         {
             transform->rotation.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
             if ( kf.values.vector().size() == 3 )
@@ -734,7 +734,7 @@ private:
         model::KeyframeTransition hold;
         hold.set_hold(true);
 
-        for ( const auto& kf : add_keyframes(anim.single("display")) )
+        for ( const auto& kf : anim.single("display") )
         {
             opacity.set_keyframe(kf.time, kf.values.string() == "none" ? 0 : 1)->set_transition(hold);
         }
@@ -759,13 +759,13 @@ private:
         stroke->miter_limit.set(parse_unit(style.get("stroke-miterlimit", "4")));
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : add_keyframes(anim.single("stroke")) )
+        for ( const auto& kf : anim.single("stroke") )
             stroke->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("stroke-opacity")) )
+        for ( const auto& kf : anim.single("stroke-opacity") )
             stroke->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("stroke-width")) )
+        for ( const auto& kf : anim.single("stroke-width") )
             stroke->width.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         display_to_opacity(stroke.get(), anim, stroke->opacity, nullptr);
@@ -808,10 +808,10 @@ private:
             fill->fill_rule.set(model::Fill::EvenOdd);
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : add_keyframes(anim.single("fill")) )
+        for ( const auto& kf : anim.single("fill") )
             fill->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.single("fill-opacity")) )
+        for ( const auto& kf : anim.single("fill-opacity") )
             fill->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         if ( fill_color == "none" )
@@ -847,16 +847,16 @@ private:
 
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : add_keyframes(anim.joined({"x", "y", "width", "height"})) )
+        for ( const auto& kf : anim.joined({"x", "y", "width", "height"}) )
             rect->position.set_keyframe(kf.time, {
                 kf.values[0].vector()[0] + kf.values[2].vector()[0] / 2,
                 kf.values[1].vector()[0] + kf.values[3].vector()[0] / 2
             })->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.joined({"width", "height"})) )
+        for ( const auto& kf : anim.joined({"width", "height"}) )
             rect->size.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
 
-        for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
+        for ( const auto& kf : anim.joined({"rx", "ry"}) )
             rect->rounded.set_keyframe(kf.time, qMax(kf.values[0].vector()[0], kf.values[1].vector()[0]))->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -875,9 +875,9 @@ private:
         ellipse->size.set(QSizeF(rx * 2, ry * 2));
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+        for ( const auto& kf : anim.joined({"cx", "cy"}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-        for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
+        for ( const auto& kf : anim.joined({"rx", "ry"}) )
             ellipse->size.set_keyframe(kf.time, {kf.values[0].vector()[0]*2, kf.values[1].vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -895,9 +895,9 @@ private:
         ellipse->size.set(QSizeF(d, d));
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+        for ( const auto& kf : anim.joined({"cx", "cy"}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-        for ( const auto& kf : add_keyframes(anim.single({"r"})) )
+        for ( const auto& kf : anim.single({"r"}) )
             ellipse->size.set_keyframe(kf.time, {kf.values.vector()[0]*2, kf.values.vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -961,7 +961,7 @@ private:
 
         auto anim = parse_animated(args.element);
 
-        for ( const auto& kf : add_keyframes(anim.single("opacity")) )
+        for ( const auto& kf : anim.single("opacity") )
             g_node->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         display_to_opacity(g_node, anim, g_node->opacity, &style);
@@ -1019,7 +1019,7 @@ private:
             len_attr(args.element, "y2", 0)
         ));
         auto path = parse_bezier_impl_single(args, bez);
-        for ( const auto& kf : add_keyframes(parse_animated(args.element).joined({"x1", "y1", "x2", "y2"})) )
+        for ( const auto& kf : parse_animated(args.element).joined({"x1", "y1", "x2", "y2"}) )
         {
             math::bezier::Bezier bez;
             bez.add_point({kf.values[0].vector()[0], kf.values[1].vector()[0]});
@@ -1056,7 +1056,7 @@ private:
         if ( !path )
             return;
 
-        for ( const auto& kf : add_keyframes(parse_animated(args.element).single("points")) )
+        for ( const auto& kf : parse_animated(args.element).single("points") )
             path->shape.set_keyframe(kf.time, build_poly(kf.values.vector(), close))->set_transition(kf.transition);
 
     }
@@ -1347,7 +1347,7 @@ private:
                     last->position.set(pos + offset);
                     apply_text_style(last->font.get(), style);
 
-                    for ( const auto& kf : add_keyframes(anim.joined({"x", "y"})) )
+                    for ( const auto& kf : anim.joined({"x", "y"}) )
                     {
                         last->position.set_keyframe(
                             kf.time,

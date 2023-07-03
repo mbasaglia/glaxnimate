@@ -320,15 +320,6 @@ protected:
         return model::Stroke::MiterJoin;
     }
 
-    template<class KfCollection>
-    std::decay_t<KfCollection> add_keyframes(KfCollection&& kfs)
-    {
-        if ( !kfs.empty() && kfs.back().time > max_time)
-            max_time = kfs.back().time;
-
-        return std::forward<KfCollection>(kfs);
-    }
-
     void path_animation(
         const std::vector<model::Path*>& paths,
         const AnimatedProperties& anim,
@@ -337,7 +328,7 @@ protected:
     {
         if ( !paths.empty() )
         {
-            for ( const auto& kf : add_keyframes(anim.single(attr)) )
+            for ( const auto& kf : anim.single(attr) )
             {
                 for ( int i = 0; i < math::min<int>(kf.values.bezier().size(), paths.size()); i++ )
                     paths[i]->shape.set_keyframe(kf.time, kf.values.bezier()[i])->set_transition(kf.transition);
@@ -351,13 +342,18 @@ private:
         main->width.set(size.width());
         main->height.set(size.height());
 
-        if ( max_time <= 0 )
-            max_time = default_time;
+        if ( !animate_parser.kf_range_initialized )
+        {
+            animate_parser.min_kf = 0;
+            animate_parser.max_kf = default_time;
+        }
 
-        main->animation->last_frame.set(max_time);
+        main->animation->first_frame.set(animate_parser.min_kf);
+        main->animation->last_frame.set(animate_parser.max_kf);
         for ( auto lay : layers )
         {
-            lay->animation->last_frame.set(max_time);
+            lay->animation->last_frame.set(animate_parser.min_kf);
+            lay->animation->last_frame.set(animate_parser.max_kf);
         }
 
         document->undo_stack().clear();
@@ -377,7 +373,6 @@ protected:
     model::Document* document;
 
     AnimateParser animate_parser;
-    model::FrameTime max_time = 0;
     std::function<void(const QString&)> on_warning;
     std::unordered_map<QString, QDomElement> map_ids;
     std::unordered_map<QString, model::BrushStyle*> brush_styles;

@@ -15,6 +15,7 @@
     * Improved SVG group opacity import
     * Added support for AEP files
     * Added support for SVGs with animations within `<defs>`
+    * Improved start/end frame detection for AVD and SVG
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console

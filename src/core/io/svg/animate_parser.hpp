@@ -228,6 +228,23 @@ public:
         return values;
     }
 
+    void register_time_range(model::FrameTime start_time, model::FrameTime end_time)
+    {
+        if ( !kf_range_initialized )
+        {
+            kf_range_initialized = true;
+            min_kf = start_time;
+            max_kf = end_time;
+        }
+        else
+        {
+            if ( min_kf > start_time )
+                min_kf = start_time;
+            if ( max_kf > end_time )
+                max_kf = end_time;
+        }
+    }
+
     void parse_animate(const QDomElement& animate, AnimatedProperty& prop)
     {
         if ( !prop.keyframes.empty() )
@@ -252,6 +269,8 @@ public:
             warning("Invalid timings in `animate`");
             return;
         }
+
+        register_time_range(start_time, end_time);
 
         std::vector<ValueVariant> values = get_values(animate);
         if ( values.empty() )
@@ -385,6 +404,9 @@ public:
     }
 
     qreal fps = 60;
+    qreal min_kf = 0;
+    qreal max_kf = 0;
+    bool kf_range_initialized = false;
     std::function<void(const QString&)> on_warning;
     std::unordered_map<QString, std::vector<QDomElement>> stored_animate;
     static const QRegularExpression separator;
