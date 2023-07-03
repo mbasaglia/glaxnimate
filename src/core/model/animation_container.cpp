@@ -12,7 +12,7 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::AnimationContainer)
 
 bool glaxnimate::model::AnimationContainer::time_visible(glaxnimate::model::FrameTime time) const
 {
-    return first_frame.get() <= time && time <= last_frame.get();
+    return first_frame.get() <= time && time < last_frame.get();
 }
 
 bool glaxnimate::model::AnimationContainer::time_visible() const

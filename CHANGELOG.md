@@ -13,6 +13,7 @@
     * When possible, backup files are saved in the same directory as the file being edited
     * Improved SVG star output
     * Improved svg group opacity import
+    * Added support of AEP files
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
@@ -20,6 +21,7 @@
     * Fixed button connections in the advanced page of the trace dialog
     * Opening an image file sets the animation to 1 second rather than 0
     * Fixed several inconsistencies that applied changes to the first composition
+    * Fixed layer end frame rendering
 * Other:
     * Added arm64 APK download
 
