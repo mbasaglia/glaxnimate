@@ -15,8 +15,7 @@
 
 #include "lottie_private_common.hpp"
 #include "io/svg/svg_parser.hpp"
-
-#include <QDebug>
+#include "model/animation/join_animatables.hpp"
 
 namespace glaxnimate::io::lottie::detail {
 
@@ -546,8 +545,28 @@ private:
             gradient->colors.set(colors);
             load_properties(gradient, fields["Gradient"], json_obj, props);
 
-            /// \todo load highlight from h/a if present
-            gradient->highlight.set(gradient->start_point.get());
+            if ( json_obj.contains("h") || json_obj.contains("a") )
+            {
+                model::Document dummydoc("");
+                model::Object dummy(&dummydoc);
+                model::AnimatedProperty<float> length(&dummy, "", 0);
+                model::AnimatedProperty<float> angle(&dummy, "", 0);
+                if ( json_obj.contains("h") )
+                    load_animated(&length, json_obj["h"], {});
+                if ( json_obj.contains("a") )
+                    load_animated(&angle, json_obj["a"], {});
+
+                glaxnimate::model::JoinAnimatables join({&gradient->start_point, &gradient->end_point, &length, &angle});
+                join.apply_to(&gradient->highlight, [](const QPointF& p, const QPointF& e, float length, float angle) -> QPointF {
+                    angle = math::deg2rad(angle + 90);
+                    length = math::length(e - p) * length / 100;
+                    return p + math::from_polar<QPointF>(length, angle);
+                }, &gradient->start_point, &gradient->end_point, &length, &angle);
+            }
+            else
+            {
+                gradient->highlight.set(gradient->start_point.get());
+            }
 
             auto jcolors = json_obj["g"].toObject();
             load_animated(&colors->colors, jcolors["k"], GradientLoad{jcolors["p"].toInt()});

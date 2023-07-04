@@ -16,6 +16,7 @@
     * Added support for AEP files
     * Added support for SVGs with animations within `<defs>`
     * Improved start/end frame detection for AVD and SVG
+    * Added support for importing lottie with gradient highlight
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console

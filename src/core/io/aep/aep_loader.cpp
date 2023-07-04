@@ -19,7 +19,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/text.hpp"
-#include <model/animation/join_animatables.hpp>
+#include "model/animation/join_animatables.hpp"
 
 using namespace glaxnimate::io::aep;
 using namespace glaxnimate;
