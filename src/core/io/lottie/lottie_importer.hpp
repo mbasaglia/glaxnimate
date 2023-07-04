@@ -40,10 +40,11 @@ public:
     {
         load_version(json);
         load_meta(json["meta"]);
-        load_assets(json["assets"].toArray());
+        main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
+        auto comps = load_assets(json["assets"].toArray());
         load_fonts(json["fonts"]["list"].toArray());
-        auto main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
         load_composition(json, main);
+        load_comps(comps);
     }
 
 private:
@@ -105,6 +106,15 @@ private:
         invalid_indices.clear();
         layer_indices.clear();
         deferred.clear();
+
+        if ( composition != main )
+        {
+            composition->width.set(main->width.get());
+            composition->height.set(main->height.get());
+            composition->fps.set(main->fps.get());
+            composition->animation->first_frame.set(main->animation->first_frame.get());
+            composition->animation->last_frame.set(main->animation->last_frame.get());
+        }
 
         load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
@@ -907,7 +917,7 @@ private:
         return {keyframe_bezier_handle_comp(val["x"]), keyframe_bezier_handle_comp(val["y"])};
     }
 
-    void load_assets(const QJsonArray& assets)
+    std::vector<std::pair<QJsonObject, model::Composition*>> load_assets(const QJsonArray& assets)
     {
         std::vector<std::pair<QJsonObject, model::Composition*>> comps;
 
@@ -920,6 +930,11 @@ private:
                 comps.emplace_back(asset, load_asset_precomp(asset));
         }
 
+        return comps;
+    }
+
+    void load_comps(const std::vector<std::pair<QJsonObject, model::Composition*>>& comps)
+    {
         for ( const auto& p : comps )
             load_composition(p.first, p.second);
     }
@@ -1081,6 +1096,7 @@ private:
     model::DocumentNode* current_node = nullptr;
     model::Layer* current_layer = nullptr;
     std::array<int, 3> version = {5,5,1};
+    model::Composition* main = nullptr;
 };
 
 
