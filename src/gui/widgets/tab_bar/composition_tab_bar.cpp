@@ -147,13 +147,12 @@ void CompositionTabBar::update_comp_color(int index, model::Composition* comp)
 
 void CompositionTabBar::set_current_composition(model::Composition* comp)
 {
-    int index = document->assets()->compositions->values.index_of(static_cast<model::Composition*>(comp));
-    setCurrentIndex(index+1);
+    int index = document->assets()->compositions->values.index_of(comp);
+    setCurrentIndex(index);
 }
 
 void CompositionTabBar::on_precomp_removed(int index)
 {
-    index++;
     if ( currentIndex() == index )
         setCurrentIndex(0);
 
