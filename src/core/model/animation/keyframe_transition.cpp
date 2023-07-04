@@ -141,7 +141,14 @@ void glaxnimate::model::KeyframeTransition::set_hold(bool hold)
 
 double glaxnimate::model::KeyframeTransition::lerp_factor(double ratio) const
 {
-    if ( ratio <= 0 || hold_ )
+    if ( hold_ )
+    {
+        if ( ratio >= 1 || qFuzzyCompare(float(ratio), 1.f) )
+            return 1;
+        return 0;
+    }
+
+    if ( ratio <= 0 )
         return 0;
     if ( ratio >= 1 )
         return 1;

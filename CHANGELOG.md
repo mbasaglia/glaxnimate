@@ -24,6 +24,7 @@
     * Opening an image file sets the animation to 1 second rather than 0
     * Fixed several inconsistencies that applied changes to the first composition
     * Fixed layer end frame rendering
+    * Fixed hold frame inconsistent handling of their last frame
 * Other:
     * Added arm64 APK download
 
