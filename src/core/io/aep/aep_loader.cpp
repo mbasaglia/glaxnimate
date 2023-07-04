@@ -46,6 +46,9 @@ static constexpr std::array<QRgb, 17> label_colors = {
 
 void glaxnimate::io::aep::AepLoader::load_project()
 {
+    for ( const auto& comp : project.compositions )
+        get_comp(comp->id);
+
     for ( const auto& pair : project.assets )
         load_asset(pair.second);
 
