@@ -20,8 +20,6 @@
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/text.hpp"
 
-#include <QDebug>
-
 using namespace glaxnimate::io::aep;
 using namespace glaxnimate;
 using glaxnimate::io::ImportExport;
@@ -91,8 +89,12 @@ void glaxnimate::io::aep::AepLoader::load_asset(const glaxnimate::io::aep::Folde
     }
     else if ( item->type() == FolderItem::Composition )
     {
-        auto comp = static_cast<const Composition*>(item);
-        asset_size[item->id] = QPointF(comp->width, comp->height);
+        auto aecomp = static_cast<const Composition*>(item);
+        asset_size[item->id] = QPointF(aecomp->width, aecomp->height);
+        auto comp = get_comp(item->id);
+        comp->width.set(aecomp->width);
+        comp->height.set(aecomp->height);
+        comp->name.set(aecomp->name);
     }
 }
 
