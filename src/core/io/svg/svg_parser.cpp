@@ -152,7 +152,7 @@ private:
             if ( def.tagName().startsWith("animate") )
             {
                 QString link = attr(def, "xlink", "href");
-                if ( link.isEmpty() || link[0] != "#" )
+                if ( link.isEmpty() || link[0] != '#' )
                     continue;
                 animate_parser.store_animate(link.mid(1), def);
             }
