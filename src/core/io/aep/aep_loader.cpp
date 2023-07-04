@@ -19,6 +19,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/text.hpp"
+#include <model/animation/join_animatables.hpp>
 
 using namespace glaxnimate::io::aep;
 using namespace glaxnimate;
@@ -801,7 +802,29 @@ std::unique_ptr<model::ShapeElement> load_gradient(const ObjectConverter<T, mode
     auto f2 = gradient_converter().fallback(grad, &f1);
     base_converter->load_properties(shape.get(), io, document, prop, &f2);
 
-    grad->highlight.set(grad->start_point.get());
+    auto* highlight_len = prop.value->get("ADBE Vector Grad HiLite Length");
+    auto* highlight_angle = prop.value->get("ADBE Vector Grad HiLite Angle");
+    if ( highlight_len || highlight_angle )
+    {
+        model::Document dummydoc("");
+        model::Object dummy(&dummydoc);
+        model::AnimatedProperty<float> length(&dummy, "", 0);
+        model::AnimatedProperty<float> angle(&dummy, "", 0);
+        if ( highlight_len )
+            load_property_check(io, length, *highlight_len, "ADBE Vector Grad HiLite Length");
+        if ( highlight_angle )
+            load_property_check(io, angle, *highlight_angle, "ADBE Vector Grad HiLite Angle");
+        model::JoinAnimatables join({&grad->start_point, &grad->end_point, &length, &angle});
+        join.apply_to(&grad->highlight, [](const QPointF& p, const QPointF& e, float length, float angle) -> QPointF {
+            angle = math::deg2rad(angle + 90);
+            length = math::length(e - p) * length / 100;
+            return p + math::from_polar<QPointF>(length, angle);
+        }, &grad->start_point, &grad->end_point, &length, &angle);
+    }
+    else
+    {
+        grad->highlight.set(grad->start_point.get());
+    }
 
     return shape;
 }
