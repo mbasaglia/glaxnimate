@@ -599,6 +599,7 @@ public:
                 break;
             case model::Stroke::Join::MiterJoin:
                 style["stroke-linejoin"] = "miter";
+                style["stroke-miterlimit"] = QString::number(stroke->miter_limit.get());
                 break;
         }
         style["stroke-dasharray"] = "none";
