@@ -304,7 +304,7 @@ static MultiBezier offset_path(
         for ( const auto& multi_segment : multi_segments )
         {
             if ( last_seg )
-                last_point = join_lines(output_bezier, *last_seg, multi_segment[0], line_join, miter_limit);
+                last_point = join_lines(output_bezier, *last_seg, multi_segment[0], line_join, miter_limit * amount);
 
             last_seg = &multi_segment.back();
 
@@ -324,7 +324,7 @@ static MultiBezier offset_path(
         }
 
         if ( !multi_segments.empty() )
-            join_lines(output_bezier, *last_seg, multi_segments[0][0], line_join, miter_limit);
+            join_lines(output_bezier, *last_seg, multi_segments[0][0], line_join, miter_limit * amount);
 
         result.beziers().push_back(output_bezier);
     }

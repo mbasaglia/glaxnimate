@@ -905,8 +905,8 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
         ;
         factory.obj<model::OffsetPath>("ADBE Vector Filter - Offset")
             .prop(&model::OffsetPath::amount, "ADBE Vector Offset Amount")
-            .prop(&model::OffsetPath::join, "ADBE Vector Offset Line Join", &convert_enum<model::Stroke::Join>)
-            .prop(&model::OffsetPath::miter_limit, "ADBE Vector Offset Miter Limit")
+            .prop(&model::OffsetPath::join, "ADBE Vector Offset Line Join", &convert_enum<model::Stroke::Join>, model::Stroke::MiterJoin)
+            .prop(&model::OffsetPath::miter_limit, "ADBE Vector Offset Miter Limit", {}, 4)
         ;
         factory.obj<model::InflateDeflate>("ADBE Vector Filter - PB")
             .prop(&model::InflateDeflate::amount, "ADBE Vector PuckerBloat Amount")

@@ -28,6 +28,7 @@
     * Fixed layer end frame rendering
     * Fixed hold frame inconsistent handling of their last frame
     * Fixed rendering order for trim path
+    * Fixed miter limit for offset path
 * Other:
     * Added arm64 APK download
 

@@ -329,7 +329,11 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"OffsetPath", {
         FieldInfo{"a", "amount"},
-        FieldInfo{"lj", "join"},
+        FieldInfo{"lj", "join", EnumMap{{
+            {model::Stroke::MiterJoin, 1},
+            {model::Stroke::RoundJoin, 2},
+            {model::Stroke::BevelJoin, 3},
+        }}},
         FieldInfo{"ml", "miter_limit"},
     }},
     {"ZigZag", {
