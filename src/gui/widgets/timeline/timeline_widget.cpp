@@ -260,7 +260,7 @@ public:
 
     int frame_at_point(const QPoint& view_pos)
     {
-        return qBound(start_time, qRound(parent->mapToScene(view_pos).x()), end_time);
+        return qBound(start_time, qRound(parent->mapToScene(view_pos).x()), end_time - 1);
     }
 };
 
@@ -465,14 +465,14 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     painter.fillRect(
         QRectF(
             QPointF(mapFromScene(d->start_time, 0).x(), 0),
-            QPointF(mapFromScene(d->end_time+1, 0).x(), small_height)
+            QPointF(mapFromScene(d->end_time, 0).x(), small_height)
         ),
         palette().base()
     );
     painter.fillRect(
         QRectF(
             QPointF(mapFromScene(d->time_round_to_ticks(d->start_time) - d->frame_skip, 0).x(), small_height),
-            QPointF(mapFromScene(d->time_round_to_ticks(d->end_time), 0).x(), d->header_height)
+            QPointF(mapFromScene(d->time_round_to_ticks(d->end_time-1), 0).x(), d->header_height)
         ),
         palette().base()
     );

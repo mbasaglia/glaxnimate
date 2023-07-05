@@ -265,7 +265,7 @@ public:
         {
             if ( min_kf > start_time )
                 min_kf = start_time;
-            if ( max_kf > end_time )
+            if ( max_kf < end_time )
                 max_kf = end_time;
         }
     }
