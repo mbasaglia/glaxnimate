@@ -268,6 +268,7 @@ void glaxnimate::model::ShapeOperator::update_affected()
     }
 
     affected_elements = curr_siblings;
+    std::reverse(affected_elements.begin(), affected_elements.end());
 }
 
 void glaxnimate::model::ShapeOperator::on_graphics_changed()
