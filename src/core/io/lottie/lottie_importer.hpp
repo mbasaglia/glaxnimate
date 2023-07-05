@@ -345,6 +345,8 @@ private:
                 auto shape_target = std::make_unique<model::Layer>(document);
                 target = shape_target.get();
                 shape_target->name.set(layer->name.get());
+                shape_target->animation->first_frame.set(layer->animation->first_frame.get());
+                shape_target->animation->last_frame.set(layer->animation->last_frame.get());
                 layer->shapes.insert(std::move(shape_target));
 
                 document->set_best_name(clip, QObject::tr("Clip"));
