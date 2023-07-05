@@ -347,6 +347,10 @@ private:
             animate_parser.min_kf = 0;
             animate_parser.max_kf = default_time;
         }
+        else
+        {
+            animate_parser.max_kf = qRound(animate_parser.max_kf);
+        }
 
         main->animation->first_frame.set(animate_parser.min_kf);
         main->animation->last_frame.set(animate_parser.max_kf);
