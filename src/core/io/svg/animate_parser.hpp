@@ -38,6 +38,31 @@ public:
     {
         QDomElement element;
 
+        bool apply_motion(model::AnimatedProperty<QPointF>& prop, const QPointF& delta_pos = {}) const
+        {
+            auto motion = properties.find("motion");
+            if ( motion == properties.end() )
+                return false;
+
+            for ( const auto& kf : motion->second.keyframes )
+                prop.set_keyframe(kf.time, QPointF())->set_transition(kf.transition);
+
+            if ( qFuzzyIsNull(math::length(delta_pos)) )
+            {
+                prop.set_bezier(motion->second.motion);
+            }
+            else
+            {
+                math::bezier::Bezier bez = motion->second.motion;
+                for ( auto& p : bez )
+                    p.translate(delta_pos);
+
+                prop.set_bezier(bez);
+            }
+
+            return true;
+        }
+
         bool prepare_joined(std::vector<JoinedProperty>& props) const override
         {
             for ( auto& p : props )
@@ -245,7 +270,7 @@ public:
         }
     }
 
-    void parse_animate(const QDomElement& animate, AnimatedProperty& prop)
+    void parse_animate(const QDomElement& animate, AnimatedProperty& prop, bool motion)
     {
         if ( !prop.keyframes.empty() )
         {
@@ -272,7 +297,35 @@ public:
 
         register_time_range(start_time, end_time);
 
-        std::vector<ValueVariant> values = get_values(animate);
+        std::vector<ValueVariant> values;
+
+        if ( motion )
+        {
+            if ( !animate.hasAttribute("path") )
+            {
+                warning("Missing path for animateMotion");
+                return;
+            }
+
+            auto mbez = PathDParser(animate.attribute("path")).parse();
+
+            /// \todo Automatically add Hold transitions for sub-bezier end points
+            for ( const auto& b : mbez.beziers() )
+            {
+                for ( const auto& p : b )
+                {
+                    values.push_back(std::vector<qreal>{p.pos.x(), p.pos.y()});
+                    prop.motion.push_back(p);
+                }
+            }
+
+            /// \todo keyPoints
+        }
+        else
+        {
+            values = get_values(animate);
+        }
+
         if ( values.empty() )
             return;
 
@@ -385,7 +438,9 @@ public:
     {
         return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
             if ( child.tagName() == "animate" && child.hasAttribute("attributeName") )
-                parse_animate(child, props.properties[child.attribute("attributeName")]);
+                parse_animate(child, props.properties[child.attribute("attributeName")], false);
+            else if ( child.tagName() == "animateMotion" )
+                parse_animate(child, props.properties["motion"], true);
         });
     }
 
@@ -393,7 +448,9 @@ public:
     {
         return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
             if ( child.tagName() == "animateTransform" && child.hasAttribute("type") && child.attribute("attributeName") == "transform" )
-                parse_animate(child, props.properties[child.attribute("type")]);
+                parse_animate(child, props.properties[child.attribute("type")], false);
+            else if ( child.tagName() == "animateMotion" )
+                parse_animate(child, props.properties["motion"], true);
         });
     }
 

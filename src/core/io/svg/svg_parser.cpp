@@ -552,8 +552,11 @@ private:
 
         auto anim = animate_parser.parse_animated_transform(element);
 
-        for ( const auto& kf : anim.single("translate") )
-            transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
+        if ( !anim.apply_motion(transform->position, delta_pos) )
+        {
+            for ( const auto& kf : anim.single("translate") )
+                transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
+        }
 
         for ( const auto& kf : anim.single("scale") )
             transform->scale.set_keyframe(kf.time, QVector2D(kf.values.vector()[0], kf.values.vector()[1]))->set_transition(kf.transition);
@@ -849,6 +852,10 @@ private:
 
 
         auto anim = parse_animated(args.element);
+
+        /// \todo handle offset
+        anim.apply_motion(rect->position);
+
         for ( const auto& kf : anim.joined({"x", "y", "width", "height"}) )
             rect->position.set_keyframe(kf.time, {
                 kf.values[0].vector()[0] + kf.values[2].vector()[0] / 2,
@@ -877,6 +884,7 @@ private:
         ellipse->size.set(QSizeF(rx * 2, ry * 2));
 
         auto anim = parse_animated(args.element);
+        anim.apply_motion(ellipse->position);
         for ( const auto& kf : anim.joined({"cx", "cy"}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         for ( const auto& kf : anim.joined({"rx", "ry"}) )
@@ -897,6 +905,7 @@ private:
         ellipse->size.set(QSizeF(d, d));
 
         auto anim = parse_animated(args.element);
+        anim.apply_motion(ellipse->position);
         for ( const auto& kf : anim.joined({"cx", "cy"}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         for ( const auto& kf : anim.single({"r"}) )

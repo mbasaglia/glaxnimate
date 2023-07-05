@@ -144,6 +144,7 @@ struct JoinedPropertyKeyframe
 struct AnimatedProperty
 {
     std::vector<PropertyKeyframe> keyframes;
+    math::bezier::Bezier motion;
 
     void sort()
     {
