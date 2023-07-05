@@ -901,6 +901,7 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
             .prop(&model::Trim::start, "ADBE Vector Trim Start", &convert_divide<100>)
             .prop(&model::Trim::end, "ADBE Vector Trim End", &convert_divide<100>)
             .prop(&model::Trim::offset, "ADBE Vector Trim Offset", &convert_divide<360>)
+            .prop(&model::Trim::multiple, "ADBE Vector Trim Type", &convert_enum<model::Trim::MultipleShapes>)
         ;
         factory.obj<model::OffsetPath>("ADBE Vector Filter - Offset")
             .prop(&model::OffsetPath::amount, "ADBE Vector Offset Amount")

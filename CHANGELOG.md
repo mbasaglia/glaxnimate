@@ -27,6 +27,7 @@
     * Fixed several inconsistencies that applied changes to the first composition
     * Fixed layer end frame rendering
     * Fixed hold frame inconsistent handling of their last frame
+    * Fixed rendering order for trim path
 * Other:
     * Added arm64 APK download
 
