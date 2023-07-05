@@ -1003,6 +1003,55 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
         shape_layer(layer, ae_layer, data);
     else if ( ae_layer.type == LayerType::TextLayer )
         text_layer(layer, ae_layer, data);
+
+    auto mask_parade = ae_layer.properties.get("ADBE Mask Parade");
+    if ( mask_parade )
+    {
+        layer->mask->mask.set(model::MaskSettings::Alpha);
+
+        auto clip_p = std::make_unique<model::Group>(document);
+        auto clip = clip_p.get();
+        layer->shapes.insert(std::move(clip_p), 0);
+        document->set_best_name(clip, QObject::tr("Clip"));
+
+        for ( const auto& mask : *mask_parade )
+        {
+            if ( mask.match_name != "ADBE Mask Atom" )
+                continue;
+
+            auto group = std::make_unique<model::Group>(document);
+
+            auto fill = std::make_unique<model::Fill>(document);
+            fill->color.set(QColor(255, 255, 255));
+            document->set_best_name(fill.get());
+            auto mask_opacity = mask.value->get_pair("ADBE Mask Opacity");
+            if ( mask_opacity )
+                load_property_check(io, fill->opacity, *mask_opacity->value, mask_opacity->match_name, &convert_divide<100>);
+            group->shapes.insert(std::move(fill));
+
+            if ( auto expansion = mask.value->get_pair("ADBE Mask Offset") )
+            {
+                // could also use offset path rather then a stroke
+                auto stroke = std::make_unique<model::Stroke>(document);
+                if ( mask_opacity )
+                    load_property_check(io, stroke->opacity, *mask_opacity->value, mask_opacity->match_name, &convert_divide<100>);
+                stroke->color.set(QColor(255, 255, 255));
+                document->set_best_name(stroke.get());
+                load_property_check(io, stroke->width, *expansion->value, expansion->match_name, &convert_divide<100>);
+                group->shapes.insert(std::move(stroke));
+            }
+
+            if ( auto shape = mask.value->get_pair("ADBE Mask Shape") )
+            {
+                auto path = std::make_unique<model::Path>(document);
+                document->set_best_name(path.get());
+                load_property_check(io, path->shape, *shape->value, shape->match_name, {});
+                group->shapes.insert(std::move(path));
+            }
+
+            clip->shapes.insert(std::move(group));
+        }
+    }
 }
 
 void glaxnimate::io::aep::AepLoader::shape_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData&)

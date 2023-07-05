@@ -30,13 +30,16 @@ using Id = std::uint32_t;
 
 struct PropertyIterator;
 
+struct PropertyPair;
+
 struct PropertyBase
 {
     enum Type { Null, PropertyGroup, Property, TextProperty, EffectInstance, Mask };
     virtual ~PropertyBase() noexcept = default;
     virtual Type class_type() const noexcept { return Null; }
 
-    virtual const PropertyBase* get(const QString& key) const { Q_UNUSED(key); return nullptr; }
+    const PropertyBase* get(const QString& key) const;
+    virtual const PropertyPair* get_pair(const QString& key) const { Q_UNUSED(key); return nullptr; }
 
     explicit operator bool() const
     {
@@ -62,6 +65,13 @@ struct PropertyPair
     std::unique_ptr<PropertyBase> value;
 };
 
+inline const PropertyBase* PropertyBase::get(const QString& key) const
+{
+    if ( auto p = get_pair(key) )
+        return p->value.get();
+    return nullptr;
+}
+
 struct PropertyIterator : public utils::RandomAccessIteratorWrapper<PropertyIterator, std::vector<PropertyPair>::const_iterator>
 {
 public:
@@ -82,19 +92,26 @@ struct PropertyGroup : PropertyBase
 
     Type class_type() const noexcept override { return PropertyBase::PropertyGroup; }
 
-    const PropertyBase* property(const QString& match_name) const
+    const PropertyPair* property_pair(const QString& match_name) const
     {
         for ( const auto& prop : properties )
         {
             if ( prop.match_name == match_name )
-                return prop.value.get();
+                return &prop;
         }
         return nullptr;
     }
 
-    const PropertyBase* get(const QString& key) const override
+    const PropertyBase* property(const QString& match_name) const
     {
-        return property(key);
+        if ( auto p = property_pair(match_name) )
+            return p->value.get();
+        return nullptr;
+    }
+
+    const PropertyPair* get_pair(const QString& key) const override
+    {
+        return property_pair(key);
     }
 
     PropertyIterator begin() const override
@@ -577,6 +594,12 @@ struct Mask : PropertyBase
     aep::PropertyGroup properties;
 
     Type class_type() const noexcept override { return PropertyBase::Mask; }
+
+
+    const PropertyPair* get_pair(const QString& key) const override
+    {
+        return properties.property_pair(key);
+    }
 };
 
 struct FolderItem
