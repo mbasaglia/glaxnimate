@@ -174,8 +174,6 @@ QPainterPath glaxnimate::model::Layer::to_painter_path_impl(glaxnimate::model::F
     return Group::to_painter_path_impl(time);
 }
 
-
-
 QIcon glaxnimate::model::Layer::tree_icon() const
 {
     return mask->has_mask() ? QIcon::fromTheme("path-clip-edit") : QIcon::fromTheme("folder");

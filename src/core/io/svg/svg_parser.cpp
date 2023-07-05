@@ -471,10 +471,12 @@ private:
         for ( const auto& attr : detail::css_atrrs )
             element.removeAttribute(attr);
 
+        Style mask_style;
+        mask_style["stroke"] = "none";
         parse_g_to_layer({
             mask_element,
             &layer->shapes,
-            style,
+            mask_style,
             false
         });
 

@@ -20,6 +20,7 @@
     * Miter limit now gets exported to SVG
     * Removed extra strokes from SVG output
     * Improved import of ZigZag modifiers from Lottie
+    * Fixed artifacts on imported SVG clip paths
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
