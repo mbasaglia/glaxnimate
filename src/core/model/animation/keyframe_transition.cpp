@@ -25,7 +25,7 @@ glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTr
     if ( hold_ )
         return Hold;
 
-    if ( bezier_.points()[1] == bezier_.points()[0] )
+    if ( qFuzzyIsNull(bezier_.points()[1].x() - bezier_.points()[1].y()) )
         return Linear;
 
     if ( bezier_.points()[1].y() == 0 )
@@ -45,7 +45,7 @@ glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTr
     if ( hold_ )
         return Hold;
 
-    if ( bezier_.points()[2] == bezier_.points()[3] )
+    if ( qFuzzyIsNull(bezier_.points()[2].x() - bezier_.points()[2].y()) )
         return Linear;
 
     if ( bezier_.points()[2].y() == 1 )
