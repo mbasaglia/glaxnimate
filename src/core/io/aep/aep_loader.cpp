@@ -909,7 +909,7 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
             .prop(&model::OffsetPath::miter_limit, "ADBE Vector Offset Miter Limit", {}, 4)
         ;
         factory.obj<model::InflateDeflate>("ADBE Vector Filter - PB")
-            .prop(&model::InflateDeflate::amount, "ADBE Vector PuckerBloat Amount")
+            .prop(&model::InflateDeflate::amount, "ADBE Vector PuckerBloat Amount", &convert_divide<100>)
         ;
         factory.obj<model::ZigZag>("ADBE Vector Filter - Zigzag")
             .prop(&model::ZigZag::amplitude, "ADBE Vector Zigzag Size")
