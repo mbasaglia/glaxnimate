@@ -619,6 +619,7 @@ public:
             style["fill"] = styler_to_css(fill);
             style["fill-opacity"] = QString::number(fill->opacity.get());
         }
+        style["stroke"] = "none";
         QDomElement g = write_styler_shapes(parent, fill, style);
         if ( animated )
             write_styler_attrs(g, fill, "fill");

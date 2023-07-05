@@ -137,8 +137,9 @@ private:
 
 enum FieldMode
 {
-    Ignored,
     Auto,
+    AnimatedToStatic,
+    Ignored,
     Custom
 };
 
@@ -156,6 +157,10 @@ struct FieldInfo
 
     FieldInfo(const char* lottie, FieldMode mode = Ignored)
         : lottie(lottie), essential(false), mode(mode)
+    {}
+
+    FieldInfo(const char* lottie, const char* name, FieldMode mode, bool essential = true)
+        : name(name), lottie(lottie), essential(essential), mode(mode)
     {}
 };
 
@@ -339,7 +344,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"ZigZag", {
         FieldInfo{"s", "amplitude"},
         FieldInfo{"r", "frequency"},
-        FieldInfo{"pt", "style"},
+        FieldInfo{"pt", "style", AnimatedToStatic},
     }},
 };
 const QMap<QString, QString> shape_types = {

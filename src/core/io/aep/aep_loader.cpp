@@ -895,7 +895,7 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
             .ignore("ADBE Vector Composite Order") /// \todo could be parsed
         ;
         factory.obj<model::RoundCorners>("ADBE Vector Filter - RC")
-            .prop(&model::RoundCorners::radius, "ADBE Vector RoundCorner Radius")
+            .prop(&model::RoundCorners::radius, "ADBE Vector RoundCorner Radius", {}, 10)
         ;
         factory.obj<model::Trim>("ADBE Vector Filter - Trim")
             .prop(&model::Trim::start, "ADBE Vector Trim Start", &convert_divide<100>)
@@ -912,8 +912,8 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
             .prop(&model::InflateDeflate::amount, "ADBE Vector PuckerBloat Amount", &convert_divide<100>)
         ;
         factory.obj<model::ZigZag>("ADBE Vector Filter - Zigzag")
-            .prop(&model::ZigZag::amplitude, "ADBE Vector Zigzag Size")
-            .prop(&model::ZigZag::frequency, "ADBE Vector Zigzag Detail")
+            .prop(&model::ZigZag::amplitude, "ADBE Vector Zigzag Size", {}, 5)
+            .prop(&model::ZigZag::frequency, "ADBE Vector Zigzag Detail", {}, 10)
             .prop(&model::ZigZag::style, "ADBE Vector Zigzag Points", &convert_enum<model::ZigZag::Style>)
         ;
         factory.obj<model::Fill>("ADBE Vector Graphic - G-Fill", [fill](ImportExport* io, model::Document* document, const PropertyPair& prop) {

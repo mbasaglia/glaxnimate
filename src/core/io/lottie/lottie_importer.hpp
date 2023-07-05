@@ -643,7 +643,7 @@ private:
         for ( const FieldInfo& field : fields )
         {
             avail_obj_keys.erase(field.lottie);
-            if ( field.mode != Auto || !json_obj.contains(field.lottie) )
+            if ( field.mode >= Ignored || !json_obj.contains(field.lottie) )
                 continue;
 
             model::BaseProperty * prop = obj->get_property(field.name);
@@ -656,6 +656,10 @@ private:
             if ( prop->traits().flags & model::PropertyTraits::Animated )
             {
                 load_animated(static_cast<model::AnimatableBase*>(prop), json_obj[field.lottie], field.transform);
+            }
+            else if ( field.mode == AnimatedToStatic )
+            {
+                load_static(prop, json_obj[field.lottie], field.transform);
             }
             else
             {
@@ -827,6 +831,21 @@ private:
         auto v = value_to_variant(prop, val);
         if ( !v || !prop->set_value(trans.from_lottie(*v, 0)) )
             emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
+    }
+
+    void load_static(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans)
+    {
+        if ( val.isObject() )
+        {
+            QJsonObject obj = val.toObject();
+            if ( obj.contains("k") )
+            {
+                load_value(prop, obj["k"], trans);
+                return;
+            }
+        }
+
+        load_value(prop, val, trans);
     }
 
     void load_animated(model::AnimatableBase* prop, const QJsonValue& val, const TransformFunc& trans)
