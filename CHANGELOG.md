@@ -31,6 +31,7 @@
     * Fixed hold frame inconsistent handling of their last frame
     * Fixed rendering order for trim path
     * Fixed miter limit for offset path
+    * Fixed rendering of masks containing sub groups / layers
 * Other:
     * Added arm64 APK download
 

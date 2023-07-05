@@ -62,7 +62,7 @@ QPainterPath glaxnimate::model::Group::to_painter_path_impl(glaxnimate::model::F
     QPainterPath path;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
     {
-        if ( ch->is_instance<glaxnimate::model::Styler>() )
+        if ( ch->is_instance<glaxnimate::model::Styler>() || ch->is_instance<glaxnimate::model::Group>()  )
             path.addPath(ch->to_clip(t));
     }
 
