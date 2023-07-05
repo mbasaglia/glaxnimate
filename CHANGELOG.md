@@ -34,6 +34,7 @@
     * Fixed rendering order for trim path
     * Fixed miter limit for offset path
     * Fixed rendering of masks containing sub groups / layers
+    * Removed the ability to select frames outside the composition range from the timeline
 * Other:
     * Added arm64 APK download
 

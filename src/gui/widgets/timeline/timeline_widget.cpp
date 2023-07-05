@@ -257,6 +257,11 @@ public:
                 adjust_expand(index, row, true);
         }
     }
+
+    int frame_at_point(const QPoint& view_pos)
+    {
+        return qBound(start_time, qRound(parent->mapToScene(view_pos).x()), end_time);
+    }
 };
 
 TimelineWidget::TimelineWidget(QWidget* parent)
@@ -550,7 +555,7 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
 
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
-    d->mouse_frame = qRound(mapToScene(event->pos()).x());
+    d->mouse_frame = d->frame_at_point(event->pos());
 
     if ( event->y() > d->header_height )
     {
@@ -570,7 +575,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    d->mouse_frame = qRound(mapToScene(event->pos()).x());
+    d->mouse_frame = d->frame_at_point(event->pos());
 
     if ( d->dragging_frame && (event->buttons() & Qt::LeftButton) )
     {
