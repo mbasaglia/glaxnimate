@@ -1031,14 +1031,10 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
 
             if ( auto expansion = mask.value->get_pair("ADBE Mask Offset") )
             {
-                // could also use offset path rather then a stroke
-                auto stroke = std::make_unique<model::Stroke>(document);
-                if ( mask_opacity )
-                    load_property_check(io, stroke->opacity, *mask_opacity->value, mask_opacity->match_name, &convert_divide<100>);
-                stroke->color.set(QColor(255, 255, 255));
-                document->set_best_name(stroke.get());
-                load_property_check(io, stroke->width, *expansion->value, expansion->match_name, &convert_divide<100>);
-                group->shapes.insert(std::move(stroke));
+                auto offset = std::make_unique<model::OffsetPath>(document);
+                document->set_best_name(offset.get());
+                load_property_check(io, offset->amount, *expansion->value, expansion->match_name);
+                group->shapes.insert(std::move(offset));
             }
 
             if ( auto shape = mask.value->get_pair("ADBE Mask Shape") )
@@ -1046,6 +1042,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
                 auto path = std::make_unique<model::Path>(document);
                 document->set_best_name(path.get());
                 load_property_check(io, path->shape, *shape->value, shape->match_name, {});
+                path->closed.set(true);
                 group->shapes.insert(std::move(path));
             }
 
