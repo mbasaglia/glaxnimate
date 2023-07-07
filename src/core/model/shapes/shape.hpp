@@ -80,6 +80,7 @@ protected:
     const ShapeListProperty& siblings() const;
     void on_property_changed(const BaseProperty* prop, const QVariant& value) override;
     void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
+    void refresh_owner_composition(glaxnimate::model::Composition* comp);
     virtual void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp)
     {
         Q_UNUSED(old_comp);

@@ -76,6 +76,11 @@ glaxnimate::model::ObjectListProperty<glaxnimate::model::ShapeElement>::iterator
     return it;
 }
 
+void glaxnimate::model::ShapeElement::refresh_owner_composition(glaxnimate::model::Composition* comp)
+{
+    d->update_comp(comp, this);
+}
+
 void glaxnimate::model::ShapeElement::set_position(ShapeListProperty* property, int pos)
 {
     d->property = property;

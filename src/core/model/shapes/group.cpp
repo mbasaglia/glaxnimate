@@ -106,3 +106,12 @@ void glaxnimate::model::Group::on_graphics_changed()
     }
 
 }
+
+
+void glaxnimate::model::Group::on_composition_changed(model::Composition*, model::Composition* new_comp)
+{
+    for ( const auto& shape : shapes )
+    {
+        shape->refresh_owner_composition(new_comp);
+    }
+}
