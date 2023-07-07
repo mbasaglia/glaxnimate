@@ -509,9 +509,11 @@ private:
     )
     {
         auto bb = node->local_bounding_rect(0);
+        bool anchor_from_inkscape = false;
         QPointF center = bb.center();
         if ( element.hasAttributeNS(detail::xmlns.at("inkscape"), "transform-center-x") )
         {
+            anchor_from_inkscape = true;
             qreal ix = element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-x").toDouble();
             qreal iy = -element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-y").toDouble();
             center += QPointF(ix, iy);
@@ -539,7 +541,7 @@ private:
             transform->anchor_point.set(center);
             delta_pos = center;
         }
-        else
+        else if ( anchor_from_inkscape )
         {
             auto matrix = transform->transform_matrix(transform->time());
             QPointF p1 = matrix.map(QPointF(0, 0));
