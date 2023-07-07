@@ -22,6 +22,7 @@
     * Improved import of ZigZag modifiers from Lottie
     * Fixed artifacts on imported SVG clip paths
     * Implemented loading animateMotion from SVG
+    * Fixed SVG animated path import
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console

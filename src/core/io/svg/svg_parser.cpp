@@ -993,9 +993,8 @@ private:
         std::vector<model::Path*> paths;
         for ( const auto& bezier : bez.beziers() )
         {
-            model::Path* shape = nullptr;
+            model::Path* shape = push<model::Path>(shapes);
             paths.push_back(shape);
-            shape = push<model::Path>(shapes);
             shape->shape.set(bezier);
             shape->closed.set(bezier.closed());
         }
