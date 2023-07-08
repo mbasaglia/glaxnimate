@@ -86,7 +86,6 @@ inline PropertyIterator PropertyBase::end() const { return {}; }
 struct PropertyGroup : PropertyBase
 {
     bool visible = true;
-    bool split_position = false;
     QString name = "";
     std::vector<PropertyPair> properties;
 
@@ -460,7 +459,9 @@ enum class PropertyType
 
 struct Property : PropertyBase
 {
+    bool split = false;
     bool animated = false;
+    bool is_component = false;
     int components = 0;
     PropertyValue value;
     std::vector<Keyframe> keyframes;

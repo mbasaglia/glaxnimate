@@ -349,7 +349,6 @@ private:
             {
                 Flags flags = child->data().read_uint32();
                 group.visible = flags.get(0, 0);
-                group.split_position = flags.get(0, 1);
             }
             else if ( *child == "tdsn" )
             {
@@ -435,12 +434,19 @@ private:
         Property* prop, Chunk chunk, const PropertyContext& context, std::vector<PropertyValue> values
     )
     {
-        Chunk header, value, keyframes, expression, tdpi, tdps, tdli;
-        header = value = keyframes = expression = tdpi = tdps = tdli = nullptr;
+        Chunk tdsb, header, value, keyframes, expression, tdpi, tdps, tdli;
+        tdsb = header = value = keyframes = expression = tdpi = tdps = tdli = nullptr;
         chunk->find_multiple(
-            {&header, &value, &keyframes, &expression, &tdpi, &tdps, &tdli},
-            {"tdb4", "cdat", "list", "Utf8", "tdpi", "tdps", "tdli"}
+            {&tdsb, &header, &value, &keyframes, &expression, &tdpi, &tdps, &tdli},
+            {"tdsb", "tdb4", "cdat", "list", "Utf8", "tdpi", "tdps", "tdli"}
         );
+
+        if ( tdsb )
+        {
+            Flags flags(tdsb->data().read_uint32());
+            prop->split = flags.get(1, 3);
+        }
+
         auto data = header->data();
         data.skip(2);
         prop->components = data.read_uint16();
@@ -465,6 +471,10 @@ private:
             prop->type = PropertyType::MultiDimensional;
 
         prop->animated = data.read_uint8() == 1;
+
+        data.skip(6);
+
+        prop->is_component = data.read_uint8() == 1;
 
         if ( integer && tdpi )
         {

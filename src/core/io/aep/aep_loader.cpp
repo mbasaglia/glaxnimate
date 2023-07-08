@@ -486,6 +486,23 @@ struct AnchorMult
     QPointF p;
 };
 
+bool load_position_component(io::ImportExport* io, const PropertyGroup& group, int suffix, model::AnimatedProperty<float>& out, bool force)
+{
+    auto pair =  group.get_pair(QString("ADBE Position_%1").arg(suffix));
+    if ( !pair )
+        return false;
+
+    if ( pair->value->class_type() != PropertyBase::Property )
+        return false;
+
+    const Property& prop = static_cast<const Property&>(*pair->value);
+    if ( !prop.is_component && !force )
+        return false;
+
+    load_property_check(io, out, prop, pair->match_name);
+    return true;
+}
+
 void load_transform(io::ImportExport* io, model::Transform* tf, const PropertyBase& prop, model::AnimatedProperty<float>* opacity, const QPointF& anchor_mult, bool divide_100)
 {
     if ( prop.class_type() != PropertyBase::PropertyGroup )
@@ -495,20 +512,30 @@ void load_transform(io::ImportExport* io, model::Transform* tf, const PropertyBa
     }
 
     const PropertyGroup& g = static_cast<const PropertyGroup&>(prop);
-    if ( g.split_position )
-    {
-        /// \todo
-        io->warning(AepFormat::tr("Split position currently not supported"));
-    }
 
     bool is_3d = false;
+    int split_position = 1;
 
     for ( const auto& p : g.properties )
     {
         if ( p.match_name.endsWith("Anchor Point") || p.match_name.endsWith("Anchor") )
             load_property_check(io, tf->anchor_point, *p.value, p.match_name, AnchorMult{anchor_mult});
         else if ( p.match_name.endsWith("Position") )
-            load_property_check(io, tf->position, *p.value, p.match_name);
+        {
+            if ( p.value->class_type() == PropertyBase::Property )
+            {
+                const Property& pos_prop = static_cast<const Property&>(*p.value);
+                if ( pos_prop.split )
+                {
+                    split_position = 2;
+                }
+                else
+                {
+                    split_position = 0;
+                    load_property_check(io, tf->position, *p.value, p.match_name);
+                }
+            }
+        }
         else if ( p.match_name.endsWith("Scale") )
             load_property_check(io, tf->scale, *p.value, p.match_name, divide_100 ? &convert_divide<100, QVector2D> : &convert_divide<1, QVector2D>);
         else if ( p.match_name.endsWith("Rotation") || p.match_name.endsWith("Rotate Z") )
@@ -528,6 +555,29 @@ void load_transform(io::ImportExport* io, model::Transform* tf, const PropertyBa
             !p.match_name.endsWith("Envir Appear in Reflect")
         )
             io->information(AepFormat::tr("Unknown property \"%1\"").arg(p.match_name));
+    }
+
+    if ( split_position )
+    {
+        model::Document dummydoc("");
+        model::Object dummy(&dummydoc);
+        model::AnimatedProperty<float> ax(&dummy, "", 0);
+        model::AnimatedProperty<float> ay(&dummy, "", 0);
+
+
+        bool force_split = split_position == 2;
+        bool xok = load_position_component(io, g, 0, ax, force_split);
+        bool yok = load_position_component(io, g, 1, ay, force_split);
+        if ( split_position == 1 )
+            force_split = xok || yok;
+
+        if ( force_split )
+        {
+            model::JoinAnimatables join({&ax, &ay});
+            join.apply_to(&tf->position, [](float x, float y) -> QPointF {
+                return QPointF(x, y);
+            }, &ax, &ay);
+        }
     }
 
     if ( is_3d )
@@ -802,8 +852,8 @@ std::unique_ptr<model::ShapeElement> load_gradient(const ObjectConverter<T, mode
     auto f2 = gradient_converter().fallback(grad, &f1);
     base_converter->load_properties(shape.get(), io, document, prop, &f2);
 
-    auto* highlight_len = prop.value->get("ADBE Vector Grad HiLite Length");
-    auto* highlight_angle = prop.value->get("ADBE Vector Grad HiLite Angle");
+    auto* highlight_len = prop.value->get_pair("ADBE Vector Grad HiLite Length");
+    auto* highlight_angle = prop.value->get_pair("ADBE Vector Grad HiLite Angle");
     if ( highlight_len || highlight_angle )
     {
         model::Document dummydoc("");
@@ -811,9 +861,9 @@ std::unique_ptr<model::ShapeElement> load_gradient(const ObjectConverter<T, mode
         model::AnimatedProperty<float> length(&dummy, "", 0);
         model::AnimatedProperty<float> angle(&dummy, "", 0);
         if ( highlight_len )
-            load_property_check(io, length, *highlight_len, "ADBE Vector Grad HiLite Length");
+            load_property_check(io, length, *highlight_len->value, highlight_len->match_name);
         if ( highlight_angle )
-            load_property_check(io, angle, *highlight_angle, "ADBE Vector Grad HiLite Angle");
+            load_property_check(io, angle, *highlight_angle->value, highlight_angle->match_name);
         model::JoinAnimatables join({&grad->start_point, &grad->end_point, &length, &angle});
         join.apply_to(&grad->highlight, [](const QPointF& p, const QPointF& e, float length, float angle) -> QPointF {
             angle = math::deg2rad(angle + 90);
