@@ -24,6 +24,7 @@
     * Implemented loading animateMotion from SVG
     * Fixed SVG animated path import
     * Fixed anchor point detection in imported SVG
+    * Added support for split positions in imported lotties
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console

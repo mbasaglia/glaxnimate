@@ -521,6 +521,29 @@ private:
         load_basic(transform, tf);
         if ( transform.contains("o") && opacity )
             load_animated(opacity, transform["o"], FloatMult(100));
+
+        if ( transform.contains("p") )
+        {
+            auto pos = transform["p"].toObject();
+            if ( pos.contains("x") && pos.contains("y") )
+            {
+                model::Document dummydoc("");
+                model::Object dummy(&dummydoc);
+                model::AnimatedProperty<float> px(&dummy, "", 0);
+                model::AnimatedProperty<float> py(&dummy, "", 0);
+                load_animated(&px, pos["x"], {});
+                load_animated(&py, pos["y"], {});
+
+                model::JoinAnimatables join({&px, &py});
+                join.apply_to(&tf->position, [](float x, float y) -> QPointF {
+                    return QPointF(x, y);
+                }, &px, &py);
+            }
+            else
+            {
+                load_animated(&tf->position, transform["p"], {});
+            }
+        }
     }
 
     void load_styler(model::Styler* styler, const QJsonObject& json_obj)
