@@ -161,6 +161,7 @@ private:
 
         std::unique_ptr<model::ShapeElement> inner_shape;
         bool start_mask = json["td"].toInt();
+        start_mask = false;
 
         if ( ty == 0 )
         {

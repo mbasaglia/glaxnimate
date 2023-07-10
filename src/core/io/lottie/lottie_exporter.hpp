@@ -127,6 +127,7 @@ public:
             QCborMap transform;
             convert_transform(grp->transform.get(), &grp->opacity, transform);
             json["ks"_l] = transform;
+            json["ao"_l] = int(grp->auto_orient.get());
 
             json["shapes"_l] = convert_shapes(grp->shapes, false);
         }
@@ -556,6 +557,8 @@ public:
         {
             if ( qobject_cast<model::Layer*>(gr) )
                 format->information(io::lottie::LottieFormat::tr("Lottie only supports layers in the top level"));
+            else if ( gr->auto_orient.get() )
+                format->information(io::lottie::LottieFormat::tr("Lottie only supports auto-orient layers in the top level"));
             auto shapes = convert_shapes(gr->shapes, force_hidden || !gr->visible.get());
             QCborMap transform;
             transform["ty"_l] = "tr";

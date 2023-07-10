@@ -453,3 +453,35 @@ void glaxnimate::model::detail::AnimatedPropertyPosition::add_smooth_keyframe_un
 
     object()->document()->push_command(parent.release());
 }
+
+std::optional<QPointF> glaxnimate::model::detail::AnimatedPropertyPosition::derivative_at(glaxnimate::model::FrameTime time) const
+{
+    int count = keyframe_count();
+    if ( count < 2 )
+        return {};
+
+    QPointF delta;
+    int index_before = keyframe_index(time);
+    const keyframe_type* kf_before = keyframe(index_before);
+    const keyframe_type* kf_after = nullptr;
+    qreal factor = 1;
+
+    if ( index_before == count - 1 )
+    {
+        kf_after = kf_before;
+        kf_before = keyframe(index_before - 1);
+    }
+    else
+    {
+        kf_after = keyframe(index_before + 1);
+        factor = math::unlerp(kf_before->time(), kf_after->time(), time);
+    }
+
+    const math::bezier::Point& point_before = kf_before->point();
+    const math::bezier::Point& point_after = kf_after->point();
+    math::bezier::CubicBezierSolver solver(point_before.pos, point_before.tan_out, point_after.tan_in, point_after.pos);
+    return QPointF(
+        solver.derivative(factor, 0),
+        solver.derivative(factor, 1)
+    );
+}

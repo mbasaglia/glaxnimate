@@ -1042,7 +1042,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
         layer->transform->anchor_point.set(anchor / 2);
     }
     load_transform(io, layer->transform.get(), ae_layer.properties["ADBE Transform Group"], &layer->opacity, anchor, false);
-    /// \todo auto-orient
+    layer->auto_orient.set(ae_layer.auto_orient);
     /// \todo masks "ADBE Mask Parade"
 
     if ( ae_layer.is_null )

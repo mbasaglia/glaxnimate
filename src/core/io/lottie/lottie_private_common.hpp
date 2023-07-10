@@ -199,7 +199,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("parent", Custom),
         FieldInfo("sr"),
         FieldInfo("ks", Custom),
-        FieldInfo("ao"),
+        FieldInfo("ao", "auto_orient"),
         FieldInfo{"st", Custom},
         FieldInfo("bm"),
         FieldInfo("tt"),

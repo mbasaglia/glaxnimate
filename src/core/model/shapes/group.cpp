@@ -37,7 +37,7 @@ void glaxnimate::model::Group::on_transform_matrix_changed()
 
 void glaxnimate::model::Group::add_shapes(glaxnimate::model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& parent_transform) const
 {
-    QTransform trans = transform.get()->transform_matrix(t) * parent_transform;
+    QTransform trans = transform.get()->transform_matrix(t, auto_orient.get()) * parent_transform;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
     {
         ch->add_shapes(t, bez, trans);
@@ -53,7 +53,7 @@ QRectF glaxnimate::model::Group::local_bounding_rect(FrameTime t) const
 
 QTransform glaxnimate::model::Group::local_transform_matrix(glaxnimate::model::FrameTime t) const
 {
-    return transform.get()->transform_matrix(t);
+    return transform.get()->transform_matrix(t, auto_orient.get());
 }
 
 
@@ -72,7 +72,7 @@ QPainterPath glaxnimate::model::Group::to_painter_path_impl(glaxnimate::model::F
 
 QPainterPath glaxnimate::model::Group::to_clip(FrameTime t) const
 {
-    return transform.get()->transform_matrix(t).map(to_painter_path(t));
+    return transform.get()->transform_matrix(t, auto_orient.get()).map(to_painter_path(t));
 }
 
 std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Group::to_path() const

@@ -23,6 +23,7 @@ public:
     GLAXNIMATE_PROPERTY_LIST(ShapeElement, shapes)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1, false, PropertyTraits::Percent)
+    GLAXNIMATE_PROPERTY(bool, auto_orient, false, &Group::on_transform_matrix_changed, {}, PropertyTraits::Visual|PropertyTraits::Hidden)
 
 public:
     Group(Document* document);

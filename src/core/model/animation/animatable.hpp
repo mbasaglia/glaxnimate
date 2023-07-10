@@ -997,6 +997,12 @@ public:
 
     void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value) override;
 
+    /**
+     * \brief Gets the bezier derivative at the given time
+     * \returns The derivative point, if defined
+     */
+    std::optional<QPointF> derivative_at(FrameTime time) const;
+
 signals:
     /// Invoked on set_bezier()
     void  bezier_set(const math::bezier::Bezier& bezier);

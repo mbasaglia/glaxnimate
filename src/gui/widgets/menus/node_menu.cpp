@@ -251,7 +251,12 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
     menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
         ResetTransform{group->document(), group->transform.get()}
     );
-
+    /// \todo better icon
+    auto ao = menu->addAction(QIcon::fromTheme("path-reverse"), NodeMenu::tr("Auto Orient"), menu, [group](bool check) {
+        group->auto_orient.set_undoable(check);
+    });
+    ao->setCheckable(true);
+    ao->setChecked(group->auto_orient.get());
 
     model::Layer* lay = qobject_cast<model::Layer*>(group);
     if ( lay )
