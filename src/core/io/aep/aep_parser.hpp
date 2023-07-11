@@ -295,7 +295,9 @@ private:
         auto data = ldta->data();
         layer->id = data.read_uint32();
         layer->quality = LayerQuality(data.read_uint16());
-        data.skip(7);
+        data.skip(4);
+        layer->time_stretch = data.read_uint16();
+        data.skip(1);
         layer->start_time = comp.time_to_frames(data.read_sint16());
         data.skip(6);
         layer->in_time = context.time_to_frames(data.read_uint16());
@@ -323,7 +325,9 @@ private:
         data.skip(32); // Name, we get it from Utf8 instead
         data.skip(11);
         layer->matte_mode = TrackMatteType(data.read_uint8());
-        data.skip(23);
+        data.skip(2);
+        layer->time_stretch /= data.read_uint16();
+        data.skip(19);
         layer->type = LayerType(data.read_uint8());
         layer->parent_id = data.read_uint32();
         data.skip(24);

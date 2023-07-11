@@ -1132,6 +1132,8 @@ void glaxnimate::io::aep::AepLoader::asset_layer(
         /// \todo ADBE Time Remapping
         /// \todo Time stretch / start_time
         auto precomp = std::make_unique<model::PreCompLayer>(document);
+        precomp->timing->start_time.set(ae_layer.start_time);
+        precomp->timing->stretch.set(ae_layer.time_stretch);
         precomp->composition.set(comp_it->second);
         precomp->name.set(comp_it->second->name.get());
         precomp->size.set(comp_it->second->size());

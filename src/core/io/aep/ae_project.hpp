@@ -510,6 +510,7 @@ struct Layer
     Id id = 0;
     LayerQuality quality = LayerQuality::Draft;
     model::FrameTime start_time = 0;
+    qreal time_stretch = 1;
     model::FrameTime in_time = 0;
     model::FrameTime out_time = 0;
     bool is_guide = false;
