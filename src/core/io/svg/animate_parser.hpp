@@ -38,11 +38,14 @@ public:
     {
         QDomElement element;
 
-        bool apply_motion(model::AnimatedProperty<QPointF>& prop, const QPointF& delta_pos = {}) const
+        bool apply_motion(model::AnimatedProperty<QPointF>& prop, const QPointF& delta_pos = {}, model::Property<bool>* auto_orient = nullptr) const
         {
             auto motion = properties.find("motion");
             if ( motion == properties.end() )
                 return false;
+
+            if ( auto_orient )
+                auto_orient->set(motion->second.auto_orient);
 
             for ( const auto& kf : motion->second.keyframes )
                 prop.set_keyframe(kf.time, QPointF())->set_transition(kf.transition);
@@ -305,6 +308,25 @@ public:
             {
                 warning("Missing path for animateMotion");
                 return;
+            }
+
+            if ( animate.hasAttribute("rotate") )
+            {
+                QString rotate = animate.attribute("rotate");
+                if ( rotate == "auto" )
+                {
+                    prop.auto_orient = true;
+                }
+                else
+                {
+                    bool is_number = false;
+                    int degrees = rotate.toInt(&is_number) % 360;
+                    if ( !is_number || degrees != 0 )
+                    {
+                        warning("The only supported values for animateMotion.rotate are auto or 0");
+                        prop.auto_orient = rotate == "auto-reverse";
+                    }
+                }
             }
 
             auto mbez = PathDParser(animate.attribute("path")).parse();

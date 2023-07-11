@@ -289,7 +289,10 @@ public:
             hold = trans.hold();
         }
 
-        void add_dom(QDomElement& element, const char* tag = "animate", const QString& type = {})
+        void add_dom(
+            QDomElement& element, const char* tag = "animate", const QString& type = {},
+            const QString& path = {}, bool auto_orient = false
+        )
         {
             if ( last < parent->op )
             {
@@ -314,7 +317,12 @@ public:
                 animation.setAttribute("dur", parent->clock(parent->op-parent->ip));
                 animation.setAttribute("attributeName", data.attribute);
                 animation.setAttribute("calcMode", "spline");
-                animation.setAttribute("values", data.values.join("; "));
+                if ( !path.isEmpty() )
+                {
+                    animation.setAttribute("path", path);
+                    if ( auto_orient )
+                        animation.setAttribute("rotate", "auto");
+                }
                 animation.setAttribute("keyTimes", key_times_str);
                 animation.setAttribute("keySplines", key_splines_str);
                 animation.setAttribute("repeatCount", "indefinite");
@@ -896,14 +904,17 @@ public:
             g = start_group(parent, group);
         }
 
-        transform_to_attr(g, group->transform.get());
+        transform_to_attr(g, group->transform.get(), group->auto_orient.get());
         write_property(g, &group->opacity, "opacity");
         write_visibility_attributes(g, group);
         write_shapes(g, group->shapes, has_mask);
     }
 
     template<class PropT, class Callback>
-    QDomElement transform_property(QDomElement& e, const char* name, PropT* prop, const Callback& callback)
+    QDomElement transform_property(
+        QDomElement& e, const char* name, PropT* prop, const Callback& callback,
+        const QString& path = {}, bool auto_orient = false
+    )
     {
         model::JoinAnimatables j({prop}, model::JoinAnimatables::NoValues);
 
@@ -917,16 +928,26 @@ public:
         {
             AnimationData data(this, {"transform"}, j.keyframes().size());
 
-            for ( const auto& kf : j )
-                data.add_keyframe(time_to_global(kf.time), {callback(prop->get_at(kf.time))}, kf.transition());
-            data.add_dom(g, "animateTransform", name);
+            if ( !path.isEmpty() )
+            {
+                for ( const auto& kf : j )
+                    data.add_keyframe(time_to_global(kf.time), {""}, kf.transition());
+                data.add_dom(g, "animateMotion", "", path, auto_orient);
+            }
+            else
+            {
+
+                for ( const auto& kf : j )
+                    data.add_keyframe(time_to_global(kf.time), {callback(prop->get_at(kf.time))}, kf.transition());
+                data.add_dom(g, "animateTransform", name);
+            }
         }
 
         g.setAttribute("transform", QString("%1(%2)").arg(name).arg(callback(prop->get())));
         return g;
     }
 
-    void transform_to_attr(QDomElement& parent, model::Transform* transf)
+    void transform_to_attr(QDomElement& parent, model::Transform* transf, bool auto_orient = false)
     {
         if ( animated && (transf->position.animated() || transf->scale.animated() || transf->rotation.animated() || transf->anchor_point.animated()) )
         {
@@ -940,9 +961,11 @@ public:
             subject = transform_property(subject, "rotate", &transf->rotation, [](qreal val){
                 return QString::number(val);
             });
+            math::bezier::MultiBezier mb;
+            mb.beziers().push_back(transf->position.bezier());
             subject = transform_property(subject, "translate", &transf->position, [](const QPointF& val){
                 return QString("%1 %2").arg(val.x()).arg(val.y());
-            });
+            }, path_data(mb).first, auto_orient);
         }
         else
         {

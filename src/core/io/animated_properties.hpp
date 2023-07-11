@@ -145,6 +145,7 @@ struct AnimatedProperty
 {
     std::vector<PropertyKeyframe> keyframes;
     math::bezier::Bezier motion;
+    bool auto_orient = false;
 
     void sort()
     {

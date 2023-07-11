@@ -504,7 +504,7 @@ private:
 
     void parse_transform(
         const QDomElement& element,
-        model::VisualNode* node,
+        model::Group* node,
         model::Transform* transform
     )
     {
@@ -554,7 +554,7 @@ private:
 
         auto anim = animate_parser.parse_animated_transform(element);
 
-        if ( !anim.apply_motion(transform->position, delta_pos) )
+        if ( !anim.apply_motion(transform->position, delta_pos, &node->auto_orient) )
         {
             for ( const auto& kf : anim.single("translate") )
                 transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
