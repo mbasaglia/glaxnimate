@@ -230,8 +230,9 @@ public:
             QStringList values = {};
         };
 
-        AnimationData(SvgRenderer::Private* parent, const std::vector<QString>& attrs, int n_keyframes)
-            : parent(parent)
+        AnimationData(SvgRenderer::Private* parent, const std::vector<QString>& attrs, int n_keyframes,
+                      qreal time_stretch, model::FrameTime time_start)
+            : parent(parent), time_stretch(time_stretch), time_start(time_start)
         {
             attributes.reserve(attrs.size());
             for ( const auto& attr : attrs )
@@ -294,7 +295,7 @@ public:
             const QString& path = {}, bool auto_orient = false
         )
         {
-            if ( last < parent->op )
+            if ( last < parent->op && path.isEmpty() )
             {
                 key_times.push_back("1");
                 for ( auto& attr : attributes )
@@ -313,8 +314,8 @@ public:
             for ( const auto& data : attributes )
             {
                 QDomElement animation = parent->element(element, tag);
-                animation.setAttribute("begin", parent->clock(parent->ip));
-                animation.setAttribute("dur", parent->clock(parent->op-parent->ip));
+                animation.setAttribute("begin", parent->clock(time_start + time_stretch * parent->ip));
+                animation.setAttribute("dur", parent->clock(time_start + time_stretch * parent->op-parent->ip));
                 animation.setAttribute("attributeName", data.attribute);
                 animation.setAttribute("calcMode", "spline");
                 if ( !path.isEmpty() )
@@ -337,6 +338,8 @@ public:
         QStringList key_splines = {};
         model::FrameTime last = 0;
         bool hold = false;
+        qreal time_stretch = 1;
+        model::FrameTime time_start = 0;
     };
 
     void write_property(
@@ -354,7 +357,7 @@ public:
 
             auto keyframes = split_keyframes(property);
 
-            AnimationData data(this, {attr}, keyframes.size());
+            AnimationData data(this, {attr}, keyframes.size(), time_stretch, time_start);
 
             for ( int i = 0; i < int(keyframes.size()); i++ )
             {
@@ -393,7 +396,7 @@ public:
         if ( j.animated() && animated )
         {
             auto keys = split_keyframes(&j);
-            AnimationData data(this, attrs, keys.size());
+            AnimationData data(this, attrs, keys.size(), time_stretch, time_start);
 
             for ( const auto& kf : keys )
                 data.add_keyframe(time_to_global(kf->time()), callback(j.value_at(kf->time())), kf->transition());
@@ -651,7 +654,11 @@ public:
             transform_to_attr(e, layer->transform.get());
             write_property(e, &layer->opacity, "opacity");
             write_visibility_attributes(parent, layer);
+            time_stretch = layer->timing->stretch.get();
+            time_start = layer->timing->start_time.get();
             write_composition(e, layer->composition.get());
+            time_stretch = 1;
+            time_start = 0;
             timing.pop_back();
         }
     }
@@ -672,7 +679,7 @@ public:
             int kf_count = repeater->copies.keyframe_count();
             if ( kf_count >= 2 )
             {
-                AnimationData anim_display(this, {"display"}, kf_count);
+                AnimationData anim_display(this, {"display"}, kf_count, time_stretch, time_start);
 
                 for ( int i = 0; i < kf_count; i++ )
                 {
@@ -685,7 +692,7 @@ public:
 
             if ( opacity.animated() )
             {
-                AnimationData anim_opacity(this, {"opacity"}, opacity.keyframes().size());
+                AnimationData anim_opacity(this, {"opacity"}, opacity.keyframes().size(), time_stretch, time_start);
                 for ( const auto& keyframe : opacity.keyframes() )
                 {
                     anim_opacity.add_keyframe(
@@ -785,7 +792,7 @@ public:
 
             if ( j.animated() )
             {
-                AnimationData data(this, {"d"}, j.keyframes().size());
+                AnimationData data(this, {"d"}, j.keyframes().size(), time_stretch, time_start);
 
                 for ( const auto& kf : j )
                     data.add_keyframe(time_to_global(kf.time), {path_data(shape->shapes(kf.time)).first}, kf.transition());
@@ -926,7 +933,7 @@ public:
 
         if ( j.animated() )
         {
-            AnimationData data(this, {"transform"}, j.keyframes().size());
+            AnimationData data(this, {"transform"}, j.keyframes().size(), time_stretch, time_start);
 
             if ( !path.isEmpty() )
             {
@@ -1112,7 +1119,7 @@ public:
             auto stops = gradient->colors.get();
             for ( int i = 0; i < n_stops; i++ )
             {
-                AnimationData data(this, {"offset", "stop-color"}, gradient->colors.keyframe_count());
+                AnimationData data(this, {"offset", "stop-color"}, gradient->colors.keyframe_count(), time_stretch, time_start);
                 for ( const auto& kf : gradient->colors )
                 {
                     auto stop = kf.get()[i];
@@ -1192,6 +1199,8 @@ public:
     QDomElement svg;
     QDomElement defs;
     CssFontType font_type;
+    qreal time_stretch = 1;
+    model::FrameTime time_start = 0;
 };
 
 

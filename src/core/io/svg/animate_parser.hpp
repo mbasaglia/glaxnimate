@@ -365,7 +365,7 @@ public:
             );
             if ( strings.size() != int(values.size()) )
             {
-                warning("`keyTimes` and `values` mismatch");
+                warning(QString("`keyTimes` (%1) and `values` (%2) mismatch").arg(strings.size()).arg(int(values.size())));
                 return;
             }
 
