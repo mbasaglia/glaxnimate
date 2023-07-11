@@ -1036,7 +1036,7 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
 
     QPointF anchor{1, 1};
     auto it = asset_size.find(ae_layer.asset_id);
-    if ( it != asset_size.end() )
+    if ( it != asset_size.end() && !ae_layer.is_null )
     {
         anchor = it->second;
         layer->transform->anchor_point.set(anchor / 2);
