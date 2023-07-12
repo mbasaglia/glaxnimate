@@ -3,7 +3,8 @@ linux:test:
     stage: test
     script:
         - pip3 install gcovr
-        - mkdir build
+        - ls -l build || true
+        - mkdir -p build
         - cd build
         - cmake .. -DCMAKE_CXX_FLAGS=--coverage
         - make tests_run
@@ -12,6 +13,7 @@ linux:test:
         #paths:
             #- build/coverage
     when: always
+    needs: []
 
 linux:build:
     image: ubuntu:latest
