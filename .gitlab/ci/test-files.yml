@@ -8,8 +8,8 @@ test-files:
         - git clone https://github.com/LottieFiles/test-files.git
     script:
         - pip3 install -r test-files/tools/requirements.txt
-        - .test-files/tools/render-report -o report -f aep  -f json -f svg ./build/bin/glaxnimate {} -r {out} --frame {frame}
-        - .test-files/tools/error-report --score-error 0 report/report.json
+        - ./test-files/tools/render-report -o report -f aep  -f json -f svg ./build/bin/glaxnimate {} -r {out} --frame {frame}
+        - ./test-files/tools/error-report --score-error 0 report/report.json
     artifacts:
         paths:
             - report
