@@ -70,7 +70,8 @@ public:
         auto rdf = element(element(svg, "metadata"), "rdf:RDF");
         auto work = element(rdf, "cc:Work");
         element(work, "dc:format").appendChild(dom.createTextNode("image/svg+xml"));
-        element(work, "dc:type").setAttribute("rdf:resource", "http://purl.org/dc/dcmitype/StillImage");
+        QString dc_type = animated ? "MovingImage" : "StillImage";
+        element(work, "dc:type").setAttribute("rdf:resource", "http://purl.org/dc/dcmitype/" + dc_type);
         element(work, "dc:title").appendChild(dom.createTextNode(comp->name.get()));
         auto document = comp->document();
 
