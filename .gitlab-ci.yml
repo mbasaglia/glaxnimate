@@ -31,3 +31,4 @@ include:
     - .gitlab/ci/release.yml
     - .gitlab/ci/reuse-lint.yml
     - .gitlab/ci/android-sign.yml
+    - .gitlab/ci/test-files.yml

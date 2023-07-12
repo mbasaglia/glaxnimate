@@ -1,6 +1,6 @@
 linux:test:
     image: ubuntu:22.04
-    stage: build
+    stage: test
     script:
         - pip3 install gcovr
         - mkdir build
@@ -21,4 +21,7 @@ linux:build:
         - cd build
         - cmake .. -DCMAKE_CXX_FLAGS="-Werror -pedantic"
         - make VERBOSE=1
+    artifacts:
+        paths:
+            - build/bin/glaxnimate
     when: always
