@@ -6,6 +6,7 @@ test-files:
         - apt-get install -y git python3 python3-pip libgl1
         - git clone https://github.com/LottieFiles/test-files.git
         - pip3 install -r test-files/tools/requirements.txt
+        - export QT_QPA_PLATFORM=minimal
         - ./test-files/tools/render-report -o report -f aep  -f json -f svg ./build/bin/glaxnimate {} -r {out} --frame {frame}
         - ./test-files/tools/error-report --score-error 0 report/report.json
     artifacts:
