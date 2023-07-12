@@ -2,11 +2,9 @@ test-files:
     image: ubuntu:latest
     stage: test
     needs: ["linux:build"]
-    before_script:
-        - apt-get update -qq
-        - apt-get install -y python3 python3-pip git
-        - git clone https://github.com/LottieFiles/test-files.git
     script:
+        - apt-get install -y git python3 python3-pip libgl1
+        - git clone https://github.com/LottieFiles/test-files.git
         - pip3 install -r test-files/tools/requirements.txt
         - ./test-files/tools/render-report -o report -f aep  -f json -f svg ./build/bin/glaxnimate {} -r {out} --frame {frame}
         - ./test-files/tools/error-report --score-error 0 report/report.json
