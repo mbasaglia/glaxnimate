@@ -12,6 +12,7 @@ pages:
     after_script:
         - mv build/docs/site public
         - mv build/doxygen/html public/doxygen
+        - mv report public/report
         #- mv build/coverage public/coverage
     artifacts:
         paths:
@@ -19,4 +20,6 @@ pages:
     when: always
     only:
         - master
-    #needs: ["linux:test"]
+    needs:
+        - test-files
+        #- "linux:test"
