@@ -380,6 +380,10 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
     comp = new_comp;
 
     ui.play_controls->set_range(comp->animation->first_frame.get(), comp->animation->last_frame.get());
+    ui.play_controls->set_fps(comp->fps.get());
+    ui.play_controls_2->set_range(comp->animation->first_frame.get(), comp->animation->last_frame.get());
+    ui.play_controls_2->set_fps(comp->fps.get());
+
     QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
     QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
