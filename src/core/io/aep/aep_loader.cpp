@@ -879,6 +879,88 @@ std::unique_ptr<model::ShapeElement> load_gradient(const ObjectConverter<T, mode
     return shape;
 }
 
+/**
+ * \brief Checks for the default rectangle created by AE with merge path
+ * bodymovin has a similar check on export
+ */
+bool is_merge_rect(const model::ShapeElement& shape)
+{
+    auto path = shape.cast<model::Path>();
+
+    if ( !path )
+        return false;
+
+    if ( path->shape.animated() )
+        return false;
+
+    const auto& bez = path->shape.get();
+
+    if ( !bez.closed() || bez.size() != 4 )
+        return false;
+
+    for ( const auto& p : bez )
+        if ( !math::fuzzy_compare(p.pos, p.tan_in) || !math::fuzzy_compare(p.pos, p.tan_out) )
+            return false;
+
+    std::array<qreal, 4> x;
+    std::array<qreal, 4> y;
+    for ( int i = 0; i < 4; i++ )
+    {
+        x[i] = bez[i].pos.x();
+        y[i] = bez[i].pos.y();
+    }
+    std::sort(x.begin(), x.end());
+    std::sort(y.begin(), y.end());
+
+    return qFuzzyIsNull(x[0]-x[1]) &&
+           qFuzzyIsNull(x[2]-x[3]) &&
+           qFuzzyIsNull(y[0]-y[1]) &&
+           qFuzzyIsNull(y[2]-y[3]);
+}
+
+bool skip_merge(model::ShapeListProperty& shapes, const PropertyPair& prop)
+{
+    if ( prop.match_name != "ADBE Vector Filter - Merge" )
+        return false;
+
+    auto type = prop.value->get("ADBE Vector Merge Type");
+    if ( !type || type->class_type() != PropertyBase::Property )
+        return false;
+
+    auto type_prop = static_cast<const Property*>(type);
+    if ( type_prop->animated )
+        return false;
+
+    if ( !qFuzzyCompare(type_prop->value.magnitude(), 4) )
+        return false;
+
+    return true;
+
+}
+
+void load_shape_list(ImportExport* io, model::Document* document, const PropertyBase& properties, model::ShapeListProperty& shapes)
+{
+    model::ShapeElement* merge_rect = nullptr;
+
+    for ( const auto& prop : properties )
+    {
+        if ( merge_rect && skip_merge(shapes, prop) )
+        {
+            shapes.remove(shapes.index_of(merge_rect));
+            merge_rect = nullptr;
+            continue;
+        }
+
+        if ( auto shape = load_shape(io, document, prop) )
+        {
+            if ( !merge_rect && is_merge_rect(*shape) )
+                merge_rect = shape.get();
+
+            shapes.insert(std::move(shape), 0);
+        }
+    }
+}
+
 const ObjectFactory<model::ShapeElement>& shape_factory()
 {
     static ObjectFactory<model::ShapeElement> factory;
@@ -890,11 +972,7 @@ const ObjectFactory<model::ShapeElement>& shape_factory()
             auto gp = std::make_unique<model::Group>(document);
             load_transform(io, gp->transform.get(), (*prop.value)["ADBE Vector Transform Group"], &gp->opacity, {1, 1}, true);
 
-            for ( const auto& prop : (*prop.value)["ADBE Vectors Group"] )
-            {
-                if ( auto shape = load_shape(io, document, prop) )
-                    gp->shapes.insert(std::move(shape), 0);
-            }
+            load_shape_list(io, document, (*prop.value)["ADBE Vectors Group"], gp->shapes);
 
             return gp;
         });
@@ -1101,13 +1179,13 @@ void glaxnimate::io::aep::AepLoader::load_layer(const glaxnimate::io::aep::Layer
     }
 }
 
-void glaxnimate::io::aep::AepLoader::shape_layer(model::Layer* layer, const glaxnimate::io::aep::Layer& ae_layer, glaxnimate::io::aep::AepLoader::CompData&)
+void glaxnimate::io::aep::AepLoader::shape_layer(
+    model::Layer* layer,
+    const glaxnimate::io::aep::Layer& ae_layer,
+    glaxnimate::io::aep::AepLoader::CompData&
+)
 {
-    for ( const auto& prop : ae_layer.properties["ADBE Root Vectors Group"] )
-    {
-        if ( auto shape = load_shape(io, document, prop) )
-            layer->shapes.insert(std::move(shape), 0);
-    }
+    load_shape_list(io, document, ae_layer.properties["ADBE Root Vectors Group"], layer->shapes);
 }
 
 void glaxnimate::io::aep::AepLoader::asset_layer(
