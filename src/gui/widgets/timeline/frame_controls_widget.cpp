@@ -59,16 +59,16 @@ void FrameControlsWidget::set_min(int min)
 
 void FrameControlsWidget::set_max(int max)
 {
-    d->spin_frame->setMaximum(max);
-    emit max_changed(max);
+    d->spin_frame->setMaximum(max-1);
+    emit max_changed(max-1);
 }
 
 void FrameControlsWidget::set_range(int min, int max)
 {
-    d->spin_frame->setRange(min, max);
+    d->spin_frame->setRange(min, max-1);
     d->spin_frame->setValue(min);
     emit min_changed(min);
-    emit max_changed(max);
+    emit max_changed(max-1);
 }
 
 void FrameControlsWidget::set_fps(qreal fps)

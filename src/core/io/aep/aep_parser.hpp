@@ -36,7 +36,7 @@ private:
 
         model::FrameTime time_to_frames(model::FrameTime time) const
         {
-            return (time + layer->start_time) / comp->time_scale;
+            return time / comp->time_scale + layer->start_time;
         }
     };
 
