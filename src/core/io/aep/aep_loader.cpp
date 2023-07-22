@@ -918,7 +918,7 @@ bool is_merge_rect(const model::ShapeElement& shape)
            qFuzzyIsNull(y[2]-y[3]);
 }
 
-bool skip_merge(model::ShapeListProperty& shapes, const PropertyPair& prop)
+bool skip_merge(const PropertyPair& prop)
 {
     if ( prop.match_name != "ADBE Vector Filter - Merge" )
         return false;
@@ -944,7 +944,7 @@ void load_shape_list(ImportExport* io, model::Document* document, const Property
 
     for ( const auto& prop : properties )
     {
-        if ( merge_rect && skip_merge(shapes, prop) )
+        if ( merge_rect && skip_merge(prop) )
         {
             shapes.remove(shapes.index_of(merge_rect));
             merge_rect = nullptr;
