@@ -188,6 +188,8 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("motion_blur"),
         FieldInfo("tgs"),
         FieldInfo("meta", Custom),
+        FieldInfo("props"),
+        FieldInfo("slots"),
     }},
     // Layer is converted explicitly
     {"__Layer__", {
@@ -211,6 +213,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("masksProperties", Custom),
         FieldInfo("ef"),
         FieldInfo("bounds"), // old, no longer there
+        FieldInfo("ct"),
     }},
     {"Transform", {
         FieldInfo{"a", "anchor_point"},
