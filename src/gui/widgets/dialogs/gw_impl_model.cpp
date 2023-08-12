@@ -477,6 +477,8 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     new_comp->width.set(comp->width.get());
     new_comp->height.set(comp->height.get());
     new_comp->fps.set(comp->fps.get());
+    new_comp->animation->first_frame.set(comp->animation->first_frame.get());
+    new_comp->animation->last_frame.set(comp->animation->last_frame.get());
     if ( objects.size() > 1 || objects[0]->name.get().isEmpty() )
         current_document->set_best_name(new_comp);
     else
