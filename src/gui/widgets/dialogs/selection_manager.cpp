@@ -188,39 +188,33 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
     if ( comps.size() > 1 )
         as_comp = true;
 
-    if ( as_comp )
+    if ( !as_comp )
     {
-        std::unique_ptr<model::Composition> comp = std::make_unique<model::Composition>(doc);
-        auto comp_ptr = comp.get();
-        QString name = comp->name.get();
-        if ( name.isEmpty() )
-            name = QFileInfo(document->filename()).baseName();
-        doc->set_best_name(comp.get(), name);
-        doc->push_command(new command::AddObject(&doc->assets()->compositions->values, std::move(comp)));
-
-        select.push_back(layer_new_comp(comp_ptr));
-        shape_cont = &comp_ptr->shapes;
-    }
-
-    if ( !comp->shapes.empty() )
-    {
-        int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : comp->shapes.raw() )
+        if ( !comp->shapes.empty() )
         {
-            auto ptr = shape.get();
-            shape->clear_owner();
-            shape->refresh_uuid();
-            if ( !as_comp )
-                select.push_back(ptr);
-            shape->transfer(doc);
-            doc->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
-            if ( !as_comp )
-                ptr->recursive_rename();
+            int shape_insertion_point = shape_cont->size();
+            for ( auto& shape : comp->shapes.raw() )
+            {
+                auto ptr = shape.get();
+                shape->clear_owner();
+                shape->refresh_uuid();
+                if ( !as_comp )
+                    select.push_back(ptr);
+                shape->transfer(doc);
+                doc->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
+                if ( !as_comp )
+                    ptr->recursive_rename();
+            }
         }
     }
 
     for ( const auto& pending : document->pending_assets() )
         doc->add_pending_asset(pending);
+
+    if ( as_comp )
+    {
+        select.push_back(layer_new_comp(comp));
+    }
 
     set_selection(select);
 }
