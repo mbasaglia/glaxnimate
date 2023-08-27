@@ -115,6 +115,13 @@ private:
             composition->animation->last_frame.set(main->animation->last_frame.get());
         }
 
+        if ( json.contains("fr") )
+            composition->fps.set(json["fr"].toDouble());
+        if ( json.contains("w") )
+            composition->width.set(json["w"].toInt());
+        if ( json.contains("h") )
+            composition->height.set(json["h"].toInt());
+
         load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
 
@@ -316,7 +323,16 @@ private:
             }
         }
 
-        load_animation_container(json, layer->animation.get());
+        if ( !json.contains("ip") && !json.contains("op") )
+        {
+            auto comp = layer->owner_composition();
+            layer->animation->first_frame.set(comp->animation->first_frame.get());
+            layer->animation->last_frame.set(comp->animation->last_frame.get());
+        }
+        else
+        {
+            load_animation_container(json, layer->animation.get());
+        }
 
         if ( !layer->shapes.empty() )
             return;
