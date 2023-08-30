@@ -1,0 +1,1828 @@
+GIMP Palette
+Name: RAL Design+
+#
+ 33  33  34	H000L15C00 - Ink Black
+ 43  43  43	H000L20C00 - Slate Black
+ 58  58  58	H000L25C00 - Onyx Black
+ 68  68  67	H000L30C00 - Medium Black
+ 80  80  80	H000L35C00 - Briquette Grey
+ 93  92  91	H000L40C00 - Dark Grey
+107 106 105	H000L45C00 - Architecture Grey
+118 118 117	H000L50C00 - Steel Grey
+130 130 130	H000L55C00 - Medium Grey
+143 143 142	H000L60C00 - Ash Grey
+158 159 158	H000L65C00 - Mortar Grey
+172 173 172	H000L70C00 - Light Grey
+186 186 186	H000L75C00 - Marble Grey
+201 200 199	H000L80C00 - Foggy Grey
+214 214 212	H000L85C00 - Shadow White
+226 227 224	H000L90C00 - Winter White
+ 62  42  44	H010L20C10 - Wenge Black
+ 66  35  41	H010L20C15 - Cherry Black
+ 72  32  41	H010L20C20 - Dark Mahogany
+ 75  28  40	H010L20C25 - Rusty Red
+ 88  64  67	H010L30C10 - Wood-Black Red
+ 93  59  65	H010L30C15 - Night Mauve
+100  57  65	H010L30C20 - Pinkish Brown
+108  51  63	H010L30C25 - Chestnut Red
+113  47  62	H010L30C30 - Leather Red
+115  41  59	H010L30C35 - Anthracite Red
+123  32  57	H010L30C40 - Brown Magenta
+130  25  58	H010L30C44 - Atlas Red
+111  88  91	H010L40C10 - Caput Mortuum Grey Red
+119  83  89	H010L40C15 - Rust Brown
+127  81  88	H010L40C20 - Sunset Red
+134  77  88	H010L40C25 - Mineral Red
+141  72  86	H010L40C30 - Dull Magenta
+144  67  83	H010L40C35 - Velvet Red
+152  61  83	H010L40C40 - Algae Red
+159  55  83	H010L40C45 - Raspberry Ice Red
+165  49  82	H010L40C50 - Fuchsia Red
+169  43  79	H010L40C53 - Primal Red
+136 113 117	H010L50C10 - Old Mahogany
+143 109 115	H010L50C15 - Dull Dusky Pink
+152 105 113	H010L50C20 - Brickwork Red
+160 101 112	H010L50C25 - Matte Carmine
+169  96 110	H010L50C30 - Marble Red
+174  91 108	H010L50C35 - Geranium Red
+179  88 108	H010L50C40 - Slate Pink
+184  81 106	H010L50C45 - Tulip Red
+194  76 106	H010L50C50 - Vibrant Red
+163 138 141	H010L60C10 - Lilac Grey
+173 135 141	H010L60C15 - Orchid Red
+182 132 140	H010L60C20 - Lime Pink
+189 127 138	H010L60C25 - Lipstick Pink
+196 122 136	H010L60C30 - Japanese Coral
+205 118 135	H010L60C35 - Rose Red
+212 113 134	H010L60C40 - Strawberry Milkshake Red
+220 108 132	H010L60C45 - Luminous Pink
+192 166 170	H010L70C10 - Pale Mauve
+200 162 167	H010L70C15 - Powder Rose
+210 158 166	H010L70C20 - Silver Rose
+219 154 165	H010L70C25 - Flamingo Pink
+226 151 164	H010L70C30 - Cherry Blossom Pink
+234 145 161	H010L70C35 - Baby Pink
+220 192 195	H010L80C10 - Mud Pink
+228 189 194	H010L80C15 - Ice Hot Pink
+239 185 192	H010L80C20 - Pastel Pink
+223 211 212	H010L85C05 - Pearl Rose
+230 207 210	H010L85C10 - Salmon Rose
+240 205 210	H010L85C15 - Milkshake Pink
+249 203 211	H010L85C20 - Flesh Pink
+239 224 222	H010L90C05 - Rose Cream
+242 218 214	H010L90C10 - Light Apricot
+243 232 234	H010L93C05 - White-Red
+ 52  42  42	H020L20C05 - Deep Brown
+ 60  39  39	H020L20C10 - Night Red
+ 74  33  37	H020L20C20 - Dark Red Brown
+ 83  24  31	H020L20C29 - Burgundy
+ 77  65  65	H020L30C05 - Rhodonite Brown
+ 85  61  62	H020L30C10 - Budapest Brown
+ 99  54  57	H020L30C20 - Kremlin Red
+109  44  50	H020L30C30 - Crystal Dark Red
+123  35  49	H020L30C40 - Amaranth Blossom
+132  23  44	H020L30C48 - Sweet Cherry Red
+103  91  91	H020L40C05 - Greyish Brown
+110  86  87	H020L40C10 - Nut Brown
+125  79  81	H020L40C20 - Antique Red
+138  71  76	H020L40C30 - Hermosa Pink
+148  61  70	H020L40C40 - October Red
+160  46  62	H020L40C50 - Bright Red
+128 116 115	H020L50C05 - Zircon Grey
+136 110 112	H020L50C10 - Sandstone Red Grey
+153 104 106	H020L50C20 - Red Grey
+167  96 101	H020L50C30 - Venetian Red
+177  87  95	H020L50C40 - Alsike Clover Red
+190  76  90	H020L50C50 - Flame Red
+206  68  88	H020L50C58 - Lingonberry Red
+153 141 141	H020L60C05 - Globe Thistle Grey Rose
+163 137 138	H020L60C10 - Tin Pink
+180 130 134	H020L60C20 - Retro Pink
+195 121 127	H020L60C30 - Begonia Rose
+209 113 123	H020L60C40 - Lotus Red
+181 168 168	H020L70C05 - Fashion Mauve
+189 163 165	H020L70C10 - Tourmaline Mauve
+211 158 162	H020L70C20 - Rosewood Apricot
+227 150 155	H020L70C30 - Marker Pink
+211 197 196	H020L80C05 - Aurora Grey
+219 191 192	H020L80C10 - Quartz Rose
+238 186 188	H020L80C20 - Marzipan Pink
+224 210 209	H020L85C05 - Almond Blossom Pink
+233 207 207	H020L85C10 - Salmon Cream
+253 202 202	H020L85C20 - Elegant Light Rose
+240 226 222	H020L90C05 - Mussel White
+244 220 216	H020L90C10 - Peach Cream
+248 232 228	H020L93C05 - Blossom White
+ 85  64  62	H030L30C10 - Laurel Nut Brown
+ 98  56  54	H030L30C20 - Autumn Leaf Red
+110  47  44	H030L30C30 - Macore Veneer Red
+124  41  42	H030L30C40 - Crimson Red
+125  30  32	H030L30C45 - Blood Red
+108  87  85	H030L40C10 - Peat Red Brown
+126  83  80	H030L40C20 - Cranberry Red
+139  75  71	H030L40C30 - Brick Brown
+151  65  62	H030L40C40 - Spicy Red
+163  55  55	H030L40C50 - Hibiscus Red
+172  44  50	H030L40C60 - Emperor Cherry Red
+136 111 109	H030L50C10 - Earth Red
+151 106 102	H030L50C20 - Terracotta Red Brown
+166  97  93	H030L50C30 - Clay Red
+180  90  86	H030L50C40 - Vermilion Red
+191  81  78	H030L50C50 - Maple Red
+203  69  67	H030L50C60 - Holland Red
+162 138 136	H030L60C10 - Storm Red
+179 131 127	H030L60C20 - Desert Red
+194 122 116	H030L60C30 - Antique Pink
+208 117 111	H030L60C40 - Light Tomato
+222 107 102	H030L60C50 - Calypso Red
+190 164 162	H030L70C10 - Florida Grey
+208 156 151	H030L70C20 - Dull Apricot
+225 149 143	H030L70C30 - Salmon Pink Red
+239 142 135	H030L70C40 - Flamingo Red
+218 192 188	H030L80C10 - Salt Pink
+236 185 179	H030L80C20 - Magnolia Pink
+224 209 203	H030L85C05 - Almond Cream
+231 207 202	H030L85C10 - Soft Ice Rose
+249 205 196	H030L85C20 - Peach Red
+238 224 220	H030L90C05 - Antique White
+246 223 216	H030L90C10 - Wedding Pink
+249 234 229	H030L93C05 - Parchment White
+ 71  36  26	H040L20C19 - Wild Brown
+ 77  66  62	H040L30C05 - Basalt Black
+ 83  62  57	H040L30C10 - Caviar Black
+ 96  57  47	H040L30C20 - Coffee Brown
+107  50  38	H040L30C30 - Root Brown
+119  47  33	H040L30C40 - Corrosion Red
+103  91  88	H040L40C05 - Ash Brown
+108  87  81	H040L40C10 - Somali Brown
+123  83  73	H040L40C20 - Vandyck Brown
+133  75  60	H040L40C30 - Chestnut Brown
+145  65  47	H040L40C40 - Brick Red
+157  61  39	H040L40C50 - Henna Red
+165  49  26	H040L40C60 - Copper Red
+173  43  16	H040L40C67 - China Red
+126 115 111	H040L50C05 - Nomad Grey
+135 112 107	H040L50C10 - Umbra Sand
+149 106  96	H040L50C20 - Agate Brown
+164 100  84	H040L50C30 - Rust Coloured
+176  93  74	H040L50C40 - Ant Red
+189  85  62	H040L50C50 - English Red
+202  78  51	H040L50C60 - Fox Red
+209  70  44	H040L50C70 - Pompeii Red
+153 142 138	H040L60C05 - Warm Grey
+163 138 131	H040L60C10 - Light Caramel
+176 130 119	H040L60C20 - Sienna Yellow
+194 126 111	H040L60C30 - Cedar Red
+204 118  97	H040L60C40 - Terra Orange
+218 113  87	H040L60C50 - Mandarin Orange
+228 105  76	H040L60C60 - Coral Orange
+180 168 164	H040L70C05 - Matte Grey
+191 165 158	H040L70C10 - Mohair Mauve
+208 159 147	H040L70C20 - Soft Sienna
+224 152 135	H040L70C30 - Industrial Rose
+232 145 125	H040L70C40 - Apricot Red
+250 137 112	H040L70C50 - Fruit Red
+211 197 192	H040L80C05 - Natural Silk Grey
+221 194 186	H040L80C10 - Thulite Rose
+241 190 176	H040L80C20 - Madder Orange
+254 183 165	H040L80C30 - Nature Apricot
+227 212 207	H040L85C05 - Pandora Grey
+236 211 203	H040L85C10 - Fine Alabaster
+253 205 189	H040L85C20 - Delicate Sweet Apricot
+240 225 219	H040L90C05 - Sahara Light Red
+247 224 214	H040L90C10 - Delicate Rose
+251 237 229	H040L93C05 - Natural White
+ 61  45  36	H050L20C10 - Granite Brown
+ 68  40  27	H050L20C16 - Night Brown
+ 82  62  53	H050L30C10 - Obsidian Brown
+ 96  59  42	H050L30C20 - Tropical Wood Brown
+108  56  33	H050L30C30 - Tobacco Brown
+114  55  28	H050L30C36 - Rosewood Brown
+111  91  82	H050L40C10 - Mocha Black
+122  85  68	H050L40C20 - Florentine Brown
+132  80  56	H050L40C30 - Curry Brown
+143  72  38	H050L40C40 - Madeira Brown
+153  69  31	H050L40C50 - Autumn Red
+137 117 107	H050L50C10 - Teakwood Brown
+150 111  93	H050L50C20 - Milk Coffee Brown
+163 106  79	H050L50C30 - Golden Brown
+173  99  66	H050L50C40 - Copper-Metal Red
+185  94  51	H050L50C50 - Gold Varnish Brown
+189  86  32	H050L50C60 - Titian Red
+205  77   4	H050L50C70 - Poppy Red
+212  88  20	H050L50C78 - Persian Orange
+164 141 131	H050L60C10 - Ecru Ochre
+177 135 117	H050L60C20 - Caramel Brown
+194 132 104	H050L60C30 - Medium Brown
+204 126  91	H050L60C40 - Apricot Brown
+216 121  76	H050L60C50 - Orange Yellow
+229 116  59	H050L60C60 - Camel Red
+233 103  45	H050L60C70 - Carrot Orange
+246  97  26	H050L60C80 - Gerbera Red
+193 171 160	H050L70C10 - Bamboo Beige
+208 165 146	H050L70C20 - Amber Grey
+222 159 131	H050L70C30 - Sienna Ochre
+237 154 118	H050L70C40 - Light Amber Orange
+246 146 104	H050L70C50 - Melon Red
+255 139  88	H050L70C60 - Mango Orange
+223 199 188	H050L80C10 - Pale Sienna
+238 192 171	H050L80C20 - Soft Orange
+252 185 157	H050L80C30 - Pallid Orange
+228 213 205	H050L85C05 - Ocean Sand
+233 208 196	H050L85C10 - Pure Beige
+249 204 183	H050L85C20 - Biscuit Cream
+243 228 220	H050L90C05 - Eggshell White
+255 230 216	H050L90C10 - Light Peach Rose
+251 237 229	H050L93C05 - Tulle White
+ 50  43  38	H060L20C05 - Industrial Black
+ 76  67  61	H060L30C05 - Vehicle Body Grey
+ 81  64  53	H060L30C10 - Nutria Fur Brown
+ 90  61  41	H060L30C20 - Peat Brown
+ 98  60  31	H060L30C27 - Cassiterite Brown
+101  91  85	H060L40C05 - Zinc Grey
+106  88  77	H060L40C10 - Moor Oak Grey
+118  86  64	H060L40C20 - Coffee Bean Brown
+127  81  49	H060L40C30 - Brazilian Brown
+138  80  36	H060L40C40 - Plane Brown
+127 116 110	H060L50C05 - Chinchilla Grey
+133 114 102	H060L50C10 - Sandstone Grey
+144 110  88	H060L50C20 - Mushroom Brown
+157 108  74	H060L50C30 - Mustard Brown
+165 102  57	H060L50C40 - Camel Brown
+175 100  43	H060L50C50 - Date Fruit Brown
+178  91   9	H060L50C60 - Elm Brown Red
+189  92   0	H060L50C70 - Dry Clay
+154 144 138	H060L60C05 - Screed Grey
+161 141 128	H060L60C10 - Oak Brown
+176 137 113	H060L60C20 - Light Topaz Ochre
+185 133  99	H060L60C30 - Cognac Brown
+200 133  84	H060L60C40 - Maple Syrup Brown
+202 122  64	H060L60C50 - Turmeric Red
+213 118  43	H060L60C60 - Bitter Orange
+219 114  16	H060L60C70 - Gold Orange
+229 109   0	H060L60C80 - Accent Orange
+181 171 164	H060L70C05 - Cement Greige
+189 168 156	H060L70C10 - Putty Grey
+200 163 138	H060L70C20 - Peanutbutter
+209 156 121	H060L70C30 - Peach Yellow
+224 155 110	H060L70C40 - Candle Yellow
+235 151  94	H060L70C50 - Topaz Yellow
+240 143  72	H060L70C60 - Melon Orange
+252 140  53	H060L70C70 - Indian Yellow
+209 198 190	H060L80C05 - Light Chamois Beige
+215 195 181	H060L80C10 - Soft Greige
+230 191 166	H060L80C20 - Biscuit Beige
+244 186 148	H060L80C30 - Mild Orange
+253 180 130	H060L80C40 - Apricot Orange
+227 214 204	H060L85C05 - Champagne Rose
+235 213 197	H060L85C10 - Cornmeal Beige
+246 208 182	H060L85C20 - Dough Yellow
+255 204 165	H060L85C30 - Light Saffron Orange
+239 227 216	H060L90C05 - Grain White
+247 224 210	H060L90C10 - Vanilla Cream
+253 220 200	H060L90C15 - Apricot Cream
+249 237 228	H060L93C05 - Wool White
+ 77  63  51	H070L30C10 - Mineral Brown
+ 87  65  40	H070L30C20 - Beech Brown
+103  89  76	H070L40C10 - Mink Brown
+113  86  59	H070L40C20 - Huckleberry Brown
+122  85  46	H070L40C30 - Arable Brown
+128  82  26	H070L40C40 - Autumn Gold
+129 114 101	H070L50C10 - Saruk Grey
+140 111  84	H070L50C20 - Ash Gold
+148 107  65	H070L50C30 - Lion's Mane Blonde
+157 105  47	H070L50C40 - Antique Gold
+158 105  40	H070L50C50 - Stage Gold
+167 105  36	H070L50C55 - Theatre Gold
+155 139 124	H070L60C10 - Light Mahogany
+166 138 110	H070L60C20 - Dark Blond
+175 133  92	H070L60C30 - Light Oak Brown
+184 131  73	H070L60C40 - Grain Brown
+193 129  54	H070L60C50 - Mud Yellow
+203 129  45	H070L60C60 - Mustard Yellow
+205 123   0	H070L60C70 - Seabuckthorn Yellow Brown
+208 122   4	H070L60C75 - Autumn Leaf Orange
+184 168 153	H070L70C10 - Ginger Grey Yellow
+194 164 135	H070L70C20 - Light Ash Brown
+206 162 119	H070L70C30 - Golden Beige
+215 158  98	H070L70C40 - Dechant Pear Yellow
+222 156  82	H070L70C50 - Honeycomb Yellow
+233 154  60	H070L70C60 - Gorse Yellow Orange
+235 147  31	H070L70C70 - Naples Yellow
+240 143   0	H070L70C80 - Saffron Gold
+212 195 179	H070L80C10 - Flax Beige
+227 194 163	H070L80C20 - Buttercup Yellow
+236 190 145	H070L80C30 - Golden Oat Coloured
+247 189 129	H070L80C40 - Apricot Yellow
+255 184 107	H070L80C50 - Warm Apricot
+255 182  87	H070L80C60 - Golden Rain Yellow
+223 213 202	H070L85C05 - Almond Beige
+231 213 197	H070L85C10 - Silver Thistle Beige
+242 209 177	H070L85C20 - Sandalwood Beige
+253 207 161	H070L85C30 - Hair Blonde
+237 228 217	H070L90C05 - Off White
+243 226 209	H070L90C10 - Light Corn
+255 222 190	H070L90C20 - Chalk Yellow
+249 239 228	H070L93C05 - Anemone White
+102  91  78	H075L40C10 - Tree Bark Brown
+109  86  60	H075L40C20 - Caraway Brown
+115  83  42	H075L40C30 - Bark Brown
+121  84  25	H075L40C38 - Lizard Brown
+128 115 101	H075L50C10 - Rye Dough Brown
+138 112  84	H075L50C20 - China Cinnamon
+147 112  67	H075L50C30 - Grog Yellow
+154 108  49	H075L50C40 - Amber Brown
+158 106  25	H075L50C50 - Cinnamon Brown
+160 102   0	H075L50C58 - Cumin Ochre
+157 142 127	H075L60C10 - Putty Yellow
+166 139 110	H075L60C20 - Walnut Shell Brown
+174 137  93	H075L60C30 - Clay Ochre
+182 136  77	H075L60C40 - Funchal Yellow
+187 132  52	H075L60C50 - Mango Brown
+193 129  22	H075L60C60 - Turmeric Brown
+200 127   0	H075L60C70 - Bamboo Brown
+183 169 154	H075L70C10 - Flax Fibre Grey
+194 165 133	H075L70C20 - Light Pumpkin Brown
+202 163 117	H075L70C30 - Golden Thistle Yellow
+210 161  97	H075L70C40 - Brick Yellow
+217 159  80	H075L70C50 - Deep Bamboo Yellow
+225 156  53	H075L70C60 - Intense Yellow
+233 154  16	H075L70C70 - Pumpkin Yellow
+233 151   0	H075L70C80 - Autumn Yellow
+214 197 180	H075L80C10 - Chalk Beige
+224 195 162	H075L80C20 - Light Corn Yellow
+231 191 142	H075L80C30 - Dark Yellow
+240 189 126	H075L80C40 - Ash Yellow
+247 185 105	H075L80C50 - Orient Yellow
+255 183  86	H075L80C60 - Carriage Yellow
+230 214 196	H075L85C10 - Water Lily White
+241 211 178	H075L85C20 - Banana Ice Cream
+250 208 161	H075L85C30 - Maple Beige
+255 206 143	H075L85C40 - Goldenrod Yellow
+246 228 208	H075L90C10 - Dessert Cream
+253 222 189	H075L90C20 - Butter White
+246 238 229	H075L93C05 - Vanilla White
+ 50  45  37	H080L20C05 - Night Brown Black
+ 54  44  29	H080L20C10 - Vanilla Bean Brown
+ 73  67  59	H080L30C05 - Earth Black
+ 75  64  49	H080L30C10 - Olive Black
+ 82  63  33	H080L30C20 - Clove Yellow Brown
+ 87  63  22	H080L30C26 - Smoked Oak Brown
+ 99  93  84	H080L40C05 - Office Grey
+102  91  77	H080L40C10 - Stone Brown
+108  87  56	H080L40C20 - Pimento Grain Brown
+114  87  40	H080L40C30 - Ochre Green
+122  86  14	H080L40C40 - Autumn Leaf Brown
+123 117 108	H080L50C05 - Dusk Grey
+128 116 101	H080L50C10 - Rye Brown
+135 114  84	H080L50C20 - Greyish Yellow
+141 112  64	H080L50C30 - Chili Green
+146 110  46	H080L50C40 - Dirt Yellow
+152 110  25	H080L50C50 - Chamois Yellow
+150 144 135	H080L60C05 - Flannel Grey
+153 141 124	H080L60C10 - Light Khaki
+163 140 107	H080L60C20 - Spelt Grain Brown
+170 138  88	H080L60C30 - Golden Quartz Ochre
+174 136  75	H080L60C40 - Bamboo Yellow
+181 135  53	H080L60C50 - Brass Yellow
+187 134  16	H080L60C60 - Fig Mustard Yellow
+190 132   0	H080L60C70 - Yellow Gold
+176 170 161	H080L70C05 - Garlic Beige
+181 169 152	H080L70C10 - Fine Greige
+191 167 133	H080L70C20 - Yellow Brown
+197 165 116	H080L70C30 - Mustard Seed Beige
+206 164  97	H080L70C40 - Diamond Yellow
+212 162  78	H080L70C50 - Antique Brass
+218 161  53	H080L70C60 - Courgette Yellow
+223 160  26	H080L70C70 - Grapefruit Yellow
+225 156   0	H080L70C80 - Sunflower Yellow
+229 155   0	H080L70C88 - Arnica Yellow
+205 199 189	H080L80C05 - Micaceous Light Grey
+213 198 180	H080L80C10 - Pastel Sand
+220 195 159	H080L80C20 - Natural Rice Beige
+227 192 141	H080L80C30 - Yellow Beige
+236 191 122	H080L80C40 - Straw Yellow
+243 190 103	H080L80C50 - Mirabelle Yellow
+249 188  79	H080L80C60 - Full Yellow
+252 185  55	H080L80C70 - Pear Yellow
+255 183  11	H080L80C80 - Fire Yellow
+255 183   0	H080L80C90 - Summer Yellow
+221 214 202	H080L85C05 - Wheat Flour White
+226 213 194	H080L85C10 - Onion White
+237 212 177	H080L85C20 - Nashi Pear Beige
+243 209 159	H080L85C30 - Vespa Yellow
+252 207 139	H080L85C40 - Puff Pastry Yellow
+238 230 217	H080L90C05 - Japanese White
+240 225 205	H080L90C10 - Mushroom White
+247 223 186	H080L90C20 - Macadamia Beige
+255 222 169	H080L90C30 - Horseradish Yellow
+245 237 226	H080L93C05 - Milk Star White
+102  93  78	H085L40C10 - Mineral Green
+106  90  57	H085L40C20 - Khaki Green
+113  91  46	H085L40C30 - Moss Brown
+126 116  99	H085L50C10 - Coriander Ochre
+134 116  82	H085L50C20 - Pyrite Slate Green
+140 115  64	H085L50C30 - Sepia Yellow
+142 113  46	H085L50C40 - Marshy Green
+147 112  22	H085L50C50 - Honey Yellow Green
+153 143 127	H085L60C10 - Matte Olive
+161 142 107	H085L60C20 - Pond Green
+167 140  89	H085L60C30 - Wood Green
+172 139  70	H085L60C40 - Lichen Green
+177 139  50	H085L60C50 - Mineral Umber
+182 139  19	H085L60C60 - Loden Yellow
+179 169 150	H085L70C10 - Raffia Greige
+188 168 133	H085L70C20 - Feldspar Grey
+194 167 112	H085L70C30 - Hay Yellow
+199 165  95	H085L70C40 - Winter Pear Beige
+205 164  73	H085L70C50 - Autumn Apple Yellow
+208 163  46	H085L70C60 - Pitmaston Pear Yellow
+212 162   7	H085L70C70 - Immortelle Yellow
+217 164   0	H085L70C75 - Golden Beryl Yellow
+208 197 177	H085L80C10 - Velvet Beige
+216 196 159	H085L80C20 - Mineral Beige
+225 195 139	H085L80C30 - Moonlight Yellow
+229 194 121	H085L80C40 - Table Pear Yellow
+234 192 100	H085L80C50 - Fruit Yellow
+239 191  77	H085L80C60 - Adonis Rose Yellow
+243 189  50	H085L80C70 - Barberry Yellow
+245 187   0	H085L80C80 - Dandelion Yellow
+246 187   0	H085L80C85 - Decor Yellow
+223 212 191	H085L85C10 - Alabaster White
+232 211 175	H085L85C20 - Light Blond
+240 210 157	H085L85C30 - Willow-Flower Yellow
+247 210 140	H085L85C40 - Light Ginger Yellow
+241 229 209	H085L90C10 - Tulip White
+247 224 186	H085L90C20 - Alpine Berry Yellow
+253 221 167	H085L90C30 - Porcelain Yellow
+244 239 228	H085L93C05 - Vintage White
+ 75  68  51	H090L30C10 - Limonite Brown
+ 81  68  33	H090L30C20 - Bark Green
+101  94  78	H090L40C10 - Boulder Brown
+105  92  57	H090L40C20 - Plum Green
+110  94  44	H090L40C30 - Vine Leaf Green
+124 118 102	H090L50C10 - Graphite Grey Green
+129 117  83	H090L50C20 - Pesto Green
+136 118  63	H090L50C30 - Giant Cactus Green
+139 118  44	H090L50C40 - Aubergine Green
+150 143 127	H090L60C10 - Oyster Grey
+158 143 107	H090L60C20 - Manzanilla Olive
+162 143  92	H090L60C30 - Camouflage Olive
+165 141  69	H090L60C40 - Laurel Green
+165 139  44	H090L60C50 - Faint Green
+173 143  15	H090L60C60 - Titanite Yellow
+178 170 152	H090L70C10 - Dusty Yellow
+184 169 131	H090L70C20 - Barbados Beige
+188 168 114	H090L70C30 - Rhubarb Leaf Green
+196 170  94	H090L70C40 - Hedgehog Cactus Yellow Green
+199 169  74	H090L70C50 - Gooseberry Yellow
+202 168  47	H090L70C60 - Bud Green
+204 168   0	H090L70C70 - Catkin Yellow
+208 167   0	H090L70C80 - Prehnite Yellow
+207 197 176	H090L80C10 - Light Beige
+212 196 158	H090L80C20 - Champagne Beige
+220 198 142	H090L80C30 - Lemon Sorbet Yellow
+225 199 125	H090L80C40 - Blossom Yellow
+230 197  98	H090L80C50 - Tasman Honey Yellow
+232 194  71	H090L80C60 - New Yellow
+237 197  55	H090L80C70 - Fashion Yellow
+236 193   0	H090L80C80 - Poster Yellow
+242 194   0	H090L80C90 - Contrasting Yellow
+219 214 203	H090L85C05 - Pepper White
+225 215 194	H090L85C10 - Paella Natural White
+231 214 175	H090L85C20 - Cider Yellow
+237 214 157	H090L85C30 - Palm Sugar Yellow
+241 212 138	H090L85C40 - March Yellow
+246 213 118	H090L85C50 - Oriole Yellow
+234 228 216	H090L90C05 - Marzipan White
+236 228 208	H090L90C10 - Primrose White
+244 227 187	H090L90C20 - Cream Yellow
+248 225 168	H090L90C30 - Wax Yellow
+254 225 147	H090L90C40 - Lemon Cream
+255 222 126	H090L90C50 - Tiger Yellow
+255 219 103	H090L90C60 - Sunrose Yellow
+242 238 226	H090L93C05 - Cream White
+ 99  93  76	H095L40C10 - Shady Green
+102  91  56	H095L40C20 - Forest Green
+104  92  39	H095L40C30 - Bean Green
+122 117 100	H095L50C10 - Dull Olive
+128 117  83	H095L50C20 - Cabbage Green
+132 118  64	H095L50C30 - Caper Green
+135 118  43	H095L50C40 - Garden Lettuce Green
+137 119  20	H095L50C50 - Artichoke Green
+150 144 126	H095L60C10 - Pale Green Grey
+154 143 108	H095L60C20 - Pale Green
+158 143  87	H095L60C30 - Cypress Green
+161 143  68	H095L60C40 - Grape Green
+163 145  47	H095L60C50 - Gooseberry Green
+161 141  13	H095L60C60 - Guava Green
+163 142   0	H095L60C70 - Romaine Green
+178 171 152	H095L70C10 - Sand Grey
+183 172 135	H095L70C20 - Crocodile Green
+187 171 117	H095L70C30 - Chicory Green
+189 170  93	H095L70C40 - Banana Green
+190 170  74	H095L70C50 - Star Fruit Yellow Green
+190 169  50	H095L70C60 - Papaya Yellow Green
+195 170   0	H095L70C70 - Bronze Green
+205 199 180	H095L80C10 - Sapphire Light Yellow
+211 199 161	H095L80C20 - Pale Olive
+218 201 142	H095L80C30 - Asparagus Yellow
+221 200 122	H095L80C40 - Pea Green
+221 199 101	H095L80C50 - Williams Pear Yellow
+219 196  77	H095L80C60 - Greenish Yellow
+223 198  51	H095L80C70 - Mimosa Yellow
+218 193   0	H095L80C80 - Sorbet Yellow
+222 216 196	H095L85C10 - Salsify White
+229 217 180	H095L85C20 - Dull Light Yellow
+233 215 158	H095L85C30 - Leaf Yellow
+238 216 139	H095L85C40 - Natural Yellow
+239 214 120	H095L85C50 - Sport Yellow
+236 228 206	H095L90C10 - Atlas White
+241 227 188	H095L90C20 - Pearl Yellow
+246 226 167	H095L90C30 - Lemon Ice Yellow
+247 225 144	H095L90C40 - Fresh Yellow
+254 227 127	H095L90C50 - Luminous Yellow
+255 227 109	H095L90C59 - Dynamic Yellow
+240 238 227	H095L93C05 - Crepe Silk White
+ 48  47  39	H100L20C05 - Night Green
+ 69  67  59	H100L30C05 - Volcanic Stone Green
+ 71  66  48	H100L30C10 - Vermilion Green
+ 76  70  35	H100L30C20 - Uniform Green
+ 93  91  83	H100L40C05 - Dove Grey
+ 97  93  76	H100L40C10 - Slick Green
+ 99  93  59	H100L40C20 - Broccoli Green
+102  93  37	H100L40C30 - High Forest Green
+102  94  13	H100L40C40 - Brussels Sprout Green
+120 118 109	H100L50C05 - Forest Floor Khaki
+122 117  98	H100L50C10 - Lapwing Grey Green
+125 120  83	H100L50C20 - Green Woodpecker Olive
+125 118  64	H100L50C30 - Steppe Green
+129 118  43	H100L50C40 - Faience Green
+127 119  17	H100L50C50 - Tool Green
+147 144 135	H100L60C05 - Smoky Grey Green
+146 142 124	H100L60C10 - Olivine Grey
+152 145 108	H100L60C20 - Grey-Headed Woodpecker Green
+152 144  87	H100L60C30 - Cardamom Green
+155 146  70	H100L60C40 - Lettuce Green
+156 147  47	H100L60C50 - Art Nouveau Green
+152 142   1	H100L60C60 - Smoothie Green
+174 173 163	H100L70C05 - Smoky White
+176 172 152	H100L70C10 - Anise Grey Yellow
+179 172 133	H100L70C20 - Sand Brown
+180 172 113	H100L70C30 - Hippie Green
+184 174  96	H100L70C40 - Linden Green
+182 172  75	H100L70C50 - Dill Green
+181 172  49	H100L70C60 - New Green
+200 199 188	H100L80C05 - Natural Grey
+204 199 177	H100L80C10 - Pale Beige
+210 202 161	H100L80C20 - Soft Green
+210 200 140	H100L80C30 - Silver Green
+212 201 120	H100L80C40 - March Tulip Green
+212 201 100	H100L80C50 - Light Olive
+216 203  75	H100L80C60 - Advertisement Green
+216 203  50	H100L80C70 - LED Green
+212 204   0	H100L80C80 - March Green
+219 217 205	H100L85C05 - Celery White
+221 216 194	H100L85C10 - Palm Heart Cream
+224 216 176	H100L85C20 - Beige Green
+228 217 159	H100L85C30 - Crystal Yellow
+232 229 216	H100L90C05 - Brilliant Yellow
+234 229 207	H100L90C10 - Elderberry White
+239 229 187	H100L90C20 - Designer Cream Yellow
+239 228 165	H100L90C30 - Boxwood Yellow
+243 230 146	H100L90C40 - Primrose Yellow
+242 228 125	H100L90C50 - Spring Yellow
+241 239 228	H100L93C05 - Fog White
+ 47  46  31	H110L20C10 - Metal Construction Green
+ 69  70  54	H110L30C10 - Dark Olive Green
+ 70  72  38	H110L30C20 - Nori Seaweed Green
+ 94  95  77	H110L40C10 - Stump Green
+ 92  93  57	H110L40C20 - Antique Green
+ 94  96  42	H110L40C30 - Gardener Green
+ 92  97  22	H110L40C40 - Kirchner Green
+118 119 100	H110L50C10 - November Green
+118 120  83	H110L50C20 - Alexandrite Green
+119 122  68	H110L50C30 - Plant Green
+116 122  44	H110L50C40 - Ripe Green
+113 121  16	H110L50C50 - Portuguese Green
+113 124   0	H110L50C55 - Flag Green
+144 145 126	H110L60C10 - Grey Green
+142 145 109	H110L60C20 - Peapod Green
+145 149  95	H110L60C30 - Indian Green
+142 149  73	H110L60C40 - Winterpea Green
+140 150  50	H110L60C50 - Airline Green
+139 153  22	H110L60C60 - Woodruff Green
+140 153   0	H110L60C65 - Traffic Light Green
+172 173 152	H110L70C10 - Chinese Tea Green
+171 174 134	H110L70C20 - Wall Green
+169 173 116	H110L70C30 - Wasabi Green
+169 176  98	H110L70C40 - April Green
+170 179  80	H110L70C50 - Delaunay Green
+166 178  55	H110L70C60 - Lime Green
+158 177   0	H110L70C70 - Chlorophyll Green
+157 175   0	H110L70C77 - Marker Green
+197 198 179	H110L80C10 - Spring Grey
+201 202 161	H110L80C20 - Mint Ice Green
+200 203 142	H110L80C30 - Springtide Green
+198 205 125	H110L80C40 - Lime Sorbet Green
+199 207 104	H110L80C50 - Easter Green
+196 208  86	H110L80C60 - Clown Green
+192 208  54	H110L80C70 - Juice Green
+215 216 195	H110L85C10 - Veltliner White
+217 217 177	H110L85C20 - Kohlrabi Green
+218 219 160	H110L85C30 - Burgundy Grey
+216 219 139	H110L85C40 - Wax Green
+214 219 118	H110L85C50 - Sprout Green
+228 227 216	H110L90C05 - Cotton White
+230 230 208	H110L90C10 - Light Fern Green
+230 230 188	H110L90C20 - Lily Scent Green
+229 231 167	H110L90C30 - Kiwi Ice Cream Green
+229 232 150	H110L90C40 - Lime Juice Green
+238 238 227	H110L93C05 - Raffia White
+246 247 241	H110L96C02 - Laundry White
+ 65  67  58	H120L30C05 - Racing Green
+ 65  70  52	H120L30C10 - Country House Green
+ 62  72  38	H120L30C20 - Avocado Dark Green
+ 90  92  83	H120L40C05 - English Green
+ 89  94  76	H120L40C10 - Almond Green
+ 86  96  61	H120L40C20 - Cactus Green
+ 84  98  46	H120L40C30 - Basil Green
+ 78  99  20	H120L40C40 - Pepper Green
+117 118 108	H120L50C05 - Smoke Green
+115 120 102	H120L50C10 - Velvet Green Grey
+113 123  86	H120L50C20 - Parrot Green
+110 124  69	H120L50C30 - Quartz Green
+105 125  54	H120L50C40 - Hedge Green
+ 99 126  29	H120L50C50 - Birch Leaf Green
+146 148 137	H120L60C05 - Bluish Grey
+140 145 128	H120L60C10 - Lavender Leaf Green
+138 148 111	H120L60C20 - Cider Pear Green
+135 152  96	H120L60C30 - Vesuvian Green
+130 153  76	H120L60C40 - Bamboo Grass Green
+126 155  57	H120L60C50 - Aloe Vera Green
+119 154  32	H120L60C60 - Mamba Green
+118 156  24	H120L60C63 - Luminescent Green
+170 172 162	H120L70C05 - Laurel Grey
+169 173 153	H120L70C10 - Nile Green
+165 175 137	H120L70C20 - Filigree Green
+162 179 122	H120L70C30 - Serpentine Green
+157 181 103	H120L70C40 - Light Birch Green
+152 182  82	H120L70C50 - Clematis Green
+145 179  60	H120L70C60 - Tourmaline Green
+142 184  38	H120L70C70 - Cocktail Green
+136 180   7	H120L70C75 - Brilliant Green
+198 200 190	H120L80C05 - Dust Green
+195 200 179	H120L80C10 - Jugendstil Green
+194 205 165	H120L80C20 - Avocado Cream
+188 205 145	H120L80C30 - Natural Green
+185 208 128	H120L80C40 - Summer Green
+179 210 109	H120L80C50 - Fashion Green
+176 212  93	H120L80C60 - Neon Green
+214 216 205	H120L85C05 - Chalk Green
+211 217 197	H120L85C10 - Light Feather Green
+210 219 180	H120L85C20 - Lake Green
+206 220 160	H120L85C30 - Aqua Green
+225 227 215	H120L90C05 - Lily of the Valley White
+227 231 209	H120L90C10 - Pale Pistachio
+222 232 190	H120L90C20 - Kiwi Sorbet Green
+217 235 172	H120L90C30 - Ice Cold Green
+236 239 227	H120L93C05 - Touch Of White Green
+ 63  70  53	H130L30C10 - Arame Seaweed Green
+ 57  72  39	H130L30C20 - Kelp Green
+ 89  96  79	H130L40C10 - Soft Olive
+ 79  96  62	H130L40C20 - Alpine Lake Green
+ 75  99  49	H130L40C30 - Gemstone Green
+111 119 102	H130L50C10 - Dubuffet Green
+106 123  89	H130L50C20 - Spanish Green
+ 97 125  72	H130L50C30 - Algae Green
+ 89 128  57	H130L50C40 - Hot Pepper Green
+ 79 129  41	H130L50C50 - Emerald Clear Green
+138 147 129	H130L60C10 - Matte Sage Green
+131 149 115	H130L60C20 - Old Green
+124 152 101	H130L60C30 - Pea Aubergine Green
+116 154  84	H130L60C40 - Bavarian Green
+107 156  66	H130L60C50 - Parisian Green
+ 96 158  47	H130L60C60 - Primal Green
+165 175 157	H130L70C10 - Limestone Green
+160 178 142	H130L70C20 - Soap Green
+150 180 126	H130L70C30 - Watercolour Green
+143 182 109	H130L70C40 - Van Gogh Green
+135 185  96	H130L70C50 - Apple Green
+126 186  77	H130L70C60 - Ultra Green
+193 202 183	H130L80C10 - Jade Light Green
+186 204 168	H130L80C20 - Enamel Green
+179 207 153	H130L80C30 - Pastel Green
+172 211 139	H130L80C40 - Jasmine Green
+164 213 121	H130L80C50 - Crystal Green
+211 217 206	H130L85C05 - Grape Oil Green
+209 219 199	H130L85C10 - Duchamp Light Green
+203 220 183	H130L85C20 - Pallid Light Green
+200 224 171	H130L85C30 - Viridine Green
+223 227 216	H130L90C05 - Poplar White
+224 233 211	H130L90C10 - Mediterranean Green
+214 233 195	H130L90C20 - Spring Green
+235 240 228	H130L93C05 - Bean White
+ 40  46  39	H140L20C05 - Melanite Black Green
+ 40  49  35	H140L20C10 - Mountain Range Green
+ 37  54  30	H140L20C20 - Bavarian Green
+ 66  71  64	H140L30C05 - Black Forest Green
+ 62  73  57	H140L30C10 - Copper Pyrite Green
+ 54  76  46	H140L30C20 - Nettle Green
+ 42  79  33	H140L30C30 - Chestnut Green
+ 27  79  28	H140L30C40 - Ranger Green
+ 89  95  87	H140L40C05 - Stone Green
+ 85  97  81	H140L40C10 - Loden Green
+ 72  98  65	H140L40C20 - Acacia Green
+ 64 102  53	H140L40C30 - Peacock Green
+ 50 106  43	H140L40C40 - Radical Green
+ 41 109  35	H140L40C50 - Brazilian Green
+113 119 110	H140L50C05 - Silver Maple Green
+109 121 105	H140L50C10 - Fir Spruce Green
+ 99 124  91	H140L50C20 - Silver Willow Green
+ 90 128  79	H140L50C30 - Rambling Green
+ 74 129  64	H140L50C40 - Guinean Green
+ 65 134  56	H140L50C50 - Mountain Meadow Green
+ 43 135  37	H140L50C60 - Temperamental Green
+139 145 138	H140L60C05 - Camouflage Green
+133 147 130	H140L60C10 - Silver Linden Grey
+126 153 119	H140L60C20 - Spinach Green
+115 156 105	H140L60C30 - Blackthorn Green
+106 158  92	H140L60C40 - Fresh Green
+ 90 159  77	H140L60C50 - Parsley Green
+ 77 162  65	H140L60C60 - Oregano Green
+ 59 162  52	H140L60C70 - Balloon Green
+165 172 164	H140L70C05 - Ginkgo Green
+159 174 158	H140L70C10 - Wormwood Green
+151 179 145	H140L70C20 - Dew Green
+140 182 132	H140L70C30 - Aniseed Leaf Green
+132 185 119	H140L70C40 - Sour Green
+118 187 104	H140L70C50 - Acid Green
+105 189  90	H140L70C60 - Drop Green
+195 202 191	H140L80C05 - Willow Green
+188 203 185	H140L80C10 - Pastel Grey Green
+179 206 171	H140L80C20 - Gio Ponti Green
+168 209 158	H140L80C30 - Relaxation Green
+153 213 144	H140L80C40 - Dentist Green
+210 218 208	H140L85C05 - Deadnettle White
+206 220 202	H140L85C10 - Leek White
+197 224 189	H140L85C20 - Limestone Slate
+184 226 176	H140L85C30 - Mint Cocktail Green
+223 230 218	H140L90C05 - Rosemary White
+219 233 213	H140L90C10 - Touch Of Green
+234 241 230	H140L93C05 - Chestnut White
+ 61  75  61	H150L30C10 - Thyme Green
+ 46  78  54	H150L30C20 - Moselle Green
+ 30  79  43	H150L30C30 - Mountain Green
+ 82  97  83	H150L40C10 - Felt Green
+ 71 101  74	H150L40C20 - Firm Green
+ 51 103  63	H150L40C30 - Genever Green
+ 28 106  53	H150L40C40 - Ink Green
+  0 108  46	H150L40C50 - Ireland Green
+105 121 106	H150L50C10 - Sage Green Grey
+ 93 125  97	H150L50C20 - Korean Mint
+ 83 128  89	H150L50C30 - Field Green
+ 63 134  83	H150L50C40 - Celery Green
+ 33 136  69	H150L50C50 - Rich Green
+  0 139  60	H150L50C60 - Cold Green
+133 149 135	H150L60C10 - Pointed Cabbage Green
+119 153 125	H150L60C20 - Orient Green
+105 155 114	H150L60C30 - Rosemary Green
+ 89 159 104	H150L60C40 - Mosaic Green
+ 73 164  98	H150L60C50 - Bouncy Ball Green
+ 28 163  80	H150L60C60 - Energy Green
+158 175 160	H150L70C10 - Tea Green
+146 180 152	H150L70C20 - Liebermann Green
+131 186 142	H150L70C30 - Oilcloth Green
+116 187 131	H150L70C40 - Jade Stone Green
+ 98 190 119	H150L70C50 - Verdigris Coloured
+187 204 189	H150L80C10 - Organza Green
+173 208 179	H150L80C20 - Pastel Mint Green
+159 212 170	H150L80C30 - Bright Green
+143 216 159	H150L80C40 - Mother-Of-Pearl Green
+206 217 207	H150L85C05 - Asparagus White
+203 220 203	H150L85C10 - Transparent White
+193 224 193	H150L85C20 - Pallid Green
+220 229 217	H150L90C05 - Mineral White
+215 233 215	H150L90C10 - Alabaster Green
+231 241 230	H150L93C05 - Quark White
+ 43  50  45	H160L20C05 - Beryl Black Green
+ 36  52  42	H160L20C10 - Mussel Green
+ 24  52  37	H160L20C15 - Pumpkin Green Black
+ 16  50  34	H160L20C20 - Opulent Green
+ 62  71  64	H160L30C05 - Rich Olive
+ 56  73  62	H160L30C10 - Exclusive Green
+ 47  73  57	H160L30C15 - Leaf Green
+ 37  75  55	H160L30C20 - Mountain Mint
+ 26  76  50	H160L30C25 - Order Green
+  1  78  46	H160L30C30 - Troll Green
+  0  81  44	H160L30C35 - Card Table Green
+  0  82  40	H160L30C40 - Lemon Balm Green
+ 87  96  90	H160L40C05 - Jasper Green
+ 78  97  87	H160L40C10 - Siberian Green
+ 70  99  83	H160L40C15 - Cucumber Green
+ 62 100  79	H160L40C20 - Serbian Green
+ 51 101  74	H160L40C25 - Black Pine Green
+ 40 104  72	H160L40C30 - Pumpkin Green
+ 22 106  69	H160L40C35 - Jade Mussel Green
+  0 108  68	H160L40C40 - Clover Green
+  0 105  60	H160L40C45 - Frog Green
+  0 107  56	H160L40C50 - Universal Green
+  0 111  55	H160L40C55 - Column Of Oak Green
+111 120 114	H160L50C05 - Arctic Lichen Green
+102 122 110	H160L50C10 - Atlas Cedar Green
+ 95 125 108	H160L50C15 - Stone Cypress Green
+ 86 127 105	H160L50C20 - Juniper Green
+ 77 128 100	H160L50C25 - Sports Field Green
+ 67 130  97	H160L50C30 - Leisure Green
+ 59 132  94	H160L50C35 - Adamite Green
+ 36 133  91	H160L50C40 - Metallic Green
+ 19 136  89	H160L50C45 - Vital Green
+  0 136  84	H160L50C50 - Golf Green
+  0 139  82	H160L50C55 - Iceland Green
+  0 138  76	H160L50C60 - Real Turquoise
+136 146 140	H160L60C05 - Sandstone Grey Green
+127 148 136	H160L60C10 - Slate Green
+120 152 133	H160L60C15 - Mild Green
+111 152 129	H160L60C20 - Douglas Fir Green
+103 154 124	H160L60C25 - Practice Green
+ 94 157 123	H160L60C30 - Memphis Green
+ 83 160 121	H160L60C35 - Advertising Green
+ 69 160 116	H160L60C40 - Hunter Green
+ 58 163 114	H160L60C45 - Linoleum Green
+ 26 163 109	H160L60C50 - Parakeet Green
+  0 162 103	H160L60C55 - Emerald Light Green
+  0 164 101	H160L60C58 - Alhambra Green
+163 174 167	H160L70C05 - Greenish Grey
+153 175 163	H160L70C10 - Weak Green
+144 177 157	H160L70C15 - Andean Slate
+138 179 155	H160L70C20 - Ceramic Green
+129 184 154	H160L70C25 - Water Green
+117 185 150	H160L70C30 - Mountain Lake Green
+106 186 146	H160L70C35 - American Green
+ 96 189 142	H160L70C40 - Techno Turquoise
+ 81 191 138	H160L70C45 - Garish Green
+ 68 192 137	H160L70C50 - Malachite Green
+188 200 193	H160L80C05 - Fog Green
+181 203 189	H160L80C10 - Matte Jade Green
+171 206 186	H160L80C15 - Sun Yellow
+163 208 182	H160L80C20 - Feather Green
+156 210 180	H160L80C25 - Menthol Green
+148 214 178	H160L80C30 - Silk Green
+204 216 208	H160L85C05 - Light Green
+197 218 204	H160L85C10 - Micaceous Green
+189 221 200	H160L85C15 - Moonstone Green
+219 229 219	H160L90C05 - Watercolour White
+210 232 216	H160L90C10 - Moonlight Green
+201 234 212	H160L90C15 - Glacial Water Green
+226 239 232	H160L93C05 - Mountain Crystal Silver
+ 28  49  41	H170L20C10 - Deep Green
+ 18  51  40	H170L20C15 - Intense Green
+  0  53  39	H170L20C20 - Coach Green
+  0  55  35	H170L20C25 - Off-Road Green
+ 53  74  65	H170L30C10 - Garnet Black Green
+ 40  75  62	H170L30C15 - Dark Green
+ 30  75  59	H170L30C20 - Thistle Green
+  4  79  59	H170L30C25 - Raspberry Leaf Green
+  0  79  57	H170L30C30 - Chrysocolla Dark Green
+  0  82  57	H170L30C35 - Trapper Green
+  0  84  55	H170L30C40 - Permanent Green
+ 75  96  87	H170L40C10 - Chalcedony Green
+ 66  98  85	H170L40C15 - Palace Green
+ 53 101  84	H170L40C20 - Plantain Green
+ 43 101  81	H170L40C25 - Ore Mountains Green
+ 28 106  81	H170L40C30 - Tractor Green
+  0 106  77	H170L40C35 - Victoria Green
+  0 107  77	H170L40C40 - Device Green
+  0 108  75	H170L40C45 - Environmental Green
+  0 108  71	H170L40C50 - Vegan Green
+ 99 122 114	H170L50C10 - Bournonite Green
+ 91 126 112	H170L50C15 - Fuchsite Green
+ 80 127 109	H170L50C20 - Blackberry Leaf Green
+ 70 129 108	H170L50C25 - Tourmaline Blue
+ 53 131 106	H170L50C30 - Dream Green
+ 32 132 104	H170L50C35 - Accent Green Blue
+  0 134 100	H170L50C40 - Spectral Green
+  0 135 100	H170L50C45 - Mallard Green
+  0 139  98	H170L50C50 - Chagall Green
+  0 138  96	H170L50C55 - Absinthe Turquoise
+124 148 139	H170L60C10 - Quantum Green
+118 151 137	H170L60C15 - Bitter Clover Green
+105 154 136	H170L60C20 - Cyprus Green
+ 94 155 134	H170L60C25 - Succulent Green
+ 80 157 131	H170L60C30 - Vibrant Green
+ 63 162 130	H170L60C35 - Klimt Green
+ 44 161 128	H170L60C40 - Persian Green
+  0 162 125	H170L60C45 - Sport Green
+  0 166 126	H170L60C50 - Active Green
+152 177 166	H170L70C10 - Lovage Green
+143 178 163	H170L70C15 - Chrysopal Light Green
+132 182 162	H170L70C20 - Source Green
+124 184 161	H170L70C25 - Orient Mosaic Green
+108 187 160	H170L70C30 - Mint Cold Green
+ 95 187 156	H170L70C35 - Emerald Green
+ 82 188 154	H170L70C40 - Expressionism Green
+180 204 194	H170L80C10 - Fluorite Blue
+168 207 192	H170L80C15 - Swimming Pool Green
+159 211 191	H170L80C20 - Sky Green
+147 211 188	H170L80C25 - Larimar Green
+205 218 211	H170L85C05 - Silicate Light Turquoise
+197 221 208	H170L85C10 - Topaz Green
+186 223 205	H170L85C15 - Refrigerator Green
+177 226 203	H170L85C20 - Crystal Glass Green
+217 229 221	H170L90C05 - Crystal Salt White
+207 233 220	H170L90C10 - Turquoise White
+228 240 232	H170L93C05 - Snow Crystal Green
+ 40  51  48	H180L20C05 - Pitch Green
+ 27  50  44	H180L20C10 - Lacquer Green
+  9  51  44	H180L20C15 - Fence Green
+  0  53  44	H180L20C20 - Myrtle Green
+ 63  74  71	H180L30C05 - Amazon Green
+ 50  73  67	H180L30C10 - Rich Grey Turquoise
+ 39  76  67	H180L30C15 - Blackboard Green
+ 24  77  67	H180L30C20 - Swedish Green
+  0  80  67	H180L30C25 - Fjord Green
+  0  80  66	H180L30C30 - Urban Green
+  0  83  65	H180L30C35 - Jungle Green
+ 84  95  91	H180L40C05 - Earth Green
+ 74  99  92	H180L40C10 - Pine Green
+ 62 100  91	H180L40C15 - Forest Greenery
+ 48 103  92	H180L40C20 - Sea Green
+ 30 103  90	H180L40C25 - Eucalyptus Green
+  0 106  91	H180L40C30 - Fresh Ivy Green
+  0 107  87	H180L40C35 - Chrysocolla Medium Green
+  0 107  86	H180L40C40 - Poster Green
+  0 109  87	H180L40C45 - Teal Dark Green
+110 122 119	H180L50C05 - Dusk Green
+ 97 122 116	H180L50C10 - Refreshing Green
+ 85 125 115	H180L50C15 - Dull Turquoise
+ 73 127 115	H180L50C20 - Azurite Water Green
+ 57 129 116	H180L50C25 - Copper Mineral Green
+ 35 132 114	H180L50C30 - Glass Green
+  0 133 114	H180L50C35 - Summer Turquoise
+  0 133 113	H180L50C40 - Christmas Green
+  0 138 112	H180L50C45 - Industrial Turquoise
+  0 138 111	H180L50C50 - Ocean Green
+133 146 143	H180L60C05 - Marble Green-Grey
+122 149 142	H180L60C10 - Tile Green
+111 151 142	H180L60C15 - Copper Roof Green
+ 99 154 142	H180L60C20 - Sage Green
+ 84 155 140	H180L60C25 - Petrol Green
+ 67 158 141	H180L60C30 - Dioptase Green
+ 46 161 140	H180L60C35 - Stamp Pad Green
+  0 163 140	H180L60C40 - Light Turquoise
+  0 165 140	H180L60C45 - Caribbean Green
+  0 166 139	H180L60C50 - Brilliant Turquoise
+160 173 169	H180L70C05 - Feldspar Silver
+147 176 169	H180L70C10 - Delicate Green
+136 178 169	H180L70C15 - Silicate Green
+125 182 168	H180L70C20 - Mint Bonbon Green
+111 183 168	H180L70C25 - Glacial Green
+ 98 186 168	H180L70C30 - Bath Turquoise
+ 76 188 167	H180L70C35 - Mountain Lake Azure
+ 54 191 168	H180L70C40 - Pure Cyan
+188 201 195	H180L80C05 - Aragonite White
+177 204 197	H180L80C10 - Light Teal
+167 208 197	H180L80C15 - Whirlpool Green
+150 209 195	H180L80C20 - Opal Turquoise
+139 212 195	H180L80C25 - Light Capri Green
+130 217 197	H180L80C30 - Tender Turquoise
+203 217 212	H180L85C05 - Sea Haze Grey
+194 221 211	H180L85C10 - Tierra Del Fuego Sea Green
+186 225 211	H180L85C15 - Pale Mountain Lake Turquoise
+171 226 207	H180L85C20 - Coral Green
+217 231 226	H180L90C05 - Transparent Green
+205 235 225	H180L90C10 - Ice Water Green
+229 241 236	H180L93C05 - Arctic White
+  0  56  51	H190L20C20 - Night Turquoise
+ 37  77  72	H190L30C15 - Carriage Green
+ 16  79  74	H190L30C20 - Stockade Green
+  0  80  75	H190L30C25 - Action Green
+  0  82  76	H190L30C30 - Myrtle Deep Green
+  0  83  76	H190L30C35 - Plankton Green
+ 73  98  94	H190L40C10 - Mud Green
+ 60 100  97	H190L40C15 - Moor Pond Green
+ 41 102  97	H190L40C20 - Lush Green
+ 11 104  99	H190L40C25 - Butterfly Green
+  0 107 100	H190L40C30 - Fashion Blue
+  0 108 101	H190L40C35 - Office Blue Green
+  0 110 102	H190L40C40 - Iguana Green
+  0 113 103	H190L40C45 - Dark Teal
+ 97 124 120	H190L50C10 - Storm Green
+ 84 126 121	H190L50C15 - Dark Turquoise
+ 70 128 123	H190L50C20 - Fir Blue
+ 49 130 123	H190L50C25 - Apatite Blue
+  8 132 124	H190L50C30 - Egyptian Green
+  0 134 125	H190L50C35 - Ornamental Turquoise
+  0 137 128	H190L50C40 - Eyeshadow Turquoise
+  0 138 129	H190L50C45 - Clear Turquoise
+122 150 147	H190L60C10 - Subtle Turquoise
+111 152 146	H190L60C15 - Pale Verdigris
+ 99 155 149	H190L60C20 - Goose Pond Green
+ 79 158 150	H190L60C25 - Tourmaline Turquoise
+ 58 160 152	H190L60C30 - Baltic Green
+ 22 162 154	H190L60C35 - Ceramic Blue Turquoise
+  0 164 154	H190L60C40 - Baltic Turquoise
+  0 164 153	H190L60C45 - Tyrolite Blue-Green
+149 176 173	H190L70C10 - Marble Green
+137 179 173	H190L70C15 - Jade Green
+122 181 174	H190L70C20 - Spring Water Turquoise
+107 184 177	H190L70C25 - Florida Turquoise
+ 93 188 180	H190L70C30 - Hygiene Green
+ 69 188 179	H190L70C35 - Arctic Green
+175 205 199	H190L80C10 - Andean Opal Green
+165 208 203	H190L80C15 - Cold Turquoise
+151 209 203	H190L80C20 - Teal Blue
+136 212 204	H190L80C25 - Pool Green
+198 219 214	H190L85C05 - Morning Dew White
+187 222 215	H190L85C10 - Bath Salt Green
+171 226 214	H190L85C15 - Capri Water Blue
+157 229 216	H190L85C20 - Horizon Blue
+218 230 226	H190L90C05 - Cool White
+205 234 229	H190L90C10 - Source Blue
+229 241 236	H190L93C05 - Egyptian White
+ 38  49  48	H200L20C05 - Concealed Green
+ 25  50  50	H200L20C10 - Dark Pine Green
+  4  49  50	H200L20C15 - Roof Tile Green
+  0  54  54	H200L20C20 - Shrub Green
+  0  56  57	H200L20C23 - Customs Green
+ 58  70  69	H200L30C05 - Darkness Green
+ 48  75  74	H200L30C10 - Tree Bark Green
+ 35  78  77	H200L30C15 - Hornblende Green
+ 14  79  79	H200L30C20 - Malachite Blue Turquoise
+  0  78  78	H200L30C25 - Antique Turquoise
+  0  81  82	H200L30C30 - Wool Turquoise
+  0  84  86	H200L30C33 - Ice Dark Turquoise
+ 82  96  95	H200L40C05 - Calcite Grey Green
+ 72  98  98	H200L40C10 - Brochantite Green
+ 58  99 100	H200L40C15 - Pyrite Green
+ 41 103 103	H200L40C20 - Dusky Alpine Blue
+ 10 105 106	H200L40C25 - Bath Green
+  0 107 108	H200L40C30 - Mayan Blue
+  0 108 110	H200L40C35 - Byzantine Blue
+  0 111 114	H200L40C40 - Active Turquoise
+106 119 119	H200L50C05 - North Grey
+ 96 123 123	H200L50C10 - Eye Grey
+ 83 126 126	H200L50C15 - Nickel Ore Green
+ 66 127 128	H200L50C20 - Seafoam Green
+ 45 130 132	H200L50C25 - Kandinsky Turquoise
+  0 132 134	H200L50C30 - Caribbean Turquoise
+  0 136 139	H200L50C35 - Well Blue
+  0 137 140	H200L50C40 - Industrial Blue
+  0 138 142	H200L50C45 - India Blue
+132 146 146	H200L60C05 - Shady Grey
+122 149 149	H200L60C10 - North Cape Grey
+108 152 152	H200L60C15 - Woad Indigo
+ 95 155 156	H200L60C20 - Jugendstil Turquoise
+ 73 156 157	H200L60C25 - Coolbox Ice Turquoise
+ 49 159 159	H200L60C30 - Aquamarine Blue
+  0 161 163	H200L60C35 - Arctic Blue
+  0 164 166	H200L60C40 - Wax Crayon Blue
+160 173 172	H200L70C05 - Prince Grey
+148 178 178	H200L70C10 - Calcite Blue
+133 179 178	H200L70C15 - Cold Front Green
+122 182 182	H200L70C20 - Kingfisher Turquoise
+106 185 187	H200L70C25 - Fresh Soft Blue
+188 201 199	H200L80C05 - China Light Green
+174 204 203	H200L80C10 - Baroque Chalk Soft Blue
+162 205 203	H200L80C15 - Ice Boutique Turquoise
+148 211 209	H200L80C20 - Summer Soft Blue
+133 212 212	H200L80C25 - Mountain Lake Blue
+203 217 216	H200L85C05 - Raffia Light Grey
+193 220 219	H200L85C10 - Cold Air Turquoise
+180 224 222	H200L85C15 - Frosty Soft Blue
+166 227 224	H200L85C20 - Ice Crystal Blue
+217 231 228	H200L90C05 - Frosty Green
+204 233 228	H200L90C10 - Frosty White Blue
+229 241 237	H200L93C05 - Chilly White
+ 50  73  75	H210L30C10 - Graphite Black Green
+ 33  76  79	H210L30C15 - Mallard Blue
+  0  79  84	H210L30C20 - Transporter Green
+  0  79  87	H210L30C25 - Deep Atlantic Blue
+  0  80  90	H210L30C30 - Kali Blue
+ 70  97  99	H210L40C10 - Linen Grey
+ 58 100 104	H210L40C15 - China Green Blue
+ 38 102 107	H210L40C20 - Dusk Blue
+  0 102 109	H210L40C25 - Trouser Blue
+  0 105 115	H210L40C30 - Indigo Blue
+  0 108 120	H210L40C35 - Cold Blue
+  0 106 119	H210L40C38 - Mary Blue
+ 95 123 126	H210L50C10 - Uniform Green Grey
+ 84 125 128	H210L50C15 - Labradorite Green
+ 66 127 133	H210L50C20 - Enamel Antique Green
+ 43 130 136	H210L50C25 - Cranach Blue
+  0 131 141	H210L50C30 - China Blue
+  0 134 145	H210L50C35 - Glacier Blue
+  0 136 148	H210L50C40 - Curaçao Blue
+  0 137 151	H210L50C45 - Atlantic Blue
+122 149 152	H210L60C10 - Ash Blue
+108 150 154	H210L60C15 - Baltic Blue
+ 95 156 162	H210L60C20 - Beach Blue
+ 74 159 167	H210L60C25 - Basilica Blue
+ 48 160 170	H210L60C30 - Danube Blue
+  0 161 172	H210L60C35 - Altdorf Sky Blue
+  0 164 177	H210L60C40 - Garish Blue
+149 177 179	H210L70C10 - Storm Grey
+137 179 182	H210L70C15 - Persian Blue
+121 182 188	H210L70C20 - Aqua Blue
+105 184 192	H210L70C25 - Maritime Soft Blue
+ 83 188 197	H210L70C30 - Mountain Blue
+ 53 189 200	H210L70C35 - Panorama Blue
+180 206 207	H210L80C10 - Turquoise Grey
+165 209 211	H210L80C15 - Dolphin Blue
+150 210 214	H210L80C20 - Aroma Blue
+136 214 220	H210L80C25 - Vibrant Soft Blue
+202 218 218	H210L85C05 - Siesta White
+188 224 223	H210L85C10 - Mint Blue
+182 225 225	H210L85C15 - Fine Blue
+167 227 226	H210L85C20 - Pale Blue
+217 231 229	H210L90C05 - Tulle Soft Blue
+204 234 231	H210L90C10 - Antarctic Blue
+ 38  48  50	H220L20C05 - Navy Black
+ 26  51  56	H220L20C10 - Indigo Carmine
+  1  52  58	H220L20C15 - Artist Blue
+  0  55  64	H220L20C20 - Natural Indigo
+ 60  71  72	H220L30C05 - Panda Black
+ 49  74  78	H220L30C10 - Pallasite Blue
+ 37  77  84	H220L30C15 - Hurricane Green Blue
+  8  77  88	H220L30C20 - Watercolour Blue
+  0  81  93	H220L30C25 - Coral Blue
+  0  81  96	H220L30C30 - Sandalwood Grey Blue
+ 83  95  98	H220L40C05 - Limousine Grey Blue
+ 74  98 103	H220L40C10 - Corundum Blue
+ 59 100 108	H220L40C15 - Smock Blue
+ 42 102 113	H220L40C20 - Mordant Blue
+  6 105 118	H220L40C25 - Cotton Indigo
+  0 107 125	H220L40C30 - Fjord Blue
+  0 108 129	H220L40C35 - Azure Green Blue
+  0 111 134	H220L40C40 - Cyan Blue
+110 122 124	H220L50C05 - Winter Could Grey
+ 99 123 128	H220L50C10 - Cadet Grey
+ 84 125 134	H220L50C15 - Holbein Blue Grey
+ 66 128 138	H220L50C20 - Shady Blue
+ 48 129 143	H220L50C25 - Fresco Blue
+  0 129 147	H220L50C30 - Craftsman Blue
+  0 134 154	H220L50C35 - Marker Blue
+  0 136 159	H220L50C40 - Toy Blue
+135 146 148	H220L60C05 - Deep Sea Grey
+124 149 155	H220L60C10 - Tile Blue
+112 152 160	H220L60C15 - Morning Blue
+ 93 154 166	H220L60C20 - Frost Blue
+ 75 156 171	H220L60C25 - Summer Turquoise Blue
+ 50 160 177	H220L60C30 - Fischer Blue
+  0 159 179	H220L60C35 - Planet Blue
+  0 161 185	H220L60C40 - January Blue
+161 174 177	H220L70C05 - Tempered Grey
+151 178 183	H220L70C10 - Mohair Soft Blue Grey
+138 181 189	H220L70C15 - Kitchen Blue
+123 182 193	H220L70C20 - Culinary Blue
+103 183 198	H220L70C25 - Blouson Blue
+ 83 184 201	H220L70C30 - Mountain Range Blue
+ 50 188 209	H220L70C35 - Holiday Blue
+188 202 202	H220L80C05 - Pastel Blue
+178 207 211	H220L80C10 - Clinical Soft Blue
+161 206 215	H220L80C15 - Children's Soft Blue
+153 211 223	H220L80C20 - Tourmaline Water Blue
+139 214 226	H220L80C25 - Fresh Blue
+205 219 221	H220L85C05 - Transparent Blue
+193 222 226	H220L85C10 - Ice Shard Soft Blue
+179 224 231	H220L85C15 - Polar Blue
+217 231 230	H220L90C05 - Cold Soft Blue
+207 234 233	H220L90C10 - Full Moon Grey
+ 28  51  57	H230L20C10 - Ore Bluish Black
+ 17  53  63	H230L20C15 - Firmanent Blue
+  0  52  66	H230L20C20 - Prussian Blue
+ 55  75  82	H230L30C10 - Galenite Blue
+ 38  75  86	H230L30C15 - Berry Blue Green
+ 15  77  92	H230L30C20 - Teal Dark Blue
+  0  79  99	H230L30C25 - Thunderstorm Blue
+ 74  97 105	H230L40C10 - Cone Green Blue
+ 63  98 110	H230L40C15 - Juniper Berry Blue
+ 46 102 118	H230L40C20 - Loon Turquoise
+  2 102 123	H230L40C25 - Workshop Blue
+  0 105 129	H230L40C30 - Pilot Blue
+  0 107 136	H230L40C35 - Ink Blue
+  0 107 139	H230L40C40 - Techno Blue
+ 99 122 130	H230L50C10 - Gravel Grey Blue
+ 87 126 137	H230L50C15 - Spruce Blue
+ 73 128 144	H230L50C20 - Casual Blue
+ 53 128 148	H230L50C25 - Forget-Me-Not Blue
+  0 132 157	H230L50C30 - Zircon Blue
+  0 132 160	H230L50C35 - Lagoon Blue
+  0 133 167	H230L50C40 - Azores Blue
+126 150 159	H230L60C10 - Kingfisher Grey
+113 150 162	H230L60C15 - Silver Fir Blue
+ 98 153 170	H230L60C20 - Pyjama Blue
+ 78 154 176	H230L60C25 - Starflower Blue
+ 57 155 180	H230L60C30 - Sports Blue
+  0 159 189	H230L60C35 - Greek Blue
+  0 160 195	H230L60C40 - Alpine Blue
+155 178 186	H230L70C10 - Ice Gull Grey Blue
+138 179 191	H230L70C15 - Thistleblossom Soft Blue
+124 181 198	H230L70C20 - Tennis Blue
+111 183 204	H230L70C25 - Vintage Blue
+ 91 185 210	H230L70C30 - Fitness Blue
+179 205 212	H230L80C10 - Pallid Blue
+166 204 216	H230L80C15 - Alpine Morning Blue
+155 208 225	H230L80C20 - Light Blue
+208 220 222	H230L85C05 - Polar Soft Blue
+194 220 227	H230L85C10 - Washing Powder White
+185 222 233	H230L85C15 - Himalaya White Blue
+172 225 240	H230L85C20 - Atmospheric Soft Blue
+218 230 229	H230L90C05 - Brilliant White
+ 41  49  53	H240L20C05 - Nightshade Blue
+ 30  50  59	H240L20C10 - Elderberry Black
+ 15  51  65	H240L20C15 - Metal Blue
+  0  52  71	H240L20C20 - Crowberry Blue
+  0  52  74	H240L20C22 - Rich Blue
+ 62  71  75	H240L30C05 - Diamond Grey
+ 52  73  83	H240L30C10 - Dirty Blue
+ 42  75  90	H240L30C15 - Deep Sea Blue
+ 23  76  96	H240L30C20 - Lasurite Blue
+  0  77 103	H240L30C25 - Work Blue
+  0  79 109	H240L30C30 - Gemstone Blue
+  0  81 113	H240L30C35 - Captain Blue
+ 85  94 100	H240L40C05 - Blue Anthracite
+ 76  96 107	H240L40C10 - Blackthorn Blue
+ 64  99 116	H240L40C15 - Celeste Blue
+ 47 100 121	H240L40C20 - Denim Blue
+ 21 102 129	H240L40C25 - Orient Blue
+  0 102 135	H240L40C30 - Sailor Blue
+  0 104 141	H240L40C35 - Stone Blue
+  0 106 147	H240L40C40 - Pure Light Blue
+111 120 125	H240L50C05 - Smoky Blue
+ 99 121 133	H240L50C10 - Tool Blue
+ 88 124 141	H240L50C15 - Technical Blue
+ 73 125 147	H240L50C20 - Coelin Blue
+ 54 127 154	H240L50C25 - Greenland Blue
+ 24 128 161	H240L50C30 - Summer Blue
+  0 129 168	H240L50C35 - Advertising Blue
+  0 130 173	H240L50C40 - Tusche Blue
+136 147 152	H240L60C05 - Carrier Pigeon Blue
+123 146 158	H240L60C10 - Bird Blue
+113 149 166	H240L60C15 - Architecture Blue
+101 152 175	H240L60C20 - Shirt Blue
+ 85 153 182	H240L60C25 - Steel Light Blue
+ 62 154 189	H240L60C30 - Fairytale Blue
+ 20 156 196	H240L60C35 - Princess Blue
+  0 159 200	H240L60C40 - Clear Blue
+162 173 179	H240L70C05 - Laundry Blue
+152 175 186	H240L70C10 - Eye Blue
+140 177 194	H240L70C15 - Bermuda Blue
+128 178 201	H240L70C20 - Sea Blue
+113 181 209	H240L70C25 - Madonna Blue
+ 95 181 214	H240L70C30 - Caribbean Blue
+188 200 204	H240L80C05 - Hazy Blue
+181 205 215	H240L80C10 - Light Topaz Soft Blue
+169 205 221	H240L80C15 - Baby Blue
+155 208 229	H240L80C20 - Crystal Blue
+206 218 222	H240L85C05 - Ice Grey
+195 219 228	H240L85C10 - Air Blue
+183 221 237	H240L85C15 - Paris Blue
+218 231 233	H240L90C05 - Soft Blue White
+208 235 241	H240L90C10 - Chalky Blue White
+  0  50  73	H250L20C20 - Cosmos Blue
+  0  51  79	H250L20C25 - Dark Denim Blue
+ 41  72  90	H250L30C15 - Black Forest Blue
+ 21  73  98	H250L30C20 - Swallow Blue
+  0  76 106	H250L30C25 - Navy Dark Blue
+  0  76 113	H250L30C30 - Pompeii Blue
+ 78  96 109	H250L40C10 - Trekking Blue
+ 67  97 117	H250L40C15 - Steel Blue Grey
+ 50  96 122	H250L40C20 - Berry Blue
+ 29  99 131	H250L40C25 - Linen Blue
+  0 101 140	H250L40C30 - Pool Blue
+  0 100 145	H250L40C35 - Kingfisher Blue
+  0 103 150	H250L40C40 - Europe Blue
+103 121 134	H250L50C10 - Metal Grey
+ 91 121 142	H250L50C15 - Titanium Blue
+ 81 123 149	H250L50C20 - Mallorca Blue
+ 66 124 157	H250L50C25 - Linoleum Blue
+ 43 125 166	H250L50C30 - Prominent Blue
+  0 127 174	H250L50C35 - Turkish Blue
+  0 129 181	H250L50C40 - Primal Blue
+127 146 160	H250L60C10 - Bird Blue Grey
+118 148 169	H250L60C15 - Gentle Blue
+106 149 177	H250L60C20 - Aragonite Blue
+ 93 150 185	H250L60C25 - Pearl Blue
+ 75 152 192	H250L60C30 - Topaz Blue
+ 55 153 200	H250L60C35 - Stratos Blue
+ 14 155 209	H250L60C40 - Structural Blue
+153 174 187	H250L70C10 - Foggy Blue
+144 176 196	H250L70C15 - Chalk Blue
+133 176 204	H250L70C20 - Medium Blue
+122 178 212	H250L70C25 - Meadow Blossom Blue
+107 179 219	H250L70C30 - Broom Butterfly Blue
+182 202 215	H250L80C10 - Light Cyan
+174 205 224	H250L80C15 - Himalaya Blue
+159 202 229	H250L80C20 - Velvet Blue
+205 214 219	H250L85C05 - White Blue
+195 216 228	H250L85C10 - Washing Powder Soft Blue
+188 218 236	H250L85C15 - Diamond Soft Blue
+218 227 231	H250L90C05 - Ice White
+ 36  49  61	H260L20C05 - Blue-Black
+ 21  48  67	H260L20C10 - Nato Blue
+ 43  48  54	H260L20C15 - Suit Blue
+  9  50  74	H260L20C20 - Halite Blue
+ 64  70  77	H260L30C05 - Alpine Duck Grey
+ 58  72  86	H260L30C10 - Bronze Blue
+ 49  72  92	H260L30C15 - Berlin Blue
+ 38  73  99	H260L30C20 - French Blue
+ 17  74 107	H260L30C25 - Tanzanite Blue
+  0  76 115	H260L30C30 - Opal Blue
+  0  77 124	H260L30C35 - Royal Blue
+ 87  93 100	H260L40C05 - Swedish Blue
+ 82  97 111	H260L40C10 - Sheet Blue
+ 75  97 118	H260L40C15 - Plum Blue
+ 61  95 124	H260L40C20 - Cadet Blue
+ 50  98 133	H260L40C25 - Enamel Blue
+ 33  99 139	H260L40C30 - Copenhagen Blue
+  0  99 146	H260L40C35 - Bauhaus Blue
+  0 101 157	H260L40C40 - Navy Blue
+  0 102 163	H260L40C45 - LED Blue
+111 117 125	H260L50C05 - Spitsbergen Blue
+106 119 134	H260L50C10 - Cypress Grey Blue
+ 98 120 142	H260L50C15 - Mahonia Berry Blue
+ 92 123 151	H260L50C20 - Cropper Blue
+ 80 124 160	H260L50C25 - Biedermeier Blue
+ 62 125 170	H260L50C30 - Beijing Blue
+ 43 124 175	H260L50C35 - Vermeer Blue
+  0 127 185	H260L50C40 - Meissen Blue
+138 144 152	H260L60C05 - Seal Grey
+131 145 160	H260L60C10 - Diopside Blue
+126 149 171	H260L60C15 - Nordland Blue
+116 148 177	H260L60C20 - Cranberry Blue
+106 150 186	H260L60C25 - Lupine Blue
+ 94 150 195	H260L60C30 - Blueberry Soft Blue
+ 79 152 203	H260L60C35 - Brilliant Blue
+167 174 180	H260L70C05 - Northern Light Grey
+160 174 188	H260L70C10 - Petrel Blue Grey
+150 174 197	H260L70C15 - Nordland Light Blue
+143 176 206	H260L70C20 - Matte Blue
+131 176 214	H260L70C25 - Pacific Blue
+192 200 207	H260L80C05 - Light Blue Grey
+185 201 215	H260L80C10 - Powder Soft Blue
+177 201 223	H260L80C15 - Wind Blue
+207 213 219	H260L85C05 - Satin White
+201 217 231	H260L85C10 - Sea Breeze Green
+220 227 231	H260L90C05 - Milk Blue
+ 17  47  75	H270L20C20 - Crow Black Blue
+  0  46  81	H270L20C25 - Indigo Black
+  0  49  90	H270L20C29 - Effervescent Blue
+ 54  71  92	H270L30C15 - Midnight Blue
+ 46  71 100	H270L30C20 - Dark Blue
+ 36  72 108	H270L30C25 - Grape Blue
+ 16  71 115	H270L30C30 - Medici Blue
+  0  71 122	H270L30C35 - Kolibri Blue
+  0  72 131	H270L30C40 - Prince Blue
+ 79  95 118	H270L40C15 - Pewter Grey
+ 70  95 126	H270L40C20 - Parlour Blue
+ 63  96 134	H270L40C25 - Functional Blue
+ 51  95 141	H270L40C30 - Make-Up Blue
+ 33  95 150	H270L40C35 - Lapis Lazuli Blue
+  0  95 157	H270L40C40 - Magic Blue
+109 120 136	H270L50C10 - Brocade Blue
+105 121 145	H270L50C15 - Noble Blue
+ 96 121 153	H270L50C20 - Delft Blue
+ 90 122 162	H270L50C25 - Cocktail Blue
+ 78 120 169	H270L50C30 - Sage Blossom Blue
+ 66 120 175	H270L50C35 - Viennese Blue
+ 50 122 185	H270L50C40 - Cornflower Blue
+133 145 162	H270L60C10 - Fantasy Grey
+130 147 172	H270L60C15 - Lilac Blue
+123 147 180	H270L60C20 - Lavender Blue
+116 148 188	H270L60C25 - Delphinium Blue
+107 148 197	H270L60C30 - Eyeshadow Blue
+ 95 147 204	H270L60C35 - Butterfly Blue
+162 174 191	H270L70C10 - Feather Soft Blue
+156 173 199	H270L70C15 - Satin Soft Blue
+150 174 208	H270L70C20 - Angel Blue
+140 172 214	H270L70C25 - Boy Blue
+190 200 216	H270L80C10 - Light Pearl Soft Blue
+182 199 224	H270L80C15 - Retina Soft Blue
+210 214 219	H270L85C05 - Angel Hair Silver
+204 214 230	H270L85C10 - Mother-Of-Pearl Silver
+197 214 238	H270L85C15 - Murano Soft Blue
+223 227 232	H270L90C05 - Bleached White
+ 49  50  56	H280L20C05 - Granite Black
+ 43  48  62	H280L20C10 - Diamond Black
+ 38  49  69	H280L20C15 - Crow Black
+ 32  47  75	H280L20C20 - Manganese Black
+ 27  48  83	H280L20C25 - Elite Blue
+ 13  47  90	H280L20C30 - Ambassador Blue
+ 67  69  76	H280L30C05 - Smoking Night Blue
+ 65  71  86	H280L30C10 - Meteorite Black Blue
+ 61  71  94	H280L30C15 - Anthracite Blue
+ 56  72 102	H280L30C20 - Garnet Stone Blue
+ 51  71 109	H280L30C25 - Hydrogen Blue
+ 38  70 116	H280L30C30 - Deep Blue
+ 33  70 122	H280L30C35 - Theatre Blue
+ 19  70 130	H280L30C40 - Poster Blue
+ 91  93 101	H280L40C05 - Gallery Grey
+ 88  93 109	H280L40C10 - Suede Indigo
+ 84  94 118	H280L40C15 - Dark Lavender
+ 79  94 126	H280L40C20 - Starry Sky Blue
+ 76  94 135	H280L40C25 - Indigo Navy Blue
+ 68  94 141	H280L40C30 - Evening Blue
+ 60  94 149	H280L40C35 - Portuguese Blue
+ 46  93 157	H280L40C40 - Neptune Blue
+ 30  93 165	H280L40C45 - Hyacinth Blue
+115 119 127	H280L50C05 - Noble Grey
+113 119 135	H280L50C10 - Ice Blue Grey
+109 119 143	H280L50C15 - Granite Blue
+104 118 152	H280L50C20 - Lavender Mauve
+100 119 160	H280L50C25 - Costume Blue
+ 95 118 168	H280L50C30 - Light Mauve
+ 87 118 175	H280L50C35 - Sapphire Shimmer Blue
+ 80 119 186	H280L50C40 - Diva Violet
+141 144 152	H280L60C05 - Tulle Grey
+137 143 160	H280L60C10 - Sweet Lavender
+134 143 169	H280L60C15 - Marble Blue
+131 144 179	H280L60C20 - Misty Violet
+126 143 187	H280L60C25 - Opal Violet
+121 144 194	H280L60C30 - Persian Violet
+115 145 204	H280L60C35 - Organza Violet
+167 169 177	H280L70C05 - Taupe Grey
+166 172 188	H280L70C10 - Tulle Violet
+162 172 197	H280L70C15 - Foxflower Viola
+158 171 208	H280L70C20 - Lilac Scent Soft Blue
+155 172 216	H280L70C25 - Aster Flower Blue
+198 200 208	H280L80C05 - Viola Ice Grey
+193 199 215	H280L80C10 - Hyacinth White Soft Blue
+188 198 223	H280L80C15 - Violet Scent Soft Blue
+211 215 220	H280L85C05 - Pebble Soft Blue White
+206 214 230	H280L85C10 - Jewellery White
+223 227 232	H280L90C05 - Mauve White
+234 237 242	H280L93C05 - Porcelain White
+ 39  42  59	H290L20C10 - Spinel Stone Black
+ 43  44  66	H290L20C15 - Black Violet
+ 42  46  76	H290L20C20 - Tropical Night Blue
+ 36  44  82	H290L20C25 - Indigo Violet
+ 29  42  88	H290L20C30 - Ultramarine Violet
+ 25  41  97	H290L20C35 - Schiava Blue
+ 67  66  82	H290L30C10 - Flintstone Blue
+ 65  67  91	H290L30C15 - Spinel Black
+ 61  65  97	H290L30C20 - Church Blue
+ 60  65 106	H290L30C25 - Gloomy Blue
+ 56  65 114	H290L30C30 - Lviv Blue
+ 53  66 123	H290L30C35 - British Mauve
+ 46  65 130	H290L30C40 - Official Violet
+ 91  91 108	H290L40C10 - Shearwater Black
+ 90  91 116	H290L40C15 - Agate Violet
+ 86  90 125	H290L40C20 - Deep Lavender
+ 84  88 131	H290L40C25 - Dusk Mauve
+ 80  87 139	H290L40C30 - Rich Violet
+ 76  86 146	H290L40C35 - Onion Skin Blue
+ 73  88 156	H290L40C40 - Iris Blue
+ 65  87 162	H290L40C45 - Violet Blue
+115 116 134	H290L50C10 - Ash Mauve
+113 115 140	H290L50C15 - Stormy Mauve
+110 113 150	H290L50C20 - Silk Crepe Mauve
+111 114 159	H290L50C25 - Hyacinth Mauve
+108 113 166	H290L50C30 - Mountain Flower Mauve
+103 112 174	H290L50C35 - Chalcedony Violet
+ 99 112 182	H290L50C40 - Gladiola Blue
+140 141 161	H290L60C10 - Lavender Blossom Grey
+140 141 168	H290L60C15 - Delicate Violet
+135 139 177	H290L60C20 - Opera Mauve
+136 140 186	H290L60C25 - Soft Blue Lavender
+133 139 194	H290L60C30 - Pleated Mauve
+126 137 200	H290L60C35 - True Lavender
+169 170 189	H290L70C10 - Cream Violet
+166 168 197	H290L70C15 - Wisteria Light Soft Blue
+163 167 204	H290L70C20 - Blossom Mauve
+161 166 214	H290L70C25 - Sorbet Ice Mauve
+195 196 214	H290L80C10 - Tulip Soft Blue
+195 196 221	H290L80C15 - Pale Lilac
+214 215 219	H290L85C05 - Limestone Mauve
+209 213 234	H290L85C10 - Orchid White
+226 227 233	H290L90C05 - Violet White
+234 236 241	H290L93C05 - Lilac White
+ 49  47  54	H300L20C05 - Night Black
+ 47  43  58	H300L20C10 - Heron Blue
+ 47  42  65	H300L20C15 - Viola Black
+ 46  40  72	H300L20C20 - Blackberry Black
+ 44  40  76	H300L20C25 - Cardinal Mauve
+ 42  39  86	H300L20C30 - Ceremonial Purple
+ 70  68  76	H300L30C05 - Night Grey
+ 71  67  84	H300L30C10 - Mourning Violet
+ 70  65  89	H300L30C15 - Club Grey
+ 70  63  96	H300L30C20 - Mulberry Mauve Black
+ 70  63 103	H300L30C25 - Evening Mauve
+ 69  62 110	H300L30C30 - Opera Blue
+ 68  62 117	H300L30C35 - Deep Violet
+ 65  60 123	H300L30C40 - Sage Violet
+ 95  93 100	H300L40C05 - Baroque Grey
+ 94  90 106	H300L40C10 - Gobelin Mauve
+ 94  88 113	H300L40C15 - Orchid Grey
+ 95  87 121	H300L40C20 - Old Mauve
+ 95  86 128	H300L40C25 - Parma Mauve
+ 94  85 135	H300L40C30 - Wool Violet
+ 94  84 141	H300L40C35 - Fine Purple
+ 90  82 147	H300L40C40 - Clematis Blue
+ 89  82 156	H300L40C45 - Coronation Blue
+119 117 125	H300L50C05 - Hawk Grey
+120 115 132	H300L50C10 - Violet Grey
+120 114 140	H300L50C15 - Capercaillie Mauve
+120 112 147	H300L50C20 - Parisian Violet
+119 111 154	H300L50C25 - Tulip Violet
+119 110 162	H300L50C30 - Toy Mauve
+120 109 170	H300L50C35 - Wintertime Mauve
+118 108 176	H300L50C40 - Clear Mauve
+145 144 152	H300L60C05 - Partridge Grey
+146 141 159	H300L60C10 - Rose Grey
+146 139 166	H300L60C15 - Antique Viola
+146 138 174	H300L60C20 - Larkspur Violet
+145 136 181	H300L60C25 - Silk Lilac
+145 135 189	H300L60C30 - Heliotropic Mauve
+144 133 196	H300L60C35 - Amethyst Grey
+172 170 179	H300L70C05 - Velvet Grey
+173 167 185	H300L70C10 - Morning Mist Grey
+173 166 194	H300L70C15 - Eyeshadow Viola
+174 166 201	H300L70C20 - Lavender Violet
+173 163 209	H300L70C25 - Pink Lavender
+200 198 206	H300L80C05 - Hazy Mauve
+198 195 214	H300L80C10 - Pale Violet
+201 194 221	H300L80C15 - Ice Mauve
+215 214 220	H300L85C05 - Delicate Viola
+217 211 229	H300L85C10 - Powder Viola White
+228 227 233	H300L90C05 - Translucent White
+ 56  43  70	H310L20C20 - Obsidian Lava Black
+ 58  40  76	H310L20C25 - Operetta Mauve
+ 55  34  82	H310L20C30 - Powerful Violet
+ 78  68  89	H310L30C15 - Dark Grey Mauve
+ 76  63  93	H310L30C20 - Powerful Mauve
+ 81  62 100	H310L30C25 - English Violet
+ 83  61 107	H310L30C30 - Crystal Purple
+ 81  59 110	H310L30C35 - Succinct Violet
+ 85  58 118	H310L30C40 - Loden Purple
+100  91 107	H310L40C10 - Dark Pink
+103  91 114	H310L40C15 - Violet Haze
+105  90 120	H310L40C20 - Indigo Red
+106  87 127	H310L40C25 - Charoite Violet
+106  83 131	H310L40C30 - Royal Purple
+108  83 137	H310L40C35 - Magenta Violet
+111  83 144	H310L40C40 - Pure Mauve
+125 116 133	H310L50C10 - Dull Mauve
+126 115 139	H310L50C15 - Batik Lilac
+130 113 145	H310L50C20 - Provence Violet
+132 112 152	H310L50C25 - Baroness Mauve
+133 109 158	H310L50C30 - Bitter Violet
+132 107 163	H310L50C35 - Violet Rose
+134 106 170	H310L50C40 - Orchid Mauve
+149 140 158	H310L60C10 - Gentle Mauve
+153 139 165	H310L60C15 - Smoky Mauve
+156 138 171	H310L60C20 - Saffron Blossom Mauve
+158 136 177	H310L60C25 - Flirty Pink
+159 134 183	H310L60C30 - Peony Mauve
+161 131 192	H310L60C35 - Lilac Purple
+177 167 183	H310L70C10 - Amorphous Rose
+180 166 191	H310L70C15 - Transparent Mauve
+181 163 197	H310L70C20 - Blue Pink
+183 162 204	H310L70C25 - Glass Violet
+203 194 211	H310L80C10 - Powder Viola
+207 193 218	H310L80C15 - Orchid Violet
+215 213 219	H310L85C05 - Fairy Pink
+220 211 227	H310L85C10 - Tricot Lilac White
+231 227 231	H310L90C05 - Wallflower White
+ 53  47  54	H320L20C05 - Lava Black
+ 55  42  56	H320L20C10 - Obsidian Red
+ 56  40  61	H320L20C15 - Spinel Violet
+ 59  39  65	H320L20C20 - Aubergine Mauve
+ 60  34  70	H320L20C25 - Dark Purple
+ 73  67  74	H320L30C05 - Violet Black
+ 77  64  79	H320L30C10 - Stone Violet
+ 79  60  82	H320L30C15 - Amethyst Dark Violet
+ 83  57  88	H320L30C20 - Dark Blackberry
+ 87  56  94	H320L30C25 - Purpurite Violet
+ 88  53  99	H320L30C30 - Damson Mauve
+ 90  52 104	H320L30C35 - Grape Purple
+ 94  51 109	H320L30C37 - Lounge Violet
+ 98  92  99	H320L40C05 - Slate Mauve
+101  88 103	H320L40C10 - Olivine Basalt
+105  87 109	H320L40C15 - Antique Grey
+108  84 114	H320L40C20 - Basil Mauve
+110  81 120	H320L40C25 - Gladiola Violet
+114  76 123	H320L40C30 - Cabbage Blossom Violet
+117  74 128	H320L40C35 - Lilac Violet
+120  72 136	H320L40C40 - Violet Purple
+120 115 122	H320L50C05 - Grey Violet
+125 112 129	H320L50C10 - British Grey Mauve
+128 110 133	H320L50C15 - Parma Grey
+135 109 140	H320L50C20 - Cyclamen
+136 104 145	H320L50C25 - Poetry Mauve
+140 104 151	H320L50C30 - Viola Grey
+143  98 154	H320L50C35 - Aster Violetta
+146 100 162	H320L50C40 - Empire Violet
+148 142 150	H320L60C05 - Aragonite Grey
+152 140 155	H320L60C10 - Chalk Violet
+156 137 161	H320L60C15 - Amethyst Grey Violet
+160 133 166	H320L60C20 - Wonder Violet
+163 131 172	H320L60C25 - Nightshade Violet
+167 128 178	H320L60C30 - Lobby Lilac
+169 126 182	H320L60C35 - Blackberry Sorbet
+174 168 176	H320L70C05 - Elderberry Grey
+178 165 183	H320L70C10 - Bellflower Violet
+181 162 188	H320L70C15 - Quartz Violet
+189 162 196	H320L70C20 - Beach Lilac
+192 157 200	H320L70C25 - Lilac Pink
+203 196 203	H320L80C05 - Light Violet
+207 194 209	H320L80C10 - Amethyst Light Violet
+211 190 213	H320L80C15 - Cosmetic Mauve
+217 211 218	H320L85C05 - Blackberry Cream
+222 209 224	H320L85C10 - Ametrine Quartz
+232 225 230	H320L90C05 - Apatite Pink
+ 64  36  61	H330L20C20 - Profound Mauve
+ 70  35  67	H330L20C25 - Opulent Mauve
+ 85  62  81	H330L30C15 - Currant Violet
+ 90  60  85	H330L30C20 - Mexican Purple
+ 94  57  88	H330L30C25 - Parma Plum Red
+ 99  54  93	H330L30C30 - Intense Purple
+103  51  98	H330L30C35 - Opulent Purple
+104  45  99	H330L30C40 - Intense Mauve
+105  90 103	H330L40C10 - Patina Violet
+110  87 107	H330L40C15 - Dark Purple Grey
+114  86 112	H330L40C20 - Amaranth Red
+119  83 115	H330L40C25 - Deep Magenta
+127  79 120	H330L40C30 - Phloxflower Violet
+131  77 124	H330L40C35 - Thistle Mauve
+131  71 125	H330L40C40 - Visiona Red
+134  68 128	H330L40C45 - Purpurite Red
+129 113 126	H330L50C10 - Burlap Grey
+136 112 132	H330L50C15 - Sapphire Pink
+141 109 137	H330L50C20 - Dianthus Mauve
+145 107 140	H330L50C25 - Crystal Pink
+150 105 147	H330L50C30 - Tulipan Violet
+154 101 150	H330L50C35 - Violet Red
+159  97 152	H330L50C40 - Orchid Purple
+156 140 154	H330L60C10 - Greige Violet
+162 138 159	H330L60C15 - Vesuvian Violet
+168 135 164	H330L60C20 - Gentian Violet
+170 131 164	H330L60C25 - Wilhelminian Pink
+176 129 170	H330L60C30 - Stage Mauve
+182 125 175	H330L60C35 - Cheddar Pink Mauve
+186 122 179	H330L60C40 - Colombo Red Mauve
+184 166 181	H330L70C10 - Mist Pink
+188 163 184	H330L70C15 - Leek Blossom Pink
+193 161 189	H330L70C20 - Strawberry Pink
+202 158 194	H330L70C25 - Purple Pink
+205 155 196	H330L70C30 - Clover Pink
+211 194 207	H330L80C10 - Purple White
+216 191 212	H330L80C15 - Lovely Pink
+225 188 216	H330L80C20 - Designer Pink
+219 213 218	H330L85C05 - Light Magnolia Rose
+228 211 224	H330L85C10 - Raspberry Pink
+234 209 228	H330L85C15 - Heavenly Pink
+235 226 229	H330L90C05 - Delicacy White
+ 53  45  50	H340L20C05 - Liquorice Black
+ 58  39  50	H340L20C10 - Mangosteen Violet
+ 60  34  51	H340L20C15 - Sitter Red
+ 68  34  56	H340L20C20 - Juice Violet
+ 76  33  61	H340L20C25 - Prestige Mauve
+ 75  66  71	H340L30C05 - Apple Herb Black
+ 81  62  73	H340L30C10 - Passionfruit Mauve
+ 87  59  76	H340L30C15 - Dark Fig Violet
+ 92  56  78	H340L30C20 - Ruby Violet
+ 99  54  84	H340L30C25 - Blackberry Deep Red
+101  48  84	H340L30C30 - Deep Red
+105  43  87	H340L30C35 - Velvet Mauve
+110  39  89	H340L30C38 - Forest Fruit Red
+ 98  89  95	H340L40C05 - Mauve Brown
+106  86  98	H340L40C10 - Spinel Grey
+112  83 100	H340L40C15 - Earth Brown Violet
+118  80 103	H340L40C20 - Dahlia Matte Red
+123  77 107	H340L40C25 - Brocade Violet
+128  73 110	H340L40C30 - Madder Magenta
+131  67 112	H340L40C35 - Club Mauve
+136  62 114	H340L40C40 - Cherry Red
+145  57 119	H340L40C45 - Magenta Red
+124 115 121	H340L50C05 - Jubilee Grey
+133 112 124	H340L50C10 - Port Wine Red
+139 108 126	H340L50C15 - Raw Garnet Viola
+145 105 129	H340L50C20 - Milkwort Red
+150 102 132	H340L50C25 - Rust Magenta
+155  98 135	H340L50C30 - Raspberry Jelly Red
+160  93 139	H340L50C35 - Thimble Red
+167  89 141	H340L50C40 - Cyclamen Red
+173  84 143	H340L50C45 - Brilliant Carmine
+152 142 148	H340L60C05 - Heather Red Grey
+158 137 150	H340L60C10 - Piano Mauve
+167 135 154	H340L60C15 - Evening Pink
+172 131 156	H340L60C20 - Capri Fashion Pink
+176 127 158	H340L60C25 - Antique Hot Pink
+182 124 162	H340L60C30 - Cheek Red
+189 121 165	H340L60C35 - Hollyhock Blossom Pink
+196 115 169	H340L60C40 - Bishop Red
+177 167 173	H340L70C05 - Mauve Grey
+185 164 176	H340L70C10 - Buckwheat Mauve
+194 161 181	H340L70C15 - Hollyhock Pink
+200 158 183	H340L70C20 - Idyllic Pink
+202 153 183	H340L70C25 - Morning Glory Pink
+212 150 189	H340L70C30 - Soft Fuchsia
+218 147 193	H340L70C35 - Firm Pink
+207 196 199	H340L80C05 - Piano Grey Rose
+215 194 206	H340L80C10 - Mint Blossom Rose
+223 189 208	H340L80C15 - Scandalous Rose
+230 186 210	H340L80C20 - Bonbon Rose
+223 212 217	H340L85C05 - Strawberry Cream
+231 209 221	H340L85C10 - Light Flamingo Pink
+240 207 225	H340L85C15 - Lacquer Mauve
+235 224 228	H340L90C05 - Rose White
+244 235 239	H340L93C05 - Dress Pink
+ 59  41  50	H350L20C10 - Mulled Wine Red
+ 65  37  51	H350L20C15 - Soft Red
+ 72  32  52	H350L20C20 - Star Ruby
+ 75  28  53	H350L20C25 - Chilli Black Red
+ 83  25  56	H350L20C30 - Tulip Poplar Purple
+ 82  62  71	H350L30C10 - Sparrow Grey Red
+ 90  61  74	H350L30C15 - Siliceous Red
+ 97  57  75	H350L30C20 - Liqueur Red
+103  51  76	H350L30C25 - Wine Gummy Red
+110  49  79	H350L30C30 - Burlat Red
+111  44  79	H350L30C35 - Bordeaux Red
+117  38  83	H350L30C40 - Dried Flower Purple
+110  88  97	H350L40C10 - Aubergine Grey
+115  83  98	H350L40C15 - Opium Mauve
+122  80  99	H350L40C20 - Grey Carmine
+127  76 100	H350L40C25 - Nectar Red
+135  71 102	H350L40C30 - Dark Rose
+140  66 104	H350L40C35 - Bonbon Red
+145  63 106	H350L40C40 - Cyclamen Red
+149  57 106	H350L40C45 - Powder Red
+156  50 107	H350L40C50 - Madder Red
+133 111 121	H350L50C10 - Innocent Pink
+141 108 122	H350L50C15 - Blunt Violet
+149 104 125	H350L50C20 - Corundum Red
+156 101 126	H350L50C25 - Batik Pink
+161  99 129	H350L50C30 - Beryl Red
+170  92 129	H350L50C35 - Crimson
+177  88 130	H350L50C40 - Madder Rose
+177  83 132	H350L50C45 - Signal Pink
+189  78 132	H350L50C50 - Nail Polish Pink
+160 137 148	H350L60C10 - Art Nouveau Violet
+167 133 148	H350L60C15 - Mohair Pink
+177 131 152	H350L60C20 - Heather Violet
+184 127 151	H350L60C25 - Heather Rose
+192 123 154	H350L60C30 - Venetian Pink
+197 118 155	H350L60C35 - Dolomite Red
+205 115 157	H350L60C40 - Camellia Pink
+208 111 160	H350L60C45 - Persian Pink
+188 165 173	H350L70C10 - Cold Pink
+196 161 175	H350L70C15 - Shady Pink
+201 155 176	H350L70C20 - Lady's Cushions Pink
+212 154 179	H350L70C25 - Coral Pink
+221 149 180	H350L70C30 - Techno Pink
+226 146 182	H350L70C35 - Chewing Gum Pink
+216 191 200	H350L80C10 - Magnolia White
+223 188 201	H350L80C15 - Spring Pink
+232 185 205	H350L80C20 - Light Pink
+222 212 216	H350L85C05 - Fairy White
+233 209 218	H350L85C10 - Orchid Rose
+239 205 219	H350L85C15 - Pale Pink
+237 224 225	H350L90C05 - Light Rose
+245 221 230	H350L90C10 - Ranuncula White
+246 235 238	H350L93C05 - Clichy White
+ 67  35  44	H360L20C15 - Piermont Stone Red
+ 77  66  68	H360L30C05 - Russian Red
+ 83  61  68	H360L30C10 - Peppercorn Red
+ 90  56  68	H360L30C15 - Zinfandel Red
+ 98  55  69	H360L30C20 - Art Deco Red
+102  49  69	H360L30C25 - Clinker Red
+108  44  69	H360L30C30 - Cherry Juice Red
+117  39  69	H360L30C35 - Palace Red
+121  36  69	H360L30C40 - Ember Red
+101  90  92	H360L40C05 - Roasted Black
+107  86  94	H360L40C10 - Mocha Brown
+115  82  92	H360L40C15 - Ruby Grey
+123  79  93	H360L40C20 - Baroque Red
+129  74  92	H360L40C25 - Frenzied Red
+136  69  94	H360L40C30 - Redcurrant
+143  65  95	H360L40C35 - Orient Pink
+150  59  96	H360L40C40 - Aurora Magenta
+155  54  94	H360L40C45 - Cardinal Red
+161  45  93	H360L40C50 - Parlour Red
+128 115 117	H360L50C05 - Pumice Grey
+133 111 118	H360L50C10 - Pomace Red
+142 107 118	H360L50C15 - Evening Crimson
+148 104 119	H360L50C20 - Copper Pink
+157  99 117	H360L50C25 - Jugendstil Pink
+165  96 120	H360L50C30 - Cosmetic Red
+173  91 120	H360L50C35 - Indian Pink
+180  88 119	H360L50C40 - Kir Royale Rose
+188  83 120	H360L50C45 - Cockscomb Red
+192  76 119	H360L50C50 - Persian Red
+153 142 145	H360L60C05 - Ash Pink
+160 137 144	H360L60C10 - Majolica Mauve
+169 134 145	H360L60C15 - Fig Fruit Mauve
+178 131 146	H360L60C20 - Noble Lilac
+184 126 145	H360L60C25 - Light Red
+181 169 172	H360L70C05 - Tea Blossom Pink
+188 163 170	H360L70C10 - Quartz Pink
+198 160 171	H360L70C15 - Opaline Pink
+209 196 198	H360L80C05 - Mother-Of-Pearl Pink
+217 191 197	H360L80C10 - Venetian Pink
+229 191 202	H360L80C15 - Soap Pink
+226 212 212	H360L85C05 - Theatre Powder Rose
+234 208 214	H360L85C10 - Lotus Pink
+241 225 224	H360L90C05 - Ice Pink
+249 223 229	H360L90C10 - Cake Frosting
+249 234 235	H360L93C05 - Arrowhead White
