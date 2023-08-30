@@ -28,18 +28,47 @@ void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
     QImageReader reader;
     QImage qimage;
 
-    if ( (rebuild_embedded && !filename.get().isEmpty()) || data.get().isEmpty() )
+    bool load_data = true;
+
+    if ( rebuild_embedded || data.get().isEmpty() )
     {
-        QFileInfo finfo = file_info();
-        if ( !finfo.isFile() )
+        if ( !filename.get().isEmpty() )
+        {
+            QFileInfo finfo = file_info();
+            if ( !finfo.isFile() )
+                return;
+            reader.setFileName(finfo.absoluteFilePath());
+            format.set(reader.format());
+            qimage = reader.read();
+            if ( rebuild_embedded && embedded() )
+                data.set(build_embedded(qimage));
+            load_data = false;
+        }
+        else if ( !url.get().isEmpty() )
+        {
+            document()->assets()->network_downloader.get(url.get(), [this, rebuild_embedded](QByteArray response){
+                QImageReader reader;
+                QImage qimage;
+                QBuffer buf(&response);
+                buf.open(QIODevice::ReadOnly);
+                reader.setDevice(&buf);
+                format.set(reader.format());
+                qimage = reader.read();
+                if ( rebuild_embedded && embedded() )
+                    data.set(build_embedded(qimage));
+
+                image = QPixmap::fromImage(qimage);
+                width.set(image.width());
+                height.set(image.height());
+
+                document()->graphics_invalidated();
+                emit loaded();
+            }, this);
             return;
-        reader.setFileName(finfo.absoluteFilePath());
-        format.set(reader.format());
-        qimage = reader.read();
-        if ( rebuild_embedded && embedded() )
-            data.set(build_embedded(qimage));
+        }
     }
-    else
+
+    if ( load_data )
     {
         QBuffer buf(const_cast<QByteArray*>(&data.get()));
         buf.open(QIODevice::ReadOnly);
@@ -99,7 +128,9 @@ bool glaxnimate::model::Bitmap::from_url(const QUrl& url)
     if ( url.scheme() == "data" )
         return from_base64(url.path());
 
-    return false;
+    this->url.set(url.toString());
+
+    return true;
 }
 
 bool glaxnimate::model::Bitmap::from_file(const QString& file)

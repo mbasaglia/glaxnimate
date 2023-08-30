@@ -1028,14 +1028,26 @@ private:
             format->warning(io::lottie::LottieFormat::tr("Duplicate Bitmap ID: %1").arg(id));
         bitmap_ids[id] = bmp;
 
+        if ( asset.contains("nm") )
+            bmp->name.set(asset["nm"].toString());
+
         if ( asset["e"].toInt() )
         {
             bmp->from_url(asset["p"].toString());
         }
         else
         {
-            QDir dir(asset["u"].toString());
-            bmp->from_file(dir.filePath(asset["p"].toString()));
+            QString path = asset["u"].toString();
+            if ( path.contains("://") )
+            {
+                path += asset["p"].toString();
+                bmp->from_url(path);
+            }
+            else
+            {
+                QDir dir(path);
+                bmp->from_file(dir.filePath(asset["p"].toString()));
+            }
         }
     }
 

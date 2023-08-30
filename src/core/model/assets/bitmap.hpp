@@ -20,6 +20,7 @@ class Bitmap : public Asset
     GLAXNIMATE_OBJECT(Bitmap)
     GLAXNIMATE_PROPERTY(QByteArray, data, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY(QString, filename, {}, &Bitmap::on_refresh)
+    GLAXNIMATE_PROPERTY(QString, url, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY_RO(QString, format, {})
     GLAXNIMATE_PROPERTY_RO(int, width, -1)
     GLAXNIMATE_PROPERTY_RO(int, height, -1)

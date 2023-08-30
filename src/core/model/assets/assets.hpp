@@ -14,6 +14,7 @@
 #include "gradient.hpp"
 #include "composition.hpp"
 #include "embedded_font.hpp"
+#include "network_downloader.hpp"
 
 
 namespace glaxnimate::model {
@@ -204,6 +205,8 @@ public:
     QIcon tree_icon() const override;
     QIcon instance_icon() const override;
     QString type_name_human() const override { return tr("Assets"); }
+
+    NetworkDownloader network_downloader;
 };
 
 } // namespace glaxnimate::model
