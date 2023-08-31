@@ -70,6 +70,22 @@ public:
     QMap<int, int> values;
 };
 
+class IntBool : public ValueTransform
+{
+public:
+    QVariant to_lottie(const QVariant& v, model::FrameTime) const override
+    {
+        return int(v.toBool());
+    }
+
+    QVariant from_lottie(const QVariant& v, model::FrameTime) const override
+    {
+        return bool(v.toInt());
+    }
+private:
+    float factor;
+};
+
 class GradientLoad : public ValueTransform
 {
 public:
@@ -201,7 +217,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("parent", Custom),
         FieldInfo("sr"),
         FieldInfo("ks", Custom),
-        FieldInfo("ao", "auto_orient"),
+        FieldInfo("ao", "auto_orient", IntBool()),
         FieldInfo{"st", Custom},
         FieldInfo("bm"),
         FieldInfo("tt"),

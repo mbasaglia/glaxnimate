@@ -73,7 +73,7 @@ public:
         json["v"_l] = version;
         convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
-        json["assets"_l] = convert_assets();
+        json["assets"_l] = convert_assets(animation);
         convert_composition(animation, json);
         if ( !strip )
             convert_meta(json);
@@ -616,7 +616,7 @@ public:
         return jshapes;
     }
 
-    QCborArray convert_assets()
+    QCborArray convert_assets(model::Composition* animation)
     {
         QCborArray assets;
 
@@ -638,7 +638,10 @@ public:
         }
 
         for ( const auto& comp : document->assets()->compositions->values )
-            assets.push_back(convert_precomp(comp.get()));
+        {
+            if ( comp.get() != animation )
+                assets.push_back(convert_precomp(comp.get()));
+        }
 
         return assets;
     }
