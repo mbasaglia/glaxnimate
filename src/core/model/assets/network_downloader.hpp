@@ -3,8 +3,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 #pragma once
+
+#include <unordered_map>
+
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -57,6 +59,7 @@ public:
     {
         auto reply = manager.get(QNetworkRequest(url));
         pending.insert({reply, PendingRequest(reply)});
+        connect(reply, &QNetworkReply::downloadProgress, this, &NetworkDownloader::on_download_progress);
         connect(reply, &QNetworkReply::finished, receiver ? receiver : this, [this, reply, callback]{
             if ( !reply->error() )
                 callback(reply->readAll());
@@ -79,7 +82,7 @@ private slots:
         if ( bytes_total == -1 )
             bytes_total = 0;
 
-        auto request = sender();
+        QObject* request = sender();
         auto it = pending.find(request);
         if ( it == pending.end() )
             return;

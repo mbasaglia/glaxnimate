@@ -460,7 +460,6 @@ std::optional<QPointF> glaxnimate::model::detail::AnimatedPropertyPosition::deri
     if ( count < 2 )
         return {};
 
-    QPointF delta;
     int index_before = keyframe_index(time);
     const keyframe_type* kf_before = keyframe(index_before);
     const keyframe_type* kf_after = nullptr;
