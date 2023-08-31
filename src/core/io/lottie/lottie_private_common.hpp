@@ -236,7 +236,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("px", Custom),
         FieldInfo("py", Custom),
         FieldInfo("pz", Custom),
-        FieldInfo{"p", Custom},
+        FieldInfo{"p", "position"},
         FieldInfo{"s", "scale"},
         FieldInfo{"r", "rotation"},
         FieldInfo("rx", Custom),
