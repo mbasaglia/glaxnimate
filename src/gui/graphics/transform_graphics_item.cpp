@@ -505,12 +505,22 @@ void graphics::TransformGraphicsItem::drag_pos_start(const QPointF &p)
     d->pos_drag_start = d->pos_trans.map(mapToScene(p));
     d->pos_start_value = d->transform->position.get();
 }
-void graphics::TransformGraphicsItem::drag_pos(const QPointF &p, Qt::KeyboardModifiers)
+
+void graphics::TransformGraphicsItem::drag_pos(const QPointF &p, Qt::KeyboardModifiers mod)
 {
     auto sp = mapToScene(p);
     QPointF delta = d->pos_trans.map(sp) - d->pos_drag_start;
+    if ( mod & Qt::ControlModifier )
+    {
+        if ( math::abs(delta.x()) < math::abs(delta.y()) )
+            delta.setX(0);
+        else
+            delta.setY(0);
+    }
+
     d->push_command(d->transform->position, d->pos_start_value + delta, false);
 }
+
 void graphics::TransformGraphicsItem::commit_pos()
 {
     d->push_command(d->transform->position, d->transform->position.value(), true);
@@ -522,5 +532,4 @@ QVariant graphics::TransformGraphicsItem::itemChange(QGraphicsItem::GraphicsItem
         update_offshoots();
 
     return QGraphicsItem::itemChange(change, value);
-
 }

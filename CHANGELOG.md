@@ -6,6 +6,7 @@
     * All compositions have the same attributes and features
     * Added property that aligns groups to their animated position path
     * Added RAL and X11 palettes
+    * Holding Ctrl on snaps the transform position handle to x/y
 * I/O:
     * Fixed error message showing when loading a dotLottie without custom metadata
     * Fixed loading image assets from dotLottie
@@ -24,6 +25,7 @@
     * Improved import of ZigZag modifiers from Lottie
     * Fixed artifacts on imported SVG clip paths
     * Implemented loading animateMotion from SVG
+    * Implemented loading auto orient from Lottie
     * Fixed SVG animated path import
     * Fixed anchor point detection in imported SVG
     * Added support for split positions in imported lotties
