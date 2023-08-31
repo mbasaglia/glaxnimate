@@ -14,7 +14,7 @@
 
 namespace glaxnimate::model {
 
-class NetworkDownloader: QObject
+class NetworkDownloader: public QObject
 {
     Q_OBJECT
 
