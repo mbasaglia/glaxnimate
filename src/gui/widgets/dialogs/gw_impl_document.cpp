@@ -536,6 +536,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     fd.selectFile(tr("Frame%1.png").arg(frame));
     fd.setAcceptMode(QFileDialog::AcceptSave);
     fd.setFileMode(QFileDialog::AnyFile);
+    fd.setOption(QFileDialog::DontUseNativeDialog, !app::settings::get<bool>("open_save", "native_dialog"));
 
     QString formats;
     for ( const auto& fmt : QImageWriter::supportedImageFormats() )
@@ -563,6 +564,7 @@ void GlaxnimateWindow::Private::save_frame_svg()
     fd.setAcceptMode(QFileDialog::AcceptSave);
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setNameFilter(tr("Scalable Vector Graphics (*.svg)"));
+    fd.setOption(QFileDialog::DontUseNativeDialog, !app::settings::get<bool>("open_save", "native_dialog"));
 
     if ( fd.exec() == QDialog::Rejected )
         return;

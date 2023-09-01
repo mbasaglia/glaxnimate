@@ -89,6 +89,9 @@ which made them more difficult to access.
 
 Directly opening a static image file sets the animation to 1 second rather than 0.
 
+A new setting has been introduced in the preferences dialog that allows
+toggling between the system native file dialog an the Qt widgets one.
+
 There have also been improvements in the script API to handle
 import / export plugins:
 the new `window.choose_option()` method shows a dilaog to display a selection from a list,

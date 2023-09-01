@@ -211,6 +211,7 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
 
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
     dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setOption(QFileDialog::DontUseNativeDialog, !app::settings::get<bool>("open_save", "native_dialog"));
 
     if ( dialog.exec() == QDialog::Rejected )
         return {};

@@ -214,6 +214,7 @@ void GlaxnimateApp::on_initialize_settings()
                 QT_TRANSLATE_NOOP("Settings", "How often to save a backup copy (in minutes)"),  5, 0, 60),
         Setting("render_path",      {},         {},                        Setting::Internal,  QString{}),
         Setting("import_path",      {},         {},                        Setting::Internal,  QString{}),
+        Setting("native_dialog",    QT_TRANSLATE_NOOP("Settings", "Use system file dialog"), {}, Setting::Bool, true),
     });
     Settings::instance().add_group("scripting", QT_TRANSLATE_NOOP("Settings", "Scripting"), "utilities-terminal", {
         //      slug                Label       Tooltip                    Type                default

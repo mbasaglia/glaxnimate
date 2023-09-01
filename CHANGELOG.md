@@ -31,6 +31,9 @@
     * Added support for split positions in imported lotties
     * Fixed SVG export of precomps with stretched/offset time
     * Added support for loading image assets from the web
+* UI:
+    * Option to toggle between Qt and Native file dialog
+    * Improved palette selector
 * Scripting
     * `window.choose_option()` method that shows a dilaog to display a selection
     * Exception from I/O plugins now properly show in the script console
