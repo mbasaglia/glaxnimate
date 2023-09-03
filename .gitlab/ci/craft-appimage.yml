@@ -1,7 +1,7 @@
 craft_appimage_x86_64:
   stage: build
   when: always
-  image: kdeorg/centos7-craft:latest
+  image: invent-registry.kde.org/sysadmin/ci-images/centos7-craft:latest
   #needs: ["suse_tumbleweed_qt515"]
   tags:
     - linux
@@ -9,7 +9,7 @@ craft_appimage_x86_64:
     GIT_STRATEGY: none
     KDECI_CRAFT_PLATFORM: linux-64-gcc
     KDECI_CRAFT_CACHE: /mnt/craft-cache/$KDECI_CRAFT_PLATFORM/
-    KDECI_CRAFT_CONFIG: ci-utilities/resources/CraftConfig.ini
+    KDECI_CRAFT_CONFIG: ci-utilities/craft/qt5/CraftConfig.ini
     KDECI_CRAFT_PROJECT_CONFIG: $CI_PROJECT_DIR/src/.craft.ini
   interruptible: true
   before_script:
