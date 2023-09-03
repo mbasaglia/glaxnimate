@@ -25,17 +25,17 @@ craft_appimage_x86_64:
     # Set up craft settings and blueprint settings
     - craftmaster --setup
     # Get Craft itself ready
-    - craftmaster -c -i --options virtual.ignored=True --update craft >> appimage-joblog.txt
+    - craftmaster -c -i --options virtual.ignored=True --update craft
     # Add the repository with the blueprints for Glaxnimate
-    - craftmaster -c --add-blueprint-repository https://invent.kde.org/packaging/craft-blueprints-community.git >> appimage-joblog.txt
+    - craftmaster -c --add-blueprint-repository https://invent.kde.org/packaging/craft-blueprints-community.git
     # Install all of our dependencies
-    - craftmaster -c --install-deps $CI_PROJECT_NAME >> appimage-joblog.txt
+    - craftmaster -c --install-deps $CI_PROJECT_NAME
     # Build the actual application
-    - craftmaster -c --no-cache --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME >> appimage-joblog.txt
+    - craftmaster -c --no-cache --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME
     # Ensure the tools needed to conduct packaging are installed
-    - craftmaster -c -i --update linuxdeploy >> appimage-joblog.txt
+    - craftmaster -c -i --update linuxdeploy
     # Package it up!
-    - craftmaster -c --package --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME >> appimage-joblog.txt
+    - craftmaster -c --package --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME
     # Save our package
     - packageDir=$(craftmaster -c -q --get "packageDestinationDir()" virtual/base)
     - mkdir $CI_PROJECT_DIR/.kde-ci-packages/
@@ -46,4 +46,5 @@ craft_appimage_x86_64:
     expose_as: "Appimage"
     paths:
      - ".kde-ci-packages/"
-     - "appimage-joblog.txt"
+     - "$KDECI_CRAFT_PLATFORM/logs"
+
