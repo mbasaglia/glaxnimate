@@ -1,7 +1,7 @@
 .craft_android_base:
   stage: build
   when: always
-  image: kdeorg/android-qt515:latest
+  image: invent-registry.kde.org/sysadmin/ci-images/android-qt515:latest
   #needs: ["android_qt515"]
   tags:
     - linux
@@ -9,7 +9,7 @@
     GIT_STRATEGY: none
     # KDECI_CRAFT_PLATFORM is specified in the derived jobs
     KDECI_CRAFT_CACHE: /mnt/craft-cache/$KDECI_CRAFT_PLATFORM/
-    KDECI_CRAFT_CONFIG: ci-utilities/resources/CraftConfig.ini
+    KDECI_CRAFT_CONFIG: ci-utilities/craft/qt5/CraftConfig.ini
     KDECI_CRAFT_PROJECT_CONFIG: $CI_PROJECT_DIR/src/.craft.ini
   interruptible: true
   before_script:
@@ -24,15 +24,15 @@
     # Set up craft settings and blueprint settings
     - craftmaster --setup
     # Get Craft itself ready
-    - craftmaster -c -i craft >> $KDECI_CRAFT_PLATFORM-joblog.txt
+    - craftmaster -c -i craft
     # Add the repository with the blueprints for Glaxnimate
-    - craftmaster -c --add-blueprint-repository https://invent.kde.org/packaging/craft-blueprints-community.git >> $KDECI_CRAFT_PLATFORM-joblog.txt
+    - craftmaster -c --add-blueprint-repository https://invent.kde.org/packaging/craft-blueprints-community.git
     # Install all of our dependencies
-    - craftmaster -c --install-deps $CI_PROJECT_NAME >> $KDECI_CRAFT_PLATFORM-joblog.txt
+    - craftmaster -c --install-deps $CI_PROJECT_NAME
     # Build the actual application
-    - craftmaster -c --no-cache --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME >> $KDECI_CRAFT_PLATFORM-joblog.txt
+    - craftmaster -c --no-cache --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME
     # Package it up!
-    - craftmaster -c --package --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME >> $KDECI_CRAFT_PLATFORM-joblog.txt
+    - craftmaster -c --package --target master --src-dir $CI_PROJECT_DIR/src/ $CI_PROJECT_NAME
     # Save our package
     - packageDir=$(craftmaster -c -q --get "packageDestinationDir()" virtual/base)
     - mkdir $CI_PROJECT_DIR/.kde-ci-packages/

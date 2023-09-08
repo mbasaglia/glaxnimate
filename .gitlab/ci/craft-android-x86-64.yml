@@ -10,4 +10,4 @@ craft_android_x86_64:
     expose_as: "Android x86-64"
     paths:
      - ".kde-ci-packages/"
-     - $KDECI_CRAFT_PLATFORM-joblog.txt
+     - "$KDECI_CRAFT_PLATFORM/logs"
