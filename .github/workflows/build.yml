@@ -108,6 +108,7 @@ jobs:
                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
                 ./deploy/win_build.sh build
             - name: Build Python
+              if: false
               run: |
                 cd build
                 CI_COMMIT_BRANCH="${GITHUB_REF#refs/*/}"
@@ -142,6 +143,7 @@ jobs:
                 branch="${GITHUB_REF#refs/*/}"
                 ./deploy/win_build.sh deploy "$branch" "-i $PWD/privkey"
             - name: Upload Pypi
+              if: false
               env:
                 TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_GITLAB }}
                 TWINE_USERNAME: __token__

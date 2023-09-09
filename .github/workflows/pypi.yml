@@ -53,6 +53,7 @@ jobs:
               run: |
                 ./deploy/gitlab_commit_status.py $RESULT
     windows:
+        if: false
         runs-on: windows-latest
         defaults:
             run:
