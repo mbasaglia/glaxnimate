@@ -1,3 +1,8 @@
+## 0.5.5
+
+* Misc:
+    * Switched to an even/odd version numbering scheme.
+
 ## 0.5.4
 
 * Editing:

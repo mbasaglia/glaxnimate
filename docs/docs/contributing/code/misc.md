@@ -32,8 +32,8 @@ You can use the script that adds all that
 ## Release Checklist
 
 1. Update the version number on the root `CMakeLists.txt`
-2. Ensure `CHANGELOG.md` is up to date and changes are under the heading for the scheduled release
-3. Add release notes page to the docs
+2. Add release notes page to the docs
+3. Ensure `CHANGELOG.md` is up to date and changes are under the heading for the scheduled release
 4. Build the `release_0` target
 5. Wait for CI to complete <https://gitlab.com/mattbas/glaxnimate/-/pipelines>
 6. If there are errors
@@ -44,11 +44,13 @@ You can use the script that adds all that
 8. Wait for CI to complete
 9. In the tag pipeline, manually run the `release` job
 10. Wait for CI to complete
-11. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
-12. Run the release validation jobs
+11. Increase the release from the public number (from `X.Y.2n-1` to `X.Y.2n`)
+12. Repeat steps 3 to 10.
+13. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
+14. Run the release validation jobs
     * https://gitlab.com/mattbas/glaxnimate/-/pipelines `release:check`
     * https://github.com/mbasaglia/glaxnimate/actions/workflows/verify_release.yml
-13. Merge `release` / `pre-release` back into master if there have been any new commits
+15. Merge `release` / `pre-release` back into master if there have been any new commits
 
 
 ## Creating/Editing AUR packages with docker
