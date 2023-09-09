@@ -8,6 +8,7 @@ on:
     workflow_dispatch:
 jobs:
     macos:
+        if: false
         runs-on: macOS-latest
         steps:
             - name: Checkout
