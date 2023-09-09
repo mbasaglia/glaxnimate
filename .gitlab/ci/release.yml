@@ -3,7 +3,7 @@ release:
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip rsync
-        - pip3 install requests
+        - pip3 install --break-system-packages requests
     script:
         - ./deploy/make_release.py
         # Copy release files into the release tag directory
@@ -36,7 +36,7 @@ release:check:
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip
-        - pip3 install requests
+        - pip3 install --break-system-packages requests
     script:
         - ./deploy/release_check.py
 
@@ -54,7 +54,7 @@ release:check_deb:
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip xvfb
-        - pip3 install requests
+        - pip3 install --break-system-packages requests
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
@@ -103,5 +103,5 @@ release:check_pypi:
         - apt-get install -y python3-pip curl libqt5widgets5 libqt5xml5 potrace ffmpeg libarchive13
     script:
         - PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
-        - pip3 install glaxnimate=="$PYPI_VERSION"
+        - pip3 install --break-system-packages glaxnimate=="$PYPI_VERSION"
         - ./deploy/pypi_version_check.py "$PYPI_VERSION"

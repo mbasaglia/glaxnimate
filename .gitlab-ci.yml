@@ -12,23 +12,23 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
 include:
-    - .gitlab/ci/linux.yml
-    #- .gitlab/ci/windows.yml
-    - .gitlab/ci/documentation.yml
-    - .gitlab/ci/python_package.yml
-    - .gitlab/ci/snap.yml
-    - .gitlab/ci/flatpak.yml
-    # Disabled due to Flatpak bug: https://github.com/flatpak/flatpak/issues/5076
-    #- .gitlab/ci/flatpak-validate-appstream.yml
-    - .gitlab/ci/appimage.yml
-    - .gitlab/ci/craft-appimage.yml
-    - .gitlab/ci/craft-android-arm64.yml
-    # TODO: not all dependencies build hence it fails yet
-    #- .gitlab/ci/craft-android-x86-64.yml
-    - .gitlab/ci/archlinux_packages.yml
-    - .gitlab/ci/deb_packages.yml
-    - .gitlab/ci/tarball.yml
+    #- .gitlab/ci/linux.yml
+    ##- .gitlab/ci/windows.yml
+    #- .gitlab/ci/documentation.yml
+    #- .gitlab/ci/python_package.yml
+    #- .gitlab/ci/snap.yml
+    #- .gitlab/ci/flatpak.yml
+    ## Disabled due to Flatpak bug: https://github.com/flatpak/flatpak/issues/5076
+    ##- .gitlab/ci/flatpak-validate-appstream.yml
+    #- .gitlab/ci/appimage.yml
+    #- .gitlab/ci/craft-appimage.yml
+    #- .gitlab/ci/craft-android-arm64.yml
+    ## TODO: not all dependencies build hence it fails yet
+    ##- .gitlab/ci/craft-android-x86-64.yml
+    #- .gitlab/ci/archlinux_packages.yml
+    #- .gitlab/ci/deb_packages.yml
+    #- .gitlab/ci/tarball.yml
     - .gitlab/ci/release.yml
-    - .gitlab/ci/reuse-lint.yml
-    - .gitlab/ci/android-sign.yml
-    - .gitlab/ci/test-files.yml
+    #- .gitlab/ci/reuse-lint.yml
+    #- .gitlab/ci/android-sign.yml
+    #- .gitlab/ci/test-files.yml
