@@ -39,7 +39,7 @@ You can use the script that adds all that
 6. If there are errors
     * fix the errors
     * `./deploy/tag-branch.sh`
-    * go back to 4.
+    * go back to 5.
 7. build the `release_1` target, this builds the `release` branch
 8. Wait for CI to complete
 9. In the tag pipeline, manually run the `release` job

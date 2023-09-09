@@ -107,6 +107,7 @@ jobs:
                 (cd ./data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
                 ./deploy/win_build.sh build
+                cp build/checksum.txt build/checksum-win.txt
             - name: Build Python
               if: false
               run: |
@@ -116,7 +117,6 @@ jobs:
                 cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
                 cd ..
                 ./deploy/win_build.sh pypi
-                cp build/checksum.txt build/checksum-win.txt
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
             - name: Job Artifacts
               uses: actions/upload-artifact@v2
