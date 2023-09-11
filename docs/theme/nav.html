@@ -33,7 +33,13 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ nav_item.title }} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         {% for nav_item in nav_item.children %}
-                            {% include "nav-sub.html" %}
+                            {% if "mastodon" in nav_item.title.lower() %}
+                                <li {% if nav_item.active %}class="active"{% endif %}>
+                                    <a href="{{ nav_item.url|url }}" rel="me">{{ nav_item.title }}</a>
+                                </li>
+                            {% else %}
+                                {% include "nav-sub.html" %}
+                            {% endif %}
                         {% endfor %}
                         </ul>
                     </li>

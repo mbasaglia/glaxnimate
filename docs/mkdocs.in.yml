@@ -70,4 +70,5 @@ nav:
         - '<i class="fab fa-telegram"></i> Telegram Chat': ${DOCS_CHAT_URL}
         - '<i class="fab fa-gitlab"></i>   Code Browser': ${DOCS_REPO_URL}
         - '<i class="fa fa-bug"></i>       Issues': ${URL_ISSUES}
+        - '<i class="fa-brands fa-mastodon"></i> Mastodon': https://floss.social/@glax
         - '<i class="fas fa-external-link-alt"></i> More Links': contributing/links.md
