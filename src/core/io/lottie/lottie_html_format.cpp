@@ -44,7 +44,10 @@ R"(<!DOCTYPE html>
 bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                                        model::Composition* comp, const QVariantMap& settings)
 {
-    file.write(html_head(this, comp, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.js'></script>"));
+    const char* lottie_web_version = "5.12.2";
+    file.write(html_head(this, comp,
+        QString("<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/%1/lottie.js'></script>").arg(lottie_web_version)
+    ));
     file.write(R"(
 <body>
 <div id="animation"></div>
