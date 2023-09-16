@@ -223,7 +223,7 @@ public:
     void status_message(const QString& msg, int duration=5000);
     QVariant choose_option(const QString& label, const QVariantMap& options, const QString& title) const;
     void set_color_def(model::BrushStyle* sty, bool secondary);
-    QString get_open_image_file(const QString& title, const QString& dir, QString* out_dir = nullptr);
+    QStringList get_open_image_files(const QString& title, const QString& dir, QString* out_dir = nullptr, bool multiple = false);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::DocumentNode* object);
     void mouse_moved(const QPointF& pos);

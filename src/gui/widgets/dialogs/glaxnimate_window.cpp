@@ -402,7 +402,7 @@ void GlaxnimateWindow::switch_tool(tools::Tool* tool)
 
 QString GlaxnimateWindow::get_open_image_file(const QString& title, const QString& dir) const
 {
-    return d->get_open_image_file(title, dir);
+    return d->get_open_image_files(title, dir)[0];
 }
 
 model::BrushStyle * GlaxnimateWindow::linked_brush_style ( bool secondary ) const

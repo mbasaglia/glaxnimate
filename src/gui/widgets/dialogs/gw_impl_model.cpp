@@ -189,7 +189,7 @@ void GlaxnimateWindow::Private::move_to()
     }
 }
 
-QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, const QString& dir, QString* out_dir)
+QStringList GlaxnimateWindow::Private::get_open_image_files(const QString& title, const QString& dir, QString* out_dir, bool multiple)
 {
     QFileDialog dialog(parent, title, dir);
     QStringList filters;
@@ -210,8 +210,12 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
     dialog.setNameFilters(filters);
 
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setOption(QFileDialog::DontUseNativeDialog, !app::settings::get<bool>("open_save", "native_dialog"));
+
+    if ( multiple )
+        dialog.setFileMode(QFileDialog::ExistingFiles);
+    else
+        dialog.setFileMode(QFileDialog::ExistingFile);
 
     if ( dialog.exec() == QDialog::Rejected )
         return {};
@@ -219,7 +223,7 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
     if ( out_dir )
         *out_dir = dialog.directory().path();
 
-    return dialog.selectedFiles()[0];
+    return dialog.selectedFiles();
 }
 
 
@@ -229,37 +233,44 @@ void GlaxnimateWindow::Private::import_image()
     if ( path.isEmpty() )
         path = current_document->io_options().path.absolutePath();
 
-    QString image_file = get_open_image_file(tr("Import Image"), path, &path);
-    if ( image_file.isEmpty() )
+    QStringList image_files = get_open_image_files(tr("Import Image"), path, &path, true);
+    if ( image_files.isEmpty() )
         return;
 
     app::settings::set("open_save", "import_path", path);
 
-    auto bitmap = std::make_unique<model::Bitmap>(current_document.get());
-    bitmap->filename.set(image_file);
-    if ( bitmap->pixmap().isNull() )
-    {
-        show_warning(tr("Import Image"), tr("Could not import image"));
-        return;
-    }
     /// \todo dialog asking whether to embed
-
     command::UndoMacroGuard macro(tr("Import Image"), current_document.get());
 
-    auto defs = current_document->assets();
-    auto bmp_ptr = bitmap.get();
-    current_document->push_command(new command::AddObject(&defs->images->values, std::move(bitmap), defs->images->values.size()));
+    model::Image* select = nullptr;
 
-    auto image = std::make_unique<model::Image>(current_document.get());
-    image->image.set(bmp_ptr);
-    QPointF p(bmp_ptr->pixmap().width() / 2.0, bmp_ptr->pixmap().height() / 2.0);
-    image->transform->anchor_point.set(p);
-    image->transform->position.set(p);
-    auto comp = current_composition();
-    auto select = image.get();
-    image->name.set(QFileInfo(image_file).baseName());
-    current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));
-    set_current_document_node(select);
+    for ( const auto& image_file : image_files )
+    {
+        auto bitmap = std::make_unique<model::Bitmap>(current_document.get());
+        bitmap->filename.set(image_file);
+        if ( bitmap->pixmap().isNull() )
+        {
+            show_warning(tr("Import Image"), tr("Could not import image"));
+            continue;
+        }
+
+        auto defs = current_document->assets();
+        auto bmp_ptr = bitmap.get();
+        current_document->push_command(new command::AddObject(&defs->images->values, std::move(bitmap), defs->images->values.size()));
+
+        auto image = std::make_unique<model::Image>(current_document.get());
+        image->image.set(bmp_ptr);
+        QPointF p(bmp_ptr->pixmap().width() / 2.0, bmp_ptr->pixmap().height() / 2.0);
+        image->transform->anchor_point.set(p);
+        image->transform->position.set(p);
+        auto comp = current_composition();
+        select = image.get();
+        image->name.set(QFileInfo(image_file).baseName());
+        current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));
+    }
+
+    if ( select )
+        set_current_document_node(select);
 }
 
 template<class T>
