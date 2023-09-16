@@ -735,7 +735,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                 break;
             }
             case Private::VertexClick:
-                if ( event.modifiers() & Qt::ControlModifier )
+                if ( event.modifiers() & (Qt::ControlModifier|Qt::AltModifier) )
                 {
                     if ( d->selection.initial->point().type == math::bezier::PointType::Corner )
                         d->selection.initial->set_point_type(math::bezier::PointType::Smooth);
