@@ -170,7 +170,7 @@ settings::DocumentTemplates::DocumentTemplates()
 
 bool settings::DocumentTemplates::save_as_template(model::Document* document)
 {
-    if ( !document->assets()->compositions->values.empty() )
+    if ( document->assets()->compositions->values.empty() )
         return false;
 
     model::Composition* comp = document->assets()->compositions->values[0];

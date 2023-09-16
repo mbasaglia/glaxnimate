@@ -12,6 +12,7 @@
     * Fixed keyframe context menu showing the wrong "after" transition
     * When drawing bezier points that don't have tangents are correctly marked as corner
     * The play button now resumes from the current frame rather than resetting to the start
+    * Fixed saving custom templates
 
 ## 0.5.4
 
