@@ -886,7 +886,7 @@ void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)
     {
         auto bez = p.first->bezier();
         for ( int index : p.first->selected_indices() )
-            bez[index].set_point_type(t);
+            bez[index] = bez.point_with_type(index, t);
         p.first->set_bezier(bez);
     }
 }

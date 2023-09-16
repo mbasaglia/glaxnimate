@@ -4,6 +4,7 @@
     * The rotation handle now preserves rotation direction and multiple full rotations
     * Alt + click on keyframes cycles between built-in easing curves
     * Alt + click on bezier points cycles between tangent symmetry modes (Ctrl+click still works)
+    * Changing a bezier point from corner to smooth will add tangents if they are missing
 * Misc:
     * Switched to an even/odd version numbering scheme
 * Bug Fixes:

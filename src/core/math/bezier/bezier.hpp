@@ -197,6 +197,13 @@ public:
      */
     void add_close_point();
 
+    /**
+     * \brief Sets the given point to the type, and adjusts its tangents as needed
+     * \returns The updated point
+     * \note This doesn't update the bezier itself
+     */
+    Point point_with_type(int index, math::bezier::PointType point_type) const;
+
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1

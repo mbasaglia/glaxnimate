@@ -210,6 +210,35 @@ void glaxnimate::math::bezier::Bezier::add_close_point()
     }
 }
 
+glaxnimate::math::bezier::Point glaxnimate::math::bezier::Bezier::point_with_type(int index, PointType point_type) const
+{
+    auto point = points_[index];
+
+    if ( point.type == point_type && point.type == math::bezier::PointType::Corner )
+    {
+        point.tan_in = point.tan_out = point.pos;
+    }
+
+    point.type = point_type;
+
+    if ( point_type != math::bezier::PointType::Corner )
+    {
+        if ( math::fuzzy_compare(point.tan_in, point.pos) && (index > 0 || closed_) )
+        {
+            const auto& prev = index == 0 ? points_.back() : points_[index - 1];
+            point.tan_in = (prev.pos - point.pos) / 6 + point.pos;
+        }
+
+        if ( math::fuzzy_compare(point.tan_out, point.pos) && (index < size() - 1 || closed_) )
+        {
+            const auto& next = points_[index + 1];
+            point.tan_out = (next.pos - point.pos) / 6 + point.pos;
+        }
+    }
+
+    point.adjust_handles_from_type();
+    return point;
+}
 
 QRectF math::bezier::MultiBezier::bounding_box() const
 {

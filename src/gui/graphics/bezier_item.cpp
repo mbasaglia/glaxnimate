@@ -109,7 +109,7 @@ void graphics::PointItem::set_index(int index)
 
 void graphics::PointItem::set_point_type(math::bezier::PointType type)
 {
-    point_.type = type;
+    point_ = parent_editor()->bezier().point_with_type(index_, type);
     point_.adjust_handles_from_type();
     set_point(point_);
     on_modified(true);
