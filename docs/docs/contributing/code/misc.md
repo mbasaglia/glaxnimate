@@ -51,6 +51,7 @@ You can use the script that adds all that
     * https://gitlab.com/mattbas/glaxnimate/-/pipelines `release:check`
     * https://github.com/mbasaglia/glaxnimate/actions/workflows/verify_release.yml
 15. Merge `release` / `pre-release` back into master if there have been any new commits
+16. Update flatpak tag https://github.com/flathub/org.mattbas.Glaxnimate
 
 
 ## Creating/Editing AUR packages with docker
