@@ -9,6 +9,7 @@
     * Switched to an even/odd version numbering scheme
 * Bug Fixes:
     * Fixed keyframe context menu showing the wrong "after" transition
+    * When drawing bezier points that don't have tangents are correctly marked as corner
 
 ## 0.5.4
 

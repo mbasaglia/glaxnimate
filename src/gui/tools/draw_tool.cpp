@@ -171,7 +171,12 @@ void glaxnimate::gui::tools::DrawTool::Private::create(const glaxnimate::gui::to
         for ( auto & point : bezier )
         {
             if ( point.type == math::bezier::PointType::Symmetrical )
-                point.type = math::bezier::PointType::Smooth;
+            {
+                if ( math::fuzzy_compare(point.pos, point.tan_in) && math::fuzzy_compare(point.pos, point.tan_out) )
+                    point.type = math::bezier::PointType::Corner;
+                else
+                    point.type = math::bezier::PointType::Smooth;
+            }
         }
 
         if ( extend.property )
