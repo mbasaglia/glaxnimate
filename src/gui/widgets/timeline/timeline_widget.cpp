@@ -24,6 +24,13 @@ using namespace glaxnimate::gui::timeline;
 class TimelineWidget::Private
 {
 public:
+    enum class DragMode
+    {
+        None,
+        Frame,
+        Pan,
+    };
+
     TimelineWidget* parent;
     QGraphicsScene scene;
     int start_time = 0;
@@ -36,9 +43,10 @@ public:
     int min_gap = 32;
     int mouse_frame = -1;
     model::Document* document = nullptr;
-    bool dragging_frame = false;
+    DragMode drag_mode = DragMode::None;
     model::AnimationContainer* limit = nullptr;
     bool keep_highlight = false;
+    QPointF drag_start;
 
     LineItem* root = nullptr;
     std::unordered_map<quintptr, LineItem*> line_items;
@@ -262,6 +270,24 @@ public:
     {
         return qBound(start_time, qRound(parent->mapToScene(view_pos).x()), end_time - 1);
     }
+
+    int max_scroll_row()
+    {
+        return (parent->verticalScrollBar()->maximum() + header_height) / row_height;
+    }
+
+    int scroll_row()
+    {
+        return (parent->verticalScrollBar()->value() + header_height) / row_height;
+    }
+
+    bool horizontal_scroll(Qt::KeyboardModifiers modifiers)
+    {
+        bool horizontal = modifiers & (Qt::ShiftModifier|Qt::AltModifier);
+        if ( app::settings::get<bool>("ui", "timeline_scroll_horizontal") )
+            return !horizontal;
+        return horizontal;
+    }
 };
 
 TimelineWidget::TimelineWidget(QWidget* parent)
@@ -369,17 +395,13 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
     }
     else
     {
-        bool horizontal = event->modifiers() & (Qt::ShiftModifier|Qt::AltModifier);
-        if ( app::settings::get<bool>("ui", "timeline_scroll_horizontal") )
-            horizontal = !horizontal;
-
-        if ( horizontal )
+        if ( d->horizontal_scroll(event->modifiers()) )
         {
             QApplication::sendEvent(horizontalScrollBar(), event);
         }
         else
         {
-            int row = (verticalScrollBar()->value() + d->header_height) / d->row_height;
+            int row = d->scroll_row();
             if ( event->angleDelta().y() > 0 && !event->inverted() )
                 row -= 1;
             else
@@ -557,17 +579,23 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
     d->mouse_frame = d->frame_at_point(event->pos());
 
-    if ( event->y() > d->header_height )
+    if ( event->button() == Qt::MiddleButton )
     {
-        auto selection = d->scene.selectedItems();
+        setCursor(Qt::ClosedHandCursor);
+        d->drag_mode = Private::DragMode::Pan;
+        d->drag_start = mapToScene(event->pos());
+    }
+    else if ( event->y() > d->header_height )
+    {
         QGraphicsView::mousePressEvent(event);
+        auto selection = d->scene.selectedItems();
         if ( d->scene.selectedItems().empty() )
             for ( const auto& s : selection )
                 s->setSelected(true);
     }
     else if ( event->button() == Qt::LeftButton )
     {
-        d->dragging_frame = true;
+        d->drag_mode = Private::DragMode::Frame;
         emit frame_clicked(d->mouse_frame);
     }
 
@@ -577,7 +605,33 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
     d->mouse_frame = d->frame_at_point(event->pos());
 
-    if ( d->dragging_frame && (event->buttons() & Qt::LeftButton) )
+    if ( d->drag_mode == Private::DragMode::Pan )
+    {
+        QPointF scene_pos = mapToScene(event->pos());
+        QPointF drag_delta = scene_pos - d->drag_start;
+        if ( d->horizontal_scroll(event->modifiers()) )
+        {
+            int scroll_by = scene_pos.x() - d->drag_start.x();
+            int scroll = horizontalScrollBar()->value() - scroll_by * transform().m11();
+            horizontalScrollBar()->setValue(scroll);
+            d->drag_start = scene_pos;
+        }
+        else
+        {
+            int scroll_by = qRound(drag_delta.y() / d->row_height);
+            if ( scroll_by != 0 )
+            {
+                d->drag_start = scene_pos;
+                int row = d->scroll_row() - scroll_by;
+                if ( row >= 0 && row <= d->max_scroll_row() )
+                {
+                    emit scrolled(row);
+                    d->drag_start.setY(scene_pos.y() - scroll_by *  d->row_height);
+                }
+            }
+        }
+    }
+    else if ( d->drag_mode == Private::DragMode::Frame )
     {
         emit frame_clicked(d->mouse_frame);
     }
@@ -591,9 +645,14 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 
 void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-    if ( event->y() <= d->header_height || d->dragging_frame )
+    if ( event->button() == Qt::MiddleButton && d->drag_mode == Private::DragMode::Pan )
     {
-        d->dragging_frame = false;
+        unsetCursor();
+        d->drag_mode = Private::DragMode::None;
+    }
+    else if ( event->button() == Qt::LeftButton && d->drag_mode == Private::DragMode::Frame )
+    {
+        d->drag_mode = Private::DragMode::None;
         emit frame_clicked(d->mouse_frame);
     }
     else

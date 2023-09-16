@@ -6,6 +6,8 @@
     * Alt + click on bezier points cycles between tangent symmetry modes (Ctrl+click still works)
     * Changing a bezier point from corner to smooth will add tangents if they are missing
     * The import image dialog now allows importing multiple images at once
+* UI:
+    * Middle mouse drag now pans the timeline
 * Misc:
     * Switched to an even/odd version numbering scheme
 * Bug Fixes:
