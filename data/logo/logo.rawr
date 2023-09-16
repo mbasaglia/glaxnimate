@@ -736,7 +736,7 @@
                     "animation": {
                         "__type__": "AnimationContainer",
                         "first_frame": 0,
-                        "last_frame": -1
+                        "last_frame": 180
                     },
                     "fps": 60,
                     "group_color": "#00000000",
@@ -931,7 +931,7 @@
                     "animation": {
                         "__type__": "AnimationContainer",
                         "first_frame": 0,
-                        "last_frame": -1
+                        "last_frame": 180
                     },
                     "fps": 60,
                     "group_color": "#00000000",
