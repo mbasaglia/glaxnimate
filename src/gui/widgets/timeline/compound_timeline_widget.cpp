@@ -425,7 +425,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
             d->actions_enter[d->menu_kf_enter->transition().after_descriptive()].setChecked(true);
         }
 
-        d->actions_leave[d->menu_kf_exit->transition().after_descriptive()].setChecked(true);
+        d->actions_leave[d->menu_kf_exit->transition().before_descriptive()].setChecked(true);
 
         d->toggle_paste();
         d->menu_keyframe.exec(glob);

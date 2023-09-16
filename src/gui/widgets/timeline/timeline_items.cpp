@@ -60,6 +60,13 @@ void timeline::KeyframeSplitItem::mousePressEvent(QGraphicsSceneMouseEvent * eve
 {
     if ( event->button() == Qt::LeftButton )
     {
+
+        if ( event->modifiers() & Qt::AltModifier )
+        {
+            line()->cycle_keyframe_transition(time());
+            return;
+        }
+
         event->accept();
         bool multi_select = (event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier)) != 0;
 
@@ -87,7 +94,7 @@ void timeline::KeyframeSplitItem::mousePressEvent(QGraphicsSceneMouseEvent * eve
 
 void timeline::KeyframeSplitItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
-    if ( (event->buttons() & Qt::LeftButton) && isSelected() )
+    if ( (event->buttons() & Qt::LeftButton) && isSelected() && !(event->modifiers() & Qt::AltModifier) )
     {
         event->accept();
         qreal delta = qRound(event->scenePos().x()) - drag_start;
@@ -110,7 +117,7 @@ timeline::AnimatableItem* timeline::KeyframeSplitItem::line() const
 
 void timeline::KeyframeSplitItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
-    if ( event->button() == Qt::LeftButton && isSelected() )
+    if ( event->button() == Qt::LeftButton && isSelected() && !(event->modifiers() & Qt::AltModifier) )
     {
         event->accept();
 
@@ -479,15 +486,11 @@ void timeline::AnimatableItem::transition_changed(model::KeyframeTransition::Des
 
 void timeline::AnimatableItem::keyframes_dragged(const std::vector<DragData>& keyframe_items)
 {
-    std::vector<command::MoveKeyframe*> commands;
-    commands.reserve(keyframe_items.size());
-
     for ( auto kf : keyframe_items )
     {
         int index = animatable->keyframe_index(kf.from);
         auto cmd = new command::MoveKeyframe(animatable, index, kf.to);
         kf.item->setSelected(false);
-        commands.push_back(cmd);
         animatable->object()->push_command(cmd);
     }
 
@@ -498,6 +501,54 @@ void timeline::AnimatableItem::keyframes_dragged(const std::vector<DragData>& ke
         kf_split_items[index]->setSelected(true);
     }
 }
+
+void glaxnimate::gui::timeline::AnimatableItem::cycle_keyframe_transition(model::FrameTime time)
+{
+    int index = animatable->keyframe_index(time);
+    auto kf = animatable->keyframe(index);
+    if ( !kf )
+        return;
+
+    auto desc = index == 0 ? kf->transition().after_descriptive() : kf->transition().before_descriptive();
+
+    switch ( desc )
+    {
+        case model::KeyframeTransition::Hold:
+            desc = model::KeyframeTransition::Linear;
+            break;
+        case model::KeyframeTransition::Linear:
+            desc = model::KeyframeTransition::Ease;
+            break;
+        case model::KeyframeTransition::Ease:
+            desc = model::KeyframeTransition::Fast;
+            break;
+        case model::KeyframeTransition::Fast:
+            desc = model::KeyframeTransition::Overshoot;
+            break;
+        case model::KeyframeTransition::Overshoot:
+            desc = model::KeyframeTransition::Hold;
+            break;
+        case model::KeyframeTransition::Custom:
+            desc = model::KeyframeTransition::Hold;
+            break;
+    }
+
+    {
+        command::UndoMacroGuard guard(tr("Update keyframe transition"), animatable->object()->document());
+        if ( index > 0 )
+        {
+            auto kf_before = animatable->keyframe(index - 1);
+            auto left_trans = kf_before->transition();
+            left_trans.set_after_descriptive(desc);
+            animatable->object()->push_command(new command::SetKeyframeTransition(animatable, index-1, left_trans));
+        }
+
+        auto right_trans = kf->transition();
+        right_trans.set_before_descriptive(desc);
+        animatable->object()->push_command(new command::SetKeyframeTransition(animatable, index, right_trans));
+    }
+}
+
 
 void timeline::AnimatableItem::update_keyframe(int index, model::KeyframeBase* kf)
 {

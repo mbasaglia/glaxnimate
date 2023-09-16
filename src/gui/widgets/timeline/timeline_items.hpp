@@ -240,6 +240,7 @@ private slots:
 
 private:
     void keyframes_dragged(const std::vector<DragData>& keyframe_items);
+    void cycle_keyframe_transition(model::FrameTime time);
 
     model::AnimatableBase* animatable;
     std::vector<KeyframeSplitItem*> kf_split_items;

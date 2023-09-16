@@ -2,8 +2,11 @@
 
 * Editing:
     * The rotation handle now preserves rotation direction and multiple full rotations
+    * Alt + click on keyframes cycles between built-in easing curves
 * Misc:
-    * Switched to an even/odd version numbering scheme.
+    * Switched to an even/odd version numbering scheme
+* Bug Fixes:
+    * Fixed keyframe context menu showing the wrong "after" transition
 
 ## 0.5.4
 
