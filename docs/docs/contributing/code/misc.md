@@ -52,6 +52,8 @@ You can use the script that adds all that
     * https://github.com/mbasaglia/glaxnimate/actions/workflows/verify_release.yml
 15. Merge `release` / `pre-release` back into master if there have been any new commits
 16. Update flatpak tag https://github.com/flathub/org.mattbas.Glaxnimate
+17. Wait for flathub CI to complete
+18. Merge the flathub branch
 
 
 ## Creating/Editing AUR packages with docker
