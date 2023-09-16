@@ -1,5 +1,7 @@
 ## 0.5.5
 
+* Editing:
+    * The rotation handle now preserves rotation direction and multiple full rotations
 * Misc:
     * Switched to an even/odd version numbering scheme.
 

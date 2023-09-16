@@ -409,7 +409,6 @@ void graphics::TransformGraphicsItem::drag_a(const QPointF& p, Qt::KeyboardModif
     QPointF anchor = p;
     QPointF anchor_old = d->transform->anchor_point.get();
 
-
     QPointF p1 = d->transform_matrix.map(QPointF(0, 0));
     d->transform->anchor_point.set(anchor);
     QPointF p2 = d->transform_matrix.map(QPointF(0, 0));
@@ -427,20 +426,21 @@ void graphics::TransformGraphicsItem::drag_a(const QPointF& p, Qt::KeyboardModif
 
 void graphics::TransformGraphicsItem::drag_rot(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
-    QPointF diff_old = d->get_rot() - d->transform->anchor_point.get();
-    QVector2D scale = d->transform->scale.get();
-    qreal angle_to_rot_handle = std::atan2(diff_old.y() * scale.y(), diff_old.x() * scale.x());
-
     QPointF p_new = d->transform_matrix.map(p);
-    QPointF ap = d->transform_matrix.map(d->transform->anchor_point.get());
-    QPointF diff_new = p_new - ap;
-    qreal angle_new = std::atan2(diff_new.y(), diff_new.x());
-    qreal angle = qRadiansToDegrees(angle_new - angle_to_rot_handle);
+    QPointF anchor = d->transform_matrix.map(d->transform->anchor_point.get());
+    QPointF diff = anchor - p_new;
+    qreal angle_rad = -std::atan2(diff.x(), diff.y());
+    // angle in [-180, 180]
+    qreal angle = qRadiansToDegrees(angle_rad);
 
     if ( modifiers & Qt::ControlModifier )
         angle = qRound(angle/15) * 15;
 
-    d->push_command(d->transform->rotation, angle, false);
+    // Ensure continuous rotations
+    qreal old_angle = d->transform->rotation.get();
+    qreal delta = math::fmod((angle - old_angle) + 180, 360.) - 180;
+
+    d->push_command(d->transform->rotation, old_angle + delta, false);
 }
 
 void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
