@@ -94,9 +94,7 @@ public:
         connect(ui.properties->selectionModel(), &QItemSelectionModel::currentChanged, parent, &CompoundTimelineWidget::select_index);
         connect(ui.properties->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &CompoundTimelineWidget::_on_selection_changed);
 
-        ui.action_add_keyframe->setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
-        );
+        ui.action_add_keyframe->setIcon(QIcon::fromTheme("keyframe-add"));
         connect(ui.action_add_keyframe, &QAction::triggered, parent, &CompoundTimelineWidget::add_keyframe);
 
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
@@ -125,9 +123,10 @@ public:
 
 
         menu_keyframe.addAction(&action_kf_copy);
-        action_kf_copy.setIcon(QIcon::fromTheme("edit-copy"));
+        action_kf_copy.setIcon(QIcon::fromTheme("keyframe-duplicate"));
         connect(&action_kf_copy, &QAction::triggered, parent, &CompoundTimelineWidget::copy_keyframe);
 
+        action_kf_paste.setIcon(QIcon::fromTheme("edit-paste"));
         menu_keyframe.addAction(&action_kf_paste);
 
         menu_keyframe.addSeparator();

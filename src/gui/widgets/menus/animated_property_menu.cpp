@@ -30,20 +30,14 @@ public:
         connect(&action_kf_paste, &QAction::triggered, parent, &AnimatedPropertyMenu::paste_keyframe);
 
         parent->addAction(&action_add_keyframe);
-        action_add_keyframe.setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
-        );
+        action_add_keyframe.setIcon(QIcon::fromTheme("keyframe-add"));
         connect(&action_add_keyframe, &QAction::triggered, parent, &AnimatedPropertyMenu::add_keyframe);
 
         parent->addAction(&action_remove_keyframe);
-        action_remove_keyframe.setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
-        );
+        action_remove_keyframe.setIcon(QIcon::fromTheme("keyframe-remove"));
         connect(&action_remove_keyframe, &QAction::triggered, parent, &AnimatedPropertyMenu::remove_keyframe);
 
-        action_remove_all_keyframes.setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
-        );
+        action_remove_all_keyframes.setIcon(QIcon::fromTheme("edit-clear-all"));
         connect(&action_remove_all_keyframes, &QAction::triggered, parent, &AnimatedPropertyMenu::remove_all_keyframes);
         parent->addAction(&action_remove_all_keyframes);
 
