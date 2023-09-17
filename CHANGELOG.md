@@ -6,6 +6,7 @@
     * Alt + click on bezier points cycles between tangent symmetry modes (Ctrl+click still works)
     * Changing a bezier point from corner to smooth will add tangents if they are missing
     * The import image dialog now allows importing multiple images at once
+    * There is an icon on the timeline to quickly toggle keyframes
 * UI:
     * Middle mouse drag now pans the timeline
 * Misc:
@@ -15,6 +16,7 @@
     * When drawing bezier points that don't have tangents are correctly marked as corner
     * The play button now resumes from the current frame rather than resetting to the start
     * Fixed saving custom templates
+    * Toggling visibility / lock of a layer by clicking on its icon now adds an undo/redo action
 
 ## 0.5.4
 

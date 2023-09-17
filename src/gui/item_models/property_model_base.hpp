@@ -63,6 +63,7 @@ public:
     model::DocumentNode* node(const QModelIndex& index) const override;
     QModelIndex node_index(model::DocumentNode* node) const override;
     model::Document* document() const override;
+    model::AnimatableBase* animatable(const QModelIndex& index) const;
 
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

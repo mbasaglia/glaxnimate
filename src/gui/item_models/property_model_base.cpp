@@ -760,6 +760,23 @@ model::DocumentNode * item_models::PropertyModelBase::node(const QModelIndex& in
     return qobject_cast<model::DocumentNode*>(tree->object);
 }
 
+model::AnimatableBase* item_models::PropertyModelBase::Private::animatable(Subtree* tree)
+{
+    if ( !tree || !tree->prop )
+        return nullptr;
+
+    model::PropertyTraits traits = tree->prop->traits();
+    if ( traits.flags & model::PropertyTraits::Animated )
+        return static_cast<model::AnimatableBase*>(tree->prop);
+
+    return nullptr;
+}
+
+model::AnimatableBase* item_models::PropertyModelBase::animatable(const QModelIndex& index) const
+{
+    return d->animatable(d->node_from_index(index));
+}
+
 
 item_models::PropertyModelBase::Private::Subtree*
 item_models::PropertyModelBase::Private::add_property(

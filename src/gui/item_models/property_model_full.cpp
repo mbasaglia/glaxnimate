@@ -7,6 +7,8 @@
 #include "property_model_full.hpp"
 #include "property_model_private.hpp"
 
+#include <QPainter>
+
 #include "model/stretchable_time.hpp"
 #include "model/assets/assets.hpp"
 
@@ -50,13 +52,13 @@ public:
                 QModelIndex ind = node_index(visual);
                 QModelIndex par = node_index(visual->docnode_parent());
                 QModelIndex changed = model->index(ind.row(), ColumnVisible, par);
-                model->dataChanged(changed, changed, {Qt::DecorationRole});
+                model->dataChanged(changed, changed, {Qt::DecorationRole, Qt::ToolTipRole});
             });
             connect(visual, &model::VisualNode::docnode_locked_changed, model, [this, visual]() {
                 QModelIndex ind = node_index(visual);
                 QModelIndex par = node_index(visual->docnode_parent());
                 QModelIndex changed = model->index(ind.row(), ColumnLocked, par);
-                model->dataChanged(changed, changed, {Qt::DecorationRole});
+                model->dataChanged(changed, changed, {Qt::DecorationRole, Qt::ToolTipRole});
             });
             connect(visual, &model::VisualNode::docnode_group_color_changed, model, [this, visual]() {
                 QModelIndex ind = node_index(visual);
@@ -198,19 +200,63 @@ public:
 
     QVariant data_color(Subtree* tree, int role)
     {
-        if ( tree->visual_node && ( role == Qt::DisplayRole || role == Qt::EditRole ) )
-            return tree->visual_node->docnode_group_color();
+        if ( tree->visual_node )
+        {
+            if ( role == Qt::DisplayRole || role == Qt::EditRole )
+                return tree->visual_node->docnode_group_color();
+            if ( role == Qt::ToolTipRole )
+                return tr("Group Color");
+        }
 
         return {};
     }
 
+    QIcon transparent_icon(const QIcon& icon, qreal alpha = 0.3)
+    {
+        QIcon out;
+
+        for ( const auto& size : icon.availableSizes() )
+        {
+            QPixmap pixmap = icon.pixmap(size);
+            QPixmap outpix(pixmap.size());
+            outpix.fill(Qt::transparent);
+
+            QPainter painter(&outpix);
+            painter.setOpacity(alpha);
+            painter.drawPixmap(0, 0, pixmap);
+
+            out.addPixmap(outpix);
+        }
+
+        return out;
+    }
+
     QVariant data_visible(Subtree* tree, int role)
     {
-        if ( tree->visual_node && ( role == Qt::DecorationRole ) )
+        if ( tree->visual_node )
         {
-            if ( tree->visual_node->visible.get() )
-                return QIcon::fromTheme("view-visible");
-            return QIcon::fromTheme("view-hidden");
+            if ( role == Qt::DecorationRole )
+            {
+                if ( tree->visual_node->visible.get() )
+                    return QIcon::fromTheme("view-visible");
+                return QIcon::fromTheme("view-hidden");
+            }
+            else if ( role == Qt::ToolTipRole )
+            {
+                if ( tree->visual_node->visible.get() )
+                    return tr("Visible");
+                return tr("Hidden");
+            }
+        }
+        else if ( model::AnimatableBase* anprop = animatable(tree) )
+        {
+            if ( role == Qt::DecorationRole )
+            {
+                auto frame_status = anprop->keyframe_status(document->current_time());
+                if ( frame_status == model::AnimatableBase::IsKeyframe )
+                    return QIcon::fromTheme("keyframe");
+                return transparent_icon(QIcon::fromTheme("keyframe-disable"));
+            }
         }
 
         return {};
@@ -218,11 +264,20 @@ public:
 
     QVariant data_locked(Subtree* tree, int role)
     {
-        if ( tree->visual_node && ( role == Qt::DecorationRole ) )
+        if ( tree->visual_node )
         {
-            if ( tree->visual_node->locked.get() )
-                return QIcon::fromTheme("object-locked");
-            return QIcon::fromTheme("object-unlocked");
+            if ( role == Qt::DecorationRole )
+            {
+                if ( tree->visual_node->locked.get() )
+                    return QIcon::fromTheme("object-locked");
+                return QIcon::fromTheme("object-unlocked");
+            }
+            else if ( role == Qt::ToolTipRole )
+            {
+                if ( tree->visual_node->locked.get() )
+                    return tr("Locked");
+                return tr("Unlocked");
+            }
         }
 
         return {};
@@ -380,16 +435,8 @@ QVariant item_models::PropertyModelFull::headerData(int section, Qt::Orientation
                     return tr("Value");
                 break;
             case ColumnColor:
-                if ( role == Qt::ToolTipRole )
-                    return tr("Group Color");
-                break;
             case ColumnLocked:
-                if ( role == Qt::ToolTipRole )
-                    return tr("Locked");
-                break;
             case ColumnVisible:
-                if ( role == Qt::ToolTipRole )
-                    return tr("Visible");
                 break;
         }
     }

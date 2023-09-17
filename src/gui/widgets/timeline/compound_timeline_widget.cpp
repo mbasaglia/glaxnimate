@@ -524,14 +524,30 @@ void CompoundTimelineWidget::expand_index(const QModelIndex& index)
 
 void CompoundTimelineWidget::click_index ( const QModelIndex& index )
 {
-    auto node = d->property_model.visual_node(d->comp_model.mapToSource(index));
-    if ( !node )
-        return;
-
-    if ( index.column() == item_models::PropertyModelFull::ColumnVisible )
-        node->visible.set(!node->visible.get());
-     else if ( index.column() == item_models::PropertyModelFull::ColumnLocked )
-        node->locked.set(!node->locked.get());
+    auto source_index = d->comp_model.mapToSource(index);
+    if ( auto node = d->property_model.visual_node(source_index) )
+    {
+        if ( index.column() == item_models::PropertyModelFull::ColumnVisible )
+            node->visible.set_undoable(!node->visible.get());
+        else if ( index.column() == item_models::PropertyModelFull::ColumnLocked )
+            node->locked.set_undoable(!node->locked.get());
+    }
+    else if ( auto anprop = d->property_model.animatable(source_index) )
+    {
+        if ( index.column() == item_models::PropertyModelFull::ColumnVisible )
+        {
+            auto time = d->property_model.document()->current_time();
+            auto frame_status = anprop->keyframe_status(time);
+            if ( frame_status == model::AnimatableBase::IsKeyframe )
+            {
+                d->property_model.document()->push_command(new command::RemoveKeyframeTime(anprop, time));
+            }
+            else
+            {
+                d->property_model.document()->push_command(new command::SetKeyframe(anprop, time, anprop->value(), true));
+            }
+        }
+    }
 }
 
 void CompoundTimelineWidget::_on_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)

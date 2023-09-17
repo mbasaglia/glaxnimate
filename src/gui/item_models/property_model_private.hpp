@@ -113,6 +113,8 @@ public:
 
     void clean_subtree(Subtree* node);
 
+    model::AnimatableBase* animatable(Subtree* node);
+
     model::Document* document = nullptr;
     std::vector<Subtree*> roots;
     id_type next_id = 1;
