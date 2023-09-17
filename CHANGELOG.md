@@ -6,9 +6,10 @@
     * Alt + click on bezier points cycles between tangent symmetry modes (Ctrl+click still works)
     * Changing a bezier point from corner to smooth will add tangents if they are missing
     * The import image dialog now allows importing multiple images at once
-    * There is an icon on the timeline to quickly toggle keyframes
 * UI:
     * Middle mouse drag now pans the timeline
+    * There is an icon on the timeline to quickly toggle keyframes
+    * Buttons to jump to the next/previous keyframe in the timeline
 * Misc:
     * Switched to an even/odd version numbering scheme
 * Bug Fixes:

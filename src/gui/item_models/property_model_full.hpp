@@ -23,7 +23,11 @@ public:
         ColumnVisible,
         ColumnLocked,
 
-        ColumnCount
+        ColumnCount,
+
+        ColumnPrevKeyframe = ColumnColor,
+        ColumnToggleKeyframe = ColumnVisible,
+        ColumnNextKeyframe = ColumnLocked,
 
     };
 

@@ -534,11 +534,10 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
     }
     else if ( auto anprop = d->property_model.animatable(source_index) )
     {
-        if ( index.column() == item_models::PropertyModelFull::ColumnVisible )
+        if ( index.column() == item_models::PropertyModelFull::ColumnToggleKeyframe )
         {
             auto time = d->property_model.document()->current_time();
-            auto frame_status = anprop->keyframe_status(time);
-            if ( frame_status == model::AnimatableBase::IsKeyframe )
+            if ( anprop->has_keyframe(time) )
             {
                 d->property_model.document()->push_command(new command::RemoveKeyframeTime(anprop, time));
             }
@@ -546,6 +545,44 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
             {
                 d->property_model.document()->push_command(new command::SetKeyframe(anprop, time, anprop->value(), true));
             }
+        }
+        else if ( index.column() == item_models::PropertyModelFull::ColumnPrevKeyframe )
+        {
+            if ( anprop->keyframe_count() < 2 )
+                return;
+
+            auto time = d->property_model.document()->current_time();
+            auto kfindex = anprop->keyframe_index(time);
+            auto kf = anprop->keyframe(kfindex);
+
+            if ( qFuzzyCompare(kf->time(), time) || kf->time() > time )
+            {
+                kfindex -= 1;
+            }
+
+            if ( kfindex < 0 )
+                kfindex = anprop->keyframe_count() - 1;
+
+            d->property_model.document()->set_current_time(anprop->keyframe(kfindex)->time());
+        }
+        else if ( index.column() == item_models::PropertyModelFull::ColumnNextKeyframe )
+        {
+            if ( anprop->keyframe_count() < 2 )
+                return;
+
+            auto time = d->property_model.document()->current_time();
+            auto kfindex = anprop->keyframe_index(time);
+            auto kf = anprop->keyframe(kfindex);
+
+            if ( qFuzzyCompare(kf->time(), time) || kf->time() < time )
+            {
+                kfindex += 1;
+            }
+
+            if ( kfindex == anprop->keyframe_count() )
+                kfindex = 0;
+
+            d->property_model.document()->set_current_time(anprop->keyframe(kfindex)->time());
         }
     }
 }

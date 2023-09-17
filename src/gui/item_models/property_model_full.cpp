@@ -207,6 +207,16 @@ public:
             if ( role == Qt::ToolTipRole )
                 return tr("Group Color");
         }
+        else if ( model::AnimatableBase* anprop = animatable(tree) )
+        {
+            if ( anprop->keyframe_count() > 1 )
+            {
+                if ( role == Qt::ToolTipRole )
+                    return tr("Jump to previous keyframe");
+                else if ( role == Qt::DecorationRole )
+                    return QIcon::fromTheme("go-previous");
+            }
+        }
 
         return {};
     }
@@ -250,10 +260,13 @@ public:
         }
         else if ( model::AnimatableBase* anprop = animatable(tree) )
         {
-            if ( role == Qt::DecorationRole )
+            if ( role == Qt::ToolTipRole )
             {
-                auto frame_status = anprop->keyframe_status(document->current_time());
-                if ( frame_status == model::AnimatableBase::IsKeyframe )
+                return tr("Toggle Keyframe");
+            }
+            else if ( role == Qt::DecorationRole )
+            {
+                if ( anprop->has_keyframe(document->current_time()) )
                     return QIcon::fromTheme("keyframe");
                 return transparent_icon(QIcon::fromTheme("keyframe-disable"));
             }
@@ -277,6 +290,16 @@ public:
                 if ( tree->visual_node->locked.get() )
                     return tr("Locked");
                 return tr("Unlocked");
+            }
+        }
+        else if ( model::AnimatableBase* anprop = animatable(tree) )
+        {
+            if ( anprop->keyframe_count() > 1 )
+            {
+                if ( role == Qt::ToolTipRole )
+                    return tr("Jump to next keyframe");
+                else if ( role == Qt::DecorationRole )
+                    return QIcon::fromTheme("go-next");
             }
         }
 
