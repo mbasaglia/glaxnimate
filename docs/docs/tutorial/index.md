@@ -6,6 +6,9 @@
 Video Tutorials
 ---------------
 
+This is a collection of various unoffical video tutorials:
+
+* [Shotcut Motion Masking Effect Using Glaxnimate](https://www.youtube.com/watch?v=p72VQ7kNDeg) (English)
 * [Easy Character Animation in Glaxnimate](https://www.youtube.com/watch?v=REU8Z5j7qlw) (English)
 * [Glaxnimate - Eses infor Learning](https://www.youtube.com/playlist?list=PLqlTgdmIZxTvJ98FtjTUbMVkGgA4bRAa0) (English)
 * [Shotcut Tutorial - Draw an animated itinerary with Glaxnimate](https://www.youtube.com/watch?v=8mpJFPvJl6c) (English)

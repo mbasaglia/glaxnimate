@@ -28,7 +28,6 @@ public:
         ColumnPrevKeyframe = ColumnColor,
         ColumnToggleKeyframe = ColumnVisible,
         ColumnNextKeyframe = ColumnLocked,
-
     };
 
     PropertyModelFull();
