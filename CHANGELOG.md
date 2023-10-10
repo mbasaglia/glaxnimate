@@ -18,6 +18,7 @@
     * The play button now resumes from the current frame rather than resetting to the start
     * Fixed saving custom templates
     * Toggling visibility / lock of a layer by clicking on its icon now adds an undo/redo action
+    * Fixed LottieFiles import
 
 ## 0.5.4
 

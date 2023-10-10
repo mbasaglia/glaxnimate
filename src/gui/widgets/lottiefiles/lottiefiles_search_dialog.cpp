@@ -23,7 +23,7 @@
 class glaxnimate::gui::LottieFilesSearchDialog::Private
 {
 public:
-    void search(const QString& query, int page)
+    void search(const QString& query, const QString& page)
     {
         if ( query.isEmpty() )
             featured(page);
@@ -31,31 +31,34 @@ public:
             search_query(query, page);
     }
 
-    void search_query(const QString& query, int page)
+    void search_query(const QString& query, const QString& page)
     {
         static QString graphql_query = R"(
-            query Search($withAep: Boolean, $pageSize: Float, $page: Float, $query: String!)
+            query Search($withAep: Boolean, $pageSize: Int, $page: String, $query: String!)
             {
-                search(withAep: $withAep, pageSize: $pageSize, page: $page, query: $query)
+                searchPublicAnimations(withAep: $withAep, first: $pageSize, after: $page, query: $query)
                 {
-                    query,
-                    currentPage,
-                    totalPages,
-                    results
-                    {
-                        bgColor,
-                        id,
-                        imageFrame,
-                        imageUrl,
-                        lottieUrl,
-                        name,
-                        url,
-                        likesCount,
-                        commentsCount,
-                        createdBy {
-                            username
+                    edges {
+                        node {
+                            bgColor,
+                            id,
+                            imageFrame,
+                            imageUrl,
+                            jsonUrl,
+                            name,
+                            url,
+                            likesCount,
+                            commentsCount,
+                            createdBy {
+                                username
+                            }
                         }
                     }
+                    pageInfo {
+                        endCursor
+                        hasNextPage
+                    }
+                    totalCount
                 }
             })";
         QJsonObject vars;
@@ -65,42 +68,49 @@ public:
         vars["query"] = query;
 
         current_query = query;
+        previous_page = current_page;
         current_page = page;
 
         graphql.query(graphql_query, vars);
     }
 
-    void featured(int page)
+    void featured(const QString& page)
     {
         static QString query = R"(
-            query Search($page: Float)
+            query Search($page: String, $pageSize: Int, $collectionId: Float!)
             {
-                featured(page: $page)
+                publicCollectionAnimations(after: $page, first: $pageSize, collectionId: $collectionId)
                 {
-                    query,
-                    currentPage,
-                    totalPages,
-                    results
-                    {
-                        bgColor,
-                        id,
-                        imageFrame,
-                        imageUrl,
-                        lottieUrl,
-                        name,
-                        url,
-                        likesCount,
-                        commentsCount,
-                        createdBy {
-                            username
+                    edges {
+                        node {
+                            bgColor,
+                            id,
+                            imageFrame,
+                            imageUrl,
+                            jsonUrl,
+                            name,
+                            url,
+                            likesCount,
+                            commentsCount,
+                            createdBy {
+                                username
+                            }
                         }
                     }
+                    pageInfo {
+                        endCursor
+                        hasNextPage
+                    }
+                    totalCount
                 }
             })";
         QJsonObject vars;
         vars["page"] = page;
+        vars["pageSize"] = layout_rows * layout_columns;
+        vars["collectionId"] = 1318984.;
 
         current_query = "";
+        previous_page = current_page;
         current_page = page;
 
         graphql.query(query, vars);
@@ -132,7 +142,7 @@ public:
 
         auto d = response["data"].toObject();
 
-        if ( !response["data"].isObject() || (!d["search"].isObject() && !d["featured"].isObject()) )
+        if ( !response["data"].isObject() || (!d["searchPublicAnimations"].isObject() && !d["publicCollectionAnimations"].isObject()) )
         {
             if ( reply->error() )
             {
@@ -157,42 +167,38 @@ public:
         }
 
         QJsonObject data;
-        if ( d["featured"].isObject() )
-            data = d["featured"].toObject();
+        if ( d["publicCollectionAnimations"].isObject() )
+            data = d["publicCollectionAnimations"].toObject();
         else
-            data = d["search"].toObject();
+            data = d["searchPublicAnimations"].toObject();
 
-        current_query = data["query"].toString();
-        current_page = data["currentPage"].toInt();
-        max_pages = data["totalPages"].toInt();
         clear_results();
-        auto qresults = data["results"].toArray();
+        auto qresults = data["edges"].toArray();
         results.reserve(qresults.size());
         for ( const auto& rev : qresults )
         {
-            auto result = rev.toObject();
+            auto result = rev.toObject()["node"].toObject();
             add_result({
                 result["id"].toInt(),
                 result["name"].toString(),
                 result["createdBy"].toObject()["username"].toString(),
                 result["url"].toString(),
                 result["imageUrl"].toString(),
-                result["lottieUrl"].toString(),
+                result["jsonUrl"].toString(),
                 QColor(result["bgColor"].toString()),
                 result["likesCount"].toInt(),
                 result["commentsCount"].toInt(),
             });
         }
 
-        ui.spin_page->setMaximum(max_pages);
-        ui.spin_page->setValue(current_page);
-        ui.label_page_count->setText(QString::number(max_pages));
+        auto page_info = data["pageInfo"].toObject();
 
-        if ( max_pages > 1 )
-        {
-            ui.spin_page->setEnabled(true);
-            ui.button_next->setEnabled(true);
-        }
+        next_page = page_info["endCursor"].toString();
+        if ( !page_info["hasNextPage"].toBool() )
+            next_page = "";
+
+        ui.button_next->setEnabled(!next_page.isEmpty());
+        ui.button_previous->setEnabled(!current_page.isEmpty());
     }
 
     void on_error(const QString& msg)
@@ -207,7 +213,6 @@ public:
         ui.progress_bar->setMaximum(100);
         ui.progress_bar->setValue(0);
         ui.progress_bar->setVisible(true);
-        ui.spin_page->setEnabled(false);
         ui.button_next->setEnabled(false);
     }
 
@@ -269,15 +274,15 @@ public:
     GraphQl graphql{"https://graphql.lottiefiles.com/"};
     LottieFilesSearchDialog* dialog;
     QString current_query;
-    int current_page = -1;
-    int max_pages = 0;
     std::vector<std::unique_ptr<LottieFilesResultItem>> results;
     QSize preview_size{200, 200};
     int layout_columns = 4;
     int layout_rows = 3;
     QUrl current_url;
     QString current_name;
-
+    QString previous_page;
+    QString current_page;
+    QString next_page;
 };
 
 glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* parent)
@@ -288,7 +293,7 @@ glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* paren
     d->ui.progress_bar->setVisible(false);
     d->clear_results();
     d->ui.result_area->setMinimumWidth(d->preview_size.width() * d->layout_columns + 128);
-    d->featured(1);
+    d->featured("");
 
     connect(&d->graphql, &GraphQl::query_started, this, [this]{d->start_load();});
     connect(&d->graphql, &GraphQl::query_finished, this, [this](QNetworkReply* reply){d->on_response(reply);});
@@ -321,19 +326,17 @@ void glaxnimate::gui::LottieFilesSearchDialog::clicked_open()
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_search()
 {
     if ( d->current_query != d->ui.input_query->text() && d->ui.input_query->text().size() > 2 )
-        d->search(d->ui.input_query->text(), 1);
+        d->search(d->ui.input_query->text(), "");
 }
 
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_next()
 {
-    if ( d->ui.spin_page->value() < d->max_pages )
-        d->ui.spin_page->setValue(d->ui.spin_page->value() + 1);
+    d->search(d->current_query, d->next_page);
 }
 
-void glaxnimate::gui::LottieFilesSearchDialog::page_changed(int page)
+void glaxnimate::gui::LottieFilesSearchDialog::clicked_previous()
 {
-    if ( page != d->current_page && d->ui.spin_page->isEnabled() )
-        d->search(d->current_query, page);
+    d->search(d->current_query, d->previous_page);
 }
 
 const QUrl & glaxnimate::gui::LottieFilesSearchDialog::selected_url() const

@@ -37,7 +37,7 @@ private slots:
     void clicked_import();
     void clicked_search();
     void clicked_next();
-    void page_changed(int page);
+    void clicked_previous();
 
 private:
     class Private;

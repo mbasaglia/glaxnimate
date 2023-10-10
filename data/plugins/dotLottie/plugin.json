@@ -9,6 +9,7 @@
         {
             "type": "format",
             "name": "dotLottie",
+            "slug": "dotlottie",
             "extensions": ["lottie"],
             "auto_open": false,
             "open": {

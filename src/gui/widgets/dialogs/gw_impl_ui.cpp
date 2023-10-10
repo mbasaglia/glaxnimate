@@ -1251,9 +1251,11 @@ void GlaxnimateWindow::Private::import_from_lottiefiles()
     LottieFilesSearchDialog dialog;
     if ( !dialog.exec() )
         return;
+
     io::Options options;
     options.format = io::IoRegistry::instance().from_slug("lottie");
     options.filename = dialog.selected_name() + ".json";
+
     load_remote_document(dialog.selected_url(), options, dialog.result() == LottieFilesSearchDialog::Open);
 }
 

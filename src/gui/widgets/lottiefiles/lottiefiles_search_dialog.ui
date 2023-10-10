@@ -21,7 +21,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <string>Import From LottieFiles</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="lottiefiles"/>
+   <iconset theme="lottiefiles">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -92,26 +93,12 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QPushButton" name="button_previous">
        <property name="text">
-        <string>Page</string>
+        <string>Previous Page</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="spin_page"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>of</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_page_count">
-       <property name="text">
-        <string notr="true">0</string>
+       <property name="icon">
+        <iconset theme="go-previous"/>
        </property>
       </widget>
      </item>
@@ -276,18 +263,18 @@ SPDX-License-Identifier: GPL-3.0-or-later
    </hints>
   </connection>
   <connection>
-   <sender>spin_page</sender>
-   <signal>valueChanged(int)</signal>
+   <sender>button_previous</sender>
+   <signal>clicked()</signal>
    <receiver>LottieFilesSearchDialog</receiver>
-   <slot>page_changed(int)</slot>
+   <slot>clicked_previous()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>82</x>
-     <y>581</y>
+     <x>78</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
-     <x>147</x>
-     <y>691</y>
+     <x>381</x>
+     <y>724</y>
     </hint>
    </hints>
   </connection>
@@ -298,5 +285,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
   <slot>clicked_search()</slot>
   <slot>clicked_next()</slot>
   <slot>page_changed(int)</slot>
+  <slot>clicked_previous()</slot>
  </slots>
 </ui>
