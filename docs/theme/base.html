@@ -27,12 +27,12 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
     <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
     <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&apm;display=swap" rel="stylesheet">
     <link href="{{ 'css/bootstrap-custom.min.css'|url }}" rel="stylesheet">
     <link href="{{ 'css/base.min.css'|url }}" rel="stylesheet">
     <link href="{{ 'css/cinder.min.css'|url }}" rel="stylesheet">
 
-    {% if config.theme.highlightjs is defined and config.theme.highlightjs is sameas false %} 
+    {% if config.theme.highlightjs is defined and config.theme.highlightjs is sameas false %}
 
     {% else %}
         {% if config.theme.colorscheme %}
@@ -114,7 +114,7 @@
     <script src="{{ 'js/bootstrap-3.0.3.min.js'|url }}"></script>
 
     {% if config.theme.highlightjs is defined and config.theme.highlightjs is sameas false %}  <!-- default is to include highlightjs -->
-    
+
     {% else %}
     <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
         {% if config.theme.hljs_languages %}

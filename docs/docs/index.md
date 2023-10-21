@@ -76,10 +76,6 @@ no_nav: 1
     font-weight: bold;
 }
 
-h1, h2 {
-    font-family: 'Baloo 2', sans;
-}
-
 h1 {
     color: #292f75;
 }
