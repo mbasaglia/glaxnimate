@@ -42,3 +42,36 @@
     border: none !important;
     background: none !important;
 }
+
+@font-face {
+    font-family: 'Dongle';
+    size-adjust: 175%;
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/dongle/v12/sJoG3Ltdjt6VPkqeActrYg.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Dongle';
+    size-adjust: 175%;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/dongle/v12/sJoG3Ltdjt6VPkqeEcxrYg.ttf) format('truetype');
+
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: 'Dongle', sans-serif;
+    font-weight: 700;
+}
+
+h4 {
+    font-style: normal;
+}
+
+.nav {
+    font-family: 'Dongle', sans-serif;
+    font-weight: 400;
+}
