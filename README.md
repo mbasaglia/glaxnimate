@@ -93,45 +93,9 @@ To simplify the build process, you can also use the provided scripts:
 
 ### Windows
 
-Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, and run these commands on a it:
+Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit".
 
-    # Set up dependencies
-    pacman --noconfirm -Sy
-    pacman --noconfirm -Su
-    # Restart msys2 before continuing
-    pacman --noconfirm -S \
-        git zip base-devel \
-        unzip               \
-        mingw-w64-x86_64-qt5 \
-        mingw-w64-x86_64-zlib \
-        mingw-w64-x86_64-cmake \
-        mingw-w64-x86_64-python \
-        mingw-w64-x86_64-potrace \
-        mingw-w64-x86_64-ffmpeg   \
-        mingw-w64-x86_64-toolchain \
-        mingw-w64-x86_64-python-pip \
-        mingw-w64-x86_64-libarchive  \
-        mingw-w64-x86_64-libimagequant
-
-    # Build
-    # cd to where the code is
-    mkdir build
-    cd build
-    cmake.exe .. \
-        -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
-        -DZLIB_LIBRARY=/mingw64/lib/libz.a \
-        -DCMAKE_PREFIX_PATH="/mingw64/lib/" \
-        -DZLIB_INCLUDE_DIR=/mingw64/include \
-        -G "MSYS Makefiles"
-    make
-
-    # Copy library files because windows is weird like that
-    windeployqt.exe bin/glaxnimate.exe
-    cp /mingw64/bin/*.dll bin
-    cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
-
-
-To simplify the build process, you can also use the provided scripts:
+To simplify the build process, you can use the provided scripts:
 
     ./deploy/win_build.sh deps
     ./deploy/win_build.sh configure
@@ -252,6 +216,21 @@ directory mentioned in the error message.
 **Cannot set up Android, not building an APK / Application binary is not in output directory**
 
 Sometimes it does that, building again usually fixes it.
+
+
+### Installation / Packaging
+
+Assuming you configured / compiled for your target system, to install
+to a specific directory, run the following commands:
+
+```bash
+# Ensure the translations files are compiled
+make translations
+# Install under /installation/path
+make install DESTDIR=/installation/path
+```
+
+If you want to just install on your system, you don't need to specify `DESTDIR`.
 
 
 Contacts
