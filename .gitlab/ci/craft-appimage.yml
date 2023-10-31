@@ -1,7 +1,7 @@
 craft_appimage_x86_64:
   stage: build
   when: always
-  image: kdeorg/centos7-craft:latest
+  image: invent-registry.kde.org/sysadmin/ci-images/sles15-craft:latest
   #needs: ["suse_tumbleweed_qt515"]
   tags:
     - linux
