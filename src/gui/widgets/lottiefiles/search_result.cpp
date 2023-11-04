@@ -11,6 +11,7 @@
 #include <QSpacerItem>
 #include <QIcon>
 #include <QPushButton>
+#include <QToolButton>
 #include <QDesktopServices>
 #include <QPainter>
 
@@ -23,7 +24,6 @@ glaxnimate::gui::LottieFilesResultItem::LottieFilesResultItem(LottieFilesResult 
     name->setAlignment(Qt::AlignCenter);
     name->setWordWrap(true);
     name->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
-    name->setWordWrap(true);
     QFont name_font = name->font();
     name_font.setBold(true);
     name->setFont(name_font);
@@ -37,7 +37,7 @@ glaxnimate::gui::LottieFilesResultItem::LottieFilesResultItem(LottieFilesResult 
     by->setFont(by_font);
     lay->addWidget(by);
 
-    spacer = new QSpacerItem(image_size.width(), image_size.height());
+    spacer = new QSpacerItem(image_size.width(), image_size.height(), QSizePolicy::Preferred, QSizePolicy::Preferred);
     lay->addItem(spacer);
 
     auto stats = new QHBoxLayout();
@@ -59,11 +59,29 @@ glaxnimate::gui::LottieFilesResultItem::LottieFilesResultItem(LottieFilesResult 
     auto comments_num = new QLabel(QString::number(data.comments), this);
     stats->addWidget(comments_num);
 
-    auto view = new QPushButton(this);
+    auto buttons = new QHBoxLayout();
+    lay->addLayout(buttons);
+
+    auto view = new QToolButton(this);
     view->setText(tr("View on LottieFiles..."));
+    view->setToolTip(view->text());
     view->setIcon(QIcon::fromTheme("internet-web-browser"));
-    lay->addWidget(view);
-    connect(view, &QPushButton::clicked, this, [this]{QDesktopServices::openUrl(data.url);});
+    buttons->addWidget(view);
+    connect(view, &QToolButton::clicked, this, [this]{QDesktopServices::openUrl(data.url);});
+
+    auto open = new QToolButton(this);
+    open->setText(tr("Open"));
+    open->setToolTip(open->text());
+    open->setIcon(QIcon::fromTheme("document-open"));
+    buttons->addWidget(open);
+    connect(open, &QToolButton::clicked, this, [this]{emit selected_open(data.name, data.lottie);});
+
+    auto import = new QToolButton(this);
+    import->setText(tr("Import"));
+    import->setToolTip(import->text());
+    import->setIcon(QIcon::fromTheme("document-import"));
+    buttons->addWidget(import);
+    connect(import, &QToolButton::clicked, this, [this]{emit selected_import(data.name, data.lottie);});
 
     preview = QIcon::fromTheme("application-x-partial-download").pixmap(image_size).toImage();
 
@@ -83,6 +101,12 @@ void glaxnimate::gui::LottieFilesResultItem::mousePressEvent(QMouseEvent* event)
     emit selected(data.name, data.lottie);
 }
 
+void glaxnimate::gui::LottieFilesResultItem::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    QWidget::mouseDoubleClickEvent(event);
+
+    emit selected_import(data.name, data.lottie);
+}
 
 void glaxnimate::gui::LottieFilesResultItem::paintEvent(QPaintEvent*)
 {
@@ -90,6 +114,25 @@ void glaxnimate::gui::LottieFilesResultItem::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(0, 0), size()), bg);
 
-    painter.drawImage(spacer->geometry(), preview);
+    QRectF area = spacer->geometry();
+
+    if ( preview.width() == 0 || preview.height() == 0 || area.width() == 0 || area.height() == 0 )
+        return;
+
+    qreal scalex = qreal(area.width()) / preview.width();
+    qreal scaley = qreal(area.height()) / preview.height();
+    qreal scale = qMin(scalex, scaley);
+    QSizeF target_size{
+        preview.width() * scale,
+        preview.height() * scale
+    };
+    QRectF target(
+        QPointF{
+            area.center().x() - target_size.width() / 2,
+            area.center().y() - target_size.height() / 2,
+        },
+        target_size
+    );
+    painter.drawImage(target, preview);
 }
 

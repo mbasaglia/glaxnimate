@@ -23,20 +23,78 @@
 class glaxnimate::gui::LottieFilesSearchDialog::Private
 {
 public:
-    void search(const QString& query, const QString& page)
+    enum SearchType
     {
-        if ( query.isEmpty() )
-            featured(page);
-        else
-            search_query(query, page);
+        Search,
+        Featured
+    };
+
+    enum Direction
+    {
+        NewSearch,
+        Next,
+        Previous
+    };
+
+    struct Pagination
+    {
+        QString start;
+        QString end;
+
+        void next(QJsonObject& vars, int page_size) const
+        {
+            vars["first"] = page_size;
+            vars["after"] = end;
+            vars["before"] = QJsonValue::Null;
+            vars["last"] = QJsonValue::Null;
+        }
+
+        void previous(QJsonObject& vars, int page_size) const
+        {
+            vars["first"] = QJsonValue::Null;
+            vars["after"] = QJsonValue::Null;
+            vars["before"] = start;
+            vars["last"] = page_size;
+        }
+
+        void new_search(QJsonObject& vars, int page_size) const
+        {
+            vars["first"] = page_size;
+            vars["after"] = QJsonValue::Null;
+            vars["before"] = QJsonValue::Null;
+            vars["last"] = QJsonValue::Null;
+        }
+
+        void vars(QJsonObject& vars, int page_size, Direction direction) const
+        {
+            switch ( direction )
+            {
+                case NewSearch: return new_search(vars, page_size);
+                case Next: return next(vars, page_size);
+                case Previous: return previous(vars, page_size);
+            }
+        }
+    };
+
+    void search(SearchType type, Direction direction)
+    {
+        this->type = type;
+
+        switch ( type )
+        {
+            case Search:
+                return search_query(current_query, direction);
+            case Featured:
+                return featured(direction);
+        }
     }
 
-    void search_query(const QString& query, const QString& page)
+    void search_query(const QString& query, Direction direction)
     {
         static QString graphql_query = R"(
-            query Search($withAep: Boolean, $pageSize: Int, $page: String, $query: String!)
+            query Search($before: String, $after: String, $first: Int, $last: Int, $query: String!)
             {
-                searchPublicAnimations(withAep: $withAep, first: $pageSize, after: $page, query: $query)
+                searchPublicAnimations(before: $before, after: $after, first: $first, last: $last, query: $query)
                 {
                     edges {
                         node {
@@ -55,31 +113,28 @@ public:
                         }
                     }
                     pageInfo {
+                        startCursor
                         endCursor
                         hasNextPage
+                        hasPreviousPage
                     }
                     totalCount
                 }
             })";
         QJsonObject vars;
-        vars["withAep"] = false;
-        vars["pageSize"] = layout_rows * layout_columns;
-        vars["page"] = page;
+        pagination.vars(vars, layout_rows * layout_columns, direction);
         vars["query"] = query;
 
         current_query = query;
-        previous_page = current_page;
-        current_page = page;
-
         graphql.query(graphql_query, vars);
     }
 
-    void featured(const QString& page)
+    void featured(Direction direction)
     {
         static QString query = R"(
-            query Search($page: String, $pageSize: Int, $collectionId: Float!)
+            query Search($before: String, $after: String, $first: Int, $last: Int, $collectionId: Float!)
             {
-                publicCollectionAnimations(after: $page, first: $pageSize, collectionId: $collectionId)
+                publicCollectionAnimations(before: $before, after: $after, first: $first, last: $last, collectionId: $collectionId)
                 {
                     edges {
                         node {
@@ -98,20 +153,19 @@ public:
                         }
                     }
                     pageInfo {
+                        startCursor
                         endCursor
                         hasNextPage
+                        hasPreviousPage
                     }
                     totalCount
                 }
             })";
         QJsonObject vars;
-        vars["page"] = page;
-        vars["pageSize"] = layout_rows * layout_columns;
+        pagination.vars(vars, layout_rows * layout_columns, direction);
         vars["collectionId"] = 1318984.;
 
         current_query = "";
-        previous_page = current_page;
-        current_page = page;
 
         graphql.query(query, vars);
     }
@@ -193,12 +247,11 @@ public:
 
         auto page_info = data["pageInfo"].toObject();
 
-        next_page = page_info["endCursor"].toString();
-        if ( !page_info["hasNextPage"].toBool() )
-            next_page = "";
+        pagination.end = page_info["endCursor"].toString();
+        pagination.start = page_info["startCursor"].toString();
 
-        ui.button_next->setEnabled(!next_page.isEmpty());
-        ui.button_previous->setEnabled(!current_page.isEmpty());
+        ui.button_next->setEnabled(page_info["hasNextPage"].toBool());
+        ui.button_previous->setEnabled(page_info["hasPreviousPage"].toBool());
     }
 
     void on_error(const QString& msg)
@@ -240,6 +293,14 @@ public:
         connect(widget, &LottieFilesResultItem::selected, dialog, [this](const QString& name, const QUrl& url) {
             on_selected(name, url);
         });
+        connect(widget, &LottieFilesResultItem::selected_open, dialog, [this](const QString& name, const QUrl& url) {
+            on_selected(name, url);
+            dialog->done(Open);
+        });
+        connect(widget, &LottieFilesResultItem::selected_import, dialog, [this](const QString& name, const QUrl& url) {
+            on_selected(name, url);
+            dialog->done(Import);
+        });
 
         auto reply = graphql.http().get(QNetworkRequest(widget->result().preview_url));
         connect(reply, &QNetworkReply::finished, widget, [widget, reply]{
@@ -271,18 +332,16 @@ public:
     }
 
     Ui::LottieFilesSearchDialog ui;
-    GraphQl graphql{"https://graphql.lottiefiles.com/"};
+    GraphQl graphql{"https://graphql.lottiefiles.com/2022-08/"};
     LottieFilesSearchDialog* dialog;
     QString current_query;
     std::vector<std::unique_ptr<LottieFilesResultItem>> results;
-    QSize preview_size{200, 200};
     int layout_columns = 4;
     int layout_rows = 3;
     QUrl current_url;
     QString current_name;
-    QString previous_page;
-    QString current_page;
-    QString next_page;
+    Pagination pagination;
+    SearchType type = SearchType::Featured;
 };
 
 glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* parent)
@@ -292,8 +351,8 @@ glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* paren
     d->ui.setupUi(this);
     d->ui.progress_bar->setVisible(false);
     d->clear_results();
-    d->ui.result_area->setMinimumWidth(d->preview_size.width() * d->layout_columns + 128);
-    d->featured("");
+    d->ui.result_area->setMinimumWidth(80 * d->layout_columns + 128);
+    d->featured(Private::NewSearch);
 
     connect(&d->graphql, &GraphQl::query_started, this, [this]{d->start_load();});
     connect(&d->graphql, &GraphQl::query_finished, this, [this](QNetworkReply* reply){d->on_response(reply);});
@@ -312,7 +371,6 @@ void glaxnimate::gui::LottieFilesSearchDialog::changeEvent ( QEvent* e )
     }
 }
 
-
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_import()
 {
     done(Import);
@@ -325,18 +383,21 @@ void glaxnimate::gui::LottieFilesSearchDialog::clicked_open()
 
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_search()
 {
-    if ( d->current_query != d->ui.input_query->text() && d->ui.input_query->text().size() > 2 )
-        d->search(d->ui.input_query->text(), "");
+    if ( d->current_query != d->ui.input_query->text() )
+    {
+        d->current_query = d->ui.input_query->text();
+        d->search(d->current_query.isEmpty() ? Private::Featured : Private::Search, Private::NewSearch);
+    }
 }
 
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_next()
 {
-    d->search(d->current_query, d->next_page);
+    d->search(d->type, Private::Next);
 }
 
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_previous()
 {
-    d->search(d->current_query, d->previous_page);
+    d->search(d->type, Private::Previous);
 }
 
 const QUrl & glaxnimate::gui::LottieFilesSearchDialog::selected_url() const

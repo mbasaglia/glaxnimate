@@ -40,6 +40,7 @@ public:
     void set_preview_image(QImage preview)
     {
         this->preview = std::move(preview);
+        update();
     }
 
     void set_image_size(const QSize& size);
@@ -48,15 +49,19 @@ public:
 
 signals:
     void selected(const QString& name, const QUrl& url);
+    void selected_open(const QString& name, const QUrl& url);
+    void selected_import(const QString& name, const QUrl& url);
 
 protected:
     void mousePressEvent(QMouseEvent * event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
+
     void paintEvent(QPaintEvent * event) override;
 
 private:
     LottieFilesResult data;
     QImage preview = {};
-    QSize image_size{200, 200};
+    QSize image_size{128, 128};
     QSpacerItem* spacer;
 };
 
