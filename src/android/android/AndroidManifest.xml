@@ -3,7 +3,7 @@
     SPDX-FileCopyrightText: 2021 Mattia Basaglia <dev@dragon.best>
     SPDX-License-Identifier: BSD-2-Clause
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="${applicationId}" android:versionName="${versionName}" android:versionCode="${versionCode}" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mattbas.Glaxnimate" android:versionName="${versionName}" android:versionCode="${versionCode}" android:installLocation="auto">
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <application
