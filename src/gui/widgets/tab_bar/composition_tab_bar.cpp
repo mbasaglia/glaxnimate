@@ -49,10 +49,10 @@ void CompositionTabBar::fw_switch(int i)
 
 void CompositionTabBar::on_close(int index)
 {
-    if ( document && index > 0 && index <= document->assets()->compositions->values.size() )
+    if ( document && index >= 0 && index < document->assets()->compositions->values.size() )
     {
         document->push_command(new command::RemoveObject<model::Composition>(
-            index-1, &document->assets()->compositions->values
+            index, &document->assets()->compositions->values
         ));
     }
 }

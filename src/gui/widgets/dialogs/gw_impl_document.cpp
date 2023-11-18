@@ -80,7 +80,7 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     // Composition
     comp = nullptr;
-    connect(current_document->assets()->compositions.get(), &model::CompositionList::docnode_child_remove_begin, parent, [this](int index){on_remove_precomp(index);});
+    connect(current_document->assets()->compositions.get(), &model::CompositionList::docnode_child_remove_end, parent, [this](model::DocumentNode*, int index){on_remove_precomp(index);});
     connect(current_document->assets()->compositions.get(), &model::CompositionList::precomp_added, parent, [this](model::Composition* node, int row){setup_composition(node, row);});
     ui.menu_new_comp_layer->setEnabled(false);
     for ( const auto& precomp : current_document->assets()->compositions->values )
