@@ -215,7 +215,6 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../AUTHORS.md DESTINATION ${DATA_INSTA
 # Icon
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/file-icon.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}-file.svg COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg COPYONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ RENAME ${PROJECT_ID}.svg )
 
