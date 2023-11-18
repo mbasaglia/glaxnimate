@@ -32,3 +32,9 @@ include:
     # - .gitlab/ci/reuse-lint.yml
     # - .gitlab/ci/android-sign.yml
     # - .gitlab/ci/test-files.yml
+    - project: sysadmin/ci-utilities
+      file:
+        - /gitlab-templates/linux.yml
+        - /gitlab-templates/freebsd.yml
+        - /gitlab-templates/freebsd-qt6.yml
+        - /gitlab-templates/linux-qt6.yml
