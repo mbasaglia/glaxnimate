@@ -1,0 +1,3 @@
+Options:
+  cmake-options: '-DINSTALL_TRANSLATIONS=OFF'
+

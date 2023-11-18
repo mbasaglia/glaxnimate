@@ -199,7 +199,9 @@ create_qt_linguist_translations(
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/external
 )
-install(FILES ${LINGUIST_OUTPUT_FILES} DESTINATION ${DATA_INSTALL}/translations/)
+if(INSTALL_TRANSLATIONS)
+    install(FILES ${LINGUIST_OUTPUT_FILES} DESTINATION ${DATA_INSTALL}/translations/)
+endif()
 
 # Desktop
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/glaxnimate.in.desktop ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop)

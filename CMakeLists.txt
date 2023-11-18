@@ -31,6 +31,7 @@ set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
 set(PROJECT_MANINTAINER "${PROJECT_MANINTAINER_NAME} <${PROJECT_MANINTAINER_EMAIL}>")
 
 option(MOBILE_UI "Build the mobile user interface" OFF)
+option(INSTALL_TRANSLATIONS "Install translations" ON)
 
 if (ANDROID)
     set(MOBILE_UI ON)
