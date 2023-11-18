@@ -20,9 +20,6 @@ include:
     # # Disabled due to Flatpak bug: https://github.com/flatpak/flatpak/issues/5076
     # #- .gitlab/ci/flatpak-validate-appstream.yml
     # - .gitlab/ci/appimage.yml
-    # - .gitlab/ci/craft-android-arm64.yml
-    # # TODO: not all dependencies build hence it fails yet
-    # #- .gitlab/ci/craft-android-x86-64.yml
     # - .gitlab/ci/archlinux_packages.yml
     # - .gitlab/ci/deb_packages.yml
     # - .gitlab/ci/tarball.yml
@@ -38,3 +35,4 @@ include:
         - /gitlab-templates/linux-qt6.yml
         - /gitlab-templates/flatpak.yml
         - /gitlab-templates/craft-appimage.yml
+        - /gitlab-templates/craft-android-apks.yml
