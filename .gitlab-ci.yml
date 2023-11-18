@@ -17,7 +17,6 @@ include:
     # - .gitlab/ci/documentation.yml
     # - .gitlab/ci/python_package.yml
     # - .gitlab/ci/snap.yml
-    # - .gitlab/ci/flatpak.yml
     # # Disabled due to Flatpak bug: https://github.com/flatpak/flatpak/issues/5076
     # #- .gitlab/ci/flatpak-validate-appstream.yml
     # - .gitlab/ci/appimage.yml
@@ -38,3 +37,4 @@ include:
         - /gitlab-templates/freebsd.yml
         - /gitlab-templates/freebsd-qt6.yml
         - /gitlab-templates/linux-qt6.yml
+        - /gitlab-templates/flatpak.yml
