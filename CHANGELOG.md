@@ -20,6 +20,7 @@
     * Fixed saving custom templates
     * Toggling visibility / lock of a layer by clicking on its icon now adds an undo/redo action
     * Fixed LottieFiles import
+    * Fixed dropping file as object
 
 ## 0.5.4
 
