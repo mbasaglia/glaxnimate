@@ -7,6 +7,8 @@ cmake_policy(SET CMP0077 NEW)
 
 
 project(Glaxnimate VERSION 0.5.5 LANGUAGES CXX)
+include(FeatureSummary)
+
 set(PROJECT_SLUG "glaxnimate")
 set(LIB_NAME_CORE "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
@@ -115,6 +117,7 @@ find_package(ECM ${KF_DEP_VERSION} REQUIRED CONFIG)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
 include(KDEInstallDirs)
 include(KDECMakeSettings)
+include(ECMCoverageOption)
 
 if (NOT DEFINED KF_MAJOR)
   set(KF_MAJOR ${QT_MAJOR_VERSION})
@@ -238,3 +241,5 @@ set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/bundle.xml.plist")
 set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.icns")
 
 include(CPack)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
