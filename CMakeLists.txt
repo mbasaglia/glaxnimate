@@ -114,6 +114,7 @@ set(KF_DEP_VERSION "5.92.0")
 find_package(ECM ${KF_DEP_VERSION} REQUIRED CONFIG)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
 include(KDEInstallDirs)
+include(KDECMakeSettings)
 
 if (NOT DEFINED KF_MAJOR)
   set(KF_MAJOR ${QT_MAJOR_VERSION})
@@ -180,8 +181,8 @@ find_sources(ALL_SOURCES *.cpp *.hpp)
 
 add_subdirectory(data ${DATA_INSTALL})
 
-find_package(Qt${QT_VERSION_MAJOR}Test QUIET)
-if(${Qt${QT_VERSION_MAJOR}Test_FOUND})
+if(BUILD_TESTING)
+    find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
     message(STATUS "Tests enabled")
     add_subdirectory(test)
 endif()
