@@ -104,12 +104,16 @@ if ( NOT ANDROID )
     set(SCRIPTING_PY ON)
 endif()
 
+# QT_MAJOR_VERSION is the common name in KDE apps and infrastructure.
+# However some third-party submodules use QT_VERSION_MAJOR so we need to set that too.
+if (NOT DEFINED QT_MAJOR_VERSION)
+    set(QT_MAJOR_VERSION 5)
+endif()
+set(QT_VERSION_MAJOR ${QT_MAJOR_VERSION})
+
 # Qt
-#find_package(Qt5Qml QUIET)
-set(QT_VERSION_MAJOR 5)
-find_package(QT NAMES Qt5 Qt6 COMPONENTS Core QUIET)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent Network Svg REQUIRED)
-message(STATUS "Using Qt ${QT_VERSION_MAJOR}")
+find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Core Widgets Xml UiTools Concurrent Network Svg REQUIRED)
+message(STATUS "Using Qt ${QT_MAJOR_VERSION}")
 
 # KF
 set(KF_DEP_VERSION "5.92.0")
@@ -185,7 +189,7 @@ find_sources(ALL_SOURCES *.cpp *.hpp)
 add_subdirectory(data ${DATA_INSTALL})
 
 if(BUILD_TESTING)
-    find_package(Qt${QT_VERSION_MAJOR}Test REQUIRED)
+    find_package(Qt${QT_MAJOR_VERSION}Test REQUIRED)
     message(STATUS "Tests enabled")
     add_subdirectory(test)
 endif()

@@ -197,11 +197,11 @@ target_link_libraries(
     ${LIB_NAME_GUI} PUBLIC
     QtColorWidgets
     ${LIB_NAME_CORE}
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::UiTools
-    Qt${QT_VERSION_MAJOR}::Concurrent
-    Qt${QT_VERSION_MAJOR}::Network
-    Qt${QT_VERSION_MAJOR}::Svg
+    Qt${QT_MAJOR_VERSION}::Widgets
+    Qt${QT_MAJOR_VERSION}::UiTools
+    Qt${QT_MAJOR_VERSION}::Concurrent
+    Qt${QT_MAJOR_VERSION}::Network
+    Qt${QT_MAJOR_VERSION}::Svg
     KF${KF_MAJOR}::WidgetsAddons
     KF${KF_MAJOR}::Crash
 )

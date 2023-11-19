@@ -142,8 +142,8 @@ add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
 target_link_libraries(${LIB_NAME_CORE} PUBLIC
     QtAppSetup
     ZLIB::ZLIB
-    Qt${QT_VERSION_MAJOR}::Xml
-    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_MAJOR_VERSION}::Xml
+    Qt${QT_MAJOR_VERSION}::Network
     ${Potrace_LIBRARIES}
     KF${KF_MAJOR}::CoreAddons
 )

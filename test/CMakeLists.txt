@@ -11,8 +11,8 @@ include_directories(
 )
 
 set(TESTS_LINK_LIBS
-    Qt${QT_VERSION_MAJOR}::Test
-    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_MAJOR_VERSION}::Test
+    Qt${QT_MAJOR_VERSION}::Widgets
     QtColorWidgets
     QtAppSetup
 )
