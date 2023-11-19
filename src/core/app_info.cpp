@@ -7,6 +7,7 @@
 #include "app_info.hpp"
 
 #include <QGuiApplication>
+#include <KAboutData>
 
 #include "application_info_generated.hpp"
 
@@ -56,4 +57,19 @@ void glaxnimate::AppInfo::init_qapplication() const
     qApp->setApplicationVersion(version());
     qApp->setOrganizationName(organization());
     qApp->setApplicationDisplayName(name());
+
+    KAboutData aboutData(
+        QStringLiteral(PROJECT_SLUG),
+        name(),
+        QStringLiteral(PROJECT_VERSION),
+        QStringLiteral(PROJECT_DESCRIPTION),
+        KAboutLicense::GPL,
+        QObject::tr("(c) 2019-2023"),
+        // Optional text shown in the About box.
+        QStringLiteral(""),
+        QStringLiteral(URL_DOCS)
+//         QStringLiteral("submit@bugs.kde.org")
+    );
+
+    KAboutData::setApplicationData(aboutData);
 }

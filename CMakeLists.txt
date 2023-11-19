@@ -125,6 +125,7 @@ endif()
 
 find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
     REQUIRED COMPONENTS
+    CoreAddons
     WidgetsAddons
     Crash
 )
