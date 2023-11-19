@@ -273,5 +273,4 @@ void GlaxnimateWindow::Private::init_debug()
         }
         qDebug() << "----";
     });
-
 }

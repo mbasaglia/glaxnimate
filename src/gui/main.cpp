@@ -7,6 +7,8 @@
 #include <QSplashScreen>
 #include <QtGlobal>
 
+#include <KCrash>
+
 #include "app/env.hpp"
 #include "app/scripting/python/python_engine.hpp"
 #include "app/log/log.hpp"
@@ -31,6 +33,8 @@ int main(int argc, char *argv[])
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
     gui::GlaxnimateApp app(argc, argv);
+
+    KCrash::setDrKonqiEnabled(true);
 
     AppInfo::instance().init_qapplication();
 
