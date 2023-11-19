@@ -1,3 +1,14 @@
 Options:
   cmake-options: '-DINSTALL_TRANSLATIONS=OFF'
 
+Dependencies:
+- 'on': ['Linux/Qt5', 'FreeBSD/Qt5', 'Windows/Qt5', 'macOS/Qt5']
+  'require':
+    'frameworks/extra-cmake-modules': '@stable'
+    'frameworks/kcrash' : '@stable'
+    'frameworks/kconfigwidgets' : '@stable'
+- 'on': ['Linux/Qt6', 'FreeBSD/Qt6', 'Windows/Qt6', 'macOS/Qt6']
+  'require':
+    'frameworks/extra-cmake-modules': '@latest-kf6'
+    'frameworks/kcrash' : '@latest-kf6'
+    'frameworks/kconfigwidgets' : '@latest-kf6'
