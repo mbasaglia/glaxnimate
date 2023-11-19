@@ -1010,7 +1010,14 @@ void GlaxnimateWindow::Private::most_recent_file(const QString& s)
 
 void GlaxnimateWindow::Private::show_warning(const QString& title, const QString& message, app::log::Severity icon)
 {
-    ui.message_widget->queue_message({message, icon});
+    KMessageWidget::MessageType message_type;
+    switch ( icon )
+    {
+        case app::log::Severity::Info: message_type = KMessageWidget::Information; break;
+        case app::log::Severity::Warning: message_type = KMessageWidget::Warning; break;
+        case app::log::Severity::Error: message_type = KMessageWidget::Error; break;
+    }
+    ui.message_widget->queue_message({message, message_type});
     app::log::Log(title).log(message, icon);
 }
 

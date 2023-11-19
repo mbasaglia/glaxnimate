@@ -203,6 +203,7 @@ target_link_libraries(
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Svg
+    KF${KF_MAJOR}::WidgetsAddons
 )
 
 

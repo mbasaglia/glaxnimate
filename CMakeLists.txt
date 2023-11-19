@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
 # SPDX-License-Identifier: BSD-2-Clause
 
-cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.16 FATAL_ERROR)
 # cmake_policy(SET CMP0076 NEW)
 cmake_policy(SET CMP0077 NEW)
 
@@ -109,6 +109,25 @@ find_package(QT NAMES Qt5 Qt6 COMPONENTS Core QUIET)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent Network Svg REQUIRED)
 message(STATUS "Using Qt ${QT_VERSION_MAJOR}")
 
+# KF
+set(KF_DEP_VERSION "5.92.0")
+find_package(ECM ${KF_DEP_VERSION} REQUIRED CONFIG)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
+include(KDEInstallDirs)
+
+if (NOT DEFINED KF_MAJOR)
+  set(KF_MAJOR ${QT_MAJOR_VERSION})
+endif()
+
+if (KF_MAJOR STREQUAL "6")
+  set(KF_DEP_VERSION "5.240.0")
+endif()
+
+find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
+    REQUIRED COMPONENTS
+    WidgetsAddons
+)
+message(STATUS "Using KF ${KF_MAJOR}")
 
 
 set(CMAKE_AUTOMOC ON)

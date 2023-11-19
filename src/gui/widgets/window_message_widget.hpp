@@ -7,7 +7,7 @@
 #ifndef WINDOWMESSAGEWIDGET_H
 #define WINDOWMESSAGEWIDGET_H
 
-#include <QWidget>
+#include <KMessageWidget>
 #include <QAction>
 #include <memory>
 
@@ -15,7 +15,7 @@
 
 namespace glaxnimate::gui {
 
-class WindowMessageWidget : public QWidget
+class WindowMessageWidget : public KMessageWidget
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ public:
     struct Message
     {
         QString message;
-        app::log::Severity severity = app::log::Warning;
+        KMessageWidget::MessageType severity = KMessageWidget::Warning;
         std::vector<std::unique_ptr<QAction>> actions = {};
 
         template<class QObj, class Func>
@@ -39,9 +39,6 @@ public:
     ~WindowMessageWidget();
 
     void queue_message(Message msg);
-
-protected:
-    void changeEvent ( QEvent* e ) override;
 
 private:
     void show_message(const Message& msg);

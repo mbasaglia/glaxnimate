@@ -221,7 +221,7 @@ bool GlaxnimateWindow::Private::setup_document_open(QIODevice* file, const io::O
     {
         WindowMessageWidget::Message msg{
             tr("Looks like this file is being edited by another Glaxnimate instance or it was being edited when Glaxnimate crashed."),
-            app::log::Info
+            KMessageWidget::Information
         };
 
         msg.add_action(
