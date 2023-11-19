@@ -104,7 +104,6 @@ widgets/flow_layout.cpp
 widgets/spin2d.cpp
 widgets/enum_combo.cpp
 widgets/window_message_widget.cpp
-widgets/window_message_widget.ui
 widgets/tab_bar/tab_bar_close_button.cpp
 widgets/tab_bar/clickable_tab_bar.cpp
 widgets/tab_bar/composition_tab_bar.cpp
