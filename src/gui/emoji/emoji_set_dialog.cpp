@@ -19,7 +19,9 @@
 #include <QNetworkRequest>
 #include <QDesktopServices>
 
-#include "utils/tar.hpp"
+#include <KTar>
+#include <KCompressionDevice>
+
 #include "emoji/emoji_set.hpp"
 #include "glaxnimate_app.hpp"
 #include "emoji_dialog.hpp"
@@ -200,15 +202,39 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
 
         QByteArray data = reply->readAll();
         reply->close();
+
         QDir output = d->sets[row].path;
-        glaxnimate::utils::tar::TapeArchive tar(data);
-        for ( const auto& entry : tar )
+        output.makeAbsolute();
+        qDebug() << reply->open(QIODevice::ReadOnly);
+        KCompressionDevice decompressed(reply, false, KCompressionDevice::GZip);
+        qDebug() << decompressed.open(QIODevice::ReadOnly);
+        KTar tar(&decompressed);
+        if ( !tar.open(QIODevice::ReadOnly) )
         {
-            if ( entry.path().startsWith(prefix_scalable) || entry.path().startsWith(prefix_raster) )
-                tar.extract(entry, output);
+            if ( !tar.errorString().isEmpty() )
+                d->set_download_status(row, "package-broken", tar.errorString());
+            else
+                d->set_download_status(row, "package-broken", tr("Could not open archive"));
+            d->ui.progress_bar->setVisible(false);
+            return;
         }
-        if ( !tar.error().isEmpty() )
-            d->set_download_status(row, "package-broken", tar.error());
+
+        for ( const auto& entry_name : tar.directory()->entries() )
+        {
+            auto entry = tar.directory()->entry(entry_name);
+            qDebug() << entry_name << entry->name();
+            if ( entry_name.startsWith(prefix_scalable) || entry_name.startsWith(prefix_raster) )
+            {
+                tar.directory()->file(entry_name)->copyTo(output.path());
+//                 QString output_file_path = output.absoluteFilePath(entry_name);
+//                 output.mkpath(QFileInfo(entry_name).path());
+//                 QFile output(output_file_path);
+//                 output.open(QIODevice::WriteOnly);
+//                 output.write(tar.directory()->file(entry_name)->data());
+            }
+        }
+        if ( !tar.errorString().isEmpty() )
+            d->set_download_status(row, "package-broken", tar.errorString());
         else if ( !output.exists() )
             d->set_download_status(row, "package-broken", tr("Didn't download any files"));
         else
