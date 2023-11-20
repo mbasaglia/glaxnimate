@@ -125,7 +125,7 @@ void GlaxnimateWindow::view_fit()
 
 void GlaxnimateWindow::showEvent(QShowEvent * event)
 {
-    QMainWindow::showEvent(event);
+    KXmlGuiWindow::showEvent(event);
     if ( !d->started )
     {
         d->started = true;
@@ -148,7 +148,9 @@ void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
     else
     {
         d->shutdown();
-        QMainWindow::closeEvent(event);
+        KXmlGuiWindow::closeEvent(event);
+        event->accept();
+        qApp->quit();
     }
 }
 
