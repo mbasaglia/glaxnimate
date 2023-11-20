@@ -7,6 +7,7 @@
 #include "svg_format.hpp"
 
 #include <QFileInfo>
+#include <KCompressionDevice>
 
 #include "utils/gzip.hpp"
 #include "svg_parser.hpp"
@@ -31,7 +32,7 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
 
         if ( utils::gzip::is_compressed(file) )
         {
-            utils::gzip::GzipStream decompressed(&file, on_error);
+            KCompressionDevice decompressed(&file, false, KCompressionDevice::GZip);
             decompressed.open(QIODevice::ReadOnly);
             SvgParser(&decompressed, mode, document, on_error, this, forced_size, default_time, default_asset_path).parse_to_document();
             return true;
@@ -83,7 +84,7 @@ bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& fil
     rend.write_main(comp);
     if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
     {
-        utils::gzip::GzipStream compressed(&file, on_error);
+        KCompressionDevice compressed(&file, false, KCompressionDevice::GZip);
         compressed.open(QIODevice::WriteOnly);
         rend.write(&compressed, false);
     }

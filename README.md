@@ -14,10 +14,10 @@ Dependencies
 * Qt5 >= 5.12
 * CMake >= 3.5
 * Python3
-* ZLib
 * Potrace
 * libav (libavformat, libswscale, libavcodec, libavutil) >= 59
 * libarchive
+* KF5 or KF6
 
 
 Getting the Latest Code
@@ -54,9 +54,10 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 Install the dependencies:
 
     apt-get install -y g++ cmake qtbase5-dev qttools5-dev libqt5svg5-dev \
-    qt5-image-formats-plugins libpython3-dev zlib1g-dev libpotrace-dev \
-    libarchive-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
-
+    qt5-image-formats-plugins libpython3-dev libpotrace-dev \
+    libarchive-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev \
+    libkf5coreaddons-dev libkf5crash-dev libkf5widgetsaddons-dev libkf5xmlgui-dev \
+    libkf5archive-dev
 
 The generic `cmake` commands listed above should work.
 

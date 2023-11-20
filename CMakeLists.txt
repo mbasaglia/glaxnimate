@@ -137,6 +137,7 @@ find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
     WidgetsAddons
     Crash
     XmlGui
+    Archive
 )
 message(STATUS "Using KF ${KF_MAJOR}")
 

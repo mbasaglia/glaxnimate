@@ -8,8 +8,9 @@
 
 #include <set>
 
+#include <KCompressionDevice>
+
 #include "cbor_write_json.hpp"
-#include "utils/gzip.hpp"
 #include "model/shapes/polystar.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/stroke.hpp"
@@ -84,9 +85,9 @@ private:
 
 bool glaxnimate::io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
-    QByteArray json;
-    if ( !utils::gzip::decompress(file, json, [this](const QString& s){ error(s); }) )
-        return false;
+    KCompressionDevice compressed(&file, false, KCompressionDevice::GZip);
+    compressed.open(QIODevice::ReadOnly);
+    QByteArray json = compressed.readAll();
     return load_json(json, document);
 }
 
@@ -98,9 +99,13 @@ bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&,
     json[QLatin1String("tgs")] = 1;
     QByteArray data = cbor_write_json(json, true);
 
-    quint32 compressed_size = 0;
-    if ( !utils::gzip::compress(data, file, [this](const QString& s){ error(s); }, 9, &compressed_size) )
-        return false;
+    {
+        KCompressionDevice compressed(&file, false, KCompressionDevice::GZip);
+        compressed.open(QIODevice::WriteOnly);
+        compressed.write(data);
+    }
+
+    quint32 compressed_size = file.pos();
 
     qreal size_k = compressed_size / 1024.0;
     if ( size_k > 64 )

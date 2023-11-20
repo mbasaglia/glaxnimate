@@ -362,11 +362,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
          </row>
          <row>
           <property name="text">
-           <string>ZLib</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
            <string>Potrace</string>
           </property>
          </row>
