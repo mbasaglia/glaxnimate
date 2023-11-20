@@ -84,6 +84,7 @@ static void action_combo(QComboBox* box, QAction* action)
 void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent)
 {
     this->parent = parent;
+    parent->createGUI();
     ui.setupUi(parent);
     redo_text = ui.action_redo->text();
     undo_text = ui.action_undo->text();
