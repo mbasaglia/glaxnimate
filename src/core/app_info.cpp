@@ -67,8 +67,8 @@ void glaxnimate::AppInfo::init_qapplication() const
         QObject::tr("(c) 2019-2023"),
         // Optional text shown in the About box.
         QStringLiteral(""),
-        QStringLiteral(URL_DOCS)
-//         QStringLiteral("submit@bugs.kde.org")
+        QStringLiteral(URL_DOCS),
+        QStringLiteral(URL_ISSUES)
     );
 
     KAboutData::setApplicationData(aboutData);

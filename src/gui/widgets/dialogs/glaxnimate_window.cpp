@@ -21,7 +21,7 @@
 
 
 GlaxnimateWindow::GlaxnimateWindow(bool restore_state, bool debug, QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags), d(std::make_unique<Private>())
+    : KXmlGuiWindow(parent, flags), d(std::make_unique<Private>())
 {
     d->setupUi(restore_state, debug, this);
     d->setup_document_new(tr("New Animation"));
@@ -33,7 +33,7 @@ GlaxnimateWindow::~GlaxnimateWindow() = default;
 
 void GlaxnimateWindow::changeEvent(QEvent *e)
 {
-    QMainWindow::changeEvent(e);
+    KXmlGuiWindow::changeEvent(e);
     switch ( e->type() )
     {
         case QEvent::LanguageChange:

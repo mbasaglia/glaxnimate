@@ -204,6 +204,7 @@ target_link_libraries(
     Qt${QT_MAJOR_VERSION}::Svg
     KF${KF_MAJOR}::WidgetsAddons
     KF${KF_MAJOR}::Crash
+    KF${KF_MAJOR}::XmlGui
 )
 
 

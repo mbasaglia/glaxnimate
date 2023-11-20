@@ -43,7 +43,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -181,7 +181,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <addaction name="action_select_all"/>
     <addaction name="action_delete"/>
     <addaction name="separator"/>
-    <addaction name="action_preferences"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
@@ -332,6 +331,13 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <addaction name="action_text_put_on_path"/>
     <addaction name="action_text_remove_from_path"/>
    </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <addaction name="action_preferences"/>
+    <addaction name="action_shortcuts"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
@@ -343,6 +349,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <addaction name="menu_path"/>
    <addaction name="menu_text"/>
    <addaction name="menu_plugins"/>
+   <addaction name="menu_Settings"/>
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
@@ -2151,16 +2158,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
     <string>F&amp;lip View</string>
    </property>
   </action>
-  <action name="actionl">
-   <property name="text">
-    <string>l</string>
-   </property>
-  </action>
-  <action name="action">
-   <property name="text">
-    <string>;</string>
-   </property>
-  </action>
   <action name="action_save_as_template">
    <property name="icon">
     <iconset theme="document-save-as-template">
@@ -2287,6 +2284,17 @@ SPDX-License-Identifier: GPL-3.0-or-later
    </property>
    <property name="toolTip">
     <string>More compact that Wide but larger than Compact</string>
+   </property>
+  </action>
+  <action name="action_shortcuts">
+   <property name="icon">
+    <iconset theme="configure-shortcuts"/>
+   </property>
+   <property name="text">
+    <string>Configure &amp;Keyboard Shortcuts...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+,</string>
    </property>
   </action>
  </widget>

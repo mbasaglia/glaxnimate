@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include <QMainWindow>
+#include <KXmlGuiWindow>
 #include <QUndoGroup>
 #include <QLocalSocket>
 
@@ -37,7 +37,7 @@ class QItemSelection;
 namespace glaxnimate::gui {
 class PluginUiDialog;
 
-class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
+class GlaxnimateWindow : public KXmlGuiWindow, public glaxnimate::gui::SelectionManager
 {
     Q_OBJECT
 
