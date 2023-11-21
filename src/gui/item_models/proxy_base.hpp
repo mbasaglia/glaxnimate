@@ -50,22 +50,22 @@ public:
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
     {
-        return forward_impl(&QAbstractItemModel::index, row, column, parent);
+        return forward_impl<QModelIndex>(&QAbstractItemModel::index, row, column, parent);
     }
 
     QModelIndex parent(const QModelIndex &child) const override
     {
-        return forward_impl(&QAbstractItemModel::parent, child);
+        return forward_impl<QModelIndex>(&QAbstractItemModel::parent, child);
     }
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override
     {
-        return forward_impl(&QAbstractItemModel::rowCount, parent);
+        return forward_impl<int>(&QAbstractItemModel::rowCount, parent);
     }
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override
     {
-        return forward_impl(&QAbstractItemModel::columnCount, parent);
+        return forward_impl<int>(&QAbstractItemModel::columnCount, parent);
     }
 
 protected:
