@@ -49,7 +49,7 @@ public:
 private:
     void show_message(const Message& msg);
 
-private slots:
+private Q_SLOTS:
     void next_message();
 
 private:

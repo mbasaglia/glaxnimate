@@ -60,7 +60,7 @@ private:
 
     void exit_add_point_mode();
 
-signals:
+Q_SIGNALS:
     void gradient_stop_changed(model::Styler* styler, int stop);
 
 private:

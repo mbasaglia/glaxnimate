@@ -50,7 +50,7 @@ public:
     QString current_unicode() const;
     QString current_slug() const;
 
-signals:
+Q_SIGNALS:
     void selected_unicode(const QString& emoji);
     void selected_slug(const QString& emoji);
 

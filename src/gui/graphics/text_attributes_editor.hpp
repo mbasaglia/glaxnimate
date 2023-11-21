@@ -63,7 +63,7 @@ public:
         painter->restore();
     }
 
-private slots:
+private Q_SLOTS:
     void on_drag_baseline(QPointF p)
     {
         shape->position.set_undoable(p, false);

@@ -36,7 +36,7 @@ protected:
     void focusOutEvent(QFocusEvent * event) override;
     void leaveEvent(QEvent * event) override;
 
-signals:
+Q_SIGNALS:
     void before_changed(model::KeyframeTransition::Descriptive v);
     void after_changed(model::KeyframeTransition::Descriptive v);
 

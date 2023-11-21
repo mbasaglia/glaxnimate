@@ -27,7 +27,7 @@ public:
     virtual QBrush brush_style(FrameTime t) const = 0;
     virtual QBrush constrained_brush_style(FrameTime t, const QRectF& bounds) const;
 
-signals:
+Q_SIGNALS:
     void style_changed();
 
 protected:
@@ -36,7 +36,7 @@ protected:
     void invalidate_icon()
     {
         icon = {};
-        emit style_changed();
+        Q_EMIT style_changed();
     }
 
 private:

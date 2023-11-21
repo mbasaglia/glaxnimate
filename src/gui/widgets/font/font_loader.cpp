@@ -88,9 +88,9 @@ public:
     void mark_resolved()
     {
         resolved++;
-        emit parent->fonts_loaded(resolved);
+        Q_EMIT parent->fonts_loaded(resolved);
         if ( resolved >= int(queued.size()) )
-            emit parent->finished();
+            Q_EMIT parent->finished();
     }
 
     void handle_response(QNetworkReply *reply)
@@ -98,7 +98,7 @@ public:
         if ( reply->error() || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200 )
         {
             auto reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
-            emit parent->error(reason, reply->property("id").toInt());
+            Q_EMIT parent->error(reason, reply->property("id").toInt());
         }
         else
         {
@@ -128,7 +128,7 @@ public:
                 font.set_css_url(css_url.toString());
                 fonts.push_back(font);
                 if ( id != -1 )
-                    emit parent->success(id);
+                    Q_EMIT parent->success(id);
                 break;
             }
             case model::FontFileFormat::Unknown:
@@ -170,10 +170,10 @@ public:
         }
 
 
-        emit parent->fonts_queued(queued.size());
+        Q_EMIT parent->fonts_queued(queued.size());
 
         if ( id != -1 )
-            emit parent->success(id);
+            Q_EMIT parent->success(id);
     }
 
     void queue(const QueueItem& item)
@@ -187,7 +187,7 @@ public:
         if ( loading )
         {
             load_item(item);
-            emit parent->fonts_queued(queued.size());
+            Q_EMIT parent->fonts_queued(queued.size());
         }
     }
 };
@@ -217,8 +217,8 @@ void glaxnimate::gui::font::FontLoader::clear()
     d->queued.clear();
     d->loading = false;
 
-    emit fonts_queued(0);
-    emit fonts_loaded(0);
+    Q_EMIT fonts_queued(0);
+    Q_EMIT fonts_loaded(0);
 }
 
 void glaxnimate::gui::font::FontLoader::load_queue()
@@ -227,8 +227,8 @@ void glaxnimate::gui::font::FontLoader::load_queue()
     for ( const auto& url : d->queued )
         d->load_item(url);
 
-    emit fonts_queued(d->queued.size());
-    emit fonts_loaded(0);
+    Q_EMIT fonts_queued(d->queued.size());
+    Q_EMIT fonts_loaded(0);
 }
 
 void glaxnimate::gui::font::FontLoader::queue(const QString& name_alias, const QUrl& url, int id)

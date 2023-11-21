@@ -34,7 +34,7 @@ public:
     ~PluginSettingsWidget();
 
 
-private slots:
+private Q_SLOTS:
     void install_dialog();
     void refresh_plugins();
     void uninstall_current();

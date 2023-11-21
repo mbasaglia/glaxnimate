@@ -48,10 +48,10 @@ public:
 
     void set_selected(bool selected);
 
-signals:
+Q_SIGNALS:
     void modified(int index, const math::bezier::Point& point, bool commit, const QString& name);
 
-private slots:
+private Q_SLOTS:
     void tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods);
 
     void tan_out_dragged(const QPointF& p, Qt::KeyboardModifiers mods);
@@ -113,7 +113,7 @@ public:
 
     void split_segment(int index, qreal factor);
 
-public slots:
+public Q_SLOTS:
     /**
      * \brief Updates the bezier without updating the property
      */
@@ -128,7 +128,7 @@ public slots:
 
     void make_first(int index);
 
-private slots:
+private Q_SLOTS:
     void on_dragged(int index, const math::bezier::Point& point, bool commit, const QString& name);
     void refresh_from_position_property();
 

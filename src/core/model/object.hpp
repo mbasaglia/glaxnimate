@@ -102,7 +102,7 @@ public:
 
     virtual void stretch_time(qreal multiplier);
 
-signals:
+Q_SIGNALS:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void visual_property_changed(const model::BaseProperty* prop, const QVariant& value);
     void removed();

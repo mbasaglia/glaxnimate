@@ -32,7 +32,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void clicked_open();
     void clicked_import();
     void clicked_search();

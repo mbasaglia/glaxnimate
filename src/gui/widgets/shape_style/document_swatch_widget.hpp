@@ -41,7 +41,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void swatch_link(int index, Qt::KeyboardModifiers mod);
     void swatch_add();
     void swatch_palette_color_added(int index);
@@ -56,7 +56,7 @@ private slots:
     void open();
     void save();
 
-signals:
+Q_SIGNALS:
     void current_color_def(model::BrushStyle* def);
     void secondary_color_def(model::BrushStyle* def);
     void needs_new_color();

@@ -26,7 +26,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void btn_clicked(QAbstractButton* button);
     void changed_seconds(double s);
     void changed_frames(int f);

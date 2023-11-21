@@ -29,7 +29,7 @@ public:
 private:
     bool validate_stretch(float stretch);
 
-signals:
+Q_SIGNALS:
     void timing_changed();
 };
 

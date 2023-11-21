@@ -18,7 +18,7 @@ class TestTrace: public QObject
 
 private:
 
-private slots:
+private Q_SLOTS:
 
     void benchmark_eem()
     {

@@ -48,7 +48,7 @@ public:
 
     QPainterPath to_clip(model::FrameTime t) const override;
 
-signals:
+Q_SIGNALS:
     void opacity_changed(float op);
     void composition_changed();
 
@@ -57,7 +57,7 @@ protected:
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
     void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp) override;
 
-private slots:
+private Q_SLOTS:
     void on_transform_matrix_changed();
 
 

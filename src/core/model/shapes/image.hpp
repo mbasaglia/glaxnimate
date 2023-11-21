@@ -35,7 +35,7 @@ protected:
     QPainterPath to_painter_path_impl(FrameTime t) const override;
     void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier*) const override;
 
-private slots:
+private Q_SLOTS:
     void on_transform_matrix_changed();
 
 private:

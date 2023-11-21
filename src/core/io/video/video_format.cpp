@@ -421,7 +421,7 @@ public:
         ost.stream->time_base = AVRational{ 1, fps };
         ost.codec_context->time_base = ost.stream->time_base;
 
-        // emit one intra frame every twelve frames at most
+        // Q_EMIT one intra frame every twelve frames at most
         ost.codec_context->gop_size = 12;
 
         // get_format() for some reason returns an invalid value
@@ -826,11 +826,11 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         auto first_frame = comp->animation->first_frame.get();
         auto last_frame = comp->animation->last_frame.get();
         QColor background = settings["background"].value<QColor>();
-        emit progress_max_changed(last_frame - first_frame);
+        Q_EMIT progress_max_changed(last_frame - first_frame);
         for ( auto i = first_frame; i < last_frame; i++ )
         {
             video.write_video_frame(comp->render_image(i, {width, height}, background));
-            emit progress(i - first_frame);
+            Q_EMIT progress(i - first_frame);
         }
 
         video.flush();

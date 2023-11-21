@@ -158,7 +158,7 @@ protected:
 
     void edit_clicked(const MouseEvent& event);
 
-signals:
+Q_SIGNALS:
     void cursor_changed(const QCursor&);
 
 private:

@@ -185,7 +185,7 @@ private:
     void error(const QString& msg)
     {
         if ( fmt )
-            emit fmt->warning(msg);
+            Q_EMIT fmt->warning(msg);
     }
 
     QJsonObject fixed_asset_list(const QString& type, const QJsonValue& values)

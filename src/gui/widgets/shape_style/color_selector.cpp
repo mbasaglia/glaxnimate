@@ -86,9 +86,9 @@ public:
             bool cleared = i == ui.combo_box->count() - 1;
 
             if ( cleared )
-                emit parent->current_color_cleared();
+                Q_EMIT parent->current_color_cleared();
             else
-                emit parent->current_color_committed(current_color());
+                Q_EMIT parent->current_color_committed(current_color());
         });
 
         connect(ui.btn_clear, &QAbstractButton::clicked, parent, &ColorSelector::current_color_cleared);
@@ -202,7 +202,7 @@ void ColorSelector::Private::update_color(const QColor& c, bool alpha, QObject* 
     ui.palette_widget->setDefaultColor(col);
 
     lock.unlock();
-    emit parent->current_color_changed(col);
+    Q_EMIT parent->current_color_changed(col);
 }
 
 void ColorSelector::Private::update_color_component(int val, QObject* sender)
@@ -256,7 +256,7 @@ void ColorSelector::Private::color_swap()
     ui.color_preview_secondary->setColor(current_color());
     ui.color_preview->setColor(c);
     update_color(c, true, nullptr);
-    emit parent->secondary_color_changed(current_color_secondary());
+    Q_EMIT parent->secondary_color_changed(current_color_secondary());
 }
 
 ColorSelector::ColorSelector(QWidget* parent)
@@ -291,7 +291,7 @@ void ColorSelector::color_swap()
 void ColorSelector::color_update_alpha ( const QColor& col )
 {
     d->update_color(col, true, QObject::sender());
-    emit current_color_committed(col);
+    Q_EMIT current_color_committed(col);
 }
 
 void ColorSelector::color_update_noalpha ( const QColor& col )
@@ -332,7 +332,7 @@ void ColorSelector::hide_secondary()
 
 void ColorSelector::commit_current_color()
 {
-    emit current_color_committed(d->current_color());
+    Q_EMIT current_color_committed(d->current_color());
 }
 
 void ColorSelector::set_palette_model(color_widgets::ColorPaletteModel* palette_model)

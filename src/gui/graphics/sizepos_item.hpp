@@ -57,7 +57,7 @@ public:
         painter->restore();
     }
 
-private slots:
+private Q_SLOTS:
     void on_drag_tl(QPointF p, Qt::KeyboardModifiers modifiers)
     {
         if ( modifiers & Qt::ControlModifier )

@@ -43,18 +43,18 @@ public:
     void apply_to_targets(const QString& text, const std::vector<model::Styler*>& styler, int gradient_stop, bool commit);
     void clear_targets(const QString& text, const std::vector<model::Styler*>& styler);
 
-public slots:
+public Q_SLOTS:
     void set_current_color(const QColor& c);
     void set_secondary_color(const QColor& c);
 
-private slots:
+private Q_SLOTS:
     void color_update_noalpha(const QColor& col);
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
     void color_swap();
     void commit_current_color();
 
-signals:
+Q_SIGNALS:
     void current_color_changed(const QColor& c);
     void secondary_color_changed(const QColor& c);
     void current_color_committed(const QColor& c);

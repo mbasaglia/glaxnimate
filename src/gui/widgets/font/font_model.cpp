@@ -279,7 +279,7 @@ bool glaxnimate::gui::font::FontModel::preview_font() const
 void glaxnimate::gui::font::FontModel::set_preview_font(bool preview)
 {
     d->preview_font = preview;
-    emit dataChanged(
+    Q_EMIT dataChanged(
         createIndex(0, 0, nullptr),
         createIndex(d->fonts.size() + d->filtered_faves.size(), 0, nullptr),
         {Qt::FontRole}

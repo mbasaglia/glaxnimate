@@ -101,17 +101,17 @@ public:
 
     Q_INVOKABLE void warning(const QString& message)
     {
-        emit this->message(message, app::log::Warning);
+        Q_EMIT this->message(message, app::log::Warning);
     }
 
     Q_INVOKABLE void information(const QString& message)
     {
-        emit this->message(message, app::log::Info);
+        Q_EMIT this->message(message, app::log::Info);
     }
 
     Q_INVOKABLE void error(const QString& message)
     {
-        emit this->message(message, app::log::Error);
+        Q_EMIT this->message(message, app::log::Error);
     }
 
 protected:
@@ -140,7 +140,7 @@ protected:
         return false;
     }
 
-signals:
+Q_SIGNALS:
     void message(const QString& message, app::log::Severity severity);
     void progress_max_changed(int max);
     void progress(int value);

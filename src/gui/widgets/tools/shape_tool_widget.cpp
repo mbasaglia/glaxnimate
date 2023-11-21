@@ -29,7 +29,7 @@ void ShapeToolWidget::check_checks()
 {
     d->check_checks();
     d->save_settings();
-    emit checks_changed();
+    Q_EMIT checks_changed();
 }
 
 bool ShapeToolWidget::create_fill() const

@@ -83,7 +83,7 @@ public:
 
     const QString& error() const;
 
-signals:
+Q_SIGNALS:
     void message(const QString& message, app::log::Severity Severity);
 
 private:

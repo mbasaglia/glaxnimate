@@ -43,7 +43,7 @@ public:
     SelectionMode selection_mode() const { return selection_mode_; }
     void set_selection_mode(SelectionMode selection_mode) { selection_mode_ = selection_mode; }
 
-public slots:
+public Q_SLOTS:
     void set_visible(bool v)
     {
         visible = v;

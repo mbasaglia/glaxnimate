@@ -20,7 +20,7 @@ public:
 protected:
     void mouseReleaseEvent(QMouseEvent * event) override;
 
-signals:
+Q_SIGNALS:
     void context_menu_requested(int index);
 };
 

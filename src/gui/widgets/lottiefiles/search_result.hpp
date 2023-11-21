@@ -47,7 +47,7 @@ public:
 
     const LottieFilesResult& result() const { return data; }
 
-signals:
+Q_SIGNALS:
     void selected(const QString& name, const QUrl& url);
     void selected_open(const QString& name, const QUrl& url);
     void selected_import(const QString& name, const QUrl& url);

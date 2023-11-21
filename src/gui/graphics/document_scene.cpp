@@ -130,7 +130,7 @@ void graphics::DocumentScene::set_document ( model::Document* document )
         connect(document, &model::Document::record_to_keyframe_changed, this, [this]{update();});
     }
 
-    emit document_changed(document, old);
+    Q_EMIT document_changed(document, old);
 }
 
 void graphics::DocumentScene::set_composition(model::Composition* comp)
@@ -343,7 +343,7 @@ void graphics::DocumentScene::user_select(const std::vector<model::VisualNode*>&
         add_selection(new_sel);
 
     if ( !selected->empty() || !deselected->empty() )
-        emit node_user_selected(*selected, *deselected);
+        Q_EMIT node_user_selected(*selected, *deselected);
 
 }
 
@@ -470,7 +470,7 @@ void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& re
     painter->fillRect(rect, palette().base());
     if ( d->comp )
         painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->comp->size())), d->back);
-    emit drawing_background(painter, rect);
+    Q_EMIT drawing_background(painter, rect);
 }
 
 void graphics::DocumentScene::drawForeground(QPainter* painter, const QRectF&)

@@ -26,7 +26,7 @@ public:
 
     void set_current_composition(model::Composition* comp);
 
-private slots:
+private Q_SLOTS:
     void fw_switch(int i);
     void on_close(int i);
     void on_menu(int i);
@@ -36,7 +36,7 @@ private slots:
 private:
     void update_comp_color(int index, model::Composition* comp);
 
-signals:
+Q_SIGNALS:
     void switch_composition(model::Composition* comp, int index);
 
 private:

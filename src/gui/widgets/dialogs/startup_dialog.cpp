@@ -160,7 +160,7 @@ void StartupDialog::select_preset(const QModelIndex& index)
 
 void StartupDialog::click_recent(const QModelIndex& index)
 {
-    emit open_recent(index.data(Qt::ToolTipRole).toString());
+    Q_EMIT open_recent(index.data(Qt::ToolTipRole).toString());
     reject();
 }
 

@@ -67,12 +67,12 @@ void ViewTransformWidget::set_zoom(qreal percent)
 
 void ViewTransformWidget::fuckyoumoc_on_angle_changed(qreal degrees)
 {
-    emit angle_changed(qDegreesToRadians(degrees));
+    Q_EMIT angle_changed(qDegreesToRadians(degrees));
 }
 
 void ViewTransformWidget::fuckyoumoc_on_zoom_changed(qreal percent)
 {
-    emit zoom_changed(percent/100);
+    Q_EMIT zoom_changed(percent/100);
 }
 
 void ViewTransformWidget::set_flip(bool flipped)

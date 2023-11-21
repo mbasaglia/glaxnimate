@@ -74,14 +74,14 @@ glaxnimate::gui::LottieFilesResultItem::LottieFilesResultItem(LottieFilesResult 
     open->setToolTip(open->text());
     open->setIcon(QIcon::fromTheme("document-open"));
     buttons->addWidget(open);
-    connect(open, &QToolButton::clicked, this, [this]{emit selected_open(data.name, data.lottie);});
+    connect(open, &QToolButton::clicked, this, [this]{Q_EMIT selected_open(data.name, data.lottie);});
 
     auto import = new QToolButton(this);
     import->setText(tr("Import"));
     import->setToolTip(import->text());
     import->setIcon(QIcon::fromTheme("document-import"));
     buttons->addWidget(import);
-    connect(import, &QToolButton::clicked, this, [this]{emit selected_import(data.name, data.lottie);});
+    connect(import, &QToolButton::clicked, this, [this]{Q_EMIT selected_import(data.name, data.lottie);});
 
     preview = QIcon::fromTheme("application-x-partial-download").pixmap(image_size).toImage();
 
@@ -98,14 +98,14 @@ void glaxnimate::gui::LottieFilesResultItem::mousePressEvent(QMouseEvent* event)
 {
     QWidget::mousePressEvent(event);
 
-    emit selected(data.name, data.lottie);
+    Q_EMIT selected(data.name, data.lottie);
 }
 
 void glaxnimate::gui::LottieFilesResultItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     QWidget::mouseDoubleClickEvent(event);
 
-    emit selected_import(data.name, data.lottie);
+    Q_EMIT selected_import(data.name, data.lottie);
 }
 
 void glaxnimate::gui::LottieFilesResultItem::paintEvent(QPaintEvent*)

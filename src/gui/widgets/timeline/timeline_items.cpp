@@ -163,7 +163,7 @@ timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, in
 
 void timeline::LineItem::click_selected(bool selected, bool replace_selection)
 {
-    emit clicked(id_, selected, replace_selection);
+    Q_EMIT clicked(id_, selected, replace_selection);
 }
 
 
@@ -369,7 +369,7 @@ void timeline::LineItem::emit_removed()
 {
     for ( auto row : rows_ )
         row->emit_removed();
-    emit removed(id_);
+    Q_EMIT removed(id_);
 }
 
 void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)

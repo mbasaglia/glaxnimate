@@ -59,7 +59,7 @@ private:
         shape.set_closed(closed);
     }
 
-signals:
+Q_SIGNALS:
     void shape_changed(const math::bezier::Bezier& bez);
 };
 

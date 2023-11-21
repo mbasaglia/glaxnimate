@@ -108,7 +108,7 @@ public:
     bool has_subset(const QModelIndex& index, const QString& subset) const;
     bool has_category(const QModelIndex& index, GoogleFont::Category cat) const;
 
-signals:
+Q_SIGNALS:
     void max_progress_changed(int progress);
     void progress_changed(int progress);
     void error(const QString& message);

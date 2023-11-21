@@ -61,7 +61,7 @@ public:
     ShortcutGroup* find_group(const QString& label);
     void remove_action(ShortcutAction* action);
 
-signals:
+Q_SIGNALS:
     void begin_actions_change();
     void end_actions_change();
 private:

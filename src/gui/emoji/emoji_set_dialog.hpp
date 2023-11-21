@@ -25,7 +25,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void reload_sets();
     void download_selected();
     void set_selected(int row);

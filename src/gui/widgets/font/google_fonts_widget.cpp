@@ -119,7 +119,7 @@ public:
         current_font.setWeight(QFont::Weight(WeightConverter::convert(current_weight, WeightConverter::css, WeightConverter::qt)));
         current_font.setItalic(current_italic);
 
-        emit parent->font_changed(current_font);
+        Q_EMIT parent->font_changed(current_font);
     }
 
     void update_writing_systems()
@@ -214,7 +214,7 @@ glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
 
     connect(d->ui.size_widget, &FontSizeWidget::font_size_changed, this, [this](double size){
         d->current_font.setPointSizeF(size);
-        emit font_changed(d->current_font);
+        Q_EMIT font_changed(d->current_font);
     });
 
 }
@@ -248,7 +248,7 @@ void glaxnimate::gui::font::GoogleFontsWidget::change_style(const QModelIndex& i
     if ( index.isValid() )
     {
         d->current_font.setStyleName(index.data(Qt::DisplayRole).toString());
-        emit font_changed(d->current_font);
+        Q_EMIT font_changed(d->current_font);
     }
 }
 

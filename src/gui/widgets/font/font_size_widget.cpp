@@ -61,7 +61,7 @@ void glaxnimate::gui::font::FontSizeWidget::size_edited(double size)
         if ( d->standard_sizes[i] == size )
             d->ui.view_size->setCurrentIndex(d->sizes_model.index(i, 0));
 
-    emit font_size_changed(size);
+    Q_EMIT font_size_changed(size);
 }
 
 
@@ -72,5 +72,5 @@ void glaxnimate::gui::font::FontSizeWidget::size_selected(const QModelIndex& ind
     qreal size = index.data().toInt();
     d->ui.spin_size->setValue(size);;
 
-    emit font_size_changed(size);
+    Q_EMIT font_size_changed(size);
 }

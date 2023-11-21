@@ -247,7 +247,7 @@ public:
         while ( !node && index.isValid() );
 
         if ( node )
-            emit parent->current_node_changed(node);
+            Q_EMIT parent->current_node_changed(node);
     }
 
     model::VisualNode* index_node_or_parent(QModelIndex property_index)
@@ -606,7 +606,7 @@ void CompoundTimelineWidget::_on_selection_changed(const QItemSelection &selecte
 
     d->ui.timeline->select(selected, deselected);
 
-    emit selection_changed(selected_nodes, deselected_nodes);
+    Q_EMIT selection_changed(selected_nodes, deselected_nodes);
 }
 
 QAbstractItemModel * CompoundTimelineWidget::raw_model() const

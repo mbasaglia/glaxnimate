@@ -72,7 +72,7 @@ public:
 
     bool notify(QObject *receiver, QEvent *e) override;
 
-signals:
+Q_SIGNALS:
     void icon_theme_changed(const QString& theme_name);
 
 protected:

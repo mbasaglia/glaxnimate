@@ -180,7 +180,7 @@ void glaxnimate::model::Font::refresh_data ( bool update_styles )
     d->update_data();
     if ( update_styles )
         d->refresh_styles(this);
-    emit font_changed();
+    Q_EMIT font_changed();
 }
 
 void glaxnimate::model::Font::on_font_changed()

@@ -59,7 +59,7 @@ public:
     void set_transition(const KeyframeTransition& trans)
     {
         transition_ = trans;
-        emit transition_changed(transition_.before_descriptive(), transition_.after_descriptive());
+        Q_EMIT transition_changed(transition_.before_descriptive(), transition_.after_descriptive());
     }
 
     void stretch_time(qreal multiplier)
@@ -85,7 +85,7 @@ public:
         return clone;
     }
 
-signals:
+Q_SIGNALS:
     void transition_changed(KeyframeTransition::Descriptive before, KeyframeTransition::Descriptive after);
 
 protected:
@@ -316,7 +316,7 @@ public:
      */
     virtual void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value);
 
-signals:
+Q_SIGNALS:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
     void keyframe_updated(int index, KeyframeBase* keyframe);
@@ -675,7 +675,7 @@ public:
         if ( i >= 0 && i <= int(keyframes_.size()) )
         {
             keyframes_.erase(keyframes_.begin() + i);
-            emit this->keyframe_removed(i);
+            Q_EMIT this->keyframe_removed(i);
             value_changed();
         }
     }
@@ -685,7 +685,7 @@ public:
         int n = keyframes_.size();
         keyframes_.clear();
         for ( int i = n - 1; i >= 0; i-- )
-            emit this->keyframe_removed(i);
+            Q_EMIT this->keyframe_removed(i);
     }
 
     bool remove_keyframe_at_time(FrameTime time) override
@@ -696,7 +696,7 @@ public:
             {
                 int index = it - keyframes_.begin();
                 keyframes_.erase(it);
-                emit this->keyframe_removed(index);
+                Q_EMIT this->keyframe_removed(index);
                 on_keyframe_updated(time, index-1, index);
                 return true;
             }
@@ -736,7 +736,7 @@ public:
             this->value_changed();
             emitter(this->object(), value_);
             keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
-            emit this->keyframe_added(0, keyframes_.back().get());
+            Q_EMIT this->keyframe_added(0, keyframes_.back().get());
             if ( info )
                 *info = {true, 0};
             return keyframes_.back().get();
@@ -758,7 +758,7 @@ public:
         if ( kf->time() == time && !force_insert )
         {
             kf->set(value);
-            emit this->keyframe_updated(index, kf);
+            Q_EMIT this->keyframe_updated(index, kf);
             on_keyframe_updated(time, index-1, index+1);
             if ( info )
                 *info = {false, index};
@@ -769,7 +769,7 @@ public:
         if ( index == 0 && kf->time() > time )
         {
             keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
-            emit this->keyframe_added(0, keyframes_.front().get());
+            Q_EMIT this->keyframe_added(0, keyframes_.front().get());
             on_keyframe_updated(time, -1, 1);
             if ( info )
                 *info = {true, 0};
@@ -781,7 +781,7 @@ public:
             keyframes_.begin() + index + 1,
             std::make_unique<keyframe_type>(time, value)
         );
-        emit this->keyframe_added(index + 1, it->get());
+        Q_EMIT this->keyframe_added(index + 1, it->get());
         on_keyframe_updated(time, index, index+2);
         if ( info )
             *info = {true, index+1};
@@ -861,11 +861,11 @@ public:
             }
 
             for ( ; ia <= ib; ia++ )
-                emit this->keyframe_updated(ia, keyframes_[ia].get());
+                Q_EMIT this->keyframe_updated(ia, keyframes_[ia].get());
         }
         else
         {
-            emit this->keyframe_updated(keyframe_index, keyframes_[keyframe_index].get());
+            Q_EMIT this->keyframe_updated(keyframe_index, keyframes_[keyframe_index].get());
         }
 
         return new_index;
@@ -879,7 +879,7 @@ public:
         for ( std::size_t i = 0; i < keyframes_.size(); i++ )
         {
             keyframes_[i]->stretch_time(multiplier);
-            emit keyframe_updated(i, keyframes_[i].get());
+            Q_EMIT keyframe_updated(i, keyframes_[i].get());
         }
 
         current_time *= multiplier;
@@ -1003,7 +1003,7 @@ public:
      */
     std::optional<QPointF> derivative_at(FrameTime time) const;
 
-signals:
+Q_SIGNALS:
     /// Invoked on set_bezier()
     void  bezier_set(const math::bezier::Bezier& bezier);
 };

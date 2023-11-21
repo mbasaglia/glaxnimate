@@ -42,7 +42,7 @@ public:
         update();
     }
 
-private slots:
+private Q_SLOTS:
     void size_changed()
     {
         prepareGeometryChange();
@@ -76,7 +76,7 @@ public:
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget * = nullptr) override {}
     QRectF boundingRect() const override { return {}; }
 
-private slots:
+private Q_SLOTS:
     void size_changed()
     {
         update_handles();

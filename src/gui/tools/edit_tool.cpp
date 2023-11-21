@@ -585,7 +585,7 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
                 if ( clicked_on.handle->role() == graphics::MoveHandle::GradientStop )
                 {
                     auto editor = static_cast<graphics::GradientEditor*>(clicked_on.handle->parentItem());
-                    emit gradient_stop_changed(
+                    Q_EMIT gradient_stop_changed(
                         editor->styler(),
                         clicked_on.handle->data(graphics::GradientStopIndex).toInt()
                     );
@@ -1017,5 +1017,5 @@ void tools::EditTool::exit_add_point_mode()
 void tools::EditTool::set_cursor(Qt::CursorShape shape)
 {
     if ( shape != d->cursor )
-        emit cursor_changed(d->cursor = shape);
+        Q_EMIT cursor_changed(d->cursor = shape);
 }

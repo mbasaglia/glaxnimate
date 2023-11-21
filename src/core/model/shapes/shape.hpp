@@ -72,7 +72,7 @@ public:
     QPainterPath to_painter_path(FrameTime t) const;
     virtual std::unique_ptr<ShapeElement> to_path() const;
 
-signals:
+Q_SIGNALS:
     void position_updated();
     void siblings_changed();
 
@@ -189,10 +189,10 @@ protected:
     virtual bool skip_stylers() const { return true; }
     void on_graphics_changed() override;
 
-private slots:
+private Q_SLOTS:
     void update_affected();
 
-signals:
+Q_SIGNALS:
     void shape_changed();
 
 private:

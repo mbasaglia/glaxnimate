@@ -27,12 +27,12 @@ public:
 
     ~ViewTransformWidget();
 
-public slots:
+public Q_SLOTS:
     void set_zoom(qreal percent);
     void set_angle(qreal radians);
     void set_flip(bool flipped);
 
-signals:
+Q_SIGNALS:
     void zoom_in();
     void zoom_out();
     void zoom_changed(qreal percent);
@@ -40,7 +40,7 @@ signals:
     void view_fit();
     void flip_view();
 
-private slots:
+private Q_SLOTS:
     void fuckyoumoc_on_zoom_changed(qreal percent);
     void fuckyoumoc_on_angle_changed(qreal degrees);
 

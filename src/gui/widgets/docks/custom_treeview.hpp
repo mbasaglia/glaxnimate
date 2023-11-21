@@ -30,7 +30,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent * event) override
     {
         if ( event->button() == Qt::RightButton )
-            emit customContextMenuRequested(event->pos());
+            Q_EMIT customContextMenuRequested(event->pos());
         else
             QTreeView::mouseReleaseEvent(event);
     }

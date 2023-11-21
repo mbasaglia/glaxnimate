@@ -155,7 +155,7 @@ public:
      */
     void check_autosaves();
 
-public slots:
+public Q_SLOTS:
     void document_save();
     void document_save_as();
     void document_export();
@@ -171,7 +171,7 @@ public slots:
     void duplicate_selection() const;
     void delete_selected();
 
-private slots:
+private Q_SLOTS:
     void document_new();
     void document_open_dialog();
     void document_reload();

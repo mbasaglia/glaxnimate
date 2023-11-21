@@ -64,7 +64,7 @@ public:
     Q_INVOKABLE QImage render_image(float time, QSize size = {}, const QColor& background = {}) const;
     Q_INVOKABLE QImage render_image() const;
 
-signals:
+Q_SIGNALS:
     void fps_changed(float fps);
     void width_changed(int);
     void height_changed(int);

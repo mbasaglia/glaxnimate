@@ -81,7 +81,7 @@ public:
             view->setSceneRect(sr.united(vp));
         }
 
-//         emit scene_rect_changed(QRectF(mapToScene(0,0),mapToScene(width(),height())));
+//         Q_EMIT scene_rect_changed(QRectF(mapToScene(0,0),mapToScene(width(),height())));
     }
 
     void update_mouse_cursor()
@@ -221,7 +221,7 @@ void Canvas::mouseMoveEvent(QMouseEvent* event)
 
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
-    emit mouse_moved(scene_pos);
+    Q_EMIT mouse_moved(scene_pos);
 
     if ( event->buttons() & Qt::MiddleButton  )
     {
@@ -353,7 +353,7 @@ void Canvas::zoom_view_anchor(qreal factor, const QPointF& scene_anchor)
     d->zoom_factor *= factor;
 
     d->resize_fit = false;
-    emit zoomed(d->zoom_factor);
+    Q_EMIT zoomed(d->zoom_factor);
 }
 
 void Canvas::set_zoom(qreal factor)
@@ -448,7 +448,7 @@ void Canvas::do_rotate(qreal radians, const QPointF& scene_anchor)
 
 
     d->resize_fit = false;
-    emit rotated(d->rotation);
+    Q_EMIT rotated(d->rotation);
 }
 
 void Canvas::set_rotation(qreal radians)
@@ -461,7 +461,7 @@ void Canvas::view_fit()
     setTransform(QTransform());
     d->rotation = 0;
     d->zoom_factor = 1;
-    emit rotated(0);
+    Q_EMIT rotated(0);
 
     QRect fit_target;
 
@@ -483,7 +483,7 @@ void Canvas::view_fit()
     }
     else
     {
-        emit zoomed(1);
+        Q_EMIT zoomed(1);
     }
 
     d->resize_fit = true;
@@ -559,7 +559,7 @@ void Canvas::dragMoveEvent(QDragMoveEvent* event)
 void Canvas::dropEvent(QDropEvent* event)
 {
     event->acceptProposedAction();
-    emit dropped(event->mimeData());
+    Q_EMIT dropped(event->mimeData());
 }
 
 bool Canvas::event(QEvent* event)

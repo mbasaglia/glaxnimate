@@ -14,7 +14,7 @@ class TestCase: public QObject
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
 
     void test_set_handle()
     {

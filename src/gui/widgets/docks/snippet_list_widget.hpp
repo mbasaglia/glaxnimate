@@ -23,14 +23,14 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void snippet_new();
     void snippet_edit();
     void snippet_delete();
     void snippet_run();
     void snippet_reload();
 
-signals:
+Q_SIGNALS:
     void run_snippet(const QString& source);
     void warning(const QString& message, const QString& title);
 

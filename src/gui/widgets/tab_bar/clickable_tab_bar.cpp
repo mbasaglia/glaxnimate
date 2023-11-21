@@ -20,9 +20,9 @@ void ClickableTabBar::mouseReleaseEvent(QMouseEvent* event)
     if ( index != -1 )
     {
         if ( event->button() == Qt::MiddleButton )
-            emit tabCloseRequested(index);
+            Q_EMIT tabCloseRequested(index);
         else if ( event->button() == Qt::RightButton )
-            emit context_menu_requested(index);
+            Q_EMIT context_menu_requested(index);
     }
 }
 

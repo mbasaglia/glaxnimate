@@ -39,12 +39,12 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void lock_toggled(bool on);
     void x_changed(qreal x);
     void y_changed(qreal y);
 
-signals:
+Q_SIGNALS:
     void value_changed();
     
 private:

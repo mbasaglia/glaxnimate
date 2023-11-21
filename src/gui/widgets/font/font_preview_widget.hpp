@@ -24,7 +24,7 @@ public:
 
     QFont selected_font() const;
 
-public slots:
+public Q_SLOTS:
     void set_font(const QFont& font);
 
 protected:
@@ -32,7 +32,7 @@ protected:
     void resizeEvent(QResizeEvent * event) override;
     void showEvent(QShowEvent * event) override;
 
-private slots:
+private Q_SLOTS:
     void zoom_changed(double zoom);
 
 private:

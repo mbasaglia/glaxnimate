@@ -71,7 +71,7 @@ public:
      */
     void queue_pending(model::Document* document, bool reload_loaded = false);
 
-signals:
+Q_SIGNALS:
     /**
      * \brief All queued loads have been completed
      */

@@ -33,7 +33,7 @@ protected:
     void resizeEvent(QResizeEvent * event) override;
     void showEvent(QShowEvent * event) override;
 
-private slots:
+private Q_SLOTS:
     void update_preview();
     void apply();
     void change_mode(int mode);

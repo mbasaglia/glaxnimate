@@ -251,7 +251,7 @@ void DocumentSwatchWidget::swatch_palette_color_changed(int index)
 
 void DocumentSwatchWidget::swatch_add()
 {
-    emit needs_new_color();
+    Q_EMIT needs_new_color();
 }
 
 void DocumentSwatchWidget::add_new_color(const QColor& color)
@@ -268,9 +268,9 @@ void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
         auto def = index != -1 ? d->document->assets()->colors->values[index] : nullptr;
 
         if ( mod & Qt::ShiftModifier )
-            emit secondary_color_def(def);
+            Q_EMIT secondary_color_def(def);
         else
-            emit current_color_def(def);
+            Q_EMIT current_color_def(def);
     }
 }
 
@@ -433,7 +433,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             tr("Unlink fill"),
             this,
             [this]{
-                emit current_color_def(nullptr);
+                Q_EMIT current_color_def(nullptr);
             }
         );
 
@@ -442,7 +442,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             tr("Unlink stroke"),
             this,
             [this]{
-                emit secondary_color_def(nullptr);
+                Q_EMIT secondary_color_def(nullptr);
             }
         );
     }
@@ -511,7 +511,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             tr("Set as fill"),
             this,
             [item, this]{
-                emit current_color_def(item);
+                Q_EMIT current_color_def(item);
             }
         );
 
@@ -520,7 +520,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             tr("Set as stroke"),
             this,
             [item, this]{
-                emit secondary_color_def(item);
+                Q_EMIT secondary_color_def(item);
             }
         );
 

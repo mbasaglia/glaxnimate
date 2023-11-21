@@ -406,7 +406,7 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
                 row -= 1;
             else
                 row += 1;
-            emit scrolled(row);
+            Q_EMIT scrolled(row);
         }
     }
 }
@@ -600,7 +600,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
     else if ( event->button() == Qt::LeftButton )
     {
         d->drag_mode = Private::DragMode::Frame;
-        emit frame_clicked(d->mouse_frame);
+        Q_EMIT frame_clicked(d->mouse_frame);
     }
 
 }
@@ -629,7 +629,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
                 int row = d->scroll_row() - scroll_by;
                 if ( row >= 0 && row <= d->max_scroll_row() )
                 {
-                    emit scrolled(row);
+                    Q_EMIT scrolled(row);
                     d->drag_start.setY(scene_pos.y() - scroll_by *  d->row_height);
                 }
             }
@@ -637,7 +637,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
     }
     else if ( d->drag_mode == Private::DragMode::Frame )
     {
-        emit frame_clicked(d->mouse_frame);
+        Q_EMIT frame_clicked(d->mouse_frame);
     }
 #if QT_VERSION_MAJOR >= 6
     else if ( event->position().y() > d->header_height )
@@ -661,7 +661,7 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
     else if ( event->button() == Qt::LeftButton && d->drag_mode == Private::DragMode::Frame )
     {
         d->drag_mode = Private::DragMode::None;
-        emit frame_clicked(d->mouse_frame);
+        Q_EMIT frame_clicked(d->mouse_frame);
     }
     else
     {
@@ -762,21 +762,21 @@ void TimelineWidget::keyPressEvent(QKeyEvent* event)
         case Qt::Key_PageDown:
         case Qt::Key_Left:
             if ( d->document->current_time() - 1 >= d->start_time )
-                emit frame_clicked(d->document->current_time() - 1);
+                Q_EMIT frame_clicked(d->document->current_time() - 1);
             event->accept();
             break;
         case Qt::Key_PageUp:
         case Qt::Key_Right:
             if ( d->document->current_time() + 1 <= d->end_time )
-                emit frame_clicked(d->document->current_time() + 1);
+                Q_EMIT frame_clicked(d->document->current_time() + 1);
             event->accept();
             break;
         case Qt::Key_Home:
-            emit frame_clicked(d->start_time);
+            Q_EMIT frame_clicked(d->start_time);
             event->accept();
             break;
         case Qt::Key_End:
-            emit frame_clicked(d->end_time);
+            Q_EMIT frame_clicked(d->end_time);
             event->accept();
             break;
     }
@@ -959,7 +959,7 @@ void TimelineWidget::emit_clicked()
     {
         if ( item->type() >= int(ItemTypes::LineItem) )
         {
-            emit line_clicked(static_cast<LineItem*>(item)->id(), true, true);
+            Q_EMIT line_clicked(static_cast<LineItem*>(item)->id(), true, true);
             return;
         }
     }

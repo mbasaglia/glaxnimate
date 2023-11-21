@@ -27,14 +27,14 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void reload_presets();
     void select_preset(const QModelIndex& index);
     void click_recent(const QModelIndex& index);
     void update_time_units();
     void update_startup_enabled(bool checked);
 
-signals:
+Q_SIGNALS:
     void open_recent(const QString& path);
     void open_browse();
 

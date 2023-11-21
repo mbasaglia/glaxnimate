@@ -30,7 +30,7 @@ private:
     void before_set_target();
     void after_set_target();
 
-private slots:
+private Q_SLOTS:
     void set_target_color(const QColor& color);
 
     void commit_target_color();

@@ -71,12 +71,12 @@ public:
                 received -= it->second.received;
                 pending.erase(it);
                 if ( pending.empty() )
-                    emit download_finished();
+                    Q_EMIT download_finished();
             }
         });
     }
 
-private slots:
+private Q_SLOTS:
     void on_download_progress(qint64 bytes_received, qint64 bytes_total)
     {
         if ( bytes_total == -1 )
@@ -97,10 +97,10 @@ private slots:
 
         received += bytes_received;
         if ( bytes_total > 0 )
-            emit download_progress(received, total);
+            Q_EMIT download_progress(received, total);
     }
 
-signals:
+Q_SIGNALS:
     void download_progress(qint64 bytes_received, qint64 bytes_total);
     void download_finished();
 

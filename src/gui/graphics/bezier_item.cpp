@@ -181,7 +181,7 @@ void graphics::PointItem::pos_dragged(const QPointF& p)
 
 void graphics::PointItem::on_modified(bool commit, const QString& name)
 {
-    emit modified(index_, point_, commit, name);
+    Q_EMIT modified(index_, point_, commit, name);
 }
 
 void graphics::PointItem::on_commit()

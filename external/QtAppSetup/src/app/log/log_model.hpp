@@ -40,7 +40,7 @@ public:
 
     QVariant data(const QModelIndex & index, int role) const override;
 
-private slots:
+private Q_SLOTS:
     void on_line(const LogLine& line);
 
 private:

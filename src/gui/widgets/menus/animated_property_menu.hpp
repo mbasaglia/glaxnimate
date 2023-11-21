@@ -32,7 +32,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-public slots:
+public Q_SLOTS:
     void paste_keyframe();
     void loop_keyframes();
     void follow_path();

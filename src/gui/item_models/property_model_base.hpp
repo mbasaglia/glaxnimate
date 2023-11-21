@@ -65,7 +65,7 @@ public:
     model::Document* document() const override;
     model::AnimatableBase* animatable(const QModelIndex& index) const;
 
-private slots:
+private Q_SLOTS:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void on_delete_object();
 

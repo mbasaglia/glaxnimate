@@ -14,7 +14,7 @@ void glaxnimate::gui::item_models::CompFilterModel::set_composition(model::Compo
 
     this->comp = comp;
     set_root(friendly_model()->node_index(comp));
-    emit composition_changed(comp);
+    Q_EMIT composition_changed(comp);
 }
 
 glaxnimate::model::Composition* glaxnimate::gui::item_models::CompFilterModel::composition() const

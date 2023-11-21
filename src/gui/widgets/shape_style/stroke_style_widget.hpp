@@ -51,14 +51,14 @@ protected:
     void changeEvent ( QEvent* e ) override;
     void paintEvent(QPaintEvent * event) override;
 
-public slots:
+public Q_SLOTS:
     void set_color(const QColor& color);
 
-signals:
+Q_SIGNALS:
     void color_changed(const QColor& color);
     void pen_style_changed();
 
-private slots:
+private Q_SLOTS:
     void check_cap();
     void check_join();
     void check_color(const QColor& color);

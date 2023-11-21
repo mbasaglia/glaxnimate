@@ -27,7 +27,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void use_default();
     void use_nothing();
 

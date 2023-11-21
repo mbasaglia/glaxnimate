@@ -90,7 +90,7 @@ bool glaxnimate::gui::ScrollAreaEventFilter::eventFilter(QObject *object, QEvent
             auto mouse_event = static_cast<QMouseEvent*>(event);
             auto delta = mouse_event->pos() - d->scroll_start;
             if ( std::hypot(delta.x(), delta.y()) < 5 )
-                emit clicked(mouse_event->pos());
+                Q_EMIT clicked(mouse_event->pos());
             return true;
         }
         default:

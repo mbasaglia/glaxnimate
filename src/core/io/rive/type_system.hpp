@@ -173,7 +173,7 @@ public:
 
     QString type_name(TypeId type_id);
 
-signals:
+Q_SIGNALS:
     void type_not_found(int type_id);
 
 private:

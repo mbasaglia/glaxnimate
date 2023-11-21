@@ -41,7 +41,7 @@ private:
 
     void on_update_style();
 
-signals:
+Q_SIGNALS:
     void use_changed(BrushStyle* new_use);
     void use_changed_from(BrushStyle* old_use, BrushStyle* new_use);
 };

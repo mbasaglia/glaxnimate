@@ -38,10 +38,10 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void change_current_gradient();
 
-signals:
+Q_SIGNALS:
     void selected(model::Gradient* gradient, bool secondary);
 
 private:

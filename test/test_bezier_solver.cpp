@@ -15,7 +15,7 @@ class TestCase: public QObject
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
 #if 0
     void test_order()
     {

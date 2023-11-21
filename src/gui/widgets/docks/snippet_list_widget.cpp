@@ -57,13 +57,13 @@ void SnippetListWidget::snippet_edit()
     auto snippet = d->model.snippet(d->ui.list_view->currentIndex());
     if ( snippet.name().isEmpty() )
     {
-        emit warning(tr("Snippets need a name"), tr("Snippets"));
+        Q_EMIT warning(tr("Snippets need a name"), tr("Snippets"));
         return;
     }
 
     if ( !snippet.ensure_file_exists() )
     {
-        emit warning(tr("Could not create snippet: `%1`").arg(snippet.filename()), tr("Snippets"));
+        Q_EMIT warning(tr("Could not create snippet: `%1`").arg(snippet.filename()), tr("Snippets"));
     }
 
     QDesktopServices::openUrl(QUrl::fromLocalFile(snippet.filename()));
@@ -76,7 +76,7 @@ void SnippetListWidget::snippet_run()
     {
         QString src = snippet.get_source();
         if ( !src.isEmpty() )
-            emit run_snippet(src);
+            Q_EMIT run_snippet(src);
     }
 }
 

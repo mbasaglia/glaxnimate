@@ -30,7 +30,7 @@ public:
 protected:
     void changeEvent(QEvent *e) override;
 
-private slots:
+private Q_SLOTS:
     void select(const QModelIndex& index);
     void select_and_accept(const QModelIndex& index);
 

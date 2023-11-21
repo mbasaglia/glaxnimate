@@ -39,12 +39,12 @@ public:
 
     bool response_has_error(QNetworkReply* reply)
     {
-        emit parent->max_progress_changed(0);
+        Q_EMIT parent->max_progress_changed(0);
 
         if ( reply->error() || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200 )
         {
             auto reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
-            emit parent->error(reason);
+            Q_EMIT parent->error(reason);
             return true;
         }
 
@@ -60,7 +60,7 @@ public:
 
     void parse_json(const QJsonDocument& doc)
     {
-        emit parent->beginResetModel();
+        Q_EMIT parent->beginResetModel();
 
         int pop = 0;
         auto items = doc.object()["items"].toArray();
@@ -120,8 +120,8 @@ public:
             }
         }
 
-        emit parent->endResetModel();
-        emit parent->refresh_finished();
+        Q_EMIT parent->endResetModel();
+        Q_EMIT parent->refresh_finished();
     }
 
     void update_settings()
@@ -132,7 +132,7 @@ public:
 
     void font_changed(std::size_t font_index)
     {
-        emit parent->dataChanged(parent->createIndex(font_index, 0), parent->createIndex(font_index, Column::Count - 1));
+        Q_EMIT parent->dataChanged(parent->createIndex(font_index, 0), parent->createIndex(font_index, Column::Count - 1));
     }
 
     void download_style(GoogleFont* font, std::size_t font_index, int style_index, GoogleFont::StyleList::iterator style)
@@ -143,7 +143,7 @@ public:
             {
                 font->status = GoogleFont::Downloaded;
                 font_changed(font_index);
-                emit parent->download_finished(font_index);
+                Q_EMIT parent->download_finished(font_index);
             }
             return;
         }
@@ -156,11 +156,11 @@ public:
 
         int base = style_index * 100;
         connect(reply, &QNetworkReply::downloadProgress, parent, [this, base](qint64 received, qint64 total){
-            emit parent->progress_changed(received * 100 / total + base);
+            Q_EMIT parent->progress_changed(received * 100 / total + base);
         });
         connect(reply, &QNetworkReply::finished, parent, [this, reply, base, font, font_index, style, style_index]{
 
-            emit parent->progress_changed(base + 100);
+            Q_EMIT parent->progress_changed(base + 100);
 
             if ( response_has_error(reply) )
             {
@@ -177,7 +177,7 @@ public:
                 {
                     font->status = GoogleFont::Broken;
                     font_changed(font_index);
-                    emit parent->error(tr("Could not add font"));
+                    Q_EMIT parent->error(tr("Could not add font"));
                 }
                 else
                 {
@@ -195,8 +195,8 @@ public:
     {
         font.status = GoogleFont::InProgress;
         font_changed(font_index);
-        emit parent->progress_changed(0);
-        emit parent->max_progress_changed(100 * font.styles.size());
+        Q_EMIT parent->progress_changed(0);
+        Q_EMIT parent->max_progress_changed(100 * font.styles.size());
         download_style(&font, font_index, 0, font.styles.begin());
     }
 };
@@ -213,8 +213,8 @@ glaxnimate::gui::font::GoogleFontsModel::~GoogleFontsModel()
 
 void glaxnimate::gui::font::GoogleFontsModel::response_progress(qint64 received, qint64 total)
 {
-    emit max_progress_changed(total);
-    emit progress_changed(received);
+    Q_EMIT max_progress_changed(total);
+    Q_EMIT progress_changed(received);
 }
 
 
@@ -224,8 +224,8 @@ void glaxnimate::gui::font::GoogleFontsModel::refresh()
     QNetworkRequest request(QUrl(d->url_base + "?sort=popularity&key=" + d->token));
     request.setMaximumRedirectsAllowed(3);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    emit max_progress_changed(100);
-    emit progress_changed(0);
+    Q_EMIT max_progress_changed(100);
+    Q_EMIT progress_changed(0);
 
     auto reply = d->downloader.get(request);
 
@@ -239,7 +239,7 @@ void glaxnimate::gui::font::GoogleFontsModel::refresh()
         reply->close();
 
         if ( error.error )
-            emit this->error(error.errorString());
+            Q_EMIT this->error(error.errorString());
 
         d->parse_json(doc);
     });

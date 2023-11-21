@@ -69,7 +69,7 @@ public:
 
     QSize size() const;
 
-public slots:
+public Q_SLOTS:
     void refresh(bool rebuild_embedded);
 
     void embed(bool embedded);
@@ -77,10 +77,10 @@ public slots:
 private:
     QByteArray build_embedded(const QImage& img) const;
 
-private slots:
+private Q_SLOTS:
     void on_refresh();
 
-signals:
+Q_SIGNALS:
     void loaded();
 
 private:

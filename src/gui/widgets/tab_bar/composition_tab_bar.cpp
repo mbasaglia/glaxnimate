@@ -44,7 +44,7 @@ model::Composition * CompositionTabBar::index_to_comp(int index) const
 void CompositionTabBar::fw_switch(int i)
 {
     if ( auto comp = index_to_comp(i) )
-        emit switch_composition(comp, i);
+        Q_EMIT switch_composition(comp, i);
 }
 
 void CompositionTabBar::on_close(int index)

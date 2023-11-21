@@ -120,7 +120,7 @@ public:
             {
                 auto custom = dialog->custom_font();
                 if ( custom.is_valid() )
-                    emit parent->custom_font_selected(custom.database_index());
+                    Q_EMIT parent->custom_font_selected(custom.database_index());
                 parent->set_font(dialog->selected_font());
             }
         });
@@ -218,13 +218,13 @@ QFont glaxnimate::gui::TextToolWidget::font() const
 void glaxnimate::gui::TextToolWidget::on_font_changed()
 {
     save_settings();
-    emit font_changed(dd()->font());
+    Q_EMIT font_changed(dd()->font());
 }
 
 void glaxnimate::gui::TextToolWidget::set_font(const QFont& font)
 {
     dd()->set_font(font);
-    emit font_changed(dd()->font());
+    Q_EMIT font_changed(dd()->font());
 }
 
 void glaxnimate::gui::TextToolWidget::set_preview_text(const QString& text)

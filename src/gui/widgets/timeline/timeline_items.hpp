@@ -90,7 +90,7 @@ public:
 
     quintptr id() const { return id_; }
 
-signals:
+Q_SIGNALS:
     void removed(quintptr id, QPrivateSignal = QPrivateSignal());
     void clicked(quintptr id, bool selected, bool replace_selection);
 
@@ -227,12 +227,12 @@ public:
 
     item_models::PropertyModelFull::Item property_item() const override;
 
-public slots:
+public Q_SLOTS:
     void add_keyframe(int index);
 
     void remove_keyframe(int index);
 
-private slots:
+private Q_SLOTS:
     void transition_changed(model::KeyframeTransition::Descriptive before, model::KeyframeTransition::Descriptive after);
 
 

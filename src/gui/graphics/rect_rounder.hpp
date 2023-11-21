@@ -30,7 +30,7 @@ public:
     QRectF boundingRect() const override { return {}; }
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override {}
 
-private slots:
+private Q_SLOTS:
     void on_drag(const QPointF& p)
     {
         handle.setPos(restrict(p));

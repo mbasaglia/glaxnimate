@@ -49,7 +49,7 @@ public:
     void set_target_color(const QColor& color, qint32 tolerance);
     void set_target_index(uchar index);
 
-signals:
+Q_SIGNALS:
     void progress(double value);
 
 private:

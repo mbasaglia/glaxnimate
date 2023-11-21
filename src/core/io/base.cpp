@@ -58,7 +58,7 @@ bool glaxnimate::io::ImportExport::open(QIODevice& file, const QString& filename
             return false;
 
     bool ok = on_open(file, filename, document, setting_values);
-    emit completed(ok);
+    Q_EMIT completed(ok);
     return ok;
 }
 
@@ -70,7 +70,7 @@ bool glaxnimate::io::ImportExport::save(QIODevice& file, const QString& filename
             return false;
 
     bool ok = on_save(file, filename, comp, setting_values);
-    emit completed(ok);
+    Q_EMIT completed(ok);
     return ok;
 }
 

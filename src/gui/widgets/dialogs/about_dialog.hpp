@@ -32,7 +32,7 @@ protected:
     void changeEvent(QEvent *e) override;
     void populate_view(QListWidget* wid, const QStringList& paths);
 
-private slots:
+private Q_SLOTS:
     void open_user_data();
     void open_settings_file();
     void copy_system();

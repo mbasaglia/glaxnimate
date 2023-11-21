@@ -37,14 +37,14 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-public slots:
+public Q_SLOTS:
     void run_snippet(const QString& source);
 
-private slots:
+private Q_SLOTS:
     void console_commit(const QString& command);
     void console_clear();
 
-signals:
+Q_SIGNALS:
     void error(const QString& plugin, const QString& message);
 
 private:

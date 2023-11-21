@@ -695,7 +695,7 @@ void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_n
                 connect_subobject(obj_value, prop_node, true);
         }
 
-        emit model->dataChanged(index, index, {});
+        Q_EMIT model->dataChanged(index, index, {});
     }
 }
 

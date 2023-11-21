@@ -70,7 +70,7 @@ void glaxnimate::gui::LayerView::set_base_model(item_models::DocumentModelBase* 
 
 void glaxnimate::gui::LayerView::on_current_node_changed(const QModelIndex& index)
 {
-    emit current_node_changed(d->base_model->visual_node(d->proxy_model.mapToSource(index)));
+    Q_EMIT current_node_changed(d->base_model->visual_node(d->proxy_model.mapToSource(index)));
 }
 
 void glaxnimate::gui::LayerView::on_selection_changed(const QItemSelection& selected, const QItemSelection& deselected)
@@ -88,7 +88,7 @@ void glaxnimate::gui::LayerView::on_selection_changed(const QItemSelection& sele
             if ( auto node = d->base_model->visual_node(d->proxy_model.mapToSource(index)) )
                 selected_nodes.push_back(node);
 
-    emit selection_changed(selected_nodes, deselected_nodes);
+    Q_EMIT selection_changed(selected_nodes, deselected_nodes);
 }
 
 void glaxnimate::gui::LayerView::set_current_node(model::DocumentNode* node)

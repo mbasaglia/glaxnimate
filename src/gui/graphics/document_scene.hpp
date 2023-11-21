@@ -66,7 +66,7 @@ public:
 
     void debug() const;
 
-signals:
+Q_SIGNALS:
     void node_user_selected(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void document_changed(model::Document* new_doc, model::Document* old_doc);
     void drawing_background(QPainter* painter, const QRectF& rect);
@@ -75,7 +75,7 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect) override;
     void drawForeground(QPainter * painter, const QRectF & rect) override;
 
-private slots:
+private Q_SLOTS:
     void connect_node(model::DocumentNode* node);
     void disconnect_node(model::DocumentNode* node);
     void move_node(model::DocumentNode* node, int from, int to);

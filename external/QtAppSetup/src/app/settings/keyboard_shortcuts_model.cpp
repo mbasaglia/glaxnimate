@@ -131,7 +131,7 @@ bool app::settings::KeyboardShortcutsModel::setData(const QModelIndex& index, co
     act->shortcut = ks;
     if ( act->action )
         act->action->setShortcut(ks);
-    emit dataChanged(index, index, {role});
+    Q_EMIT dataChanged(index, index, {role});
     return true;
 }
 
@@ -181,12 +181,12 @@ app::settings::ShortcutAction * app::settings::KeyboardShortcutsModel::action(co
 
 void app::settings::KeyboardShortcutsModel::begin_change_data()
 {
-    emit beginResetModel();
+    Q_EMIT beginResetModel();
 }
 
 void app::settings::KeyboardShortcutsModel::end_change_data()
 {
-    emit endResetModel();
+    Q_EMIT endResetModel();
 }
 
 bool app::settings::KeyboardShortcutsFilterModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const

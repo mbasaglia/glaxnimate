@@ -329,7 +329,7 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::set_bezier(math::bezie
 
     value_ = get_at_impl(time()).second;
     emitter(this->object(), value_);
-    emit bezier_set(bezier);
+    Q_EMIT bezier_set(bezier);
 
     return true;
 }
@@ -373,7 +373,7 @@ glaxnimate::model::detail::AnimatedPropertyPosition::keyframe_type*
     {
         auto kf = detail::AnimatedProperty<QPointF>::set_keyframe(time, v->pos, info, force_insert);
         kf->set_point(*v);
-        emit bezier_set(bezier());
+        Q_EMIT bezier_set(bezier());
         return kf;
     }
 

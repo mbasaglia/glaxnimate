@@ -38,7 +38,7 @@ public:
 
     ShortcutAction* action(const QModelIndex & index) const;
 
-public slots:
+public Q_SLOTS:
     void begin_change_data();
     void end_change_data();
 

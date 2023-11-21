@@ -73,7 +73,7 @@ public:
     void style_selected(const QString& style)
     {
         current_font.setStyleName(style);
-        emit parent->font_changed(current_font);
+        Q_EMIT parent->font_changed(current_font);
     }
 };
 
@@ -93,7 +93,7 @@ glaxnimate::gui::font::ExternalFontWidget::ExternalFontWidget(QWidget* parent)
     });
     connect(d->ui.size_widget, &FontSizeWidget::font_size_changed, this, [this](double size){
         d->current_font.setPointSizeF(size);
-        emit font_changed(d->current_font);
+        Q_EMIT font_changed(d->current_font);
     });
     connect(d->ui.view_fonts->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex& index){
         d->set_active_font(index.data().toString());

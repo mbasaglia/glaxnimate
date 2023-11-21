@@ -50,7 +50,7 @@ private:
 
         return true;
     }
-private slots:
+private Q_SLOTS:
     void test_basics()
     {
         for ( qreal off = 0; off <= 100; off += 50 )

@@ -186,7 +186,7 @@ bool glaxnimate::model::Gradient::is_valid_ref ( glaxnimate::model::DocumentNode
 
 void glaxnimate::model::Gradient::on_ref_visual_changed()
 {
-    emit style_changed();
+    Q_EMIT style_changed();
 }
 
 void glaxnimate::model::Gradient::on_ref_changed ( glaxnimate::model::GradientColors* new_ref, glaxnimate::model::GradientColors* old_ref )
@@ -294,7 +294,7 @@ QString glaxnimate::model::Gradient::gradient_type_name(GradientType t)
 
 void glaxnimate::model::Gradient::on_property_changed(const glaxnimate::model::BaseProperty*, const QVariant&)
 {
-    emit style_changed();
+    Q_EMIT style_changed();
 }
 
 bool glaxnimate::model::Gradient::remove_if_unused(bool)

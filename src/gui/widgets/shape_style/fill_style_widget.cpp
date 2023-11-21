@@ -71,7 +71,7 @@ void FillStyleWidget::update_from_target()
 {
     auto lock = updating.get_lock();
     from_styler(current_target, stop);
-    emit current_color_changed(current_color());
+    Q_EMIT current_color_changed(current_color());
     update();
 }
 

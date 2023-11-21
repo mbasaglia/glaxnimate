@@ -40,7 +40,7 @@ private:
         return trim.process(0, input);
     }
 
-private slots:
+private Q_SLOTS:
 
     void test_process_empty()
     {

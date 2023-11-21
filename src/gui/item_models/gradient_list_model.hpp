@@ -38,7 +38,7 @@ public:
     QModelIndex gradient_to_index(model::GradientColors* gradient) const;
     model::GradientColors* gradient(const QModelIndex& index) const;
 
-private slots:
+private Q_SLOTS:
     void on_add_end(model::DocumentNode*);
     void on_remove_end(model::DocumentNode*);
     void on_add_begin(int);

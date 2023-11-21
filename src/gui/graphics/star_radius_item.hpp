@@ -59,7 +59,7 @@ public:
     }
 
 
-private slots:
+private Q_SLOTS:
     void on_drag_outer(const QPointF& p, Qt::KeyboardModifiers mod)
     {
         math::PolarVector<QPointF> pv = p - shape->position.get();

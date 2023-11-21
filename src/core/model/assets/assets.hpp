@@ -72,13 +72,13 @@ protected:
     virtual void on_added(T* obj, int row)
     {
         obj->attach();
-        emit docnode_child_add_end(obj, row);
+        Q_EMIT docnode_child_add_end(obj, row);
     }
 
     virtual void on_removed(T* obj, int row)
     {
         obj->detach();
-        emit docnode_child_remove_end(obj, row);
+        Q_EMIT docnode_child_remove_end(obj, row);
     }
 };
 
@@ -97,7 +97,7 @@ public:
     QIcon tree_icon() const override;
     QString type_name_human() const override { return tr("Swatch"); }
 
-signals:
+Q_SIGNALS:
     void color_changed(int position, model::NamedColor* color);
     void color_added(int position, model::NamedColor* color);
     void color_removed(int position, model::NamedColor* color);
@@ -150,7 +150,7 @@ protected:
     void on_removed(model::Composition* obj, int position) override;
     QString type_name_human() const override { return tr("Compositions"); }
 
-signals:
+Q_SIGNALS:
     void precomp_added(model::Composition* obj, int position);
 };
 
@@ -166,7 +166,7 @@ public:
 protected:
     void on_added(model::EmbeddedFont* obj, int position) override;
 
-signals:
+Q_SIGNALS:
     void font_added(model::EmbeddedFont* font);
 
 protected:

@@ -43,7 +43,7 @@ void glaxnimate::model::DocumentNode::removed_from_list()
     d->list_parent = nullptr;
     document()->decrease_node_name(name.get());
     on_parent_changed(old, d->list_parent);
-    emit removed();
+    Q_EMIT removed();
 }
 
 void glaxnimate::model::DocumentNode::added_to_list ( glaxnimate::model::DocumentNode* new_parent )
@@ -60,7 +60,7 @@ void glaxnimate::model::DocumentNode::on_name_changed(const QString& name, const
     {
         document()->decrease_node_name(old_name);
         document()->increase_node_name(name);
-        emit name_changed(name);
+        Q_EMIT name_changed(name);
     }
 }
 
@@ -127,7 +127,7 @@ void glaxnimate::model::DocumentNode::add_user(glaxnimate::model::DocumentNode::
     if ( !d->detaching )
     {
         d->users.insert(user);
-        emit users_changed();
+        Q_EMIT users_changed();
     }
 }
 
@@ -136,7 +136,7 @@ void glaxnimate::model::DocumentNode::remove_user(glaxnimate::model::DocumentNod
     if ( !d->detaching )
     {
         d->users.erase(user);
-        emit users_changed();
+        Q_EMIT users_changed();
     }
 }
 
@@ -256,14 +256,14 @@ void glaxnimate::model::VisualNode::docnode_on_update_group(bool)
 {
 //     if ( force || docnode_valid_color() )
     {
-        emit docnode_group_color_changed(docnode_group_color());
+        Q_EMIT docnode_group_color_changed(docnode_group_color());
         for ( auto gc : docnode_group_children() )
             gc->docnode_on_update_group();
         for ( auto gc : docnode_visual_children() )
             gc->docnode_on_update_group();
     }
 
-    emit group_transform_matrix_changed(group_transform_matrix(time()));
+    Q_EMIT group_transform_matrix_changed(group_transform_matrix(time()));
 }
 
 bool glaxnimate::model::VisualNode::docnode_valid_color() const
@@ -361,8 +361,8 @@ QTransform glaxnimate::model::VisualNode::group_transform_matrix(glaxnimate::mod
 
 void glaxnimate::model::VisualNode::on_visible_changed(bool visible)
 {
-    emit docnode_visible_changed(visible);
-    emit docnode_visible_recursive_changed(visible);
+    Q_EMIT docnode_visible_changed(visible);
+    Q_EMIT docnode_visible_recursive_changed(visible);
 
     for ( auto ch : docnode_visual_children() )
         ch->propagate_visible(visible);
@@ -372,15 +372,15 @@ void glaxnimate::model::VisualNode::propagate_visible(bool visible)
 {
     if ( !this->visible.get() )
         return;
-    emit docnode_visible_recursive_changed(visible);
+    Q_EMIT docnode_visible_recursive_changed(visible);
     for ( auto ch : docnode_visual_children() )
         ch->propagate_visible(visible && this->visible.get());
 }
 
 void glaxnimate::model::VisualNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
 {
-    emit transform_matrix_changed(t_global);
-    emit group_transform_matrix_changed(t_group);
+    Q_EMIT transform_matrix_changed(t_global);
+    Q_EMIT group_transform_matrix_changed(t_group);
 
     for ( auto ch : docnode_group_children() )
     {
@@ -398,7 +398,7 @@ void glaxnimate::model::VisualNode::propagate_transform_matrix_changed(const QTr
 void glaxnimate::model::VisualNode::propagate_bounding_rect_changed()
 {
     on_graphics_changed();
-    emit bounding_rect_changed();
+    Q_EMIT bounding_rect_changed();
     if ( auto parent = docnode_visual_parent() )
         parent->propagate_bounding_rect_changed();
 

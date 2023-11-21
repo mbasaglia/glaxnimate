@@ -84,7 +84,7 @@ private:
     {
         if ( json.contains("nm") )
             str = json["nm"].toString() + ": " + str;
-        emit format->warning(str);
+        Q_EMIT format->warning(str);
     }
 
     void load_stretchable_animation_container(const QJsonObject& json, model::StretchableTime* animation)
@@ -503,7 +503,7 @@ private:
     {
         for ( const auto& not_found : props )
         {
-            emit format->information(
+            Q_EMIT format->information(
                 QObject::tr("Unknown field %2%1")
                 .arg(not_found)
                 .arg(object_error_string(nullptr))
@@ -824,7 +824,7 @@ private:
                     QPointF p, ti, to;
                     if ( !compound_value_2d_raw(pos[i], p) )
                     {
-                        emit format->warning(
+                        Q_EMIT format->warning(
                             QObject::tr("Invalid bezier point %1 in %2")
                             .arg(i)
                             .arg(property_error_string(prop))
@@ -872,7 +872,7 @@ private:
     {
         auto v = value_to_variant(prop, val);
         if ( !v || !prop->set_value(trans.from_lottie(*v, 0)) )
-            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
+            Q_EMIT format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
 
     void load_static(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans)
@@ -894,14 +894,14 @@ private:
     {
         if ( !val.isObject() )
         {
-            emit format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
+            Q_EMIT format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
             return;
         }
 
         QJsonObject obj = val.toObject();
         if ( !obj.contains("k") )
         {
-            emit format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
+            Q_EMIT format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
             return;
         }
 
@@ -909,7 +909,7 @@ private:
         {
             if ( !obj["k"].isArray() )
             {
-                emit format->warning(QObject::tr("Invalid keyframes for %1").arg(property_error_string(prop)));
+                Q_EMIT format->warning(QObject::tr("Invalid keyframes for %1").arg(property_error_string(prop)));
                 return;
             }
 
@@ -973,7 +973,7 @@ private:
                         value += QMetaType::typeName(v->userType());
 #endif
                     }
-                    emit format->warning(QObject::tr("Cannot load keyframe at %1 for %2 with value %3")
+                    Q_EMIT format->warning(QObject::tr("Cannot load keyframe at %1 for %2 with value %3")
                         .arg(time).arg(property_error_string(prop)).arg(value)
                     );
                 }

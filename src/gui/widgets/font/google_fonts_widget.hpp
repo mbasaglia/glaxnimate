@@ -29,14 +29,14 @@ public:
     model::CustomFont custom_font() const;
     const QFont& selected_font() const;
 
-signals:
+Q_SIGNALS:
     void font_changed(const QFont& font);
 
 protected:
     void changeEvent ( QEvent* e ) override;
     void showEvent(QShowEvent* e) override;
 
-private slots:
+private Q_SLOTS:
     void change_style(const QModelIndex& index);
 
 private:

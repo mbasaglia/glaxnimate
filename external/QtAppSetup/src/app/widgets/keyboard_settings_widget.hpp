@@ -22,7 +22,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void clear_filter();
     void filter(const QString& text);
 

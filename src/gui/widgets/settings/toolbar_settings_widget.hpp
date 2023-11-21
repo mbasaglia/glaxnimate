@@ -23,7 +23,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-protected slots:
+protected Q_SLOTS:
     void update_preview();
 
 private:

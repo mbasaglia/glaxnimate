@@ -66,10 +66,10 @@ public Q_SLOTS:
     {
         for ( const auto& listener : listeners )
             listener->on_line(line);
-        emit logged(line);
+        Q_EMIT logged(line);
     }
 
-signals:
+Q_SIGNALS:
     void logged(const LogLine& line);
 
 private:

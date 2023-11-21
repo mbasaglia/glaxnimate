@@ -25,7 +25,7 @@ public:
 
     void set_preview_text(const QString& text);
 
-signals:
+Q_SIGNALS:
     void font_changed(const QFont& font);
     void custom_font_selected(int database_index);
 

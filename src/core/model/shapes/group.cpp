@@ -31,7 +31,7 @@ void glaxnimate::model::Group::on_paint(QPainter* painter, glaxnimate::model::Fr
 void glaxnimate::model::Group::on_transform_matrix_changed()
 {
     propagate_bounding_rect_changed();
-    emit local_transform_matrix_changed(local_transform_matrix(time()));
+    Q_EMIT local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 

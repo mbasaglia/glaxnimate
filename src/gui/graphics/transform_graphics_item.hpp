@@ -25,10 +25,10 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
-public slots:
+public Q_SLOTS:
     void set_transform_matrix(const QTransform& t);
 
-private slots:
+private Q_SLOTS:
     void drag_tl(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void drag_tr(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void drag_br(const QPointF& p, Qt::KeyboardModifiers modifiers);

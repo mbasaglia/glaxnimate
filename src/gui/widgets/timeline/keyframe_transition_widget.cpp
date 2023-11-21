@@ -93,8 +93,8 @@ void KeyframeTransitionWidget::set_target(model::KeyframeTransition* kft)
 
     if ( kft )
     {
-        emit before_changed(kft->before_descriptive());
-        emit after_changed(kft->after_descriptive());
+        Q_EMIT before_changed(kft->before_descriptive());
+        Q_EMIT after_changed(kft->after_descriptive());
     }
 }
 
@@ -221,12 +221,12 @@ void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
         if ( d->selected_handle == 1 )
         {
             d->target->set_before(d->unmap_pt(pos, width(), height(), clamp_y));
-            emit before_changed(d->target->before_descriptive());
+            Q_EMIT before_changed(d->target->before_descriptive());
         }
         else if ( d->selected_handle == 2 )
         {
             d->target->set_after(d->unmap_pt(pos, width(), height(), clamp_y));
-            emit after_changed(d->target->after_descriptive());
+            Q_EMIT after_changed(d->target->after_descriptive());
         }
         update();
     }

@@ -21,7 +21,7 @@ class Asset : public DocumentNode, public AssetBase
 public:
     using DocumentNode::DocumentNode;
 
-signals:
+Q_SIGNALS:
     void users_changed();
 
 protected:

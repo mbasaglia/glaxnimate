@@ -32,7 +32,7 @@ public:
     void set_fps(qreal fps);
     void set_frame(int frame);
 
-public slots:
+public Q_SLOTS:
     void play();
     void pause();
     void toggle_play();
@@ -44,7 +44,7 @@ public slots:
     void go_next();
     void go_last();
 
-signals:
+Q_SIGNALS:
     void frame_selected(int frame);
     void record_toggled(bool enabled);
     void play_started();
@@ -54,7 +54,7 @@ signals:
     void max_changed(int max);
     void fps_changed(qreal fps);
 
-private slots:
+private Q_SLOTS:
     void play_toggled(bool play);
     void commit_time();
 

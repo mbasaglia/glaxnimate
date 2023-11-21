@@ -55,7 +55,7 @@ public:
     Preset preset_suggestion() const;
     void trace_preset(Preset preset, int complex_posterization, std::vector<QRgb> &colors, std::vector<TraceResult>& result);
 
-signals:
+Q_SIGNALS:
     void progress_max_changed(int max);
     void progress_changed(int value);
 

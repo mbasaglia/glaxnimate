@@ -34,7 +34,7 @@ public:
     void replace_selection(model::VisualNode* node);
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 
-signals:
+Q_SIGNALS:
     void selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void current_node_changed(model::VisualNode* node);
 

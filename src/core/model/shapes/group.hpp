@@ -52,7 +52,7 @@ public:
 
     std::unique_ptr<ShapeElement> to_path() const override;
 
-signals:
+Q_SIGNALS:
     void opacity_changed(float op);
 
 protected:
@@ -61,7 +61,7 @@ protected:
     void on_graphics_changed() override;
     void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp) override;
 
-private slots:
+private Q_SLOTS:
     void on_transform_matrix_changed();
 };
 

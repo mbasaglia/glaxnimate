@@ -171,7 +171,7 @@ void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if ( !d->dragged )
     {
         d->dragged = true;
-        emit drag_starting(pos(), event->modifiers());
+        Q_EMIT drag_starting(pos(), event->modifiers());
     }
 
     QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
@@ -185,9 +185,9 @@ void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if ( !d->dont_move )
         setPos(p);
     event->accept();
-    emit dragged(p, event->modifiers());
-    emit dragged_x(p.x(), event->modifiers());
-    emit dragged_y(p.y(), event->modifiers());
+    Q_EMIT dragged(p, event->modifiers());
+    Q_EMIT dragged_x(p.x(), event->modifiers());
+    Q_EMIT dragged_y(p.y(), event->modifiers());
 
 }
 
@@ -197,12 +197,12 @@ void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     event->accept();
     if ( d->dragged )
     {
-        emit drag_finished();
+        Q_EMIT drag_finished();
         d->dragged = false;
     }
     else
     {
-        emit clicked(event->modifiers());
+        Q_EMIT clicked(event->modifiers());
     }
 }
 

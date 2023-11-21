@@ -75,7 +75,7 @@ public:
         if ( index.row() >= 0 && index.row() < int(snippets.size()) && role == Qt::EditRole )
         {
             QString name = snippets[index.row()].set_name(value.toString());
-            emit dataChanged(index, index, {});
+            Q_EMIT dataChanged(index, index, {});
             return true;
         }
 

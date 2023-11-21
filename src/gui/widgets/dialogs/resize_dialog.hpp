@@ -28,7 +28,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void width_changed(int w);
     void height_changed(int h);
     void lock_changed(bool locked);

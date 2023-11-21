@@ -59,12 +59,12 @@ public:
      */
     void debug_lines() const;
 
-public slots:
+public Q_SLOTS:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
     void reset_view();
 
-private slots:
+private Q_SLOTS:
     void update_comp(model::Composition* comp);
 
 private:
@@ -91,7 +91,7 @@ protected:
 #endif
     void keyPressEvent(QKeyEvent * event) override;
     
-signals:
+Q_SIGNALS:
     void frame_clicked(int frame);
     void line_clicked(quintptr id, bool selected, bool replace_selection);
     void scrolled(int line);

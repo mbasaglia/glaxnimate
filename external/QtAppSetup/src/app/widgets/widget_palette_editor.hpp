@@ -20,7 +20,7 @@ public:
     ~WidgetPaletteEditor();
 
 
-private slots:
+private Q_SLOTS:
     void add_palette();
     void remove_palette();
     void update_color(int row, int column);

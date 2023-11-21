@@ -20,17 +20,17 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Assets)
 void glaxnimate::model::NamedColorList::on_added(glaxnimate::model::NamedColor* color, int position)
 {
     connect(color, &Object::property_changed, this, [position, color, this]{
-        emit color_changed(position, color);
+        Q_EMIT color_changed(position, color);
     });
     Ctor::on_added(color, position);
-    emit color_added(position, color);
+    Q_EMIT color_added(position, color);
 }
 
 void glaxnimate::model::NamedColorList::on_removed(glaxnimate::model::NamedColor* color, int position)
 {
     disconnect(color, nullptr, this, nullptr);
     Ctor::on_removed(color, position);
-    emit color_removed(position, color);
+    Q_EMIT color_removed(position, color);
 }
 
 QIcon glaxnimate::model::NamedColorList::tree_icon() const
@@ -64,8 +64,8 @@ void glaxnimate::model::CompositionList::on_added(glaxnimate::model::Composition
 {
     obj->attach();
     document()->comp_graph().add_composition(obj);
-    emit docnode_child_add_end(obj, position);
-    emit precomp_added(obj, position);
+    Q_EMIT docnode_child_add_end(obj, position);
+    Q_EMIT precomp_added(obj, position);
 }
 
 
@@ -73,14 +73,14 @@ void glaxnimate::model::CompositionList::on_removed(glaxnimate::model::Compositi
 {
     obj->detach();
     document()->comp_graph().remove_composition(obj);
-    emit docnode_child_remove_end(obj, position);
+    Q_EMIT docnode_child_remove_end(obj, position);
 }
 
 void glaxnimate::model::FontList::on_added ( model::EmbeddedFont* obj, int position )
 {
     obj->attach();
-    emit docnode_child_add_end(obj, position);
-    emit font_added(obj);
+    Q_EMIT docnode_child_add_end(obj, position);
+    Q_EMIT font_added(obj);
 }
 
 

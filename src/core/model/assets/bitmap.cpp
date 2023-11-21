@@ -62,7 +62,7 @@ void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
                 height.set(image.height());
 
                 document()->graphics_invalidated();
-                emit loaded();
+                Q_EMIT loaded();
             }, this);
             return;
         }
@@ -81,7 +81,7 @@ void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
     width.set(image.width());
     height.set(image.height());
 
-    emit loaded();
+    Q_EMIT loaded();
 }
 
 QByteArray glaxnimate::model::Bitmap::build_embedded(const QImage& img) const

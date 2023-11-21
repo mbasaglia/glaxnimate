@@ -26,13 +26,13 @@ public:
     bool create_stroke() const;
     bool create_layer() const;
 
-private slots:
+private Q_SLOTS:
     void check_checks();
 
-protected slots:
+protected Q_SLOTS:
     void save_settings();
 
-signals:
+Q_SIGNALS:
     void checks_changed();
 
 protected:

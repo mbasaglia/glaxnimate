@@ -134,7 +134,7 @@ QAction* settings::DocumentTemplates::create_action(const DocumentTemplate& temp
 {
     QAction* action = new QAction(QIcon::fromTheme("document-new-from-template"), templ.long_name(), parent);
     connect(action, &QAction::triggered, this, [&templ, this]{
-        emit create_from(templ);
+        Q_EMIT create_from(templ);
     });
     return action;
 }
@@ -160,7 +160,7 @@ void settings::DocumentTemplates::load()
 
     std::sort(templates_.begin(), templates_.end());
 
-    emit loaded(templates_);
+    Q_EMIT loaded(templates_);
 }
 
 settings::DocumentTemplates::DocumentTemplates()
@@ -224,7 +224,7 @@ bool settings::DocumentTemplates::save_as_template(model::Document* document)
     templates_.insert(it, std::move(templ));
     names.insert(name_full);
 
-    emit loaded(templates_);
+    Q_EMIT loaded(templates_);
 
     return true;
 }

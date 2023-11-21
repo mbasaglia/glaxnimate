@@ -31,12 +31,12 @@ protected:
     void changeEvent ( QEvent* e ) override;
     void showEvent(QShowEvent * event) override;
 
-private slots:
+private Q_SLOTS:
     void url_from_file();
     void load_url();
     void url_changed(const QString& url);
 
-signals:
+Q_SIGNALS:
     void font_changed(const QFont& font);
 
 private:

@@ -177,7 +177,7 @@ void Spin2D::x_changed(qreal x)
         spin_y->setValue(x / ratio);
         spin_y->blockSignals(b);
     }
-    emit value_changed();
+    Q_EMIT value_changed();
 }
 
 void Spin2D::y_changed(qreal y)
@@ -188,7 +188,7 @@ void Spin2D::y_changed(qreal y)
         spin_x->setValue(y * ratio);
         spin_x->blockSignals(b);
     }
-    emit value_changed();
+    Q_EMIT value_changed();
 }
 
 void Spin2D::set_decimals(int decimals)

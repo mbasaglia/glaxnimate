@@ -44,13 +44,13 @@ void glaxnimate::model::Styler::on_use_changed(glaxnimate::model::BrushStyle* ne
     if ( reset.isValid() )
         color.set(reset);
 
-    emit use_changed(new_use);
-    emit use_changed_from(old_use, new_use);
+    Q_EMIT use_changed(new_use);
+    Q_EMIT use_changed_from(old_use, new_use);
 }
 
 void glaxnimate::model::Styler::on_update_style()
 {
-    emit property_changed(&use, use.value());
+    Q_EMIT property_changed(&use, use.value());
 }
 
 QBrush glaxnimate::model::Styler::brush(FrameTime t) const

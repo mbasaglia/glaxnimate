@@ -72,7 +72,7 @@ public:
 
     QAction* create_action(const DocumentTemplate& templ, QObject *parent = nullptr);
 
-signals:
+Q_SIGNALS:
     void loaded(const std::vector<DocumentTemplate>& templates);
     void create_from(const DocumentTemplate& templ);
 

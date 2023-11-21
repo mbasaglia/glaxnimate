@@ -43,7 +43,7 @@ public:
     void set_active_tool(tools::Tool* tool);
     void set_tool_target(glaxnimate::gui::SelectionManager* window);
 
-public slots:
+public Q_SLOTS:
     /**
      *  \brief Translate and resize sceneRect
      *
@@ -106,7 +106,7 @@ public slots:
 
     void view_fit();
 
-signals:
+Q_SIGNALS:
     /**
      *  \brief Emitted when zoom is changed
      *  \param percent Zoom percentage

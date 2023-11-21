@@ -27,7 +27,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void apply();
     void change_units(int index);
     void change_duration(double dur);

@@ -114,7 +114,7 @@ protected:
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
 
-signals:
+Q_SIGNALS:
     void drag_starting(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void dragged(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void dragged_x(qreal x, Qt::KeyboardModifiers modifiers);

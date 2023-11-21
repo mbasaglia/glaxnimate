@@ -33,7 +33,7 @@ public:
 
     QNetworkAccessManager& http() { return http_; }
 
-signals:
+Q_SIGNALS:
     void query_started();
     void query_progress(quint64 bytes, quint64 total);
     void query_finished(QNetworkReply* reply);

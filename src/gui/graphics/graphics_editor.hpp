@@ -37,7 +37,7 @@ public:
 
     model::VisualNode* node;
 
-public slots:
+public Q_SLOTS:
     void set_transform_matrix(const QTransform& t)
     {
         setTransform(t);

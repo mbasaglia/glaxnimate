@@ -41,12 +41,12 @@ public:
 
     void stretch_time(qreal multiplier) override;
 
-signals:
+Q_SIGNALS:
     void first_frame_changed(float);
     void last_frame_changed(float);
     void time_visible_changed(bool visible);
 
-private slots:
+private Q_SLOTS:
     void on_first_frame_changed(float);
     void on_last_frame_changed(float);
 

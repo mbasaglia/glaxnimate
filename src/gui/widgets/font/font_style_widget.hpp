@@ -32,11 +32,11 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-signals:
+Q_SIGNALS:
     void font_edited(const QFont& font);
     void font_changed(const QFont& font);
 
-private slots:
+private Q_SLOTS:
     void family_edited(const QString& family);
     void family_selected(const QModelIndex& index );
     void family_clicked(const QModelIndex& index);

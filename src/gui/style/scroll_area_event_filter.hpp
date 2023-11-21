@@ -33,7 +33,7 @@ public:
 
     static QScroller* setup_scroller(QAbstractScrollArea* target);
 
-signals:
+Q_SIGNALS:
     void clicked(QPoint p);
 
 protected:

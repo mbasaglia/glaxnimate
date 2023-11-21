@@ -54,27 +54,27 @@ void FrameControlsWidget::play_toggled(bool checked)
 void FrameControlsWidget::set_min(int min)
 {
     d->spin_frame->setMinimum(min);
-    emit min_changed(min);
+    Q_EMIT min_changed(min);
 }
 
 void FrameControlsWidget::set_max(int max)
 {
     d->spin_frame->setMaximum(max-1);
-    emit max_changed(max-1);
+    Q_EMIT max_changed(max-1);
 }
 
 void FrameControlsWidget::set_range(int min, int max)
 {
     d->spin_frame->setRange(min, max-1);
     d->spin_frame->setValue(min);
-    emit min_changed(min);
-    emit max_changed(max-1);
+    Q_EMIT min_changed(min);
+    Q_EMIT max_changed(max-1);
 }
 
 void FrameControlsWidget::set_fps(qreal fps)
 {
     this->fps = fps;
-    emit fps_changed(fps);
+    Q_EMIT fps_changed(fps);
 }
 
 void FrameControlsWidget::timerEvent(QTimerEvent*)
@@ -107,7 +107,7 @@ void FrameControlsWidget::play()
         frame_start = d->spin_frame->value();
         d->button_play->setChecked(true);
         d->button_play->setIcon(QIcon::fromTheme("media-playback-pause"));
-        emit play_started();
+        Q_EMIT play_started();
     }
 }
 
@@ -119,13 +119,13 @@ void FrameControlsWidget::pause()
         timer = 0;
         d->button_play->setChecked(false);
         d->button_play->setIcon(QIcon::fromTheme("media-playback-start"));
-        emit play_stopped();
+        Q_EMIT play_stopped();
     }
 }
 
 void FrameControlsWidget::commit_time()
 {
-    emit frame_selected(d->spin_frame->value());
+    Q_EMIT frame_selected(d->spin_frame->value());
 }
 
 void FrameControlsWidget::go_first()

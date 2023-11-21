@@ -57,7 +57,7 @@ class TestCase: public QObject
 #define Element(xml) element(xml, __LINE__)
 
 
-private slots:
+private Q_SLOTS:
     void test_xml_value_scalar()
     {
         COS_VALUE(xml_value(Element("<float>2.5</float>")), Number, 2.5);

@@ -27,21 +27,21 @@ void glaxnimate::model::AnimationContainer::set_time(glaxnimate::model::FrameTim
     bool new_visible = time_visible();
     if ( old_visible != new_visible )
     {
-        emit time_visible_changed(new_visible);
-        emit document()->graphics_invalidated();
+        Q_EMIT time_visible_changed(new_visible);
+        Q_EMIT document()->graphics_invalidated();
     }
 }
 
 void glaxnimate::model::AnimationContainer::on_first_frame_changed(float x)
 {
-    emit time_visible_changed(time_visible());
-    emit first_frame_changed(x);
+    Q_EMIT time_visible_changed(time_visible());
+    Q_EMIT first_frame_changed(x);
 }
 
 void glaxnimate::model::AnimationContainer::on_last_frame_changed(float x)
 {
-    emit time_visible_changed(time_visible());
-    emit last_frame_changed(x);
+    Q_EMIT time_visible_changed(time_visible());
+    Q_EMIT last_frame_changed(x);
 }
 
 float glaxnimate::model::AnimationContainer::duration() const

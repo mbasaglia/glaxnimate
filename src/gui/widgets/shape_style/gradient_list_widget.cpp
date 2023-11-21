@@ -189,7 +189,7 @@ public:
                     QVariant::fromValue(colors)
                 ));
 
-                emit parent->selected(old, secondary);
+                Q_EMIT parent->selected(old, secondary);
             }
             else
             {
@@ -199,7 +199,7 @@ public:
 
         gradient->remove_if_unused(false);
 
-        emit parent->selected(gradient, secondary);
+        Q_EMIT parent->selected(gradient, secondary);
 
     }
 
@@ -224,7 +224,7 @@ public:
                 old->remove_if_unused(false);
         }
 
-        emit parent->selected(nullptr, secondary);
+        Q_EMIT parent->selected(nullptr, secondary);
     }
 
     void add_gradient()

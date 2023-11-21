@@ -233,7 +233,7 @@ void StrokeStyleWidget::check_cap()
 
     d->set(tr("Set Line Cap"), &model::Stroke::cap, int(d->cap), true);
 
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
     update();
 }
 
@@ -248,7 +248,7 @@ void StrokeStyleWidget::check_join()
 
     d->set(tr("Set Line Join"), &model::Stroke::join, int(d->join), true);
 
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
     update();
 }
 
@@ -289,8 +289,8 @@ void StrokeStyleWidget::check_color(const QColor& color)
         d->set_color(color, false);
 
     update();
-    emit pen_style_changed();
-    emit color_changed(color);
+    Q_EMIT pen_style_changed();
+    Q_EMIT color_changed(color);
 }
 
 void glaxnimate::gui::StrokeStyleWidget::before_set_target()
@@ -307,7 +307,7 @@ void glaxnimate::gui::StrokeStyleWidget::after_set_target()
     if ( d->current_target )
     {
         d->update_from_target();
-//         emit color_changed(d->ui.color_selector->current_color());
+//         Q_EMIT color_changed(d->ui.color_selector->current_color());
         connect(d->current_target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
         update();
     }
@@ -332,7 +332,7 @@ void StrokeStyleWidget::property_changed(const model::BaseProperty* prop)
 {
     d->update_from_target();
     if ( prop == &d->current_target->color || prop == &d->current_target->use )
-        emit color_changed(d->ui.color_selector->current_color());
+        Q_EMIT color_changed(d->ui.color_selector->current_color());
     update();
 }
 
@@ -340,7 +340,7 @@ void StrokeStyleWidget::check_miter(double w)
 {
     d->set(tr("Set Miter Limit"), &model::Stroke::miter_limit, w, false);
 
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
     update();
 }
 
@@ -348,7 +348,7 @@ void StrokeStyleWidget::check_width(double w)
 {
     d->set(tr("Set Line Width"), &model::Stroke::width, w, false);
 
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
     update();
 }
 
@@ -356,13 +356,13 @@ void StrokeStyleWidget::color_committed(const QColor& color)
 {
     if ( d->can_update_target() )
         d->set_color(color, true);
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
 }
 
 void StrokeStyleWidget::commit_width()
 {
     d->set(tr("Set Line Width"), &model::Stroke::width, d->ui.spin_stroke_width->value(), true);
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
 }
 
 model::Stroke * StrokeStyleWidget::current() const
@@ -394,5 +394,5 @@ void StrokeStyleWidget::set_stroke_width(qreal w)
 void StrokeStyleWidget::clear_color()
 {
     d->ui.color_selector->clear_targets(tr("Clear Line Color"), d->targets);
-    emit pen_style_changed();
+    Q_EMIT pen_style_changed();
 }

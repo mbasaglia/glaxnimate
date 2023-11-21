@@ -43,7 +43,7 @@ void plugin::PluginActionRegistry::add_action ( plugin::ActionService* action )
     if ( it != enabled_actions.end() )
         sibling_before = *it;
     enabled_actions.insert(it, action);
-    emit action_added(action, sibling_before);
+    Q_EMIT action_added(action, sibling_before);
 }
 
 void plugin::PluginActionRegistry::remove_action ( plugin::ActionService* action )
@@ -53,7 +53,7 @@ void plugin::PluginActionRegistry::remove_action ( plugin::ActionService* action
         return;
 
     enabled_actions.erase(it);
-    emit action_removed(action);
+    Q_EMIT action_removed(action);
 }
 
 bool plugin::PluginActionRegistry::compare(plugin::ActionService* a, plugin::ActionService* b)

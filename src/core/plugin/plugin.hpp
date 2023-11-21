@@ -162,7 +162,7 @@ public:
     void set_executor(Executor* exec);
     QVariant global_parameter(const QString& name) const;
 
-signals:
+Q_SIGNALS:
     void loaded();
 
 private:

@@ -137,7 +137,7 @@ void glaxnimate::model::Document::set_io_options(const io::Options& opt)
     bool em = opt.filename != d->io_options.filename;
     d->io_options = opt;
     if ( em )
-        emit filename_changed(d->io_options.filename);
+        Q_EMIT filename_changed(d->io_options.filename);
 }
 
 glaxnimate::model::DocumentNode * glaxnimate::model::Document::find_by_uuid(const QUuid& n) const
@@ -179,7 +179,7 @@ glaxnimate::model::FrameTime glaxnimate::model::Document::current_time() const
 void glaxnimate::model::Document::set_current_time(glaxnimate::model::FrameTime t)
 {
     d->assets.set_time(t);
-    emit current_time_changed(d->current_time = t);
+    Q_EMIT current_time_changed(d->current_time = t);
 }
 
 
@@ -190,7 +190,7 @@ bool glaxnimate::model::Document::record_to_keyframe() const
 
 void glaxnimate::model::Document::set_record_to_keyframe(bool r)
 {
-    emit(record_to_keyframe_changed(d->record_to_keyframe = r));
+    Q_EMIT record_to_keyframe_changed(d->record_to_keyframe = r);
 }
 
 void glaxnimate::model::Document::push_command(QUndoCommand* cmd)

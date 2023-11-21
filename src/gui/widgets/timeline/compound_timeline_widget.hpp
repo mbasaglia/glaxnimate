@@ -47,7 +47,7 @@ public:
 
     void select(const std::vector<model::VisualNode*>& selected,  const std::vector<model::VisualNode*>& deselected);
 
-signals:
+Q_SIGNALS:
     void switch_composition(model::Composition* comp, int index);
     void current_node_changed(model::VisualNode* node);
     void selection_changed(const std::vector<model::VisualNode*>& selected,  const std::vector<model::VisualNode*>& deselected);
@@ -56,7 +56,7 @@ protected:
     void changeEvent ( QEvent* e ) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
     
-private slots:
+private Q_SLOTS:
     void select_index(const QModelIndex& index);
     void _on_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
     void select_line(quintptr id, bool selected, bool replace_selection);

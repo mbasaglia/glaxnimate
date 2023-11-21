@@ -30,7 +30,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void preset_before(int index);
     void preset_after(int index);
     void update_before(model::KeyframeTransition::Descriptive v);

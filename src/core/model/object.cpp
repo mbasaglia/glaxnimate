@@ -68,11 +68,11 @@ void glaxnimate::model::Object::clone_into(glaxnimate::model::Object* dest) cons
 void glaxnimate::model::Object::property_value_changed(const BaseProperty* prop, const QVariant& value)
 {
     on_property_changed(prop, value);
-    emit property_changed(prop, value);
+    Q_EMIT property_changed(prop, value);
     if ( prop->traits().flags & PropertyTraits::Visual )
     {
         d->document->graphics_invalidated();
-        emit visual_property_changed(prop, value);
+        Q_EMIT visual_property_changed(prop, value);
     }
 }
 

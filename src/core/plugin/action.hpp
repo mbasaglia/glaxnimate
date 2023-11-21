@@ -31,7 +31,7 @@ public:
 
     const std::vector<ActionService*>& enabled() const;
 
-signals:
+Q_SIGNALS:
     void action_added(ActionService* action, ActionService* sibling_before);
     void action_removed(ActionService*);
 
@@ -55,7 +55,7 @@ public:
     void disable() override
     {
         PluginActionRegistry::instance().remove_action(this);
-        emit disabled();
+        Q_EMIT disabled();
     }
     QIcon service_icon() const override;
 
@@ -64,10 +64,10 @@ public:
     QString icon;
     PluginScript script;
 
-public slots:
+public Q_SLOTS:
     void trigger() const;
 
-signals:
+Q_SIGNALS:
     void disabled();
 };
 

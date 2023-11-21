@@ -41,8 +41,8 @@ public:
     void on_font_changed(FontStyleWidget* parent)
     {
         info = QFontInfo(font);
-        emit parent->font_changed(font);
-        emit parent->font_edited(font);
+        Q_EMIT parent->font_changed(font);
+        Q_EMIT parent->font_edited(font);
     }
 
     Ui::FontStyleWidget ui;
@@ -105,7 +105,7 @@ void glaxnimate::gui::font::FontStyleWidget::set_font(const QFont& font)
 {
     d->font = font;
     d->update_from_font();
-    emit font_changed(d->font);
+    Q_EMIT font_changed(d->font);
 }
 
 glaxnimate::gui::font::FontModel & glaxnimate::gui::font::FontStyleWidget::model()

@@ -31,7 +31,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void select(const QModelIndex& index);
 
 private:

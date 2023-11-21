@@ -56,7 +56,7 @@ void glaxnimate::model::Image::on_image_changed(glaxnimate::model::Bitmap* new_u
 
 void glaxnimate::model::Image::on_update_image()
 {
-    emit property_changed(&image, {});
+    Q_EMIT property_changed(&image, {});
 }
 
 QTransform glaxnimate::model::Image::local_transform_matrix(glaxnimate::model::FrameTime t) const
@@ -67,8 +67,8 @@ QTransform glaxnimate::model::Image::local_transform_matrix(glaxnimate::model::F
 void glaxnimate::model::Image::on_transform_matrix_changed()
 {
     propagate_bounding_rect_changed();
-    emit local_transform_matrix_changed(transform->transform_matrix(time()));
-    emit transform_matrix_changed(transform_matrix(time()));
+    Q_EMIT local_transform_matrix_changed(transform->transform_matrix(time()));
+    Q_EMIT transform_matrix_changed(transform_matrix(time()));
 }
 
 void glaxnimate::model::Image::add_shapes(FrameTime, math::bezier::MultiBezier&, const QTransform&) const

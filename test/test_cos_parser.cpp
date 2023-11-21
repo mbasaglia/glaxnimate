@@ -50,7 +50,7 @@ class TestCase: public QObject
         return lexer.next_token();
     }
 
-private slots:
+private Q_SLOTS:
     void test_lex_object_start()
     {
         CosLexer l("<<"_b);

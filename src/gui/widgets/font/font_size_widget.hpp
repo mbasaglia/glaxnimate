@@ -24,13 +24,13 @@ public:
     void set_font_size(qreal size);
     qreal font_size() const;
 
-signals:
+Q_SIGNALS:
     void font_size_changed(qreal size);
 
 protected:
     void changeEvent ( QEvent* e ) override;
 
-private slots:
+private Q_SLOTS:
     void size_edited(double size);
     void size_selected(const QModelIndex& index);
 

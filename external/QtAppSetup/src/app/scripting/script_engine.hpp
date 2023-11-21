@@ -72,7 +72,7 @@ public:
      */
     virtual const ScriptEngine* engine() const = 0;
 
-signals:
+Q_SIGNALS:
     void stderr_line(const QString&);
     void stdout_line(const QString&);
 

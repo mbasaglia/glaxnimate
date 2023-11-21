@@ -57,7 +57,7 @@ app::settings::ShortcutAction * app::settings::ShortcutSettings::action(const QS
 
 app::settings::ShortcutAction * app::settings::ShortcutSettings::add_action(QAction* qaction, const QString& prefix)
 {
-    emit begin_actions_change();
+    Q_EMIT begin_actions_change();
     auto sca = action(prefix + qaction->objectName());
 
     sca->icon = qaction->icon();
@@ -74,7 +74,7 @@ app::settings::ShortcutAction * app::settings::ShortcutSettings::add_action(QAct
         sca->label = qaction->iconText();
     });
 
-    emit end_actions_change();
+    Q_EMIT end_actions_change();
     return sca;
 }
 
@@ -108,7 +108,7 @@ app::settings::ShortcutGroup* app::settings::ShortcutSettings::find_group(const 
 
 void app::settings::ShortcutSettings::remove_action(ShortcutAction* action)
 {
-    emit begin_actions_change();
+    Q_EMIT begin_actions_change();
     QString name;
     name = action->action->objectName();
     for ( app::settings::ShortcutGroup& group : groups )
@@ -121,5 +121,5 @@ void app::settings::ShortcutSettings::remove_action(ShortcutAction* action)
         }
     }
     actions.erase(name);
-    emit end_actions_change();
+    Q_EMIT end_actions_change();
 }
