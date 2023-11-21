@@ -73,7 +73,7 @@ struct enums<>
 };
 
 
-template<class CppClass, class... Args, class... Enums>
+template<class CppClass, class... Args>
 py::class_<CppClass, Args...> declare_from_meta(py::handle scope)
 {
     const QMetaObject& meta = CppClass::staticMetaObject;
