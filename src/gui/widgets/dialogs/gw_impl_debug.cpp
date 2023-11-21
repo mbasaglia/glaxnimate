@@ -273,4 +273,5 @@ void GlaxnimateWindow::Private::init_debug()
         }
         qDebug() << "----";
     });
+    menu_debug->addAction("Force Autosave", [this]{autosave(true);});
 }

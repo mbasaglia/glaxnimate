@@ -43,6 +43,7 @@
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
+#include "widgets/dialogs/stalefiles_dialog.hpp"
 
 template<class T>
 static void process_events(const QFuture<T>& promise)
@@ -146,8 +147,8 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     current_document->assets()->add_comp_no_undo();
 
     do_setup_document();
-
-
+    QUrl url = QUrl::fromLocalFile(tr("Unsaved Animation"));
+    autosave_file.setManagedFile(url);
     comp->name.set(comp->type_name_human());
     comp->width.set(app::settings::get<int>("defaults", "width"));
     comp->height.set(app::settings::get<int>("defaults", "height"));
@@ -217,8 +218,16 @@ bool GlaxnimateWindow::Private::setup_document_open(QIODevice* file, const io::O
 
     view_fit();
 
-    if ( !autosave_load && QFileInfo(backup_name()).exists() )
+
+    QUrl file_url = QUrl::fromLocalFile(options.filename);
+    auto stale = KAutoSaveFile::staleFiles(file_url);
+    autosave_file.setManagedFile(file_url);
+
+    if ( !autosave_load && !stale.empty() )
     {
+        // This ensures the stale file is not leaked if the user doesn't load it.
+        stale[0]->setParent(current_document.get());
+
         WindowMessageWidget::Message msg{
             tr("Looks like this file is being edited by another Glaxnimate instance or it was being edited when Glaxnimate crashed."),
             KMessageWidget::Information
@@ -235,8 +244,11 @@ bool GlaxnimateWindow::Private::setup_document_open(QIODevice* file, const io::O
             QIcon::fromTheme("document-revert"),
             tr("Load Backup"),
             parent,
-            [this, doc=current_document.get()]{ load_backup(current_document.get()); }
+            [this, file=stale[0]]{ load_backup(file, true); }
         );
+
+        for ( int i = 1; i < stale.size(); i++ )
+            delete stale[i];
 
         ui.message_widget->queue_message(std::move(msg));
     }
@@ -270,8 +282,10 @@ bool GlaxnimateWindow::Private::close_document()
 {
     if ( current_document )
     {
-        if ( !autosave_load )
-            QDir().remove(backup_name());
+        if ( !autosave_load ) {
+            autosave_file.remove();
+            autosave_file.releaseLock();
+        }
 
         if ( !current_document->undo_stack().isClean() )
         {
@@ -388,6 +402,8 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
             export_options.path = opts.path;
     }
 
+    autosave_file.remove();
+    autosave_file.setManagedFile(QUrl::fromLocalFile(opts.filename));
     return true;
 }
 
@@ -612,15 +628,14 @@ void GlaxnimateWindow::Private::autosave_timer_start(int mins)
         autosave_timer = parent->startTimer(autosave_timer_mins * 1000 * 60);
 }
 
-void GlaxnimateWindow::Private::autosave_timer_tick()
+void GlaxnimateWindow::Private::autosave(bool force)
 {
-    if ( current_document && !current_document->undo_stack().isClean() && !autosave_load )
+    if ( current_document && (force || (!current_document->undo_stack().isClean() && !autosave_load)) )
     {
-        QFile file(backup_name());
-        file.open(QIODevice::WriteOnly);
-        io::glaxnimate::GlaxnimateFormat().save(file, file.fileName(), comp, {});
+        autosave_file.open(QIODevice::WriteOnly);
+        io::glaxnimate::GlaxnimateFormat().save(autosave_file, autosave_file.fileName(), comp, {});
+        autosave_file.close();
     }
-
 }
 
 void GlaxnimateWindow::Private::autosave_timer_load_settings()
@@ -635,40 +650,47 @@ void GlaxnimateWindow::Private::autosave_timer_load_settings()
     }
 }
 
-QString GlaxnimateWindow::Private::backup_name()
+void GlaxnimateWindow::Private::load_backup(KAutoSaveFile* file, bool io_options_from_current)
 {
-    const auto& options = current_document->io_options();
-    if ( !options.filename.isEmpty() && options.path.exists(options.filename) )
-    {
-        QString bak_name = options.path.filePath("." + options.filename + ".bak.rawr");
-        QFile test_file(bak_name);
-        if ( test_file.open(QFile::ReadWrite|QIODevice::Append) )
-            return bak_name;
-    }
-    return GlaxnimateApp::instance()->backup_path(current_document->uuid().toString(QUuid::Id128) + ".bak.rawr");
-}
+    file->setParent(nullptr);
+    std::unique_ptr<KAutoSaveFile> fptr(file);
 
-void GlaxnimateWindow::Private::load_backup(model::Document* doc)
-{
-    if ( doc != current_document.get() )
+    if ( !file->open(QIODevice::ReadOnly) )
     {
-        show_warning(tr("Backup"), tr("Cannot load backup of a closed file"));
+        show_warning(tr("Load Backup"), tr("Could not open the backup file"));
         return;
     }
 
-    auto io_options_old = current_document->io_options();
+    QFileInfo path = file->managedFile().toString();
+    QDir dir = path.dir();
+    if ( dir.isRoot() )
+        dir = QDir();
 
     io::Options io_options_bak {
         io::glaxnimate::GlaxnimateFormat::instance(),
-        GlaxnimateApp::instance()->backup_path(),
-        backup_name(),
+        dir,
+        path.filePath(),
         {}
     };
 
-    autosave_load = true;
-    setup_document_open(io_options_bak);
-    current_document->set_io_options(io_options_old);
-    autosave_load = false;
+    io::Options io_options;
+    if ( io_options_from_current )
+    {
+        io_options = current_document->io_options();
+    }
+    else
+    {
+        io_options = io_options_bak;
+        io_options.format = io::IoRegistry::instance().from_filename(path.filePath(), io::ImportExport::Import);
+    }
+
+    auto lock = autosave_load.get_lock();
+    setup_document_open(file, io_options_bak, true);
+    file->close();
+    autosave_file.setManagedFile(file->managedFile());
+    current_document->set_io_options(io_options);
+    current_document->undo_stack().resetClean();
+    autosave(true);
 }
 
 
@@ -890,4 +912,41 @@ void glaxnimate::gui::GlaxnimateWindow::Private::load_remote_document(const QUrl
         else
             import_file(reply, options);
     });
+}
+
+void glaxnimate::gui::GlaxnimateWindow::Private::check_autosaves()
+{
+    auto stale = KAutoSaveFile::allStaleFiles();
+    if ( stale.empty() )
+        return;
+
+    WindowMessageWidget::Message msg{
+        tr("There are %1 auto-save files that can be restored.").arg(stale.size()),
+        KMessageWidget::Information
+    };
+
+    msg.add_action(QIcon::fromTheme("dialog-cancel"), tr("Ignore"));
+
+    msg.add_action(
+        QIcon::fromTheme("document-revert"),
+        tr("Load Backup..."),
+        parent,
+        [this, stale]{ show_stale_autosave_list(stale); }
+    );
+
+    ui.message_widget->queue_message(std::move(msg));
+}
+
+void glaxnimate::gui::GlaxnimateWindow::Private::show_stale_autosave_list(const QList<KAutoSaveFile*>& stale)
+{
+    StalefilesDialog dialog(stale, parent);
+    if ( dialog.exec() == QDialog::Accepted && dialog.selected() )
+    {
+        dialog.cleanup(dialog.selected());
+        load_backup(dialog.selected(), true);
+    }
+    else
+    {
+        dialog.cleanup(nullptr);
+    }
 }

@@ -11,8 +11,10 @@
     * There is an icon on the timeline to quickly toggle keyframes
     * Buttons to jump to the next/previous keyframe in the timeline
     * Improved LottieFiles import dialog
+    * Improved autosave recovery process
 * Misc:
     * Switched to an even/odd version numbering scheme
+    * Integration with KDE Frameworks
 * Bug Fixes:
     * Fixed keyframe context menu showing the wrong "after" transition
     * When drawing bezier points that don't have tangents are correctly marked as corner

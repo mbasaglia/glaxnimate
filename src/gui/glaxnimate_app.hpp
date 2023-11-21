@@ -40,7 +40,7 @@ public:
     const QMimeData* get_clipboard_data();
 
 
-    QString backup_path(const QString& file = {}) const;
+    QString backup_path() const;
 
     static QString temp_path();
 
@@ -76,7 +76,7 @@ public:
         return static_cast<GlaxnimateApp *>(QCoreApplication::instance());
     }
 
-    QString backup_path(const QString& file = {}) const;
+    QString backup_path() const;
 
     app::settings::ShortcutSettings* shortcuts() const;
 

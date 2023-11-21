@@ -52,7 +52,10 @@ void glaxnimate::gui::WindowMessageWidget::show_message(const WindowMessageWidge
     setText(msg.message);
 
     for ( const auto& action : msg.actions )
+    {
         addAction(action.get());
+        connect(action.get(), &QAction::triggered, this, &KMessageWidget::animatedHide);
+    }
 
     switch ( msg.severity )
     {

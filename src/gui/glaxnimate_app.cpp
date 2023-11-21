@@ -60,6 +60,7 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 #include <QDir>
 #include <QPalette>
 #include <QClipboard>
+#include <QStandardPaths>
 
 #include "app/settings/settings.hpp"
 #include "app/settings/palette_settings.hpp"
@@ -302,7 +303,11 @@ QString GlaxnimateApp::temp_path()
     return tempdir.filePath(subdir);
 }
 
-QString GlaxnimateApp::backup_path(const QString& file) const
+QString GlaxnimateApp::backup_path() const
 {
-    return writable_data_path("backup/"+file);
+
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+        + QLatin1String("/stalefiles/")
+        + QCoreApplication::instance()->applicationName()
+    ;
 }

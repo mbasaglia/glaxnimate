@@ -150,6 +150,11 @@ public:
 
     void ipc_connect(const QString& name);
 
+    /**
+     * \brief Checks if there are any autosave files left pending
+     */
+    void check_autosaves();
+
 public slots:
     void document_save();
     void document_save_as();

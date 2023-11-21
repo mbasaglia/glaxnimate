@@ -368,7 +368,7 @@ qreal GlaxnimateWindow::current_zoom() const
 
 void GlaxnimateWindow::timerEvent(QTimerEvent*)
 {
-    d->autosave_timer_tick();
+    d->autosave(false);
 }
 
 void GlaxnimateWindow::dragEnterEvent(QDragEnterEvent* event)
@@ -612,4 +612,9 @@ void GlaxnimateWindow::set_selection(const std::vector<model::VisualNode*>& sele
 void GlaxnimateWindow::update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
     return d->selection_changed(selected, deselected);
+}
+
+void GlaxnimateWindow::check_autosaves()
+{
+    d->check_autosaves();
 }

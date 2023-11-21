@@ -33,6 +33,12 @@ public:
             connect(actions.back().get(), &QAction::triggered, context, functor);
             return actions.back().get();
         }
+
+        QAction* add_action(const QIcon& icon, const QString& label)
+        {
+            actions.push_back(std::make_unique<QAction>(icon, label));
+            return actions.back().get();
+        }
     };
 
     WindowMessageWidget(QWidget* parent = nullptr);

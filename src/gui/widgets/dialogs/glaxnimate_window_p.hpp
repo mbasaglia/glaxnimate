@@ -12,6 +12,8 @@
 #include <QPointer>
 #include <QNetworkAccessManager>
 
+#include <KAutoSaveFile>
+
 #include "QtColorWidgets/color_delegate.hpp"
 #include "QtColorWidgets/color_palette_model.hpp"
 
@@ -125,7 +127,6 @@ public:
     graphics::DocumentScene scene;
     model::Composition* comp = nullptr;
 
-
     GlaxnimateWindow* parent = nullptr;
 
     QStringList recent_files;
@@ -151,10 +152,12 @@ public:
 
     QNetworkAccessManager http;
 
+    KAutoSaveFile autosave_file;
+
     // "set and forget" kinda variables
     int autosave_timer = 0;
     int autosave_timer_mins = 0;
-    bool autosave_load = false;
+    utils::PseudoMutex autosave_load;
     QString undo_text;
     QString redo_text;
     style::PropertyDelegate property_delegate;
@@ -197,9 +200,8 @@ public:
     void validate_discord();
     void autosave_timer_load_settings();
     void autosave_timer_start(int mins = -1);
-    void autosave_timer_tick();
-    QString backup_name();
-    void load_backup(model::Document* doc);
+    void autosave(bool force);
+    void load_backup(KAutoSaveFile* file, bool io_options_from_current);
     QString drop_event_data(QDropEvent* ev);
     void import_image();
     void import_file();
@@ -208,6 +210,8 @@ public:
     void import_file(QIODevice* file, const io::Options& options);
     void load_pending();
     void load_remote_document(const QUrl& url, io::Options options, bool open);
+    void check_autosaves();
+    void show_stale_autosave_list(const QList<KAutoSaveFile*>& stale);
 
     // ui
     void setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent);

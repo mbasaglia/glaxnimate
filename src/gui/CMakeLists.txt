@@ -71,6 +71,8 @@ widgets/dialogs/select_shape_dialog.cpp
 widgets/dialogs/select_shape_dialog.ui
 widgets/dialogs/follow_path_dialog.cpp
 widgets/dialogs/follow_path_dialog.ui
+widgets/dialogs/stalefiles_dialog.cpp
+widgets/dialogs/stalefiles_dialog.ui
 
 widgets/lottiefiles/lottiefiles_search_dialog.cpp
 widgets/lottiefiles/lottiefiles_search_dialog.ui

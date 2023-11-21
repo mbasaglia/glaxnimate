@@ -89,9 +89,10 @@ int main(int argc, char *argv[])
     if ( args.is_defined("window-size") )
         window.resize(args.value("window-size").toSize());
 
-
     if ( args.has_flag("window-id") )
         app::cli::show_message(QString::number(window.winId(), 16), false);
+
+    window.check_autosaves();
 
     if ( args.is_defined("file") )
     {
