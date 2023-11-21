@@ -27,7 +27,7 @@ void app::TranslationService::initialize ( QString default_lang_code )
     QStringList translation_files = translations.entryList({"*.qm"});
 
     QRegularExpression re("[^_]+_([^.]+)\\.qm");
-    foreach ( QString file, translation_files )
+    for (auto &file: qAsConst(translation_files))
     {
         auto match = re.match(file);
         if ( match.hasMatch() )
@@ -130,7 +130,7 @@ void app::TranslationService::change_lang_code(QString code)
     {
         QString base_code = code.left(code.lastIndexOf('_')); // en_US -> en
         bool found = false;
-        foreach ( QString installed_code, translators.keys() )
+        for (const auto &installed_code: translators.keys())
         {
             if ( installed_code.left(installed_code.lastIndexOf('_')) == base_code )
             {
