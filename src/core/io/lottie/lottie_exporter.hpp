@@ -83,7 +83,7 @@ public:
     void convert_meta(QCborMap& json)
     {
         QCborMap meta;
-        meta["g"_l] = AppInfo::instance().name() + ' ' + AppInfo::instance().version();
+        meta["g"_l] = QString("%1 %2").arg(AppInfo::instance().name(), AppInfo::instance().version());
 
         if ( !document->info().description.isEmpty() )
             meta["d"_l] = document->info().description;

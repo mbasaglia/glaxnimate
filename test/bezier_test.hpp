@@ -133,7 +133,7 @@ public:
 
     std::string build_name(const QString& base, const char* member)
     {
-        return (base + "." + member).toStdString();
+        return QString("%1.%2").arg(base, member).toStdString();
     }
 
     bool compare_point(const math::bezier::Point& actual, const math::bezier::Point& expected,

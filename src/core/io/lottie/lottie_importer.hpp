@@ -1090,7 +1090,9 @@ private:
             }
             else if ( font.contains("fOrigin") )
             {
-                switch ( (font["fOrigin"].toString() + " ")[0].toLatin1() )
+                QString fOrigin = font["fOrigin"].toString();
+                fOrigin.append(" ");
+                switch ( fOrigin[0].toLatin1() )
                 {
                     case 'n': font_origin = FontOrigin::System; break;
                     case 'g': font_origin = FontOrigin::CssUrl; break;
