@@ -677,7 +677,7 @@ private:
     {
         internal_resource_id++;
         QString id = QString("@(internal)%1").arg(internal_resource_id);
-        id.push_back('\0');
+        id.push_back(QChar(0));
         resources[id] = {e.tagName(), e};
         return id;
     }
