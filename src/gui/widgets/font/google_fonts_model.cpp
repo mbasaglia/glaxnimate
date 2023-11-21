@@ -82,7 +82,7 @@ public:
             for ( auto it = items.begin(); it != items.end(); ++it )
             {
                 GoogleFont::Style& style = font.styles.emplace_back();
-                style.url = it->toString();
+                style.url = QUrl(it->toString());
                 style_from_slug(it.key(), style);
 
                 if ( downloaded_font )

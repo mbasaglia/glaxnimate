@@ -46,7 +46,7 @@ void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
         }
         else if ( !url.get().isEmpty() )
         {
-            document()->assets()->network_downloader.get(url.get(), [this, rebuild_embedded](QByteArray response){
+            document()->assets()->network_downloader.get(QUrl(url.get()), [this, rebuild_embedded](QByteArray response){
                 QImageReader reader;
                 QImage qimage;
                 QBuffer buf(&response);

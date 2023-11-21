@@ -26,7 +26,7 @@ glaxnimate::emoji::GitHubTemplate glaxnimate::emoji::GitHubTemplate::load(const 
 
 void glaxnimate::emoji::GitHubTemplate::apply(EmojiSet& set) const
 {
-    set.url = "https://github.com/" + org + "/" + repo;
+    set.url = QUrl("https://github.com/" + org + "/" + repo);
     QString ref_url;
     QString ref_path = ref;
     if ( ref_type == Branch )
@@ -39,7 +39,7 @@ void glaxnimate::emoji::GitHubTemplate::apply(EmojiSet& set) const
         if ( ref.size() && ref[0] == 'v' )
             ref_path.remove(0, 1);
     }
-    set.download.url = "https://github.com/" + org + "/" + repo + "/archive/refs/" + ref_url + ref + ".tar.gz";
+    set.download.url = QUrl("https://github.com/" + org + "/" + repo + "/archive/refs/" + ref_url + ref + ".tar.gz");
     for ( auto& path : set.download.paths )
     {
         if ( path.second.size == EmojiSetDirectory::Scalable )
@@ -52,7 +52,7 @@ glaxnimate::emoji::EmojiSet glaxnimate::emoji::EmojiSet::load(const QJsonObject&
 {
     EmojiSet obj;
     obj.name = json["name"].toString();
-    obj.url = json["url"].toString();
+    obj.url = QUrl(json["url"].toString());
     obj.license = json["license"].toString();
     obj.preview_template = json["preview"].toString();
     QString slug_format = json["slug_format"].toString();

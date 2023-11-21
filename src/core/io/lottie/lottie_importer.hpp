@@ -1033,7 +1033,7 @@ private:
 
         if ( asset["e"].toInt() )
         {
-            bmp->from_url(asset["p"].toString());
+            bmp->from_url(QUrl(asset["p"].toString()));
         }
         else
         {
@@ -1041,7 +1041,7 @@ private:
             if ( path.contains("://") )
             {
                 path += asset["p"].toString();
-                bmp->from_url(path);
+                bmp->from_url(QUrl(path));
             }
             else
             {
@@ -1107,7 +1107,7 @@ private:
                 case FontOrigin::CssUrl:
                 case FontOrigin::FontUrl:
                     // Queue dynamic font loading
-                    document->add_pending_asset(info.family, font["fPath"].toString());
+                    document->add_pending_asset(info.family, QUrl(font["fPath"].toString()));
                     break;
                 case FontOrigin::ScriptUrl:
                     // idk how these work

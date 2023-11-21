@@ -163,7 +163,7 @@ public:
                         QString fam = block.style["font-family"];
                         if ( fam.size() > 1 && (fam[0] == '"' || fam[0] == '\'') )
                             fam = fam.mid(1, fam.size() - 2);
-                        queue(QueueItem{-1, fam, url, css_url});
+                        queue(QueueItem{-1, fam, QUrl(url), css_url});
                     }
                 }
             }

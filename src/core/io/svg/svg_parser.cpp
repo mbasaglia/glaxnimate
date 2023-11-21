@@ -85,7 +85,7 @@ protected:
             {
                 QString url = link.attribute("href");
                 if ( !url.isEmpty() )
-                    document->add_pending_asset("", url);
+                    document->add_pending_asset("", QUrl(url));
             }
         }
 
@@ -1190,7 +1190,7 @@ private:
 
         bool open = false;
         QString href = attr(args.element, "xlink", "href");
-        QUrl url = href;
+        QUrl url = QUrl(href);
 
         if ( url.isRelative() )
             open = open_asset_file(bitmap.get(), href);

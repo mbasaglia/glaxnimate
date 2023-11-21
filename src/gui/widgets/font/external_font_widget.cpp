@@ -147,7 +147,7 @@ void glaxnimate::gui::font::ExternalFontWidget::url_from_file()
 
 void glaxnimate::gui::font::ExternalFontWidget::url_changed(const QString& url)
 {
-    d->url = url;
+    d->url = QUrl(url);
     d->ui.button_load->setEnabled(d->url.isValid());
 }
 

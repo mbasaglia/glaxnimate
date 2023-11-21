@@ -46,7 +46,7 @@ struct EmojiSetDownload
     static EmojiSetDownload load(const QJsonObject& json)
     {
         EmojiSetDownload obj;
-        obj.url = json["url"].toString();
+        obj.url = QUrl(json["url"].toString());
         for ( const auto& val : json["paths"].toArray() )
         {
             auto path = EmojiSetDirectory::load(val.toObject());
@@ -130,7 +130,7 @@ struct EmojiSet
 
     QUrl preview_url(const QString& hex_slug) const
     {
-        return preview_template.arg(slug.slug(hex_slug));
+        return QUrl(preview_template.arg(slug.slug(hex_slug)));
     }
 };
 
