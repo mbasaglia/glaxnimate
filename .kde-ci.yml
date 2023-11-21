@@ -9,10 +9,12 @@ Dependencies:
     'frameworks/kcrash' : '@stable'
     'frameworks/kconfigwidgets' : '@stable'
     'frameworks/karchive' : '@stable'
+    'frameworks/kxmlgui' : '@stable'
 - 'on': ['Linux/Qt6', 'FreeBSD/Qt6', 'Windows/Qt6', 'Android/Qt6', 'macOS/Qt6']
   'require':
     'frameworks/extra-cmake-modules': '@latest-kf6'
     'frameworks/kcoreaddons' : '@latest-kf6'
     'frameworks/kcrash' : '@latest-kf6'
     'frameworks/kconfigwidgets' : '@latest-kf6'
-    'frameworks/karchive' : '@stable'
+    'frameworks/karchive' : '@latest-kf6'
+    'frameworks/kxmlgui' : '@latest-kf6'
