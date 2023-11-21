@@ -133,6 +133,25 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(ECMCoverageOption)
 
+# TODO: The following definitons should be enabled
+remove_definitions(
+    -DQT_NO_CAST_FROM_ASCII
+    -DQT_NO_CAST_FROM_BYTEARRAY
+    -DQT_USE_QSTRINGBUILDER
+    -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
+    -DQT_NO_KEYWORDS
+    -DQT_NO_FOREACH
+    -DQT_NO_URL_CAST_FROM_STRING
+)
+
+add_definitions(
+    -DQT_NO_CAST_TO_ASCII
+)
+
+if (NOT WIN32)
+    add_definitions(-DQT_STRICT_ITERATORS)
+endif()
+
 if (NOT DEFINED KF_MAJOR)
   set(KF_MAJOR ${QT_MAJOR_VERSION})
 endif()
