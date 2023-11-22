@@ -1193,7 +1193,7 @@ void GlaxnimateWindow::Private::init_plugins()
             group->actions.push_back(GlaxnimateApp::instance()->shortcuts()->add_action(qaction));
     });
 
-    connect(&par, &plugin::PluginActionRegistry::action_removed, parent, [this](plugin::ActionService* action) {
+    connect(&par, &plugin::PluginActionRegistry::action_removed, parent, [](plugin::ActionService* action) {
         QString slug = "action_plugin_" + action->plugin()->data().name.toLower() + "_" + action->label.toLower();
         app::settings::ShortcutAction* act = GlaxnimateApp::instance()->shortcuts()->action(slug);
         GlaxnimateApp::instance()->shortcuts()->remove_action(act);

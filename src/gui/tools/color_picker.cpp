@@ -26,13 +26,17 @@ public:
 #if QT_VERSION_MAJOR < 6
         widget()->set_color(color_widgets::utils::get_screen_color(event.event->globalPos()));
 #else
-        widget()->set_color(color_widgets::utils::get_screen_color(event.event->globalPosition()));
+        widget()->set_color(color_widgets::utils::get_screen_color(event.event->globalPosition().toPoint()));
 #endif
     }
 
     void mouse_release(const MouseEvent& event) override
     {
+#if QT_VERSION_MAJOR < 6
         QColor color = color_widgets::utils::get_screen_color(event.event->globalPos());
+#else
+        color = color_widgets::utils::get_screen_color(event.event->globalPosition().toPoint());
+#endif
         widget()->set_color(color);
         if ( widget()->set_fill() )
             event.window->set_current_color(color);
