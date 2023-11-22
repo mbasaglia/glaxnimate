@@ -31,7 +31,8 @@ modules:
         buildsystem: cmake-ninja
         builddir: true
         config-opts:
-            - -DCMAKE_BUILD_TYPE=RelWithDebInfo -DQT_MAJOR_VERSION=6
+            - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+            - -DQT_MAJOR_VERSION=6
         build-commands:
             - ninja translations
         sources:
