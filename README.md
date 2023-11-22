@@ -57,7 +57,7 @@ Install the dependencies:
     qt5-image-formats-plugins libpython3-dev libpotrace-dev \
     libarchive-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev \
     libkf5coreaddons-dev libkf5crash-dev libkf5widgetsaddons-dev libkf5xmlgui-dev \
-    libkf5archive-dev
+    libkf5archive-dev libkf5completion-dev
 
 The generic `cmake` commands listed above should work.
 

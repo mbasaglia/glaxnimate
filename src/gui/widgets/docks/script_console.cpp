@@ -99,10 +99,10 @@ public:
         if ( text.isEmpty() )
             return;
 
-
         run_snippet(text.replace("\n", " "), true);
 
-        ui.console_input->setText("");
+        ui.console_input->addToHistory(text);
+        ui.console_input->clearEditText();
     }
 
 
@@ -176,8 +176,7 @@ ScriptConsole::ScriptConsole(QWidget* parent)
     d->ui.setupUi(this);
     d->parent = this;
 
-
-    d->ui.console_input->setHistory(app::settings::get<QStringList>("scripting", "history"));
+    d->ui.console_input->setHistoryItems(app::settings::get<QStringList>("scripting", "history"));
 
     for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
     {
@@ -247,7 +246,7 @@ PluginUiDialog* ScriptConsole::create_dialog(const QString& ui_file) const
 
 void ScriptConsole::save_settings()
 {
-    QStringList history = d->ui.console_input->history();
+    QStringList history = d->ui.console_input->historyItems();
     int max_history = app::settings::get<int>("scripting", "max_history");
     if ( history.size() > max_history )
         history.erase(history.begin(), history.end() - max_history);

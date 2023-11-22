@@ -138,6 +138,7 @@ find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
     Crash
     XmlGui
     Archive
+    Completion
 )
 message(STATUS "Using KF ${KF_MAJOR}")
 
@@ -177,8 +178,6 @@ else ()
 endif()
 
 add_subdirectory(external/QtAppSetup)
-
-add_subdirectory(external/Qt-History-LineEdit)
 
 add_subdirectory(src bin)
 

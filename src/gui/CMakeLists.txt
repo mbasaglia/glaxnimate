@@ -207,10 +207,5 @@ target_link_libraries(
     KF${KF_MAJOR}::WidgetsAddons
     KF${KF_MAJOR}::Crash
     KF${KF_MAJOR}::XmlGui
+    KF${KF_MAJOR}::Completion
 )
-
-
-
-if ( NOT MOBILE_UI )
-    target_link_libraries(${LIB_NAME_GUI} PUBLIC QtHistoryLineEdit )
-endif()

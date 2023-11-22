@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-SPDX-FileCopyrightText: 2019-2023 Mattia Basaglia <dev@dragon.best>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <ui version="4.0">
- <class>glaxnimate::gui::ScriptConsole</class>
+ <class>ScriptConsole</class>
  <widget class="QWidget" name="ScriptConsole">
   <property name="geometry">
    <rect>
@@ -51,7 +44,13 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="HistoryLineEdit" name="console_input">
+      <widget class="KHistoryComboBox" name="console_input">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <family>Monospace</family>
@@ -82,7 +81,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <string>Persist</string>
        </property>
        <property name="icon">
-        <iconset theme="pin"/>
+        <iconset theme="pin">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -98,7 +98,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <string>Reload</string>
        </property>
        <property name="icon">
-        <iconset theme="view-refresh"/>
+        <iconset theme="view-refresh">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -111,32 +112,18 @@ SPDX-License-Identifier: GPL-3.0-or-later
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HistoryLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>history_line_edit.hpp</header>
-   <slots>
-    <signal>lineExecuted(QString)</signal>
-   </slots>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KHistoryComboBox</class>
+   <extends>KComboBox</extends>
+   <header>khistorycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>console_input</sender>
-   <signal>lineExecuted(QString)</signal>
-   <receiver>ScriptConsole</receiver>
-   <slot>console_commit(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>129</x>
-     <y>233</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>136</x>
-     <y>248</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>btn_clear_console</sender>
    <signal>clicked()</signal>
@@ -144,12 +131,28 @@ SPDX-License-Identifier: GPL-3.0-or-later
    <slot>console_clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>187</x>
-     <y>238</y>
+     <x>229</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
      <x>273</x>
      <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>console_input</sender>
+   <signal>returnPressed(QString)</signal>
+   <receiver>ScriptConsole</receiver>
+   <slot>console_commit(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>167</x>
+     <y>302</y>
     </hint>
    </hints>
   </connection>

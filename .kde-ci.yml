@@ -10,6 +10,7 @@ Dependencies:
     'frameworks/kconfigwidgets' : '@stable'
     'frameworks/karchive' : '@stable'
     'frameworks/kxmlgui' : '@stable'
+    'frameworks/kcompletion' : '@stable'
 - 'on': ['Linux/Qt6', 'FreeBSD/Qt6', 'Windows/Qt6', 'Android/Qt6', 'macOS/Qt6']
   'require':
     'frameworks/extra-cmake-modules': '@latest-kf6'
@@ -18,3 +19,4 @@ Dependencies:
     'frameworks/kconfigwidgets' : '@latest-kf6'
     'frameworks/karchive' : '@latest-kf6'
     'frameworks/kxmlgui' : '@latest-kf6'
+    'frameworks/kcompletion' : '@latest-kf6'
