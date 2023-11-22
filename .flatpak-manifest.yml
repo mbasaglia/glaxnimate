@@ -3,9 +3,9 @@
 
 app-id: org.mattbas.Glaxnimate
 runtime: org.kde.Platform
-runtime-version: "6.6"
+runtime-version: "5.15"
 sdk: org.kde.Sdk
-sdk-version: "6.6"
+sdk-version: "5.15"
 command: glaxnimate
 finish-args:
     - --share=ipc
@@ -32,7 +32,7 @@ modules:
         builddir: true
         config-opts:
             - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-            - -DQT_MAJOR_VERSION=6
+            - -DQT_MAJOR_VERSION=5
         build-commands:
             - ninja translations
         sources:
