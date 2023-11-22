@@ -35,7 +35,7 @@ public:
 #if QT_VERSION_MAJOR < 6
         QColor color = color_widgets::utils::get_screen_color(event.event->globalPos());
 #else
-        color = color_widgets::utils::get_screen_color(event.event->globalPosition().toPoint());
+        QColor color = color_widgets::utils::get_screen_color(event.event->globalPosition().toPoint());
 #endif
         widget()->set_color(color);
         if ( widget()->set_fill() )
