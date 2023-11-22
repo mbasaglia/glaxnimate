@@ -5,7 +5,7 @@ app-id: org.mattbas.Glaxnimate
 runtime: org.kde.Platform
 runtime-version: "5.15"
 sdk: org.kde.Sdk
-sdk-version: "5.15"
+#sdk-version: "5.15"
 command: glaxnimate
 finish-args:
     - --share=ipc
