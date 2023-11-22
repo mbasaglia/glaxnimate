@@ -629,7 +629,7 @@ bool Canvas::viewportEvent(QEvent *event)
 #if QT_VERSION_MAJOR < 6
                         QPointF scene_travel = (p0.scenePos() - p0.lastScenePos() + p1.scenePos() - p1.lastScenePos()) / 2 / d->zoom_factor;
 #else
-                        QPointF scene_travel = (p0.scenePosition() - p0.lastScenePosition() + p1.scenePosition() - p1.lastScenePosition()) / 2 / d->zoom_factor;
+                        QPointF scene_travel = (p0.scenePosition() - p0.sceneLastPosition() + p1.scenePosition() - p1.sceneLastPosition()) / 2 / d->zoom_factor;
 #endif
                         translate_view(scene_travel);
                     }
