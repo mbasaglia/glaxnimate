@@ -495,11 +495,12 @@ public:
         // QFontInfo is broken, so we do something else
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         int weight = QFontDatabase::weight(font_info.family(), font_info.styleName());
+        QFont::Style font_style = QFontDatabase::italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
 #else
         QFontDatabase db;
         int weight = db.weight(font_info.family(), font_info.styleName());
-#endif
         QFont::Style font_style = db.italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
+#endif
 
         // Convert weight
         weight = WeightConverter::convert(weight, WeightConverter::qt, WeightConverter::css);

@@ -57,12 +57,21 @@ QString app::TranslationService::language_name(QString lang_code)
         if ( lang_loc.script() != QLocale::AnyScript )
             specifier = QLocale::scriptToString(lang_loc.script());
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+        if ( lang_loc.territory() != QLocale::AnyTerritory )
+        {
+            if ( !specifier.isEmpty() )
+                specifier += ", ";
+            specifier = lang_loc.nativeTerritoryName();
+        }
+#else
         if ( lang_loc.country() != QLocale::AnyCountry )
         {
             if ( !specifier.isEmpty() )
                 specifier += ", ";
             specifier = lang_loc.nativeCountryName();
         }
+#endif
     }
 
     if ( !name.isEmpty() )
