@@ -140,7 +140,12 @@ find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
     Archive
     Completion
 )
-message(STATUS "Using KF ${KF_MAJOR}")
+if ( NOT ANDROID )
+    find_package(KF${KF_MAJOR} ${KF_DEP_VERSION}
+        REQUIRED COMPONENTS
+        Crash
+    )
+endif()
 
 
 set(CMAKE_AUTOMOC ON)

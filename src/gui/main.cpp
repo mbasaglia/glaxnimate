@@ -7,7 +7,9 @@
 #include <QSplashScreen>
 #include <QtGlobal>
 
-#include <KCrash>
+#ifndef Q_OS_ANDROID
+#   include <KCrash>
+#endif
 
 #include "app/env.hpp"
 #include "app/scripting/python/python_engine.hpp"
@@ -34,7 +36,9 @@ int main(int argc, char *argv[])
 #endif
     gui::GlaxnimateApp app(argc, argv);
 
+#ifndef Q_OS_ANDROID
     KCrash::setDrKonqiEnabled(true);
+#endif
 
     AppInfo::instance().init_qapplication();
 

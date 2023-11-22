@@ -278,4 +278,5 @@ void GlaxnimateWindow::Private::init_debug()
         qDebug() << "----";
     });
     menu_debug->addAction("Force Autosave", [this]{autosave(true);});
+    //menu_debug->addAction("Crash", []{volatile int* np = nullptr;*np = 123;});
 }
