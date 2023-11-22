@@ -438,11 +438,11 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
         ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
     action->setData(QVariant::fromValue(comp));
 
-    connect(comp, &model::DocumentNode::name_changed, action, [this, comp, action](){
+    connect(comp, &model::DocumentNode::name_changed, action, [comp, action](){
         action->setText(comp->object_name());
     });
-    connect(comp, &model::VisualNode::docnode_group_color_changed, action, [this, comp, action](){
-            action->setIcon(comp->instance_icon());
+    connect(comp, &model::VisualNode::docnode_group_color_changed, action, [comp, action](){
+        action->setIcon(comp->instance_icon());
     });
 
 }

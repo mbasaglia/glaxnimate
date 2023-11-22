@@ -12,6 +12,10 @@
 
 using namespace glaxnimate::io::aep;
 
+#ifndef QVERIFY_THROWS_EXCEPTION
+#   define QVERIFY_THROWS_EXCEPTION(exceptiontype, expression) QVERIFY_EXCEPTION_THROWN(expression, exceptiontype)
+#endif
+
 
 inline QByteArray operator "" _b(const char* c, std::size_t sz)
 {
@@ -52,8 +56,8 @@ private slots:
         CosLexer l("<<"_b);
         auto token = l.next_token();
         QCOMPARE(token.type, CosTokenType::ObjectStart);
-        QVERIFY_EXCEPTION_THROWN(lex("<"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("<a"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("<"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("<a"));
     }
 
     void test_lex_identidfier()
@@ -66,8 +70,8 @@ private slots:
         token = l.next_token();
         QCOMPARE(token.type, CosTokenType::ObjectStart);
         COS_TOKEN(lex("/foo#62ar"_b), Identifier, String, "foobar");
-        QVERIFY_EXCEPTION_THROWN(lex("/foo#6"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("/foo#6r"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("/foo#6"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("/foo#6r"));
     }
 
     void test_lex_spaces()
@@ -92,9 +96,9 @@ private slots:
         COS_TOKEN(token, HexString, Bytes, "\xa0"_b);
         token = l.next_token();
         COS_TOKEN(token, HexString, Bytes, "\x13\x37"_b);
-        QVERIFY_EXCEPTION_THROWN(lex("<F00"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("<G>"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("<FG>"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("<F00"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("<G>"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("<FG>"));
     }
 
     void test_lex_object_end()
@@ -102,8 +106,8 @@ private slots:
         CosLexer l(">>"_b);
         auto token = l.next_token();
         COS_TOKEN_TYPE(token, ObjectEnd);
-        QVERIFY_EXCEPTION_THROWN(lex(">"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex(">a"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex(">"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex(">a"));
     }
 
     void test_lex_array()
@@ -159,10 +163,10 @@ private slots:
 
     void test_lex_string_errors()
     {
-        QVERIFY_EXCEPTION_THROWN(lex("(Foo"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("(\\@)"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("(\\"), CosError);
-        QVERIFY_EXCEPTION_THROWN(lex("(\\1"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("(Foo"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("(\\@)"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("(\\"));
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("(\\1"));
     }
 
     void test_lex_keywords()
@@ -174,7 +178,7 @@ private slots:
         COS_TOKEN(token, Boolean, Boolean, false);
         token = l.next_token();
         COS_TOKEN(token, Null, Null, nullptr);
-        QVERIFY_EXCEPTION_THROWN(l.next_token(), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, l.next_token());
     }
 
     void test_lex_number()
@@ -202,7 +206,7 @@ private slots:
 
     void test_unkown_token()
     {
-        QVERIFY_EXCEPTION_THROWN(lex("@"), CosError);
+        QVERIFY_THROWS_EXCEPTION(CosError, lex("@"));
     }
 
     void test_parse_value()

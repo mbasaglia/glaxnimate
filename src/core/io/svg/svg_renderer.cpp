@@ -493,8 +493,12 @@ public:
         QFontInfo font_info(text->font->query());
 
         // QFontInfo is broken, so we do something else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        int weight = QFontDatabase::weight(font_info.family(), font_info.styleName());
+#else
         QFontDatabase db;
         int weight = db.weight(font_info.family(), font_info.styleName());
+#endif
         QFont::Style font_style = db.italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
 
         // Convert weight

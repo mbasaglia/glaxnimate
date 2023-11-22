@@ -29,7 +29,9 @@ public:
     QRawFont raw;
     QRawFont raw_scaled;
     QFontMetricsF metrics;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QFontDatabase database;
+#endif
 
     Private() :
         raw(QRawFont::fromFont(query)),
@@ -93,7 +95,11 @@ public:
         }
         else
         {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             styles = database.styles(parent->family.get());
+#else
+            styles = QFontDatabase::styles(parent->family.get());
+#endif
             if ( !parent->valid_style(parent->style.get()) && !styles.empty() )
                 parent->style.set(styles[0]);
         }
@@ -351,7 +357,11 @@ qreal glaxnimate::model::Font::line_spacing_unscaled() const
 
 QStringList glaxnimate::model::Font::families() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     return d->database.families();
+#else
+    return QFontDatabase::families();
+#endif
 }
 
 QList<int> glaxnimate::model::Font::standard_sizes() const

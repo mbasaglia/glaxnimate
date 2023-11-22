@@ -79,7 +79,6 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::sa
 
 bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Composition* comp, const QVariantMap& options)
 {
-    auto on_error = [this](const QString& s){warning(s);};
     SvgRenderer rend(SMIL, CssFontType(options["font_type"].toInt()));
     rend.write_main(comp);
     if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
@@ -87,6 +86,10 @@ bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& fil
         KCompressionDevice compressed(&file, false, KCompressionDevice::GZip);
         compressed.open(QIODevice::WriteOnly);
         rend.write(&compressed, false);
+        compressed.close();
+
+        if ( compressed.error() )
+            warning(tr("Could not write to file"));
     }
     else
     {

@@ -661,7 +661,7 @@ void GlaxnimateWindow::Private::load_backup(KAutoSaveFile* file, bool io_options
         return;
     }
 
-    QFileInfo path = file->managedFile().toString();
+    QFileInfo path(file->managedFile().toString());
     QDir dir = path.dir();
     if ( dir.isRoot() )
         dir = QDir();
@@ -875,7 +875,7 @@ void glaxnimate::gui::GlaxnimateWindow::Private::load_pending()
     font_loader->setParent(current_document.get());
     connect(
         font_loader, &gui::font::FontLoader::error, parent,
-        [this](const QString& msg){ app::log::Log("Font Loader").log(msg); }
+        [](const QString& msg){ app::log::Log("Font Loader").log(msg); }
     );
     font_loader->queue_pending(current_document.get());
     connect(

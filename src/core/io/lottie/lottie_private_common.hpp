@@ -82,8 +82,6 @@ public:
     {
         return bool(v.toInt());
     }
-private:
-    float factor;
 };
 
 class GradientLoad : public ValueTransform

@@ -1321,8 +1321,12 @@ private:
         qfont.setFamily(style.family);
         qfont.setWeight(QFont::Weight(WeightConverter::convert(style.weight, WeightConverter::css, WeightConverter::qt)));
         qfont.setStyle(style.style);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QString style_string = QFontDatabase::styleString(qfont);
+#else
         QFontDatabase db;
         QString style_string = db.styleString(qfont);
+#endif
         font->style.set(style_string);
     }
 

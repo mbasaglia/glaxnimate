@@ -41,7 +41,11 @@ void tools::MouseEvent::forward_to_scene() const
     mouse_event.setButtonDownScenePos(press_button, press_scene_pos);
     mouse_event.setButtonDownScreenPos(press_button, press_screen_pos);
     mouse_event.setScenePos(scene_pos);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    mouse_event.setScreenPos(event->globalPosition().toPoint());
+#else
     mouse_event.setScreenPos(event->screenPos().toPoint());
+#endif
     mouse_event.setLastScenePos(last_scene_pos);
     mouse_event.setLastScreenPos(last_screen_pos);
     mouse_event.setButtons(event->buttons());

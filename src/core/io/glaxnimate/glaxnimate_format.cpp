@@ -210,7 +210,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         case QMetaType::QByteArray:
             return QString(value.toByteArray().toBase64());
 
-        case QVariant::Invalid:
+        case QMetaType::UnknownType:
             return {};
 
         case QMetaType::QSize:
@@ -245,9 +245,9 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["y"] = v.y();
             return o;
         }
-        case QVariant::PointF:
+        case QMetaType::QPointF:
             return point_to_json(value.toPointF());
-        case QVariant::Color:
+        case QMetaType::QColor:
         {
             auto v = value.value<QColor>();
             QString col = v.name();

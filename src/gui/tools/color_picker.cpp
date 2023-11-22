@@ -23,7 +23,11 @@ public:
 
     void mouse_move(const MouseEvent& event) override
     {
+#if QT_VERSION_MAJOR < 6
         widget()->set_color(color_widgets::utils::get_screen_color(event.event->globalPos()));
+#else
+        widget()->set_color(color_widgets::utils::get_screen_color(event.event->globalPosition()));
+#endif
     }
 
     void mouse_release(const MouseEvent& event) override

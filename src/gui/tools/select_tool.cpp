@@ -153,7 +153,7 @@ private:
             }
 
             drag_mode = Click;
-            rubber_p1 = event.event->localPos();
+            rubber_p1 = event.pos();
 
             auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
             auto clicked_on = under_mouse(event, true, selection_mode);
@@ -225,7 +225,7 @@ private:
                     mouse_move(event);
                     break;
                 case RubberBand:
-                    rubber_p2 = event.event->localPos();
+                    rubber_p2 = event.pos();
                     break;
                 case DragObject:
                     do_drag(event.scene_pos, event.modifiers(), false);
@@ -271,7 +271,7 @@ private:
                     event.view->viewport()->update();
                     break;
                 case RubberBand:
-                    rubber_p2 = event.event->localPos();
+                    rubber_p2 = event.pos();
                     complex_select(event, event.scene->nodes(
                         event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized()),
                         event.view->viewportTransform(),

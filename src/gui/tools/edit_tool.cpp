@@ -569,7 +569,7 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
     if ( event.press_button == Qt::LeftButton && d->drag_mode == Private::None )
     {
         d->drag_mode = Private::Click;
-        d->rubber_p1 = event.event->localPos();
+        d->rubber_p1 = event.pos();
 
         auto clicked_on = under_mouse(event, true, SelectionMode::Shape);
         if ( clicked_on.handle )
@@ -620,7 +620,7 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
                 d->drag_mode = Private::RubberBand;
                 [[fallthrough]];
             case Private::RubberBand:
-                d->rubber_p2 = event.event->localPos();
+                d->rubber_p2 = event.pos();
                 break;
             case Private::VertexClick:
                 d->drag_mode = Private::VertexDrag;
@@ -700,7 +700,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                 break;
             case Private::RubberBand:
             {
-                d->rubber_p2 = event.event->localPos();
+                d->rubber_p2 = event.pos();
                 d->drag_mode = Private::None;
                 if ( !(event.modifiers() & Qt::ShiftModifier) )
                     d->selection.clear();

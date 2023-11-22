@@ -175,10 +175,15 @@ void Canvas::mousePressEvent(QMouseEvent* event)
 
     d->press_button = event->button();
     d->move_press_scene = scene_pos;
+#if QT_VERSION_MAJOR < 6
     d->move_press_screen = event->screenPos().toPoint();
+    d->move_last_screen = event->screenPos().toPoint();
+#else
+    d->move_press_screen = event->globalPosition().toPoint();
+    d->move_last_screen = event->globalPosition().toPoint();
+#endif
     d->move_last = mpos;
     d->move_last_scene = scene_pos;
-    d->move_last_screen = event->screenPos().toPoint();
 
     if ( event->button() == Qt::MiddleButton )
     {
@@ -575,20 +580,32 @@ bool Canvas::viewportEvent(QEvent *event)
         {
             QTouchEvent *touch_event = static_cast<QTouchEvent *>(event);
 
+#if QT_VERSION_MAJOR < 6
             QList<QTouchEvent::TouchPoint> touch_points = touch_event->touchPoints();
+#else
+            QList<QTouchEvent::TouchPoint> touch_points = touch_event->points();
+#endif
 
             if (touch_points.count() == 2)
             {
                 const QTouchEvent::TouchPoint &p0 = touch_points.first();
                 const QTouchEvent::TouchPoint &p1 = touch_points.last();
 
-
+#if QT_VERSION_MAJOR < 6
                 qreal initial_distance = math::length(p0.startPos() - p1.startPos());
+#else
+                qreal initial_distance = math::length(p0.pressPosition() - p1.pressPosition());
+#endif
 
                 if ( initial_distance > 0 )
                 {
+#if QT_VERSION_MAJOR < 6
                     qreal distance = math::length(p0.pos() - p1.pos());
                     QPointF travel = (p0.pos() - p0.startPos() + p1.pos() - p1.startPos()) / 2;
+#else
+                    qreal distance = math::length(p0.position() - p1.position());
+                    QPointF travel = (p0.position() - p0.pressPosition() + p1.position() - p1.pressPosition()) / 2;
+#endif
                     qreal travel_distance = math::length(travel);
 
                     // pinch
@@ -609,7 +626,11 @@ bool Canvas::viewportEvent(QEvent *event)
                     // pan
                     else
                     {
+#if QT_VERSION_MAJOR < 6
                         QPointF scene_travel = (p0.scenePos() - p0.lastScenePos() + p1.scenePos() - p1.lastScenePos()) / 2 / d->zoom_factor;
+#else
+                        QPointF scene_travel = (p0.scenePosition() - p0.lastScenePosition() + p1.scenePosition() - p1.lastScenePosition()) / 2 / d->zoom_factor;
+#endif
                         translate_view(scene_travel);
                     }
                 }

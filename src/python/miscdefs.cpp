@@ -193,7 +193,13 @@ void define_utils(py::module& m)
         .def_property("green", &QColor::green, &QColor::setGreen, "Green component between 0 and 255")
         .def_property("blue", &QColor::blue, &QColor::setBlue, "Blue component between 0 and 255")
         .def_property("alpha", &QColor::alpha, &QColor::setAlpha, "Transparency component between 0 and 255")
-        .def_property("name", [](const QColor& c) { return c.name(); }, qOverload<const QString&>(&QColor::setNamedColor))
+        .def_property("name", [](const QColor& c) { return c.name(); },
+#if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
+            qOverload<const QString&>(&QColor::setNamedColor)
+#else
+            [](QColor& color, const QString& name){color = QColor::fromName(name);}
+#endif
+        )
         .def_static("from_hsv", &QColor::fromHsv, py::arg("h"), py::arg("s"), py::arg("v"), py::arg("a") = 255)
         .def_property("hue", &QColor::hue, [](QColor& c, int v){ c.setHsv(v, c.saturation(), c.value()); })
         .def_property("saturation", &QColor::saturation, [](QColor& c, int v){ c.setHsv(c.hue(), v, c.value()); })

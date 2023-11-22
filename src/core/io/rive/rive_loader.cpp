@@ -738,8 +738,7 @@ struct LoadCotext
 } // namespace
 
 RiveLoader::RiveLoader(BinaryInputStream& stream, RiveFormat* format)
-    : document(nullptr),
-    stream(stream),
+    : stream(stream),
     format(format)
 {
     extra_props = read_property_table();
