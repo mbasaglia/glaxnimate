@@ -197,7 +197,7 @@ void define_utils(py::module& m)
 #if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
             qOverload<const QString&>(&QColor::setNamedColor)
 #else
-            [](QColor& color, const QString& name){color = QColor::fromName(name);}
+            [](QColor& color, const QString& name){color = QColor::fromString(name);}
 #endif
         )
         .def_static("from_hsv", &QColor::fromHsv, py::arg("h"), py::arg("s"), py::arg("v"), py::arg("a") = 255)
