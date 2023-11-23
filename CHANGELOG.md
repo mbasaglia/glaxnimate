@@ -12,6 +12,7 @@
     * Buttons to jump to the next/previous keyframe in the timeline
     * Improved LottieFiles import dialog
     * Improved autosave recovery process
+    * Script console now supports basic autocompletion
 * Misc:
     * Switched to an even/odd version numbering scheme
     * Integration with KDE Frameworks

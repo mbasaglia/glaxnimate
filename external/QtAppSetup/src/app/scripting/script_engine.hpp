@@ -47,6 +47,11 @@ public:
     virtual QString eval_to_string(const QString& code) = 0;
 
     /**
+     * \brief Evaluates \p line and returns a strin list of available code completions
+     */
+    virtual QStringList eval_completions(const QString& line) { Q_UNUSED(line); return {}; }
+
+    /**
      * \brief Marks an app module that must be loaded
      */
     virtual void app_module(const QString& name) = 0;

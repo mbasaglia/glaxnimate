@@ -171,6 +171,31 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
     }
 }
 
+QStringList app::scripting::python::PythonContext::eval_completions(const QString& code)
+{
+    std::string std_code = code.toStdString();
+    std::string eval_code;
+
+    try
+    {
+        if ( std_code.empty() )
+        {
+            eval_code = "[_glaxnimate_iter for _glaxnimate_iter in globals().keys() if not _glaxnimate_iter.startswith('_')]";
+        }
+        else
+        {
+            py::exec("import inspect");
+            eval_code = "[_glaxnimate_iter[0] for _glaxnimate_iter in inspect.getmembers(" + std_code + ") if not _glaxnimate_iter[0].startswith('_')]";
+        }
+
+        return py::eval(eval_code).cast<QStringList>();
+    }
+    catch ( const py::error_already_set& ) {}
+    catch ( const py::builtin_exception& ) {}
+
+    return {};
+}
+
 void app::scripting::python::PythonContext::app_module ( const QString& name )
 {
     try {

@@ -8,7 +8,9 @@
 #include "ui_script_console.h"
 
 #include <QEvent>
+#include <QRegularExpression>
 
+#include <KCompletion>
 
 #include "app/settings/settings.hpp"
 #include "app/scripting/script_engine.hpp"
@@ -27,7 +29,8 @@ public:
     const plugin::Plugin* current_plugin = nullptr;
     ScriptConsole* parent;
     std::map<QString, QVariant> globals;
-
+    QRegularExpression re_completion{R"(^[a-zA-Z_0-9.\s\[\]]+$)"};
+    KCompletion completion;
 
     bool ensure_script_contexts()
     {
@@ -68,6 +71,33 @@ public:
 
         parent->error(plugin.data().name, tr("Could not find an interpreter"));
         return false;
+    }
+
+    void set_completions(const QString& prefix)
+    {
+        auto match = re_completion.match(prefix);
+        if ( !match.hasMatch() )
+        {
+            ui.console_input->completionObject()->setItems({});
+            return;
+        }
+
+        if ( !ensure_script_contexts() )
+            return;
+
+        int last_dot = prefix.lastIndexOf('.');
+        QString evaluated;
+        if ( last_dot != -1 )
+            evaluated = prefix.left(last_dot);
+
+        auto ctx = script_contexts[ui.console_language->currentIndex()].get();
+        auto completions = ctx->eval_completions(evaluated);
+        if ( !evaluated.isEmpty() )
+        {
+            for ( auto& item : completions )
+                item = evaluated + "." + item;
+        }
+        ui.console_input->completionObject()->setItems(completions);
     }
 
     void run_snippet(const QString& text, bool echo)
@@ -177,6 +207,9 @@ ScriptConsole::ScriptConsole(QWidget* parent)
     d->parent = this;
 
     d->ui.console_input->setHistoryItems(app::settings::get<QStringList>("scripting", "history"));
+    d->ui.console_input->completionObject()->setCompletionMode(KCompletion::CompletionPopup);
+    d->ui.console_input->completionObject()->setOrder(KCompletion::Sorted);
+    connect(d->ui.console_input, &KHistoryComboBox::completion, this, [this](const QString& text){ d->set_completions(text); });
 
     for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
     {

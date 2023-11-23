@@ -22,6 +22,8 @@ public:
 
     QString eval_to_string(const QString& code) override;
 
+    QStringList eval_completions(const QString& line) override;
+
     bool run_from_module (
         const QDir& path,
         const QString& module,
