@@ -8,6 +8,8 @@
 
 #include "app_info.hpp"
 
+#include <QDir>
+#include <QStandardPaths>
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -57,10 +59,8 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 
 #else
 
-#include <QDir>
 #include <QPalette>
 #include <QClipboard>
-#include <QStandardPaths>
 
 #include "app/settings/settings.hpp"
 #include "app/settings/palette_settings.hpp"
