@@ -17,6 +17,9 @@
 #include "model/shapes/path.hpp"
 #include "model/animation/join_animatables.hpp"
 
+#include <vector>
+#include <variant>
+
 class glaxnimate::io::avd::AvdRenderer::Private
 {
 public:
