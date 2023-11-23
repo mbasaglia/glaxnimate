@@ -6,17 +6,22 @@ Dependencies:
   'require':
     'frameworks/extra-cmake-modules': '@stable'
     'frameworks/kcoreaddons' : '@stable'
-    'frameworks/kcrash' : '@stable'
     'frameworks/kconfigwidgets' : '@stable'
     'frameworks/karchive' : '@stable'
     'frameworks/kxmlgui' : '@stable'
     'frameworks/kcompletion' : '@stable'
+- 'on': ['Linux/Qt5', 'FreeBSD/Qt5', 'Windows/Qt5', 'macOS/Qt5']
+  'require':
+    'frameworks/kcrash' : '@stable'
 - 'on': ['Linux/Qt6', 'FreeBSD/Qt6', 'Windows/Qt6', 'Android/Qt6', 'macOS/Qt6']
   'require':
     'frameworks/extra-cmake-modules': '@latest-kf6'
     'frameworks/kcoreaddons' : '@latest-kf6'
-    'frameworks/kcrash' : '@latest-kf6'
     'frameworks/kconfigwidgets' : '@latest-kf6'
     'frameworks/karchive' : '@latest-kf6'
     'frameworks/kxmlgui' : '@latest-kf6'
     'frameworks/kcompletion' : '@latest-kf6'
+- 'on': ['Linux/Qt6', 'FreeBSD/Qt6', 'Windows/Qt6', 'macOS/Qt6']
+  'require':
+    'frameworks/kcrash' : '@latest-kf6'
+
