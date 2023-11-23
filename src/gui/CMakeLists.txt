@@ -205,7 +205,13 @@ target_link_libraries(
     Qt${QT_MAJOR_VERSION}::Network
     Qt${QT_MAJOR_VERSION}::Svg
     KF${KF_MAJOR}::WidgetsAddons
-    KF${KF_MAJOR}::Crash
     KF${KF_MAJOR}::XmlGui
     KF${KF_MAJOR}::Completion
 )
+
+if ( NOT ANDROID )
+    target_link_libraries(
+        ${LIB_NAME_GUI} PUBLIC
+        KF${KF_MAJOR}::Crash
+    )
+endif()
