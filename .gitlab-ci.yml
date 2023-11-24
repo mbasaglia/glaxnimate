@@ -29,6 +29,7 @@ include:
     # - .gitlab/ci/test-files.yml
     - project: sysadmin/ci-utilities
       file:
+        - /gitlab-templates/reuse-lint.yml
         - /gitlab-templates/linux.yml
         - /gitlab-templates/freebsd.yml
         - /gitlab-templates/android.yml
