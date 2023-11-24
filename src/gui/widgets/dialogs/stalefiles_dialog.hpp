@@ -25,7 +25,7 @@ public:
 
     void cleanup(KAutoSaveFile* keep);
 
-private slots:
+private Q_SLOTS:
     void delete_all();
     void delete_selected();
     void current_changed(int index);
