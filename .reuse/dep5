@@ -17,14 +17,30 @@ Files: AUTHORS.md CHANGELOG.md
 Copyright: none
 License: CC0-1.0
 
-Files: src/python/MANIFEST.in.in src/python/build-requirements.txt
+Files: src/python/MANIFEST.in.in src/python/build-requirements.txt .github/* .gitlab/* deploy/* data/emoji/sets.json data/*.desktop data/*.gpl data/templates/* data/themes/*
 Copyright: none
 License: CC0-1.0
 
-Files: src/android/android/res/drawable-*/*.png
-Copyright: 2019 Mattia Basaglia <dev@dragon.best>
+Files: src/android/android/res/drawable-*/*.png docs/docs/* docs/*.md docs/*.html data/*.rawr data/*.jpg data/*.svg data/*.png
+Copyright: 2019-2023 Mattia Basaglia <dev@dragon.best>
 License: CC-BY-SA-4.0
 
 Files: src/gui/emoji/tools/emoji-test.txt
 Copyright: 2020 Unicode®, Inc.
 License: LicenseRef-UnicodeTermsOfUse
+
+Files: external/QtAppSetup/external/pybind11/*
+Copyright: 2015 Wenzel Jakob <wenzel@inf.ethz.ch>
+License: LicenseRef-PybindBSDLike
+
+Files: external/potrace/*
+Copyright: 2001-2019 Peter Selinger
+License: GPL-2.0-or-later
+
+Files: external/cmake-modules/*
+Copyright: 2009-2010 Ryan Pavlik <rpavlik@iastate.edu> <abiryan@ryand.net>
+License: BSL-1.0
+
+Files: data/plugins/*.json data/translations/*
+Copyright: 2019-2023 Mattia Basaglia <dev@dragon.best>
+License: GPL-3.0-or-later
