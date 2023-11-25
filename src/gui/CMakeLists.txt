@@ -171,7 +171,7 @@ if ( NOT MOBILE_UI )
     )
 endif()
 
-if ( NOT PYTHON_SCRIPTING_ENABLED )
+if ( PYTHON_SCRIPTING_ENABLED )
     list(APPEND SOURCES
         gui_python.cpp
         widgets/docks/script_console.cpp
