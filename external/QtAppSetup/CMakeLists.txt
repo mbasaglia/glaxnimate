@@ -21,16 +21,16 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Submodules
 add_subdirectory(src)
 
-option(SCRIPTING_JS "Enable JS scripting" OFF)
-if(Qt5Qml_FOUND AND SCRIPTING_JS)
+option(JS_SCRIPTING_ENABLED "Enable JS scripting" OFF)
+if(Qt5Qml_FOUND AND JS_SCRIPTING_ENABLED)
     message(STATUS "JS enabled")
     add_subdirectory(src/app/scripting/js/)
 endif()
 
 
-option(SCRIPTING_PY "Enable Python scripting" OFF)
+option(PYTHON_SCRIPTING_ENABLED "Enable Python scripting" OFF)
 find_package(Python3 COMPONENTS Interpreter Development QUIET)
-if(Python3_FOUND AND SCRIPTING_PY)
+if(Python3_FOUND AND PYTHON_SCRIPTING_ENABLED)
     set(PYTHON_ENABLED ON PARENT_SCOPE)
     message(STATUS "Python3 enabled")
     add_subdirectory(external/pybind11)

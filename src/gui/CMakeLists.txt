@@ -150,7 +150,6 @@ if ( NOT MOBILE_UI )
     list(APPEND SOURCES
         main.cpp
         cli.cpp
-        gui_python.cpp
 
         emoji/emoji_set_dialog.cpp
         emoji/emoji_set_dialog.ui
@@ -168,11 +167,17 @@ if ( NOT MOBILE_UI )
         widgets/dialogs/gw_impl_debug.cpp
         widgets/dialogs/gw_impl_selection.cpp
 
+        widgets/menus/node_menu.cpp
+    )
+endif()
+
+if ( NOT PYTHON_SCRIPTING_ENABLED )
+    list(APPEND SOURCES
+        gui_python.cpp
         widgets/docks/script_console.cpp
         widgets/docks/script_console.ui
         widgets/docks/snippet_list_widget.cpp
         widgets/docks/snippet_list_widget.ui
-        widgets/menus/node_menu.cpp
     )
 endif()
 

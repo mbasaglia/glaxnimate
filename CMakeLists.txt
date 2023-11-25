@@ -40,7 +40,10 @@ if (ANDROID)
 endif()
 
 if(MOBILE_UI)
+    message(STATUS "Using mobile UI")
     add_compile_definitions(MOBILE_UI)
+else()
+    message(STATUS "Using desktop UI")
 endif()
 
 # CMake modules
@@ -94,6 +97,12 @@ endif()
 
 # Python
 if ( NOT ANDROID )
+    set(PYTHON_SCRIPTING_ENABLED ON)
+else()
+    set(PYTHON_SCRIPTING_ENABLED OFF)
+endif()
+
+if ( PYTHON_SCRIPTING_ENABLED )
     find_program(PYTHON_PIP pip3)
     if(NOT PYTHON_PIP)
         find_program(PYTHON_PIP pip)
@@ -101,7 +110,8 @@ if ( NOT ANDROID )
 
     find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
     message(STATUS ${Python3_EXECUTABLE})
-    set(SCRIPTING_PY ON)
+else()
+    message(STATUS "Python Disabled")
 endif()
 
 # QT_MAJOR_VERSION is the common name in KDE apps and infrastructure.
