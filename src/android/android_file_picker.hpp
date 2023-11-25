@@ -33,7 +33,7 @@ public:
         "android.permission.READ_EXTERNAL_STORAGE"
     });
 
-signals:
+Q_SIGNALS:
     void open_selected(const QUrl& path, bool is_import);
     void save_selected(const QUrl& path, bool is_export);
 

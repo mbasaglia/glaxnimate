@@ -639,7 +639,7 @@ public:
             opts = dialog.io_options();
         }
 
-        return save_url(opts.filename, export_opts);
+        return save_url(QUrl(opts.filename), export_opts);
     }
 
     void save_document_set_opts(const io::Options& opts, bool export_opts)

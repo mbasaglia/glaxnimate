@@ -84,16 +84,16 @@ public:
             switch ( receiverRequestCode )
             {
                 case RequestOpen:
-                    emit parent->open_selected(result_to_url(resultCode, data), false);
+                    Q_EMIT parent->open_selected(result_to_url(resultCode, data), false);
                     break;
                 case RequestImport:
-                    emit parent->open_selected(result_to_url(resultCode, data), true);
+                    Q_EMIT parent->open_selected(result_to_url(resultCode, data), true);
                     break;
                 case RequestSave:
-                    emit parent->save_selected(result_to_url(resultCode, data), false);
+                    Q_EMIT parent->save_selected(result_to_url(resultCode, data), false);
                     break;
                 case RequestExport:
-                    emit parent->save_selected(result_to_url(resultCode, data), true);
+                    Q_EMIT parent->save_selected(result_to_url(resultCode, data), true);
                     break;
             }
         }
@@ -106,7 +106,7 @@ public:
                 return {};
 
             auto uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
-            return uri.toString();
+            return QUrl(uri.toString());
         }
 
         AndroidFilePicker *parent;

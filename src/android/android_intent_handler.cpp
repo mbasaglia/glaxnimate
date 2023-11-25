@@ -34,7 +34,7 @@ void glaxnimate::android::AndroidIntentHandler::set_view_uri(const QUrl &uri)
 {
     QMutexLocker lock(&mutex);
     this->uri = uri;
-    emit view_uri_changed(uri);
+    Q_EMIT view_uri_changed(uri);
 }
 
 QUrl glaxnimate::android::AndroidIntentHandler::view_uri()

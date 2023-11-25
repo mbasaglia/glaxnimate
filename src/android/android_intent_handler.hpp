@@ -23,7 +23,7 @@ public:
     void set_view_uri(const QUrl& uri);
     QUrl view_uri();
 
-signals:
+Q_SIGNALS:
     void view_uri_changed(QUrl url);
 
 private:

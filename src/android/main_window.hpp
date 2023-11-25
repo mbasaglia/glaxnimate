@@ -50,7 +50,7 @@ public:
 
     glaxnimate::gui::item_models::DocumentNodeModel* model() const override;
 
-public slots:
+public Q_SLOTS:
     void open_intent(const QUrl& uri);
 
 protected:
@@ -58,7 +58,7 @@ protected:
     void resizeEvent(QResizeEvent* e) override;
     void showEvent(QShowEvent* e) override;
 
-private slots:
+private Q_SLOTS:
     void tool_triggered(bool checked);
 
 private:
