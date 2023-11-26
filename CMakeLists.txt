@@ -131,8 +131,7 @@ find_package(ECM ${KF_DEP_VERSION} REQUIRED CONFIG)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(ECMCoverageOption)
-include(ECMEnableSanitizers)
+include(KDECompilerSettings)
 
 # TODO: The following definitons should be enabled
 remove_definitions(
@@ -140,18 +139,6 @@ remove_definitions(
     -DQT_NO_CAST_FROM_BYTEARRAY
     -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
 )
-
-add_definitions(
-    -DQT_NO_URL_CAST_FROM_STRING
-    -DQT_NO_CAST_TO_ASCII
-    -DQT_NO_FOREACH
-    -DQT_NO_KEYWORDS
-    -DQT_USE_QSTRINGBUILDER
-)
-
-if (NOT WIN32)
-    add_definitions(-DQT_STRICT_ITERATORS)
-endif()
 
 if (NOT DEFINED KF_MAJOR)
   set(KF_MAJOR ${QT_MAJOR_VERSION})
