@@ -103,10 +103,11 @@ void glaxnimate::gui::ExportImageSequenceDialog::render()
     for ( int f = frame_from; f < frame_to; f += frame_step )
     {
         QString frame_name = QString::number(f).rightJustified(pad, '0');
-        name_template.append(ext);
-        name_template.replace("{frame}", frame_name);
+        QString basename = name_template;
+        basename.append(ext);
+        basename.replace("{frame}", frame_name);
 
-        QImageWriter(path.filePath(name_template), format).write(
+        QImageWriter(path.filePath(basename), format).write(
             io::raster::RasterMime::frame_to_image(d->comp, f)
         );
 
