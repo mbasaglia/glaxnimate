@@ -3,6 +3,7 @@
 
 Options:
   cmake-options: '-DINSTALL_TRANSLATIONS=OFF'
+require-passing-tests-on: [ 'Linux', 'FreeBSD', 'Windows', 'Android']
 
 Dependencies:
 - 'on': ['Linux/Qt5', 'FreeBSD/Qt5', 'Windows/Qt5', 'Android/Qt5', 'macOS/Qt5']
