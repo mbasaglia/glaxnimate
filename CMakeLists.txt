@@ -192,6 +192,7 @@ message(STATUS "${CMAKE_BUILD_TYPE} build")
 
 SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
+add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 
 add_subdirectory(external/QtAppSetup)
 
