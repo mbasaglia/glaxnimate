@@ -19,7 +19,9 @@
 // #include "android_file_picker.hpp"
 // #include <QDebug>
 
-
+#ifdef Q_OS_ANDROID
+Q_DECL_EXPORT
+#endif
 int main(int argc, char *argv[])
 {
     using namespace glaxnimate;
