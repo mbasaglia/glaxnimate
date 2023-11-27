@@ -190,13 +190,8 @@ message(STATUS "${CMAKE_BUILD_TYPE} build")
 
 # sub projects and stuff
 
-if ( WIN32 )
-    SET(BUILD_STATIC_LIBS OFF CACHE BOOL "")
-    SET(BUILD_SHARED_LIBS ON CACHE BOOL "")
-else ()
-    SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
-    SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
-endif()
+SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
+SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
 
 add_subdirectory(external/QtAppSetup)
 
