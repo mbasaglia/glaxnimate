@@ -27,7 +27,7 @@ void app::TranslationService::initialize ( QString default_lang_code )
     QStringList translation_files = translations.entryList({"*.qm"});
 
     QRegularExpression re("[^_]+_([^.]+)\\.qm");
-    for (auto &file: qAsConst(translation_files))
+    for (auto &file: std::as_const(translation_files))
     {
         auto match = re.match(file);
         if ( match.hasMatch() )
