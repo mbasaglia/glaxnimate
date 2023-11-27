@@ -397,7 +397,7 @@ struct RegisterMethod
     static PyMethodInfo do_the_thing(const QMetaMethod& meth, py::handle& handle)
     {
         PyMethodInfo py;
-        py.name = meth.name();
+        py.name = meth.name().constData();
 
         std::string signature = "Signature:\n";
         signature += meth.name().toStdString();
@@ -444,7 +444,7 @@ struct RegisterMethod
                 // Calling by name from QMetaObject ensures that default arguments work correctly
                 bool ok = QMetaObject::invokeMethod(
                     o,
-                    meth.name(),
+                    meth.name().constData(),
                     Qt::DirectConnection,
                     argbuf.return_arg(),
                     argbuf.arg(0),

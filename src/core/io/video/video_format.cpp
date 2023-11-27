@@ -809,7 +809,7 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
         av::Video video(oc, opt, codec_id, 7000000, width, height, fps);
 
         // log format info
-        av_dump_format(oc, 0, filename, 1);
+        av_dump_format(oc, 0, filename.constData(), 1);
 
         // open the output file, if needed
         av::DeviceIo io(&dev);

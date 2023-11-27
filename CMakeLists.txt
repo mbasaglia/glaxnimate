@@ -136,7 +136,6 @@ include(KDECompilerSettings)
 # TODO: The following definitons should be enabled
 remove_definitions(
     -DQT_NO_CAST_FROM_ASCII
-    -DQT_NO_CAST_FROM_BYTEARRAY
     -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
 )
 

@@ -40,7 +40,7 @@ public:
 
         bool is_set() const
         {
-            return qEnvironmentVariableIsSet(name);
+            return qEnvironmentVariableIsSet(name.constData());
         }
 
         void operator=(const QString& value) const
@@ -52,19 +52,19 @@ public:
         {
             this->value = value;
             loaded = true;
-            qputenv(name, value.toUtf8());
+            qputenv(name.constData(), value.toUtf8());
         }
 
         void erase() const
         {
             value.clear();
             loaded = true;
-            qunsetenv(name);
+            qunsetenv(name.constData());
         }
 
         const QString& load(const QString& default_value = {}) const
         {
-            value = qEnvironmentVariable(name, default_value);
+            value = qEnvironmentVariable(name.constData(), default_value);
             loaded = true;
             return value;
         }
@@ -85,7 +85,7 @@ public:
             if ( !value.isEmpty() )
                 value += separator;
             value += item;
-            qputenv(name, value.toUtf8());
+            qputenv(name.constData(), value.toUtf8().constData());
         }
 
         void push_back(const QStringList& items, const QString& separator=ENV_SEPARATOR)
