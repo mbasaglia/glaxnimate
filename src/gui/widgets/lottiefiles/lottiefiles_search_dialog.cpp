@@ -319,7 +319,7 @@ public:
         ui.button_open->setEnabled(true);
     }
 
-    void on_progress(quint64 bytes, quint64 total)
+    void on_progress(qint64 bytes, qint64 total)
     {
         static constexpr const int maxi = std::numeric_limits<int>::max();
         if ( total > maxi )
@@ -356,7 +356,7 @@ glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* paren
 
     connect(&d->graphql, &GraphQl::query_started, this, [this]{d->start_load();});
     connect(&d->graphql, &GraphQl::query_finished, this, [this](QNetworkReply* reply){d->on_response(reply);});
-    connect(&d->graphql, &GraphQl::query_progress, this, [this](quint64 bytes, quint64 total){d->on_progress(bytes, total);});
+    connect(&d->graphql, &GraphQl::query_progress, this, [this](qint64 bytes, qint64 total){d->on_progress(bytes, total);});
 }
 
 glaxnimate::gui::LottieFilesSearchDialog::~LottieFilesSearchDialog() = default;

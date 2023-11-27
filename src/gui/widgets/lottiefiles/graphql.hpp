@@ -35,7 +35,7 @@ public:
 
 Q_SIGNALS:
     void query_started();
-    void query_progress(quint64 bytes, quint64 total);
+    void query_progress(qint64 bytes, qint64 total);
     void query_finished(QNetworkReply* reply);
 
 private:

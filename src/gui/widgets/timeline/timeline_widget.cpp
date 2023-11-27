@@ -336,7 +336,7 @@ void TimelineWidget::set_document(model::Document* document)
 
     if ( document )
     {
-        connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
+        connect(this, &TimelineWidget::frame_clicked, document, [document](int frame){document->set_current_time(frame);});
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
     }
 

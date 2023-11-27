@@ -101,7 +101,7 @@ void glaxnimate::utils::trace::TraceWrapper::trace_mono(
     result.back().color = color;
     utils::trace::Tracer tracer(d->source_image, d->options);
     tracer.set_target_alpha(alpha_threshold, inverted);
-    connect(&tracer, &utils::trace::Tracer::progress, this, &TraceWrapper::progress_changed);
+    connect(&tracer, &utils::trace::Tracer::progress, this, [this](qreal value){ Q_EMIT progress_changed(value); });
     tracer.set_progress_range(0, 100);
     tracer.trace(result.back().bezier);
 }

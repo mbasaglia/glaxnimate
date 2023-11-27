@@ -384,8 +384,7 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
         else
             comp_selections[old_i].current = comp;
 
-        QObject::disconnect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-        QObject::disconnect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+        QObject::disconnect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, nullptr);
         QObject::disconnect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     }
 
@@ -396,8 +395,8 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
     ui.play_controls_2->set_range(comp->animation->first_frame.get(), comp->animation->last_frame.get());
     ui.play_controls_2->set_fps(comp->fps.get());
 
-    QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-    QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+    QObject::connect(comp->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, [this](float frame){ui.play_controls->set_min(frame);});
+    QObject::connect(comp->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, [this](float frame){ui.play_controls->set_max(frame);});
     QObject::connect(comp, &model::Composition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
 
     auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());

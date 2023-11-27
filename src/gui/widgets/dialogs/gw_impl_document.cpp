@@ -123,8 +123,8 @@ void GlaxnimateWindow::Private::do_setup_document()
     ui.play_controls->set_record_enabled(false);
     ui.play_controls_2->set_record_enabled(false);
     ///...
-    QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
-    QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
+    QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), [this](int frame){current_document->set_current_time(frame);});
+    QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, [this](float frame){ui.play_controls->set_frame(frame);});
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls_2, &FrameControlsWidget::set_record_enabled);
     QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
