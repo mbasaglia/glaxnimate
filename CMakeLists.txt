@@ -83,7 +83,7 @@ if ( SNAP_IS_SUCH_A_PAIN  )
 endif()
 
 # Fucking Windows being shit
-if ( WIN32 )
+if ( WIN32 AND MinGW )
     # Without this shit it gives a bunch of errors like this:
     # * referenced in section `.rdata' of * defined in discarded section `.gnu.linkonce.*`
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto")
