@@ -6,6 +6,7 @@ set(SOURCES
     miscdefs.cpp
 )
 add_library(${LIB_NAME_PYTHON} OBJECT ${SOURCES} embed.cpp)
+kde_target_enable_exceptions(${LIB_NAME_PYTHON} PUBLIC)
 #target_include_directories (${LIB_NAME_PYTHON} PUBLIC
         #${Python3_INCLUDE_DIRS}
         #${CMAKE_SOURCE_DIR}/external/QtAppSetup/external/pybind11/include

@@ -223,7 +223,7 @@ public:
         bob.add_widgets(group->settings(), this, lay, group->values(), group->slug() + "__");
     }
 
-    void changeEvent(QEvent *e)
+    void changeEvent(QEvent *e) override
     {
         QWidget::changeEvent(e);
 

@@ -13,7 +13,7 @@
 using namespace glaxnimate;
 using namespace glaxnimate::io::lottie;
 
-void glaxnimate::io::lottie::ValidationVisitor::on_visit(model::Document*, model::Composition* main)
+void glaxnimate::io::lottie::ValidationVisitor::on_visit_document(model::Document*, model::Composition* main)
 {
     if ( !main )
         return;
@@ -64,8 +64,6 @@ public:
     }
 
 private:
-    using ValidationVisitor::on_visit;
-
     void on_visit(model::DocumentNode * node) override
     {
         if ( qobject_cast<model::Image*>(node) )

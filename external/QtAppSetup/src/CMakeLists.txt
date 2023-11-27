@@ -28,3 +28,4 @@ app/cli.cpp
 add_library(${PROJECT_SLUG} OBJECT ${SOURCES})
 target_link_libraries(${PROJECT_SLUG} PUBLIC Qt${QT_VERSION_MAJOR}::Widgets QtColorWidgets)
 target_include_directories(${PROJECT_SLUG} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+kde_target_enable_exceptions(${PROJECT_SLUG} PUBLIC)

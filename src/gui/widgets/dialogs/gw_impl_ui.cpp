@@ -1126,7 +1126,7 @@ void GlaxnimateWindow::Private::status_message(const QString& message, int durat
 
 void GlaxnimateWindow::Private::trace_dialog(model::DocumentNode* object)
 {
-    model::Image* bmp = 0;
+    model::Image* bmp = nullptr;
     if ( object )
     {
         bmp = object->cast<model::Image>();

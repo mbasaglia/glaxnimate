@@ -44,7 +44,7 @@ public:
     class FetchColorVisitor : public model::Visitor
     {
     private:
-        void on_visit(model::Document * doc, model::Composition*) override
+        void on_visit_document(model::Document * doc, model::Composition*) override
         {
             macro = command::UndoMacroGuard(tr("Gather Document Swatch"), doc);
 
@@ -116,7 +116,7 @@ public:
         }
 
     private:
-        void on_visit(model::Document * doc, model::Composition*) override
+        void on_visit_document(model::Document * doc, model::Composition*) override
         {
             macro = command::UndoMacroGuard(tr("Link Shapes to Swatch"), doc);
         }

@@ -22,7 +22,7 @@ protected:
         fmt->message(LottieFormat::tr("%1: %2").arg(node->object_name()).arg(message), severity);
     }
 
-    void on_visit(model::Document * document, model::Composition* main) override;
+    void on_visit_document(model::Document * document, model::Composition* main) override;
 
     LottieFormat* fmt;
     QSize fixed_size;

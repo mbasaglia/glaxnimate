@@ -40,8 +40,6 @@ public:
     }
 
 private:
-    using ValidationVisitor::on_visit;
-
     void on_visit(model::DocumentNode * node) override
     {
         if ( qobject_cast<model::PolyStar*>(node) )

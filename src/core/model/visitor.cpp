@@ -14,9 +14,9 @@
 
 void glaxnimate::model::Visitor::visit(glaxnimate::model::Document* doc, model::Composition* main, bool skip_locked)
 {
-    on_visit(doc, main);
+    on_visit_document(doc, main);
     visit(doc->assets(), skip_locked);
-    on_visit_end(doc, main);
+    on_visit_document_end(doc, main);
 }
 
 void glaxnimate::model::Visitor::visit(glaxnimate::model::DocumentNode* node, bool skip_locked)

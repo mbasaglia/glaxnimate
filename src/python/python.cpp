@@ -198,13 +198,13 @@ void define_animatable(py::module& m)
 class PyVisitorPublic : public model::Visitor
 {
 public:
-    virtual void on_visit_document(model::Document *){}
+    virtual void on_visit_doc(model::Document *){}
     virtual void on_visit_node(model::DocumentNode*){}
 
 private:
-    void on_visit(model::Document * document, model::Composition*) override
+    void on_visit_document(model::Document * document, model::Composition*) override
     {
-        on_visit_document(document);
+        on_visit_doc(document);
     }
 
     void on_visit(model::DocumentNode * node) override
@@ -216,9 +216,9 @@ private:
 class PyVisitorTrampoline : public PyVisitorPublic
 {
 public:
-    void on_visit_document(model::Document * document) override
+    void on_visit_doc(model::Document * document) override
     {
-        PYBIND11_OVERLOAD(void, PyVisitorPublic, on_visit_document, document);
+        PYBIND11_OVERLOAD(void, PyVisitorPublic, on_visit_doc, document);
     }
 
     void on_visit(model::DocumentNode * node) override
@@ -475,7 +475,7 @@ void register_py_module(py::module& glaxnimate_module)
         .def(py::init())
         .def("visit", (void (PyVisitorPublic::*)(model::Document*, model::Composition*, bool))&PyVisitorPublic::visit, py::arg("document"), py::arg("composition"), py::arg("skip_locked"))
         .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*, bool))&PyVisitorPublic::visit, py::arg("node"), py::arg("skip_locked"))
-        .def("on_visit_document", &PyVisitorPublic::on_visit_document)
+        .def("on_visit_document", &PyVisitorPublic::on_visit_doc)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
     ;
 

@@ -744,7 +744,7 @@ public:
     bool strip;
     QMap<QUuid, int> layer_indices;
     app::log::Log logger{"Lottie Export"};
-    model::Layer* mask = 0;
+    model::Layer* mask = nullptr;
     bool strip_raster;
     bool auto_embed;
     bool old_kf;

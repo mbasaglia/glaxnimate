@@ -13,7 +13,7 @@ namespace app::widgets {
 class NoCloseOnEnter : public QObject
 {
 protected:
-    bool eventFilter(QObject *obj, QEvent *event)
+    bool eventFilter(QObject *obj, QEvent *event) override
     {
         if (event->type() == QEvent::KeyPress)
         {

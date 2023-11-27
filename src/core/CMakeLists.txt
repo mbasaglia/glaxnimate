@@ -139,6 +139,7 @@ if ( GLAXNIMATE_SYSTEM_POTRACE )
 endif()
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
+kde_target_enable_exceptions(${LIB_NAME_CORE} PUBLIC)
 target_link_libraries(${LIB_NAME_CORE} PUBLIC
     QtAppSetup
     ZLIB::ZLIB

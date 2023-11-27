@@ -35,6 +35,7 @@ if (ANDROID)
 endif()
 
 add_executable(${PROJECT_SLUG}_mobile ${SOURCES})
+kde_target_enable_exceptions(${PROJECT_SLUG}_mobile PUBLIC)
 
 target_link_libraries(${PROJECT_SLUG}_mobile PUBLIC
     QtAppSetup
