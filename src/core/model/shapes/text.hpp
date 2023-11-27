@@ -19,11 +19,11 @@ namespace glaxnimate::model {
 class Font : public Object
 {
     GLAXNIMATE_OBJECT(Font)
-    GLAXNIMATE_PROPERTY_OPTIONS(QString, family, "", QStringList,
+    GLAXNIMATE_PROPERTY_OPTIONS(QString, family, {}, QStringList,
         &Font::families, &Font::on_family_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::FontCombo)
     GLAXNIMATE_PROPERTY_OPTIONS(float, size, 32, QList<int>,
         &Font::standard_sizes, &Font::on_font_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::LaxValues)
-    GLAXNIMATE_PROPERTY_OPTIONS(QString, style, "", QStringList,
+    GLAXNIMATE_PROPERTY_OPTIONS(QString, style, {}, QStringList,
         &Font::styles, &Font::on_font_changed, &Font::valid_style, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(float, line_height, 1, &Font::on_font_changed, {}, PropertyTraits::Visual|PropertyTraits::Percent)
 

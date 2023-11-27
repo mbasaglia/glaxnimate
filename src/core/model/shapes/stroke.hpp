@@ -60,7 +60,7 @@ public:
 
     static QIcon static_tree_icon()
     {
-        return QIcon::fromTheme("format-stroke-color");
+        return QIcon::fromTheme("format-stroke-color"_qs);
     }
 
     static QString static_type_name_human()

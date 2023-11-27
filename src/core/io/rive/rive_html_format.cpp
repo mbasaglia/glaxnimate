@@ -14,13 +14,13 @@ bool glaxnimate::io::rive::RiveHtmlFormat::on_save(
 )
 {
     file.write(lottie::LottieHtmlFormat::html_head(this, comp,
-        "<script src='https://unpkg.com/@rive-app/canvas@1.0.79'></script>"
+        "<script src='https://unpkg.com/@rive-app/canvas@1.0.79'></script>"_qs
     ));
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
     RiveExporter exp(&buffer, this);
     exp.write_document(comp->document());
-    file.write(QString(R"(
+    file.write(QStringLiteral(R"(
 <body>
 <canvas id="animation" width="%1" height="%2"></canvas>
 

@@ -19,7 +19,7 @@ class SpritesheetFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString slug() const override { return "spritesheet"; }
+    QString slug() const override { return "spritesheet"_qs; }
     QString name() const override { return tr("Sprite Sheet"); }
     QStringList extensions() const override;
 

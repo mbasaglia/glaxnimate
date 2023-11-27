@@ -40,7 +40,7 @@ public:
 
         bool apply_motion(model::AnimatedProperty<QPointF>& prop, const QPointF& delta_pos = {}, model::Property<bool>* auto_orient = nullptr) const
         {
-            auto motion = properties.find("motion");
+            auto motion = properties.find("motion"_qs);
             if ( motion == properties.end() )
                 return false;
 
@@ -120,19 +120,19 @@ public:
         static constexpr const qreal minutes = 60;
         static constexpr const qreal hours = 60*60;
         static const std::map<QString, qreal> units = {
-            {"ms", 0.001},
-            {"s", 1.0},
-            {"min", minutes},
-            {"h", hours}
+            {"ms"_qs, 0.001},
+            {"s"_qs, 1.0},
+            {"min"_qs, minutes},
+            {"h"_qs, hours}
         };
 
-        if ( !match.captured("unit").isEmpty() )
-            return match.captured("timecount").toDouble() * units.at(match.captured("unit")) * fps;
+        if ( !match.captured("unit"_qs).isEmpty() )
+            return match.captured("timecount"_qs).toDouble() * units.at(match.captured("unit"_qs)) * fps;
 
         return (
-            match.captured("hours").toDouble() * hours +
-            match.captured("minutes").toDouble() * minutes +
-            match.captured("seconds").toDouble()
+            match.captured("hours"_qs).toDouble() * hours +
+            match.captured("minutes"_qs).toDouble() * minutes +
+            match.captured("seconds"_qs).toDouble()
         ) * fps;
     }
 
@@ -155,20 +155,20 @@ public:
 
     std::vector<ValueVariant> get_values(const QDomElement& animate)
     {
-        QString attr = animate.attribute("attributeName");
+        QString attr = animate.attribute("attributeName"_qs);
         ValueVariant::Type type = ValueVariant::Vector;
-        if ( attr == "d" )
+        if ( attr == "d"_qs )
             type = ValueVariant::Bezier;
-        else if ( attr == "display" )
+        else if ( attr == "display"_qs )
             type = ValueVariant::String;
-        else if ( attr == "fill" || attr == "stroke" || attr == "stop-color" )
+        else if ( attr == "fill"_qs || attr == "stroke"_qs || attr == "stop-color"_qs )
             type = ValueVariant::Color;
 
         std::vector<ValueVariant> values;
 
-        if ( animate.hasAttribute("values") )
+        if ( animate.hasAttribute("values"_qs) )
         {
-            auto val_str = animate.attribute("values").split(frame_separator_re,
+            auto val_str = animate.attribute("values"_qs).split(frame_separator_re,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -181,7 +181,7 @@ public:
 
             if ( values.size() < 2 )
             {
-                warning("Not enough values in `animate`");
+                warning("Not enough values in `animate`"_qs);
                 return {};
             }
 
@@ -189,43 +189,43 @@ public:
             {
                 if ( !values[i].compatible(values[0]) )
                 {
-                    warning("Mismatching `values` in `animate`");
+                    warning("Mismatching `values` in `animate`"_qs);
                     return {};
                 }
             }
         }
         else
         {
-            if ( animate.hasAttribute("from") )
+            if ( animate.hasAttribute("from"_qs) )
             {
-                values.push_back(parse_value(animate.attribute("from"), type));
+                values.push_back(parse_value(animate.attribute("from"_qs), type));
             }
             else
             {
-                if ( attr == "transform" )
+                if ( attr == "transform"_qs )
                 {
-                    warning("You need to set `values` or `from` in `animateTransform`");
+                    warning("You need to set `values` or `from` in `animateTransform`"_qs);
                     return {};
                 }
                 else if ( !animate.hasAttribute(attr) )
                 {
-                    warning("Missing `from` in `animate`");
+                    warning("Missing `from` in `animate`"_qs);
                     return {};
                 }
 
                 values.push_back(parse_value(animate.attribute(attr), type));
             }
 
-            if ( animate.hasAttribute("to") )
+            if ( animate.hasAttribute("to"_qs) )
             {
-                values.push_back(parse_value(animate.attribute("to"), type));
+                values.push_back(parse_value(animate.attribute("to"_qs), type));
             }
-            else if ( type == ValueVariant::Vector && animate.hasAttribute("by") )
+            else if ( type == ValueVariant::Vector && animate.hasAttribute("by"_qs) )
             {
-                auto by = split_values(animate.attribute("to"));
+                auto by = split_values(animate.attribute("to"_qs));
                 if ( by.size() != values[0].vector().size() )
                 {
-                    warning("Mismatching `by` and `from` in `animate`");
+                    warning("Mismatching `by` and `from` in `animate`"_qs);
                     return {};
                 }
 
@@ -236,7 +236,7 @@ public:
             }
             else
             {
-                warning("Missing `to` or `by` in `animate`");
+                warning("Missing `to` or `by` in `animate`"_qs);
                 return {};
             }
         }
@@ -247,7 +247,7 @@ public:
             {
                 if ( v.bezier().size() != 1 )
                 {
-                    warning("Can only load animated `d` if each keyframe has exactly 1 path");
+                    warning("Can only load animated `d` if each keyframe has exactly 1 path"_qs);
                     return {};
                 }
             }
@@ -277,24 +277,24 @@ public:
     {
         if ( !prop.keyframes.empty() )
         {
-            warning("Multiple `animate` for the same property");
+            warning("Multiple `animate` for the same property"_qs);
             return;
         }
 
         model::FrameTime start_time = 0;
         model::FrameTime end_time = 0;
 
-        if ( animate.hasAttribute("begin") )
-            start_time = clock_to_frame(animate.attribute("begin"));
+        if ( animate.hasAttribute("begin"_qs) )
+            start_time = clock_to_frame(animate.attribute("begin"_qs));
 
-        if ( animate.hasAttribute("dur") )
-            end_time = start_time + clock_to_frame(animate.attribute("dur"));
-        else if ( animate.hasAttribute("end") )
-            end_time = clock_to_frame(animate.attribute("end"));
+        if ( animate.hasAttribute("dur"_qs) )
+            end_time = start_time + clock_to_frame(animate.attribute("dur"_qs));
+        else if ( animate.hasAttribute("end"_qs) )
+            end_time = clock_to_frame(animate.attribute("end"_qs));
 
         if ( start_time >= end_time )
         {
-            warning("Invalid timings in `animate`");
+            warning("Invalid timings in `animate`"_qs);
             return;
         }
 
@@ -304,16 +304,16 @@ public:
 
         if ( motion )
         {
-            if ( !animate.hasAttribute("path") )
+            if ( !animate.hasAttribute("path"_qs) )
             {
-                warning("Missing path for animateMotion");
+                warning("Missing path for animateMotion"_qs);
                 return;
             }
 
-            if ( animate.hasAttribute("rotate") )
+            if ( animate.hasAttribute("rotate"_qs) )
             {
-                QString rotate = animate.attribute("rotate");
-                if ( rotate == "auto" )
+                QString rotate = animate.attribute("rotate"_qs);
+                if ( rotate == "auto"_qs )
                 {
                     prop.auto_orient = true;
                 }
@@ -323,13 +323,13 @@ public:
                     int degrees = rotate.toInt(&is_number) % 360;
                     if ( !is_number || degrees != 0 )
                     {
-                        warning("The only supported values for animateMotion.rotate are auto or 0");
-                        prop.auto_orient = rotate == "auto-reverse";
+                        warning("The only supported values for animateMotion.rotate are auto or 0"_qs);
+                        prop.auto_orient = rotate == "auto-reverse"_qs;
                     }
                 }
             }
 
-            auto mbez = PathDParser(animate.attribute("path")).parse();
+            auto mbez = PathDParser(animate.attribute("path"_qs)).parse();
 
             /// \todo Automatically add Hold transitions for sub-bezier end points
             for ( const auto& b : mbez.beziers() )
@@ -354,9 +354,9 @@ public:
         std::vector<model::FrameTime> times;
         times.reserve(values.size());
 
-        if ( animate.hasAttribute("keyTimes") )
+        if ( animate.hasAttribute("keyTimes"_qs) )
         {
-            auto strings = animate.attribute("keyTimes").split(frame_separator_re,
+            auto strings = animate.attribute("keyTimes"_qs).split(frame_separator_re,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -365,7 +365,7 @@ public:
             );
             if ( strings.size() != int(values.size()) )
             {
-                warning(QString("`keyTimes` (%1) and `values` (%2) mismatch").arg(strings.size()).arg(int(values.size())));
+                warning(QString("`keyTimes` (%1) and `values` (%2) mismatch"_qs).arg(strings.size()).arg(int(values.size())));
                 return;
             }
 
@@ -379,16 +379,16 @@ public:
         }
 
         std::vector<model::KeyframeTransition> transitions;
-        QString calc = animate.attribute("calcMode", "linear");
-        if ( calc == "spline" )
+        QString calc = animate.attribute("calcMode"_qs, "linear"_qs);
+        if ( calc == "spline"_qs )
         {
-            if ( !animate.hasAttribute("keySplines") )
+            if ( !animate.hasAttribute("keySplines"_qs) )
             {
-                warning("Missing `keySplines`");
+                warning("Missing `keySplines`"_qs);
                 return;
             }
 
-            auto splines = animate.attribute("keySplines").split(frame_separator_re,
+            auto splines = animate.attribute("keySplines"_qs).split(frame_separator_re,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -397,7 +397,7 @@ public:
             );
             if ( splines.size() != int(values.size()) - 1 )
             {
-                warning("Wrong number of `keySplines` values");
+                warning("Wrong number of `keySplines` values"_qs);
                 return;
             }
 
@@ -407,7 +407,7 @@ public:
                 auto params = split_values(spline);
                 if ( params.size() != 4 )
                 {
-                    warning("Invalid value for `keySplines`");
+                    warning("Invalid value for `keySplines`"_qs);
                     return;
                 }
                 transitions.push_back({{params[0], params[1]}, {params[2], params[3]}});
@@ -417,7 +417,7 @@ public:
         else
         {
             model::KeyframeTransition def;
-            if ( calc == "discrete" )
+            if ( calc == "discrete"_qs )
                 def.set_hold(true);
             transitions = std::vector<model::KeyframeTransition>(values.size(), def);
         }
@@ -442,9 +442,9 @@ public:
         for ( const auto& child: ElementRange(parent) )
             func(child, props);
 
-        if ( parent.hasAttribute("id") )
+        if ( parent.hasAttribute("id"_qs) )
         {
-            auto it = stored_animate.find(parent.attribute("id"));
+            auto it = stored_animate.find(parent.attribute("id"_qs));
             if ( it != stored_animate.end() )
             {
                 for ( const auto& child: it->second )
@@ -459,20 +459,20 @@ public:
     AnimatedProperties parse_animated_properties(const QDomElement& parent)
     {
         return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
-            if ( child.tagName() == "animate" && child.hasAttribute("attributeName") )
-                parse_animate(child, props.properties[child.attribute("attributeName")], false);
-            else if ( child.tagName() == "animateMotion" )
-                parse_animate(child, props.properties["motion"], true);
+            if ( child.tagName() == "animate"_qs && child.hasAttribute("attributeName"_qs) )
+                parse_animate(child, props.properties[child.attribute("attributeName"_qs)], false);
+            else if ( child.tagName() == "animateMotion"_qs )
+                parse_animate(child, props.properties["motion"_qs], true);
         });
     }
 
     AnimatedProperties parse_animated_transform(const QDomElement& parent)
     {
         return parse_animated_elements(parent, [this](const QDomElement& child, AnimatedProperties& props){
-            if ( child.tagName() == "animateTransform" && child.hasAttribute("type") && child.attribute("attributeName") == "transform" )
-                parse_animate(child, props.properties[child.attribute("type")], false);
-            else if ( child.tagName() == "animateMotion" )
-                parse_animate(child, props.properties["motion"], true);
+            if ( child.tagName() == "animateTransform"_qs && child.hasAttribute("type"_qs) && child.attribute("attributeName"_qs) == "transform"_qs )
+                parse_animate(child, props.properties[child.attribute("type"_qs)], false);
+            else if ( child.tagName() == "animateMotion"_qs )
+                parse_animate(child, props.properties["motion"_qs], true);
         });
     }
 

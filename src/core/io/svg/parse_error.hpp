@@ -17,7 +17,7 @@ class SvgParseError : public std::exception
 public:
     QString formatted(const QString& filename) const
     {
-        return QString("%1:%2:%3: XML Parse Error: %4")
+        return QStringLiteral("%1:%2:%3: XML Parse Error: %4")
             .arg(filename)
             .arg(line)
             .arg(column)

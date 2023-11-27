@@ -35,7 +35,7 @@ public:
     /**
      * @brief Name of the node, used to display it in the UI
      */
-    GLAXNIMATE_PROPERTY(QString, name, "", &DocumentNode::on_name_changed)
+    GLAXNIMATE_PROPERTY(QString, name, {}, &DocumentNode::on_name_changed)
 
 protected:
     template<class Base>

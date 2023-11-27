@@ -11,6 +11,7 @@
 #include <QIcon>
 
 #include "app/log/log.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 
 void app::Application::initialize()
@@ -69,13 +70,13 @@ QList<QDir> app::Application::data_roots() const
     QDir binpath(QCoreApplication::applicationDirPath());
 #ifdef Q_OS_WIN
     // some Windows apps do not use a bin subfolder
-    search.push_back(binpath.filePath(QString("share/%1/%2").arg(organizationName()).arg(applicationName())));
+    search.push_back(binpath.filePath("share/%1/%2"_qs.arg(organizationName()).arg(applicationName())));
 #endif
     binpath.cdUp();
-    search.push_back(binpath.filePath(QString("share/%1/%2").arg(organizationName()).arg(applicationName())));
+    search.push_back(binpath.filePath("share/%1/%2"_qs.arg(organizationName()).arg(applicationName())));
 #ifdef Q_OS_MAC
     // some macOS app bundles use a Resources subfolder
-    search.push_back(binpath.filePath(QString("Resources/%1/%2").arg(organizationName()).arg(applicationName())));
+    search.push_back(binpath.filePath("Resources/%1/%2"_qs.arg(organizationName()).arg(applicationName())));
 #endif
 
     return search;
@@ -96,7 +97,7 @@ QString app::Application::data_file(const QString& name) const
 
 QSettings app::Application::qsettings() const
 {
-    return QSettings(writable_data_path("settings.ini"), QSettings::IniFormat);
+    return QSettings(writable_data_path("settings.ini"_qs), QSettings::IniFormat);
 }
 
 bool app::Application::notify(QObject* receiver, QEvent* e)
@@ -104,7 +105,7 @@ bool app::Application::notify(QObject* receiver, QEvent* e)
     try {
         return QApplication::notify(receiver, e);
     } catch ( const std::exception& exc ) {
-        log::Log("Event", QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type())).stream(log::Error) << "Exception:" << exc.what();
+        log::Log("Event"_qs, QString::fromUtf8(QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type()))).stream(log::Error) << "Exception:" << exc.what();
         return false;
     }
 }

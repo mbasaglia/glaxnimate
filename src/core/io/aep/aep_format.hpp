@@ -17,9 +17,9 @@ class AepFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString slug() const override { return "aep"; }
+    QString slug() const override { return "aep"_qs; }
     QString name() const override { return tr("Adobe After Effects Project"); }
-    QStringList extensions() const override { return {"aep"}; }
+    QStringList extensions() const override { return {"aep"_qs}; }
     bool can_save() const override { return false; }
     bool can_open() const override { return true; }
 
@@ -38,9 +38,9 @@ class AepxFormat : public AepFormat
     Q_OBJECT
 
 public:
-    QString slug() const override { return "aepx"; }
+    QString slug() const override { return "aepx"_qs; }
     QString name() const override { return tr("Adobe After Effects Project XML"); }
-    QStringList extensions() const override { return {"aepx"}; }
+    QStringList extensions() const override { return {"aepx"_qs}; }
     bool can_save() const override { return false; }
     bool can_open() const override { return true; }
 

@@ -18,9 +18,9 @@ class LottieFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString slug() const override { return "lottie"; }
+    QString slug() const override { return "lottie"_qs; }
     QString name() const override { return tr("Lottie Animation"); }
-    QStringList extensions() const override { return {"json"}; }
+    QStringList extensions() const override { return {"json"_qs}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
     std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition*) const override;

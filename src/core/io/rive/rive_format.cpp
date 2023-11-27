@@ -62,19 +62,19 @@ static QString property_type_to_string(glaxnimate::io::rive::PropertyType type)
     switch ( type )
     {
         case glaxnimate::io::rive::PropertyType::VarUint:
-            return "VarUint";
+            return "VarUint"_qs;
         case glaxnimate::io::rive::PropertyType::Bool:
-            return "bool";
+            return "bool"_qs;
         case glaxnimate::io::rive::PropertyType::String:
-            return "string";
+            return "string"_qs;
         case glaxnimate::io::rive::PropertyType::Bytes:
-            return "bytes";
+            return "bytes"_qs;
         case glaxnimate::io::rive::PropertyType::Float:
-            return "float";
+            return "float"_qs;
         case glaxnimate::io::rive::PropertyType::Color:
-            return "color";
+            return "color"_qs;
     }
-    return "?";
+    return "?"_qs;
 }
 
 QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary_data)
@@ -101,8 +101,8 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     {
         if ( !rive_obj )
         {
-            summary.push_back("Invalid");
-            objects.push_back("Invalid");
+            summary.push_back("Invalid"_qs);
+            objects.push_back("Invalid"_qs);
             continue;
         }
 
@@ -119,19 +119,19 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         for ( const auto& def : rive_obj.type().definitions )
         {
             QJsonObject jdef;
-            jdef["id"] = int(def->type_id);
-            jdef["name"] = def->name;
+            jdef["id"_qs] = int(def->type_id);
+            jdef["name"_qs] = def->name;
             types.push_back(jdef);
         }
-        obj["class"] = types;
+        obj["class"_qs] = types;
 
         QJsonArray props;
         for ( const auto& p : rive_obj.type().properties )
         {
             QJsonObject prop;
-            prop["id"] = int(p->id);
-            prop["name"] = p->name;
-            prop["type"] = property_type_to_string(p->type);
+            prop["id"_qs] = int(p->id);
+            prop["name"_qs] = p->name;
+            prop["type"_qs] = property_type_to_string(p->type);
             auto iter = rive_obj.properties().find(p);
             QJsonValue val;
 
@@ -148,19 +148,19 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
 
                 summary_obj[iter->first->name] = val;
             }
-            prop["value"] = val;
+            prop["value"_qs] = val;
 
             props.push_back(prop);
         }
-        obj["properties"] = props;
+        obj["properties"_qs] = props;
 
         QJsonObject summary_obj_parent;
-        summary_obj_parent[!rive_obj ? "?" : rive_obj.definition()->name] = summary_obj;
+        summary_obj_parent[!rive_obj ? "?"_qs : rive_obj.definition()->name] = summary_obj;
 
         if ( has_artboard )
         {
-            summary_obj_parent["-id"] = id;
-            obj["object_id"] = id;
+            summary_obj_parent["-id"_qs] = id;
+            obj["object_id"_qs] = id;
             id++;
         }
 
@@ -172,21 +172,21 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     QJsonArray version;
     version.push_back(int(vmaj));
     version.push_back(int(vmin));
-    header["version"] = version;
-    header["file_id"] = int(file_id);
+    header["version"_qs] = version;
+    header["file_id"_qs] = int(file_id);
     QJsonArray extra_props;
     for ( const auto& p : loader.extra_properties() )
     {
         QJsonObject prop;
-        prop["id"] = int(p.first);
-        prop["type"] = property_type_to_string(p.second);
+        prop["id"_qs] = int(p.first);
+        prop["type"_qs] = property_type_to_string(p.second);
     }
-    header["toc"] = extra_props;
+    header["toc"_qs] = extra_props;
 
     QJsonObject root;
-    root["brief"] = summary;
-    root["detail"] = objects;
-    root["header"] = header;
+    root["brief"_qs] = summary;
+    root["detail"_qs] = objects;
+    root["header"_qs] = header;
 
     return QJsonDocument(root);
 }

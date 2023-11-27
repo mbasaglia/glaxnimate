@@ -13,6 +13,7 @@
 
 #include "app/widgets/widget_palette_editor.hpp"
 #include "app/utils/string_view.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 app::settings::PaletteSettings::PaletteSettings()
     : default_palette(QGuiApplication::palette(), true)
@@ -22,12 +23,12 @@ app::settings::PaletteSettings::PaletteSettings()
 
 QString app::settings::PaletteSettings::slug() const
 {
-    return "palette";
+    return "palette"_qs;
 }
 
 QIcon app::settings::PaletteSettings::icon() const
 {
-    return QIcon::fromTheme("preferences-desktop-theme-global");
+    return QIcon::fromTheme("preferences-desktop-theme-global"_qs);
 }
 
 QString app::settings::PaletteSettings::label() const
@@ -37,10 +38,10 @@ QString app::settings::PaletteSettings::label() const
 
 void app::settings::PaletteSettings::save ( QSettings& settings )
 {
-    settings.setValue("theme", selected);
-    settings.setValue("style", style);
+    settings.setValue("theme"_qs, selected);
+    settings.setValue("style"_qs, style);
 
-    settings.beginWriteArray("themes");
+    settings.beginWriteArray("themes"_qs);
 
     int i = 0;
     for ( auto it = palettes.begin(); it != palettes.end(); ++it )
@@ -59,19 +60,19 @@ void app::settings::PaletteSettings::save ( QSettings& settings )
 
 void app::settings::PaletteSettings::write_palette ( QSettings& settings, const QString& name, const QPalette& palette )
 {
-    settings.setValue("name", name);
+    settings.setValue("name"_qs, name);
     for ( const auto& p : roles() )
     {
-        settings.setValue(p.first + "_active",   color_to_string(palette.color(QPalette::Active, p.second)));
-        settings.setValue(p.first + "_inactive", color_to_string(palette.color(QPalette::Inactive, p.second)));
-        settings.setValue(p.first + "_disabled", color_to_string(palette.color(QPalette::Disabled, p.second)));
+        settings.setValue(p.first + "_active"_qs,   color_to_string(palette.color(QPalette::Active, p.second)));
+        settings.setValue(p.first + "_inactive"_qs, color_to_string(palette.color(QPalette::Inactive, p.second)));
+        settings.setValue(p.first + "_disabled"_qs, color_to_string(palette.color(QPalette::Disabled, p.second)));
     }
 }
 
 
 void app::settings::PaletteSettings::load_palette ( const QSettings& settings, bool mark_built_in )
 {
-    QString name = settings.value("name").toString();
+    QString name = settings.value("name"_qs).toString();
     if ( name.isEmpty() )
         return;
 
@@ -84,9 +85,9 @@ void app::settings::PaletteSettings::load_palette ( const QSettings& settings, b
 
     for ( const auto& p : roles() )
     {
-        palette.setColor(QPalette::Active,   p.second, string_to_color(settings.value(p.first + "_active").toString()));
-        palette.setColor(QPalette::Inactive, p.second, string_to_color(settings.value(p.first + "_inactive").toString()));
-        palette.setColor(QPalette::Disabled, p.second, string_to_color(settings.value(p.first + "_disabled").toString()));
+        palette.setColor(QPalette::Active,   p.second, string_to_color(settings.value(p.first + "_active"_qs).toString()));
+        palette.setColor(QPalette::Inactive, p.second, string_to_color(settings.value(p.first + "_inactive"_qs).toString()));
+        palette.setColor(QPalette::Disabled, p.second, string_to_color(settings.value(p.first + "_disabled"_qs).toString()));
     }
 
     palettes.insert(name, palette);
@@ -95,12 +96,12 @@ void app::settings::PaletteSettings::load_palette ( const QSettings& settings, b
 
 void app::settings::PaletteSettings::load ( QSettings& settings )
 {
-    selected = settings.value("theme").toString();
-    style = settings.value("style").toString();
+    selected = settings.value("theme"_qs).toString();
+    style = settings.value("style"_qs).toString();
     if ( !style.isEmpty() )
         set_style(style);
 
-    int n = settings.beginReadArray("themes");
+    int n = settings.beginReadArray("themes"_qs);
 
     for ( int i = 0; i < n; i++ )
     {
@@ -129,16 +130,16 @@ const std::vector<std::pair<QString, QPalette::ColorRole> > & app::settings::Pal
     if ( roles.empty() )
     {
         QSet<QString> blacklisted = {
-            "Background", "Foreground", "NColorRoles"
+            "Background"_qs, "Foreground"_qs, "NColorRoles"_qs
         };
         QMetaEnum me = QMetaEnum::fromType<QPalette::ColorRole>();
         for ( int i = 0; i < me.keyCount(); i++ )
         {
-            if ( blacklisted.contains(me.key(i)) )
+            if ( blacklisted.contains(QString::fromUtf8(me.key(i))) )
                 continue;
 
             roles.emplace_back(
-                me.key(i),
+                QString::fromUtf8(me.key(i)),
                 QPalette::ColorRole(me.value(i))
             );
         }
@@ -177,7 +178,7 @@ QString app::settings::PaletteSettings::color_to_string(const QColor& c)
 
 QColor app::settings::PaletteSettings::string_to_color(const QString& s)
 {
-    if ( s.startsWith('#') && s.length() == 9 )
+    if ( s.startsWith('#'_qc) && s.length() == 9 )
     {
         QColor c(utils::left_ref(s, 7));
         c.setAlpha(s.right(2).toInt(nullptr, 16));

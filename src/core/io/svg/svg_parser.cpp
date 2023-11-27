@@ -35,20 +35,20 @@ protected:
     QSizeF get_size(const QDomElement& svg) override
     {
         return {
-            len_attr(svg, "width", size.width()),
-            len_attr(svg, "height", size.height())
+            len_attr(svg, "width"_qs, size.width()),
+            len_attr(svg, "height"_qs, size.height())
         };
     }
 
     void on_parse(const QDomElement& svg) override
     {
-        dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
+        dpi = attr(svg, "inkscape"_qs, "export-xdpi"_qs, "96"_qs).toDouble();
 
         QPointF pos;
         QVector2D scale{1, 1};
-        if ( svg.hasAttribute("viewBox") )
+        if ( svg.hasAttribute("viewBox"_qs) )
         {
-            auto vb = split_attr(svg, "viewBox");
+            auto vb = split_attr(svg, "viewBox"_qs);
             if ( vb.size() == 4 )
             {
                 qreal vbx = vb[0].toDouble();
@@ -58,9 +58,9 @@ protected:
 
                 if ( !forced_size.isValid() )
                 {
-                    if ( !svg.hasAttribute("width") )
+                    if ( !svg.hasAttribute("width"_qs) )
                         size.setWidth(vbw);
-                    if ( !svg.hasAttribute("height") )
+                    if ( !svg.hasAttribute("height"_qs) )
                         size.setHeight(vbh);
                 }
 
@@ -78,14 +78,14 @@ protected:
             }
         }
 
-        for ( const auto& link_node : ItemCountRange(dom.elementsByTagName("link")) )
+        for ( const auto& link_node : ItemCountRange(dom.elementsByTagName("link"_qs)) )
         {
             auto link = link_node.toElement();
-            if ( link.attribute("rel") == "stylesheet" )
+            if ( link.attribute("rel"_qs) == "stylesheet"_qs )
             {
-                QString url = link.attribute("href");
+                QString url = link.attribute("href"_qs);
                 if ( !url.isEmpty() )
-                    document->add_pending_asset("", QUrl(url));
+                    document->add_pending_asset(""_qs, QUrl(url));
             }
         }
 
@@ -97,16 +97,16 @@ protected:
         parent_layer->transform.get()->position.set(-pos);
         parent_layer->transform.get()->scale.set(scale);
         parent_layer->name.set(
-            attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
+            attr(svg, "sodipodi"_qs, "docname"_qs, svg.attribute("id"_qs, parent_layer->type_name_human()))
         );
 
         Style default_style(Style::Map{
-            {"fill", "black"},
+            {"fill"_qs, "black"_qs},
         });
         parse_children({svg, &parent_layer->shapes, parse_style(svg, default_style), false});
 
         main->name.set(
-            attr(svg, "sodipodi", "docname", "")
+            attr(svg, "sodipodi"_qs, "docname"_qs, ""_qs)
         );
     }
 
@@ -123,7 +123,7 @@ private:
     {
         CssParser parser(css_blocks);
 
-        for ( const auto& style : ItemCountRange(dom.elementsByTagName("style")) )
+        for ( const auto& style : ItemCountRange(dom.elementsByTagName("style"_qs)) )
         {
             QString data;
             for ( const auto & child : ItemCountRange(style.childNodes()) )
@@ -132,8 +132,8 @@ private:
                     data += child.toCharacterData().data();
             }
 
-            if ( data.contains("@font-face") )
-                document->add_pending_asset("", data.toUtf8());
+            if ( data.contains("@font-face"_qs) )
+                document->add_pending_asset(""_qs, data.toUtf8());
 
             parser.parse(data);
         }
@@ -149,10 +149,10 @@ private:
         auto defs = node.toElement();
         for ( const auto& def : ElementRange(defs) )
         {
-            if ( def.tagName().startsWith("animate") )
+            if ( def.tagName().startsWith("animate"_qs) )
             {
-                QString link = attr(def, "xlink", "href");
-                if ( link.isEmpty() || link[0] != '#' )
+                QString link = attr(def, "xlink"_qs, "href"_qs);
+                if ( link.isEmpty() || link[0] != '#'_qc )
                     continue;
                 animate_parser.store_animate(link.mid(1), def);
             }
@@ -163,10 +163,10 @@ private:
     {
         std::vector<QDomElement> later;
 
-        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("linearGradient")) )
+        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("linearGradient"_qs)) )
             parse_gradient_node(domnode, later);
 
-        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("radialGradient")) )
+        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("radialGradient"_qs)) )
             parse_gradient_node(domnode, later);
 
         std::vector<QDomElement> unprocessed;
@@ -181,7 +181,7 @@ private:
         }
 
 
-        for ( const auto& defs : ItemCountRange(dom.elementsByTagName("defs")) )
+        for ( const auto& defs : ItemCountRange(dom.elementsByTagName("defs"_qs)) )
             parse_defs(defs);
     }
 
@@ -191,7 +191,7 @@ private:
             return;
 
         auto gradient = domnode.toElement();
-        QString id = gradient.attribute("id");
+        QString id = gradient.attribute("id"_qs);
         if ( id.isEmpty() )
             return;
 
@@ -201,17 +201,17 @@ private:
 
     bool parse_brush_style_check(const QDomElement& element, std::vector<QDomElement>& later)
     {
-        QString link = attr(element, "xlink", "href");
+        QString link = attr(element, "xlink"_qs, "href"_qs);
         if ( link.isEmpty() )
             return true;
 
-        if ( !link.startsWith("#") )
+        if ( !link.startsWith("#"_qs) )
             return false;
 
         auto it = brush_styles.find(link);
         if ( it != brush_styles.end() )
         {
-            brush_styles["#" + element.attribute("id")] = it->second;
+            brush_styles["#"_qs + element.attribute("id"_qs)] = it->second;
             return false;
         }
 
@@ -219,7 +219,7 @@ private:
         auto it1 = gradients.find(link);
         if ( it1 != gradients.end() )
         {
-            parse_gradient(element, element.attribute("id"), it1->second);
+            parse_gradient(element, element.attribute("id"_qs), it1->second);
             return false;
         }
 
@@ -238,16 +238,16 @@ private:
 
             auto stop = domnode.toElement();
 
-            if ( stop.tagName() != "stop" )
+            if ( stop.tagName() != "stop"_qs )
                 continue;
 
             Style style = parse_style(stop, {});
-            if ( !style.contains("stop-color") )
+            if ( !style.contains("stop-color"_qs) )
                 continue;
-            QColor color = parse_color(style["stop-color"], QColor());
-            color.setAlphaF(color.alphaF() * style.get("stop-opacity", "1").toDouble());
+            QColor color = parse_color(style["stop-color"_qs], QColor());
+            color.setAlphaF(color.alphaF() * style.get("stop-opacity"_qs, "1"_qs).toDouble());
 
-            stops.push_back({stop.attribute("offset", "0").toDouble(), color});
+            stops.push_back({stop.attribute("offset"_qs, "0"_qs).toDouble(), color});
         }
 
         utils::sort_gradient(stops);
@@ -267,10 +267,10 @@ private:
             auto col = std::make_unique<model::NamedColor>(document);
             col->name.set(id);
             col->color.set(stops[0].second);
-            brush_styles["#"+id] = col.get();
-            auto anim = parse_animated(gradient.firstChildElement("stop"));
+            brush_styles["#"_qs+id] = col.get();
+            auto anim = parse_animated(gradient.firstChildElement("stop"_qs));
 
-            for ( const auto& kf : anim.single("stop-color") )
+            for ( const auto& kf : anim.single("stop-color"_qs) )
                 col->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
             document->assets()->colors->values.insert(std::move(col));
@@ -280,7 +280,7 @@ private:
         auto colors = std::make_unique<model::GradientColors>(document);
         colors->name.set(id);
         colors->colors.set(stops);
-        gradients["#"+id] = colors.get();
+        gradients["#"_qs+id] = colors.get();
         auto ptr = colors.get();
         document->assets()->gradient_colors->values.insert(std::move(colors));
         parse_gradient(gradient, id, ptr);
@@ -291,70 +291,70 @@ private:
         auto gradient = std::make_unique<model::Gradient>(document);
         QTransform gradient_transform;
 
-        if ( element.hasAttribute("gradientTransform") )
-            gradient_transform = svg_transform(element.attribute("gradientTransform"), {}).transform;
+        if ( element.hasAttribute("gradientTransform"_qs) )
+            gradient_transform = svg_transform(element.attribute("gradientTransform"_qs), {}).transform;
 
-        if ( element.tagName() == "linearGradient" )
+        if ( element.tagName() == "linearGradient"_qs )
         {
-            if ( !element.hasAttribute("x1") || !element.hasAttribute("x2") ||
-                 !element.hasAttribute("y1") || !element.hasAttribute("y2") )
+            if ( !element.hasAttribute("x1"_qs) || !element.hasAttribute("x2"_qs) ||
+                 !element.hasAttribute("y1"_qs) || !element.hasAttribute("y2"_qs) )
                 return;
 
             gradient->type.set(model::Gradient::Linear);
 
             gradient->start_point.set(gradient_transform.map(QPointF(
-                len_attr(element, "x1"),
-                len_attr(element, "y1")
+                len_attr(element, "x1"_qs),
+                len_attr(element, "y1"_qs)
             )));
             gradient->end_point.set(gradient_transform.map(QPointF(
-                len_attr(element, "x2"),
-                len_attr(element, "y2")
+                len_attr(element, "x2"_qs),
+                len_attr(element, "y2"_qs)
             )));
 
             auto anim = parse_animated(element);
-            for ( const auto& kf : anim.joined({"x1", "y1"}) )
+            for ( const auto& kf : anim.joined({"x1"_qs, "y1"_qs}) )
                 gradient->start_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-            for ( const auto& kf : anim.joined({"x2", "y2"}) )
+            for ( const auto& kf : anim.joined({"x2"_qs, "y2"_qs}) )
                 gradient->end_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         }
-        else if ( element.tagName() == "radialGradient" )
+        else if ( element.tagName() == "radialGradient"_qs )
         {
-            if ( !element.hasAttribute("cx") || !element.hasAttribute("cy") || !element.hasAttribute("r") )
+            if ( !element.hasAttribute("cx"_qs) || !element.hasAttribute("cy"_qs) || !element.hasAttribute("r"_qs) )
                 return;
 
             gradient->type.set(model::Gradient::Radial);
 
             QPointF c = QPointF(
-                len_attr(element, "cx"),
-                len_attr(element, "cy")
+                len_attr(element, "cx"_qs),
+                len_attr(element, "cy"_qs)
             );
             gradient->start_point.set(gradient_transform.map(c));
 
-            if ( element.hasAttribute("fx") )
+            if ( element.hasAttribute("fx"_qs) )
                 gradient->highlight.set(gradient_transform.map(QPointF(
-                    len_attr(element, "fx"),
-                    len_attr(element, "fy")
+                    len_attr(element, "fx"_qs),
+                    len_attr(element, "fy"_qs)
                 )));
             else
                 gradient->highlight.set(gradient_transform.map(c));
 
             gradient->end_point.set(gradient_transform.map(QPointF(
-                c.x() + len_attr(element, "r"), c.y()
+                c.x() + len_attr(element, "r"_qs), c.y()
             )));
 
 
             auto anim = parse_animated(element);
-            for ( const auto& kf : anim.joined({"cx", "cy"}) )
+            for ( const auto& kf : anim.joined({"cx"_qs, "cy"_qs}) )
                 gradient->start_point.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
-            for ( const auto& kf : anim.joined({"fx", "fy"}) )
+            for ( const auto& kf : anim.joined({"fx"_qs, "fy"_qs}) )
                 gradient->highlight.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
-            for ( const auto& kf : anim.joined({"cx", "cy", "r"}) )
+            for ( const auto& kf : anim.joined({"cx"_qs, "cy"_qs, "r"_qs}) )
                 gradient->end_point.set_keyframe(kf.time,
                     gradient_transform.map(QPointF{kf.values[0].vector()[0] + kf.values[2].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
@@ -367,7 +367,7 @@ private:
 
         gradient->name.set(id);
         gradient->colors.set(colors);
-        brush_styles["#"+id] = gradient.get();
+        brush_styles["#"_qs+id] = gradient.get();
         document->assets()->gradients->values.insert(std::move(gradient));
     }
 
@@ -375,7 +375,7 @@ private:
     {
         Style style = parent_style;
 
-        auto class_names_list = element.attribute("class").split(" ",
+        auto class_names_list = element.attribute("class"_qs).split(" "_qs,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -389,11 +389,11 @@ private:
                 rule.merge_into(style);
         }
 
-        if ( element.hasAttribute("style") )
+        if ( element.hasAttribute("style"_qs) )
         {
-            for ( const auto& item : element.attribute("style").split(';') )
+            for ( const auto& item : element.attribute("style"_qs).split(';'_qc) )
             {
-                auto split = ::utils::split_ref(item, ':');
+                auto split = ::utils::split_ref(item, ':'_qc);
                 if ( split.size() == 2 )
                 {
                     QString name = split[0].trimmed().toString();
@@ -412,10 +412,10 @@ private:
 
         for ( auto it = style.map.begin(); it != style.map.end(); )
         {
-            if ( it->second == "inherit" )
+            if ( it->second == "inherit"_qs )
             {
-                QString parent = parent_style.get(it->first, "");
-                if ( parent.isEmpty() || parent == "inherit" )
+                QString parent = parent_style.get(it->first, ""_qs);
+                if ( parent.isEmpty() || parent == "inherit"_qs )
                 {
                     it = style.map.erase(it);
                     continue;
@@ -426,20 +426,20 @@ private:
             ++it;
         }
 
-        if ( !style.contains("fill") )
-            style.set("fill", parent_style.get("fill"));
+        if ( !style.contains("fill"_qs) )
+            style.set("fill"_qs, parent_style.get("fill"_qs));
 
-        style.color = parse_color(style.get("color", ""), parent_style.color);
+        style.color = parse_color(style.get("color"_qs, ""_qs), parent_style.color);
         return style;
     }
 
     bool handle_mask(const ParseFuncArgs& args)
     {
         QString mask_ref;
-        if ( args.element.hasAttribute("clip-path") )
-            mask_ref = args.element.attribute("clip-path");
-        else if ( args.element.hasAttribute("mask") )
-            mask_ref = args.element.attribute("mask");
+        if ( args.element.hasAttribute("clip-path"_qs) )
+            mask_ref = args.element.attribute("clip-path"_qs);
+        else if ( args.element.hasAttribute("mask"_qs) )
+            mask_ref = args.element.attribute("mask"_qs);
 
         if ( mask_ref.isEmpty() )
             return false;
@@ -462,17 +462,17 @@ private:
 
         QDomElement element = args.element;
 
-        QDomElement trans_copy = dom.createElement("g");
-        trans_copy.setAttribute("style", element.attribute("style"));
-        element.removeAttribute("style");
-        trans_copy.setAttribute("transform", element.attribute("transform"));
-        element.removeAttribute("transform");
+        QDomElement trans_copy = dom.createElement("g"_qs);
+        trans_copy.setAttribute("style"_qs, element.attribute("style"_qs));
+        element.removeAttribute("style"_qs);
+        trans_copy.setAttribute("transform"_qs, element.attribute("transform"_qs));
+        element.removeAttribute("transform"_qs);
 
         for ( const auto& attr : detail::css_atrrs )
             element.removeAttribute(attr);
 
         Style mask_style;
-        mask_style["stroke"] = "none";
+        mask_style["stroke"_qs] = "none"_qs;
         parse_g_to_layer({
             mask_element,
             &layer->shapes,
@@ -511,20 +511,20 @@ private:
         auto bb = node->local_bounding_rect(0);
         bool anchor_from_inkscape = false;
         QPointF center = bb.center();
-        if ( element.hasAttributeNS(detail::xmlns.at("inkscape"), "transform-center-x") )
+        if ( element.hasAttributeNS(detail::xmlns.at("inkscape"_qs), "transform-center-x"_qs) )
         {
             anchor_from_inkscape = true;
-            qreal ix = element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-x").toDouble();
-            qreal iy = -element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-y").toDouble();
+            qreal ix = element.attributeNS(detail::xmlns.at("inkscape"_qs), "transform-center-x"_qs).toDouble();
+            qreal iy = -element.attributeNS(detail::xmlns.at("inkscape"_qs), "transform-center-y"_qs).toDouble();
             center += QPointF(ix, iy);
         }
 
         bool anchor_from_rotate = false;
 
-        if ( element.hasAttribute("transform") )
+        if ( element.hasAttribute("transform"_qs) )
         {
             auto trans = svg_transform(
-                element.attribute("transform"),
+                element.attribute("transform"_qs),
                 transform->transform_matrix(transform->time())
             );
             transform->set_transform_matrix(trans.transform);
@@ -556,14 +556,14 @@ private:
 
         if ( !anim.apply_motion(transform->position, delta_pos, &node->auto_orient) )
         {
-            for ( const auto& kf : anim.single("translate") )
+            for ( const auto& kf : anim.single("translate"_qs) )
                 transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
         }
 
-        for ( const auto& kf : anim.single("scale") )
+        for ( const auto& kf : anim.single("scale"_qs) )
             transform->scale.set_keyframe(kf.time, QVector2D(kf.values.vector()[0], kf.values.vector()[1]))->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.single("rotate") )
+        for ( const auto& kf : anim.single("rotate"_qs) )
         {
             transform->rotation.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
             if ( kf.values.vector().size() == 3 )
@@ -590,21 +590,21 @@ private:
             auto args = double_args(match.captured(2));
             if ( args.empty() )
             {
-                warning("Missing transformation parameters");
+                warning("Missing transformation parameters"_qs);
                 continue;
             }
 
             QString name = match.captured(1);
 
-            if ( name == "translate" )
+            if ( name == "translate"_qs )
             {
                 info.transform.translate(args[0], args.size() > 1 ? args[1] : 0);
             }
-            else if ( name == "scale" )
+            else if ( name == "scale"_qs )
             {
                 info.transform.scale(args[0], (args.size() > 1 ? args[1] : args[0]));
             }
-            else if ( name == "rotate" )
+            else if ( name == "rotate"_qs )
             {
                 qreal ang = args[0];
                 if ( args.size() > 2 )
@@ -622,7 +622,7 @@ private:
                     info.transform.rotate(ang);
                 }
             }
-            else if ( name == "skewX" )
+            else if ( name == "skewX"_qs )
             {
                 info.transform *= QTransform(
                     1, 0, 0,
@@ -630,7 +630,7 @@ private:
                     0, 0, 1
                 );
             }
-            else if ( name == "skewY" )
+            else if ( name == "skewY"_qs )
             {
                 info.transform *= QTransform(
                     1, qTan(args[0]), 0,
@@ -638,7 +638,7 @@ private:
                     0, 0, 1
                 );
             }
-            else if ( name == "matrix" )
+            else if ( name == "matrix"_qs )
             {
                 if ( args.size() == 6 )
                 {
@@ -650,12 +650,12 @@ private:
                 }
                 else
                 {
-                    warning("Wrong translation matrix");
+                    warning("Wrong translation matrix"_qs);
                 }
             }
             else
             {
-                warning(QString("Unknown transformation %1").arg(name));
+                warning(QStringLiteral("Unknown transformation %1").arg(name));
             }
 
         }
@@ -681,32 +681,32 @@ private:
 
     void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
     {
-        if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
+        if ( style.get("display"_qs) == "none"_qs || style.get("visibility"_qs) == "hidden"_qs )
             node->visible.set(false);
-        node->locked.set(attr(element, "sodipodi", "insensitive") == "true");
-        node->set("opacity", percent_1(style.get("opacity", "1")));
-        node->get("transform").value<model::Transform*>();
+        node->locked.set(attr(element, "sodipodi"_qs, "insensitive"_qs) == "true"_qs);
+        node->set("opacity"_qs, percent_1(style.get("opacity"_qs, "1"_qs)));
+        node->get("transform"_qs).value<model::Transform*>();
     }
 
     void set_name(model::DocumentNode* node, const QDomElement& element)
     {
-        QString name = attr(element, "inkscape", "label");
+        QString name = attr(element, "inkscape"_qs, "label"_qs);
         if ( name.isEmpty() )
         {
-            name = attr(element, "android", "name");
+            name = attr(element, "android"_qs, "name"_qs);
             if ( name.isEmpty() )
-                name = element.attribute("id");
+                name = element.attribute("id"_qs);
         }
         node->name.set(name);
     }
 
     void add_style_shapes(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString paint_order = style.get("paint-order", "normal");
-        if ( paint_order == "normal" )
-            paint_order = "fill stroke";
+        QString paint_order = style.get("paint-order"_qs, "normal"_qs);
+        if ( paint_order == "normal"_qs )
+            paint_order = "fill stroke"_qs;
 
-        for ( const auto& sr : paint_order.split(' ',
+        for ( const auto& sr : paint_order.split(' '_qc,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -714,9 +714,9 @@ private:
 #endif
         ) )
         {
-            if ( sr == "fill" )
+            if ( sr == "fill"_qs )
                 add_fill(args, shapes, style);
-            else if ( sr == "stroke" )
+            else if ( sr == "stroke"_qs )
                 add_stroke(args, shapes, style);
         }
     }
@@ -726,24 +726,24 @@ private:
                             model::AnimatedProperty<float>& opacity,
                             Style* style)
     {
-        if ( !anim.has("display") )
+        if ( !anim.has("display"_qs) )
             return;
 
         if ( opacity.keyframe_count() > 2 )
         {
-            warning("Either animate `opacity` or `display`, not both");
+            warning("Either animate `opacity` or `display`, not both"_qs);
             return;
         }
 
         if ( style )
-            style->map.erase("display");
+            style->map.erase("display"_qs);
 
         model::KeyframeTransition hold;
         hold.set_hold(true);
 
-        for ( const auto& kf : anim.single("display") )
+        for ( const auto& kf : anim.single("display"_qs) )
         {
-            opacity.set_keyframe(kf.time, kf.values.string() == "none" ? 0 : 1)->set_transition(hold);
+            opacity.set_keyframe(kf.time, kf.values.string() == "none"_qs ? 0 : 1)->set_transition(hold);
         }
 
         node->visible.set(true);
@@ -751,28 +751,28 @@ private:
 
     void add_stroke(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString stroke_color = style.get("stroke", "transparent");
-        if ( stroke_color == "none" )
+        QString stroke_color = style.get("stroke"_qs, "transparent"_qs);
+        if ( stroke_color == "none"_qs )
             return;
 
         auto stroke = std::make_unique<model::Stroke>(document);
         set_styler_style(stroke.get(), stroke_color, style.color);
 
-        stroke->opacity.set(percent_1(style.get("stroke-opacity", "1")));
-        stroke->width.set(parse_unit(style.get("stroke-width", "1")));
+        stroke->opacity.set(percent_1(style.get("stroke-opacity"_qs, "1"_qs)));
+        stroke->width.set(parse_unit(style.get("stroke-width"_qs, "1"_qs)));
 
-        stroke->cap.set(line_cap(style.get("stroke-linecap", "butt")));
-        stroke->join.set(line_join(style.get("stroke-linejoin", "miter")));
-        stroke->miter_limit.set(parse_unit(style.get("stroke-miterlimit", "4")));
+        stroke->cap.set(line_cap(style.get("stroke-linecap"_qs, "butt"_qs)));
+        stroke->join.set(line_join(style.get("stroke-linejoin"_qs, "miter"_qs)));
+        stroke->miter_limit.set(parse_unit(style.get("stroke-miterlimit"_qs, "4"_qs)));
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : anim.single("stroke") )
+        for ( const auto& kf : anim.single("stroke"_qs) )
             stroke->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.single("stroke-opacity") )
+        for ( const auto& kf : anim.single("stroke-opacity"_qs) )
             stroke->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.single("stroke-width") )
+        for ( const auto& kf : anim.single("stroke-width"_qs) )
             stroke->width.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         display_to_opacity(stroke.get(), anim, stroke->opacity, nullptr);
@@ -782,7 +782,7 @@ private:
 
     void set_styler_style(model::Styler* styler, const QString& color_str, const QColor& current_color)
     {
-        if ( !color_str.startsWith("url") )
+        if ( !color_str.startsWith("url"_qs) )
         {
             styler->color.set(parse_color(color_str, current_color));
             return;
@@ -805,23 +805,23 @@ private:
 
     void add_fill(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString fill_color = style.get("fill", "");
+        QString fill_color = style.get("fill"_qs, ""_qs);
 
         auto fill = std::make_unique<model::Fill>(document);
         set_styler_style(fill.get(), fill_color, style.color);
-        fill->opacity.set(percent_1(style.get("fill-opacity", "1")));
+        fill->opacity.set(percent_1(style.get("fill-opacity"_qs, "1"_qs)));
 
-        if ( style.get("fill-rule", "") == "evenodd" )
+        if ( style.get("fill-rule"_qs, ""_qs) == "evenodd"_qs )
             fill->fill_rule.set(model::Fill::EvenOdd);
 
         auto anim = parse_animated(args.element);
-        for ( const auto& kf : anim.single("fill") )
+        for ( const auto& kf : anim.single("fill"_qs) )
             fill->color.set_keyframe(kf.time, kf.values.color())->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.single("fill-opacity") )
+        for ( const auto& kf : anim.single("fill-opacity"_qs) )
             fill->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
-        if ( fill_color == "none" )
+        if ( fill_color == "none"_qs )
             fill->visible.set(false);
 
         display_to_opacity(fill.get(), anim, fill->opacity, nullptr);
@@ -831,7 +831,7 @@ private:
 
     QColor parse_color(const QString& color_str, const QColor& current_color)
     {
-        if ( color_str.isEmpty() || color_str == "currentColor" )
+        if ( color_str.isEmpty() || color_str == "currentColor"_qs )
             return current_color;
 
         return glaxnimate::io::svg::parse_color(color_str);
@@ -841,15 +841,15 @@ private:
     {
         ShapeCollection shapes;
         auto rect = push<model::Rect>(shapes);
-        qreal w = len_attr(args.element, "width", 0);
-        qreal h = len_attr(args.element, "height", 0);
+        qreal w = len_attr(args.element, "width"_qs, 0);
+        qreal h = len_attr(args.element, "height"_qs, 0);
         rect->position.set(QPointF(
-            len_attr(args.element, "x", 0) + w / 2,
-            len_attr(args.element, "y", 0) + h / 2
+            len_attr(args.element, "x"_qs, 0) + w / 2,
+            len_attr(args.element, "y"_qs, 0) + h / 2
         ));
         rect->size.set(QSizeF(w, h));
-        qreal rx = len_attr(args.element, "rx", 0);
-        qreal ry = len_attr(args.element, "ry", 0);
+        qreal rx = len_attr(args.element, "rx"_qs, 0);
+        qreal ry = len_attr(args.element, "ry"_qs, 0);
         rect->rounded.set(qMax(rx, ry));
 
 
@@ -858,16 +858,16 @@ private:
         /// \todo handle offset
         anim.apply_motion(rect->position);
 
-        for ( const auto& kf : anim.joined({"x", "y", "width", "height"}) )
+        for ( const auto& kf : anim.joined({"x"_qs, "y"_qs, "width"_qs, "height"_qs}) )
             rect->position.set_keyframe(kf.time, {
                 kf.values[0].vector()[0] + kf.values[2].vector()[0] / 2,
                 kf.values[1].vector()[0] + kf.values[3].vector()[0] / 2
             })->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.joined({"width", "height"}) )
+        for ( const auto& kf : anim.joined({"width"_qs, "height"_qs}) )
             rect->size.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
 
-        for ( const auto& kf : anim.joined({"rx", "ry"}) )
+        for ( const auto& kf : anim.joined({"rx"_qs, "ry"_qs}) )
             rect->rounded.set_keyframe(kf.time, qMax(kf.values[0].vector()[0], kf.values[1].vector()[0]))->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -878,18 +878,18 @@ private:
         ShapeCollection shapes;
         auto ellipse = push<model::Ellipse>(shapes);
         ellipse->position.set(QPointF(
-            len_attr(args.element, "cx", 0),
-            len_attr(args.element, "cy", 0)
+            len_attr(args.element, "cx"_qs, 0),
+            len_attr(args.element, "cy"_qs, 0)
         ));
-        qreal rx = len_attr(args.element, "rx", 0);
-        qreal ry = len_attr(args.element, "ry", 0);
+        qreal rx = len_attr(args.element, "rx"_qs, 0);
+        qreal ry = len_attr(args.element, "ry"_qs, 0);
         ellipse->size.set(QSizeF(rx * 2, ry * 2));
 
         auto anim = parse_animated(args.element);
         anim.apply_motion(ellipse->position);
-        for ( const auto& kf : anim.joined({"cx", "cy"}) )
+        for ( const auto& kf : anim.joined({"cx"_qs, "cy"_qs}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-        for ( const auto& kf : anim.joined({"rx", "ry"}) )
+        for ( const auto& kf : anim.joined({"rx"_qs, "ry"_qs}) )
             ellipse->size.set_keyframe(kf.time, {kf.values[0].vector()[0]*2, kf.values[1].vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -900,17 +900,17 @@ private:
         ShapeCollection shapes;
         auto ellipse = push<model::Ellipse>(shapes);
         ellipse->position.set(QPointF(
-            len_attr(args.element, "cx", 0),
-            len_attr(args.element, "cy", 0)
+            len_attr(args.element, "cx"_qs, 0),
+            len_attr(args.element, "cy"_qs, 0)
         ));
-        qreal d = len_attr(args.element, "r", 0) * 2;
+        qreal d = len_attr(args.element, "r"_qs, 0) * 2;
         ellipse->size.set(QSizeF(d, d));
 
         auto anim = parse_animated(args.element);
         anim.apply_motion(ellipse->position);
-        for ( const auto& kf : anim.joined({"cx", "cy"}) )
+        for ( const auto& kf : anim.joined({"cx"_qs, "cy"_qs}) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
-        for ( const auto& kf : anim.single({"r"}) )
+        for ( const auto& kf : anim.single({"r"_qs}) )
             ellipse->size.set_keyframe(kf.time, {kf.values.vector()[0]*2, kf.values.vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
@@ -929,7 +929,7 @@ private:
             case Inkscape:
                 if ( args.in_group )
                     parse_g_to_shape(args);
-                else if ( attr(args.element, "inkscape", "groupmode") == "layer" )
+                else if ( attr(args.element, "inkscape"_qs, "groupmode"_qs) == "layer"_qs )
                     parse_g_to_layer(args);
                 else
                     parse_g_to_shape(args);
@@ -974,14 +974,14 @@ private:
 
         auto anim = parse_animated(args.element);
 
-        for ( const auto& kf : anim.single("opacity") )
+        for ( const auto& kf : anim.single("opacity"_qs) )
             g_node->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         display_to_opacity(g_node, anim, g_node->opacity, &style);
 
         set_name(g_node, args.element);
         // Avoid doubling opacity values
-        style.map.erase("opacity");
+        style.map.erase("opacity"_qs);
         parse_children(args);
         parse_transform(args.element, g_node, transform);
     }
@@ -1023,15 +1023,15 @@ private:
     {
         math::bezier::Bezier bez;
         bez.add_point(QPointF(
-            len_attr(args.element, "x1", 0),
-            len_attr(args.element, "y1", 0)
+            len_attr(args.element, "x1"_qs, 0),
+            len_attr(args.element, "y1"_qs, 0)
         ));
         bez.line_to(QPointF(
-            len_attr(args.element, "x2", 0),
-            len_attr(args.element, "y2", 0)
+            len_attr(args.element, "x2"_qs, 0),
+            len_attr(args.element, "y2"_qs, 0)
         ));
         auto path = parse_bezier_impl_single(args, bez);
-        for ( const auto& kf : parse_animated(args.element).joined({"x1", "y1", "x2", "y2"}) )
+        for ( const auto& kf : parse_animated(args.element).joined({"x1"_qs, "y1"_qs, "x2"_qs, "y2"_qs}) )
         {
             math::bezier::Bezier bez;
             bez.add_point({kf.values[0].vector()[0], kf.values[1].vector()[0]});
@@ -1047,7 +1047,7 @@ private:
         if ( coords.size() < 4 )
         {
             if ( !coords.empty() )
-                warning("Not enough `points` for `polygon` / `polyline`");
+                warning("Not enough `points` for `polygon` / `polyline`"_qs);
             return bez;
         }
 
@@ -1064,11 +1064,11 @@ private:
 
     void handle_poly(const ParseFuncArgs& args, bool close)
     {
-        auto path = parse_bezier_impl_single(args, build_poly(double_args(args.element.attribute("points", "")), close));
+        auto path = parse_bezier_impl_single(args, build_poly(double_args(args.element.attribute("points"_qs, ""_qs)), close));
         if ( !path )
             return;
 
-        for ( const auto& kf : parse_animated(args.element).single("points") )
+        for ( const auto& kf : parse_animated(args.element).single("points"_qs) )
             path->shape.set_keyframe(kf.time, build_poly(kf.values.vector(), close))->set_transition(kf.transition);
 
     }
@@ -1087,24 +1087,24 @@ private:
     {
         if ( parse_star(args) )
             return;
-        QString d = args.element.attribute("d");
+        QString d = args.element.attribute("d"_qs);
         math::bezier::MultiBezier bez = PathDParser(d).parse();
         /// \todo sodipodi:nodetypes
         auto paths = parse_bezier_impl(args, bez);
 
-        path_animation(paths, parse_animated(args.element), "d" );
+        path_animation(paths, parse_animated(args.element), "d"_qs );
     }
 
     bool parse_star(const ParseFuncArgs& args)
     {
-        if ( attr(args.element, "sodipodi", "type") != "star" )
+        if ( attr(args.element, "sodipodi"_qs, "type"_qs) != "star"_qs )
             return false;
 
-        qreal randomized = attr(args.element, "inkscape", "randomized", "0").toDouble();
+        qreal randomized = attr(args.element, "inkscape"_qs, "randomized"_qs, "0"_qs).toDouble();
         if ( !qFuzzyCompare(randomized, 0.0) )
             return false;
 
-        qreal rounded = attr(args.element, "inkscape", "rounded", "0").toDouble();
+        qreal rounded = attr(args.element, "inkscape"_qs, "rounded"_qs, "0"_qs).toDouble();
         if ( !qFuzzyCompare(rounded, 0.0) )
             return false;
 
@@ -1112,22 +1112,22 @@ private:
         ShapeCollection shapes;
         auto shape = push<model::PolyStar>(shapes);
         shape->points.set(
-            attr(args.element, "sodipodi", "sides").toInt()
+            attr(args.element, "sodipodi"_qs, "sides"_qs).toInt()
         );
-        auto flat = attr(args.element, "inkscape", "flatsided");
+        auto flat = attr(args.element, "inkscape"_qs, "flatsided"_qs);
         shape->type.set(
-            flat == "true" ?
+            flat == "true"_qs ?
             model::PolyStar::Polygon :
             model::PolyStar::Star
         );
         shape->position.set(QPointF(
-            attr(args.element, "sodipodi", "cx").toDouble(),
-            attr(args.element, "sodipodi", "cy").toDouble()
+            attr(args.element, "sodipodi"_qs, "cx"_qs).toDouble(),
+            attr(args.element, "sodipodi"_qs, "cy"_qs).toDouble()
         ));
-        shape->outer_radius.set(attr(args.element, "sodipodi", "r1").toDouble());
-        shape->inner_radius.set(attr(args.element, "sodipodi", "r2").toDouble());
+        shape->outer_radius.set(attr(args.element, "sodipodi"_qs, "r1"_qs).toDouble());
+        shape->inner_radius.set(attr(args.element, "sodipodi"_qs, "r2"_qs).toDouble());
         shape->angle.set(
-            math::rad2deg(attr(args.element, "sodipodi", "arg1").toDouble())
+            math::rad2deg(attr(args.element, "sodipodi"_qs, "arg1"_qs).toDouble())
             +90
         );
 
@@ -1137,8 +1137,8 @@ private:
 
     void parseshape_use(const ParseFuncArgs& args)
     {
-        QString id = attr(args.element, "xlink", "href");
-        if ( !id.startsWith('#') )
+        QString id = attr(args.element, "xlink"_qs, "href"_qs);
+        if ( !id.startsWith('#'_qc) )
             return;
         id.remove(0,  1);
         QDomElement element = element_by_id(id);
@@ -1153,7 +1153,7 @@ private:
         parse_shape({element, &group->shapes, style, true});
 
         group->transform.get()->position.set(
-            QPointF(len_attr(args.element, "x", 0), len_attr(args.element, "y", 0))
+            QPointF(len_attr(args.element, "x"_qs, 0), len_attr(args.element, "y"_qs, 0))
         );
         parse_transform(args.element, group.get(), group->transform.get());
         args.shape_parent->insert(std::move(group));
@@ -1189,7 +1189,7 @@ private:
         auto bitmap = std::make_unique<model::Bitmap>(document);
 
         bool open = false;
-        QString href = attr(args.element, "xlink", "href");
+        QString href = attr(args.element, "xlink"_qs, "href"_qs);
         QUrl url = QUrl(href);
 
         if ( url.isRelative() )
@@ -1204,21 +1204,21 @@ private:
 
         if ( !open )
         {
-            QString path = attr(args.element, "sodipodi", "absref");
+            QString path = attr(args.element, "sodipodi"_qs, "absref"_qs);
             open = open_asset_file(bitmap.get(), path);
         }
         if ( !open )
-            warning(QString("Could not load image %1").arg(href));
+            warning(QStringLiteral("Could not load image %1").arg(href));
 
         auto image = std::make_unique<model::Image>(document);
         image->image.set(document->assets()->images->values.insert(std::move(bitmap)));
 
         QTransform trans;
-        if ( args.element.hasAttribute("transform") )
-            trans = svg_transform(args.element.attribute("transform"), trans).transform;
+        if ( args.element.hasAttribute("transform"_qs) )
+            trans = svg_transform(args.element.attribute("transform"_qs), trans).transform;
         trans.translate(
-            len_attr(args.element, "x", 0),
-            len_attr(args.element, "y", 0)
+            len_attr(args.element, "x"_qs, 0),
+            len_attr(args.element, "y"_qs, 0)
         );
         image->transform->set_transform_matrix(trans);
 
@@ -1227,7 +1227,7 @@ private:
 
     struct TextStyle
     {
-        QString family = "sans-serif";
+        QString family = "sans-serif"_qs;
         int weight = QFont::Normal;
         QFont::Style style = QFont::StyleNormal;
         qreal line_spacing = 0;
@@ -1242,32 +1242,32 @@ private:
 
         Style style = parse_style(args.element, args.parent_style);
 
-        if ( style.contains("font-family") )
-            out.family = style["font-family"];
+        if ( style.contains("font-family"_qs) )
+            out.family = style["font-family"_qs];
 
-        if ( style.contains("font-style") )
+        if ( style.contains("font-style"_qs) )
         {
-            QString slant = style["font-style"];
-            if ( slant == "normal" ) out.style = QFont::StyleNormal;
-            else if ( slant == "italic" ) out.style = QFont::StyleItalic;
-            else if ( slant == "oblique" ) out.style = QFont::StyleOblique;
+            QString slant = style["font-style"_qs];
+            if ( slant == "normal"_qs ) out.style = QFont::StyleNormal;
+            else if ( slant == "italic"_qs ) out.style = QFont::StyleItalic;
+            else if ( slant == "oblique"_qs ) out.style = QFont::StyleOblique;
         }
 
-        if ( style.contains("font-size") )
+        if ( style.contains("font-size"_qs) )
         {
-            QString size = style["font-size"];
+            QString size = style["font-size"_qs];
             static const std::map<QString, int> size_names = {
-                {{"xx-small"}, {8}},
-                {{"x-small"}, {16}},
-                {{"small"}, {32}},
-                {{"medium"}, {64}},
-                {{"large"}, {128}},
-                {{"x-large"}, {256}},
-                {{"xx-large"}, {512}},
+                {{"xx-small"_qs}, {8}},
+                {{"x-small"_qs}, {16}},
+                {{"small"_qs}, {32}},
+                {{"medium"_qs}, {64}},
+                {{"large"_qs}, {128}},
+                {{"x-large"_qs}, {256}},
+                {{"xx-large"_qs}, {512}},
             };
-            if ( size == "smaller" )
+            if ( size == "smaller"_qs )
                 out.size /= 2;
-            else if ( size == "larger" )
+            else if ( size == "larger"_qs )
                 out.size *= 2;
             else if ( size_names.count(size) )
                 out.size = size_names.at(size);
@@ -1275,32 +1275,32 @@ private:
                 out.size = parse_unit(size);
         }
 
-        if ( style.contains("font-weight") )
+        if ( style.contains("font-weight"_qs) )
         {
-            QString weight = style["font-weight"];
-            if ( weight == "bold" )
+            QString weight = style["font-weight"_qs];
+            if ( weight == "bold"_qs )
                 out.weight = 700;
-            else if ( weight == "normal" )
+            else if ( weight == "normal"_qs )
                 out.weight = 400;
-            else if ( weight == "bolder" )
+            else if ( weight == "bolder"_qs )
                 out.weight = qMin(1000, out.weight + 100);
-            else if ( weight == "lighter")
+            else if ( weight == "lighter"_qs)
                 out.weight = qMax(1, out.weight - 100);
             else
                 out.weight = weight.toInt();
         }
 
-        if ( style.contains("line-height") )
-            out.line_spacing = parse_unit(style["line-height"]);
+        if ( style.contains("line-height"_qs) )
+            out.line_spacing = parse_unit(style["line-height"_qs]);
 
 
-        if ( args.element.hasAttribute("xml:space") )
-            out.keep_space = args.element.attribute("xml:space") == "preserve";
+        if ( args.element.hasAttribute("xml:space"_qs) )
+            out.keep_space = args.element.attribute("xml:space"_qs) == "preserve"_qs;
 
-        if ( args.element.hasAttribute("x") )
-            out.pos.setX(len_attr(args.element, "x", 0));
-        if ( args.element.hasAttribute("y") )
-            out.pos.setY(len_attr(args.element, "y", 0));
+        if ( args.element.hasAttribute("x"_qs) )
+            out.pos.setX(len_attr(args.element, "x"_qs, 0));
+        if ( args.element.hasAttribute("y"_qs) )
+            out.pos.setY(len_attr(args.element, "y"_qs, 0));
 
         return out;
     }
@@ -1309,14 +1309,14 @@ private:
     {
         QString trimmed = text.simplified();
         if ( !text.isEmpty() && text.back().isSpace() )
-            trimmed += ' ';
+            trimmed += ' '_qc;
         return trimmed;
     }
 
     void apply_text_style(model::Font* font, const TextStyle& style)
     {
         font->family.set(style.family);
-        font->size.set(unit_convert(style.size, "px", "pt"));
+        font->size.set(unit_convert(style.size, "px"_qs, "pt"_qs));
         QFont qfont;
         qfont.setFamily(style.family);
         qfont.setWeight(QFont::Weight(WeightConverter::convert(style.weight, WeightConverter::css, WeightConverter::qt)));
@@ -1363,7 +1363,7 @@ private:
                     last->position.set(pos + offset);
                     apply_text_style(last->font.get(), style);
 
-                    for ( const auto& kf : anim.joined({"x", "y"}) )
+                    for ( const auto& kf : anim.joined({"x"_qs, "y"_qs}) )
                     {
                         last->position.set_keyframe(
                             kf.time,
@@ -1390,19 +1390,19 @@ private:
 
     void parse_metadata()
     {
-        auto meta = dom.elementsByTagNameNS(xmlns.at("cc"), "Work");
+        auto meta = dom.elementsByTagNameNS(xmlns.at("cc"_qs), "Work"_qs);
         if ( meta.count() == 0 )
             return;
 
-        auto work = query_element({"metadata", "RDF", "Work"}, dom.documentElement());
-        document->info().author = query({"creator", "Agent", "title"}, work);
-        document->info().description = query({"description"}, work);
-        for ( const auto& domnode : ItemCountRange(query_element({"subject", "Bag"}, work).childNodes()) )
+        auto work = query_element({"metadata"_qs, "RDF"_qs, "Work"_qs}, dom.documentElement());
+        document->info().author = query({"creator"_qs, "Agent"_qs, "title"_qs}, work);
+        document->info().description = query({"description"_qs}, work);
+        for ( const auto& domnode : ItemCountRange(query_element({"subject"_qs, "Bag"_qs}, work).childNodes()) )
         {
             if ( domnode.isElement() )
             {
                 auto child = domnode.toElement();
-                if ( child.tagName() == "li" )
+                if ( child.tagName() == "li"_qs )
                     document->info().keywords.push_back(child.text());
 
             }
@@ -1419,24 +1419,24 @@ private:
 };
 
 const std::map<QString, void (glaxnimate::io::svg::SvgParser::Private::*)(const glaxnimate::io::svg::SvgParser::Private::ParseFuncArgs&)> glaxnimate::io::svg::SvgParser::Private::shape_parsers = {
-    {"g",       &glaxnimate::io::svg::SvgParser::Private::parseshape_g},
-    {"rect",    &glaxnimate::io::svg::SvgParser::Private::parseshape_rect},
-    {"ellipse", &glaxnimate::io::svg::SvgParser::Private::parseshape_ellipse},
-    {"circle",  &glaxnimate::io::svg::SvgParser::Private::parseshape_circle},
-    {"line",    &glaxnimate::io::svg::SvgParser::Private::parseshape_line},
-    {"polyline",&glaxnimate::io::svg::SvgParser::Private::parseshape_polyline},
-    {"polygon", &glaxnimate::io::svg::SvgParser::Private::parseshape_polygon},
-    {"path",    &glaxnimate::io::svg::SvgParser::Private::parseshape_path},
-    {"use",     &glaxnimate::io::svg::SvgParser::Private::parseshape_use},
-    {"image",   &glaxnimate::io::svg::SvgParser::Private::parseshape_image},
-    {"text",    &glaxnimate::io::svg::SvgParser::Private::parseshape_text},
+    {"g"_qs,       &glaxnimate::io::svg::SvgParser::Private::parseshape_g},
+    {"rect"_qs,    &glaxnimate::io::svg::SvgParser::Private::parseshape_rect},
+    {"ellipse"_qs, &glaxnimate::io::svg::SvgParser::Private::parseshape_ellipse},
+    {"circle"_qs,  &glaxnimate::io::svg::SvgParser::Private::parseshape_circle},
+    {"line"_qs,    &glaxnimate::io::svg::SvgParser::Private::parseshape_line},
+    {"polyline"_qs,&glaxnimate::io::svg::SvgParser::Private::parseshape_polyline},
+    {"polygon"_qs, &glaxnimate::io::svg::SvgParser::Private::parseshape_polygon},
+    {"path"_qs,    &glaxnimate::io::svg::SvgParser::Private::parseshape_path},
+    {"use"_qs,     &glaxnimate::io::svg::SvgParser::Private::parseshape_use},
+    {"image"_qs,   &glaxnimate::io::svg::SvgParser::Private::parseshape_image},
+    {"text"_qs,    &glaxnimate::io::svg::SvgParser::Private::parseshape_text},
 };
-const QRegularExpression glaxnimate::io::svg::detail::SvgParserPrivate::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
-const QRegularExpression glaxnimate::io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
-const QRegularExpression glaxnimate::io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
-const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"};
-const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::clock_re{R"((?:(?:(?<hours>[0-9]+):)?(?:(?<minutes>[0-9]{2}):)?(?<seconds>[0-9]+(?:\.[0-9]+)?))|(?:(?<timecount>[0-9]+(?:\.[0-9]+)?)(?<unit>h|min|s|ms)))"};
-const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::frame_separator_re{"\\s*;\\s*"};
+const QRegularExpression glaxnimate::io::svg::detail::SvgParserPrivate::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"_qs};
+const QRegularExpression glaxnimate::io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"_qs};
+const QRegularExpression glaxnimate::io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"_qs};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"_qs};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::clock_re{R"((?:(?:(?<hours>[0-9]+):)?(?:(?<minutes>[0-9]{2}):)?(?<seconds>[0-9]+(?:\.[0-9]+)?))|(?:(?<timecount>[0-9]+(?:\.[0-9]+)?)(?<unit>h|min|s|ms)))"_qs};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::frame_separator_re{"\\s*;\\s*"_qs};
 
 glaxnimate::io::svg::SvgParser::SvgParser(
     QIODevice* device,
@@ -1482,7 +1482,7 @@ QColor glaxnimate::io::svg::parse_color(const QString& string)
         return {};
 
     // #fff #112233
-    if ( string[0] == '#' )
+    if ( string[0] == '#'_qc )
     {
         if ( string.size() == 4 || string.size() == 5 )
         {
@@ -1498,43 +1498,43 @@ QColor glaxnimate::io::svg::parse_color(const QString& string)
     }
 
     // transparent
-    if ( string == "transparent" || string == "none" )
+    if ( string == "transparent"_qs || string == "none"_qs )
         return QColor(0, 0, 0, 0);
 
     QRegularExpressionMatch match;
 
     // rgba(123, 123, 123, 0.7)
-    static QRegularExpression rgba{R"(^rgba\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9.eE]+)\s*\)$)"};
+    static QRegularExpression rgba{R"(^rgba\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9.eE]+)\s*\)$)"_qs};
     match = rgba.match(string);
     if ( match.hasMatch() )
         return QColor(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt(), match.captured(4).toDouble() * 255);
 
     // rgb(123, 123, 123)
-    static QRegularExpression rgb{R"(^rgb\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$)"};
+    static QRegularExpression rgb{R"(^rgb\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$)"_qs};
     match = rgb.match(string);
     if ( match.hasMatch() )
         return QColor(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt());
 
     // rgba(60%, 30%, 20%, 0.7)
-    static QRegularExpression rgba_pc{R"(^rgba\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"};
+    static QRegularExpression rgba_pc{R"(^rgba\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"_qs};
     match = rgba_pc.match(string);
     if ( match.hasMatch() )
         return QColor::fromRgbF(match.captured(1).toDouble() / 100, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100, match.captured(4).toDouble());
 
     // rgb(60%, 30%, 20%)
-    static QRegularExpression rgb_pc{R"(^rgb\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"};
+    static QRegularExpression rgb_pc{R"(^rgb\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"_qs};
     match = rgb_pc.match(string);
     if ( match.hasMatch() )
         return QColor::fromRgbF(match.captured(1).toDouble() / 100, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100);
 
     // hsl(60, 30%, 20%)
-    static QRegularExpression hsl{R"(^hsl\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"};
+    static QRegularExpression hsl{R"(^hsl\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"_qs};
     match = rgb_pc.match(string);
     if ( match.hasMatch() )
         return QColor::fromHslF(match.captured(1).toDouble() / 360, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100);
 
     // hsla(60, 30%, 20%, 0.7)
-    static QRegularExpression hsla{R"(^hsla\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"};
+    static QRegularExpression hsla{R"(^hsla\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"_qs};
     match = rgb_pc.match(string);
     if ( match.hasMatch() )
         return QColor::fromHslF(match.captured(1).toDouble() / 360, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100, match.captured(4).toDouble());

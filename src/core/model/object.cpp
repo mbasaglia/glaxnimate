@@ -54,7 +54,7 @@ void glaxnimate::model::Object::clone_into(glaxnimate::model::Object* dest) cons
 {
     if ( dest->metaObject() != metaObject() )
     {
-        app::log::Log log("Object", type_name());
+        app::log::Log log("Object"_qs, type_name());
         log.stream(app::log::Error) << "trying to clone into" << dest->type_name() << "from" << type_name();
         log.stream(app::log::Info) << "make sure clone_covariant is implemented for" << type_name() << "or use GLAXNIMATE_OBJECT";
         return;
@@ -120,12 +120,12 @@ const std::vector<glaxnimate::model::BaseProperty*>& glaxnimate::model::Object::
 
 QString glaxnimate::model::Object::type_name() const
 {
-    return detail::naked_type_name(metaObject()->className());
+    return detail::naked_type_name(QString::fromLatin1(metaObject()->className()));
 }
 
 QString glaxnimate::model::detail::naked_type_name(QString class_name)
 {
-    int ns = class_name.lastIndexOf(":");
+    int ns = class_name.lastIndexOf(":"_qs);
     if ( ns != -1 )
         class_name = class_name.mid(ns+1);
     return class_name;

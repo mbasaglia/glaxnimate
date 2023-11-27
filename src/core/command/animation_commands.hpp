@@ -270,8 +270,8 @@ private:
 class SetPositionBezier : public MergeableCommand<Id::SetMultipleAnimated, SetPositionBezier>
 {
 public:
-    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier after, bool commit, const QString& name = "");
-    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier before, math::bezier::Bezier after, bool commit, const QString& name = "");
+    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier after, bool commit, const QString& name = {});
+    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier before, math::bezier::Bezier after, bool commit, const QString& name = {});
 
     void undo() override;
 

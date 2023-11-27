@@ -23,7 +23,7 @@ public:
 
     QIcon tree_icon() const override
     {
-        return QIcon::fromTheme("draw-rectangle");
+        return QIcon::fromTheme("draw-rectangle"_qs);
     }
 
     QString type_name_human() const override

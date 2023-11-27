@@ -61,7 +61,7 @@ private:
 
         void lex()
         {
-            static QString cmds = "MLHVCSQTAZ";
+            static QString cmds = QStringLiteral("MLHVCSQTAZ");
 
             ch = d[off];
 
@@ -72,7 +72,7 @@ private:
                     tokens.emplace_back(ch.unicode());
                     next();
                 }
-                else if ( ch.isSpace() || ch == ',')
+                else if ( ch.isSpace() || ch == QChar::fromLatin1(',') )
                 {
                     next();
                 }
@@ -87,7 +87,7 @@ private:
         {
             lexed.clear();
 
-            if ( ch == '+' || ch == '-' )
+            if ( ch == QChar::fromLatin1('+') || ch == QChar::fromLatin1('-') )
             {
                 lexed += ch;
                 if ( !next() )
@@ -97,14 +97,14 @@ private:
             if ( ch.isDigit() )
                 lex_value_int();
 
-            if ( ch == '.' )
+            if ( ch == QChar::fromLatin1('.') )
             {
                 lexed += ch;
                 if ( !next() )
                     return;
                 lex_value_decimal();
             }
-            else if ( ch.toUpper() == 'E' )
+            else if ( ch.toUpper() == QChar::fromLatin1('E') )
             {
                 lexed += ch;
                 if ( !next() )
@@ -135,7 +135,7 @@ private:
         {
             lex_value_int();
 
-            if ( ch.toUpper() == 'E' )
+            if ( ch.toUpper() == QChar::fromLatin1('E') )
             {
                 lexed += ch;
                 if ( !next() )
@@ -146,7 +146,7 @@ private:
 
         void lex_value_exponent()
         {
-            if ( ch == '+' || ch == '-' )
+            if ( ch == QChar::fromLatin1('+') || ch == QChar::fromLatin1('-') )
             {
                 lexed += ch;
                 if ( !next() )

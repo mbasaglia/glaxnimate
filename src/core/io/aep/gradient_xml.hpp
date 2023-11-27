@@ -18,6 +18,22 @@ CosObject xml_map(const QDomElement& element);
 CosObject xml_list(const QDomElement& element);
 CosValue xml_value(const QDomElement& element);
 
+
+inline int qkey(int key)
+{
+    return key;
+}
+
+inline QString qkey(const char* key)
+{
+    return QString::fromLatin1(key);
+}
+
+inline const QString& qkey(const QString& key)
+{
+    return key;
+}
+
 inline const CosValue& get_value(const CosObject& v, const QString& key)
 {
     return v->at(key);
@@ -47,7 +63,7 @@ const CosValue& get(const V& v)
 template<class V, class H, class... T>
 const CosValue& get(const V& v, const H& key, const T&... keys)
 {
-    return get(get_value(v, key), keys...);
+    return get(get_value(v, qkey(key)), keys...);
 }
 
 template<CosValue::Index Ind, class V, class... T>

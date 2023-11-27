@@ -16,7 +16,7 @@ glaxnimate::io::Autoreg<glaxnimate::io::raster::SpritesheetFormat> glaxnimate::i
 QStringList glaxnimate::io::raster::SpritesheetFormat::extensions() const
 {
     QStringList formats;
-    formats << "png";
+    formats << "png"_qs;
     for ( const auto& fmt : QImageWriter::supportedImageFormats() )
         if ( fmt != "jpg" && fmt != "svg" )
             formats << QString::fromUtf8(fmt);
@@ -29,10 +29,10 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::raster::Spriteshee
     int last_frame = comp->animation->last_frame.get();
     int frames = last_frame - first_frame;
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        app::settings::Setting("frame_width", tr("Frame Width"), tr("Width of each frame"), comp->width.get(), 1, 999'999),
-        app::settings::Setting("frame_height", tr("Frame Height"), tr("Height of each frame"), comp->height.get(), 1, 999'999),
-        app::settings::Setting("columns", tr("Columns"), tr("Number of columns in the sheet"), std::ceil(math::sqrt(frames)), 1, 64),
-        app::settings::Setting("frame_step", tr("Time Step"), tr("By how much each rendered frame should increase time (in frames)"), 1, 1, 16),
+        app::settings::Setting("frame_width"_qs, tr("Frame Width"), tr("Width of each frame"), comp->width.get(), 1, 999'999),
+        app::settings::Setting("frame_height"_qs, tr("Frame Height"), tr("Height of each frame"), comp->height.get(), 1, 999'999),
+        app::settings::Setting("columns"_qs, tr("Columns"), tr("Number of columns in the sheet"), std::ceil(math::sqrt(frames)), 1, 64),
+        app::settings::Setting("frame_step"_qs, tr("Time Step"), tr("By how much each rendered frame should increase time (in frames)"), 1, 1, 16),
     });
 }
 
@@ -40,10 +40,10 @@ bool glaxnimate::io::raster::SpritesheetFormat::on_save(QIODevice& file, const Q
 {
     Q_UNUSED(filename);
 
-    int frame_w = setting_values["frame_width"].toInt();
-    int frame_h = setting_values["frame_height"].toInt();
-    int columns = setting_values["columns"].toInt();
-    int frame_step = setting_values["frame_step"].toInt();
+    int frame_w = setting_values["frame_width"_qs].toInt();
+    int frame_h = setting_values["frame_height"_qs].toInt();
+    int columns = setting_values["columns"_qs].toInt();
+    int frame_step = setting_values["frame_step"_qs].toInt();
 
     if ( frame_w <= 0 || frame_h <= 0 || columns <= 0 || frame_step <= 0 )
         return false;

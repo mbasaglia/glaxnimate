@@ -14,6 +14,7 @@
 
 #include "model/animation/frame_time.hpp"
 #include "model/factory.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 class QUndoCommand;
 

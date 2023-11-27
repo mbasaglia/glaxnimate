@@ -38,13 +38,13 @@ public:
         switch ( s )
         {
             case Info:
-                return "Info";
+                return QStringLiteral("Info");
             case Warning:
-                return "Warning";
+                return QStringLiteral("Warning");
             case Error:
-                return "Error";
+                return QStringLiteral("Error");
             default:
-                return "?";
+                return QStringLiteral("?");
         }
     }
 

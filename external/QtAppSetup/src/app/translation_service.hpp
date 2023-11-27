@@ -27,7 +27,7 @@ public:
     /**
      * \brief Initialize the resource system
      */
-    void initialize(QString default_lang_code="en");
+    void initialize(QString default_lang_code=QStringLiteral("en"));
 
     /**
      *  \brief Determine human readable language name from ISO 639-1 code

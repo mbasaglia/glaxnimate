@@ -17,9 +17,9 @@ class SvgFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString slug() const override { return "svg"; }
+    QString slug() const override { return "svg"_qs; }
     QString name() const override { return tr("SVG"); }
-    QStringList extensions() const override { return {"svg", "svgz"}; }
+    QStringList extensions() const override { return {"svg"_qs, "svgz"_qs}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
     std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition*) const override;

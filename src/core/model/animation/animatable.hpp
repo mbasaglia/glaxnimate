@@ -25,7 +25,7 @@
  */
 #define GLAXNIMATE_ANIMATABLE(type, name, ...)                                  \
 public:                                                                         \
-    glaxnimate::model::AnimatedProperty<type> name{this, #name, __VA_ARGS__};   \
+    glaxnimate::model::AnimatedProperty<type> name{this, QStringLiteral(#name), __VA_ARGS__};   \
     glaxnimate::model::AnimatableBase* get_##name() { return &name; }           \
 private:                                                                        \
     Q_PROPERTY(glaxnimate::model::AnimatableBase* name READ get_##name)         \

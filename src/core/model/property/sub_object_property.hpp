@@ -10,7 +10,7 @@
 
 #define GLAXNIMATE_SUBOBJECT(type, name)                    \
 public:                                                     \
-    SubObjectProperty<type> name{this, #name};              \
+    SubObjectProperty<type> name{this, QStringLiteral(#name)};              \
     type* get_##name() { return name.get(); }               \
 private:                                                    \
     Q_PROPERTY(type* name READ get_##name)                  \

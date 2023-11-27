@@ -72,10 +72,10 @@ private:
             return;
         object_ids[image] = next_asset++;
 
-        obj.set("name", name);
-        obj.set("width", image->width.get());
-        obj.set("height", image->height.get());
-        obj.set("assetId", asset_id);
+        obj.set("name"_qs, name);
+        obj.set("width"_qs, image->width.get());
+        obj.set("height"_qs, image->height.get());
+        obj.set("assetId"_qs, asset_id);
 
         serializer.write_object(obj);
 
@@ -85,7 +85,7 @@ private:
             auto contents = types.object(TypeId::FileAssetContents);
             if ( !contents )
                 return;
-            obj.set("bytes", data);
+            obj.set("bytes"_qs, data);
         }
     }
 
@@ -110,27 +110,27 @@ private:
         animations.clear();
 
         if ( !write_object(TypeId::Artboard, {
-            {"name", comp->name.get()},
-            {"width", size.width()},
-            {"height", size.height()},
-            {"x", (24 + size.width()) * (next_artboard - 1)}
+            {"name"_qs, comp->name.get()},
+            {"width"_qs, size.width()},
+            {"height"_qs, size.height()},
+            {"x"_qs, (24 + size.width()) * (next_artboard - 1)}
         }) ) return;
 
         for ( const auto& shape : comp->shapes )
             write_shape(shape.get(), 0);
 
-        write_object(TypeId::LinearAnimation, {{"loopValue", 1}});
+        write_object(TypeId::LinearAnimation, {{"loopValue"_qs, 1}});
         for ( const auto& anim : animations )
         {
-            write_object(TypeId::KeyedObject, {{"objectId", QVariant::fromValue(anim.first)}});
+            write_object(TypeId::KeyedObject, {{"objectId"_qs, QVariant::fromValue(anim.first)}});
             for ( const auto& obj : anim.second )
                 serializer.write_object(obj);
         }
         write_object(TypeId::StateMachine, {});
         write_object(TypeId::StateMachineLayer, {});
-        write_object(TypeId::AnimationState, {{"animationId", 0}});
+        write_object(TypeId::AnimationState, {{"animationId"_qs, 0}});
         write_object(TypeId::EntryState, {});
-        write_object(TypeId::StateTransition, {{"stateToId", 0}});
+        write_object(TypeId::StateTransition, {{"stateToId"_qs, 0}});
         write_object(TypeId::AnyState, {});
         write_object(TypeId::ExitState, {});
     }
@@ -166,7 +166,7 @@ private:
         else if ( auto shape = element->cast<model::Fill>() )
         {
             auto object = shape_object(TypeId::Fill, element, parent_id);
-            object.set("isVisible", shape->visible.get());
+            object.set("isVisible"_qs, shape->visible.get());
             /// \todo fillRule
             serializer.write_object(object);
             write_styler(shape, id);
@@ -174,8 +174,8 @@ private:
         else if ( auto shape = element->cast<model::Stroke>() )
         {
             auto object = shape_object(TypeId::Stroke, element, parent_id);
-            write_property(object, "thickness", shape->width, id, &detail::noop);
-            object.set("isVisible", shape->visible.get());
+            write_property(object, "thickness"_qs, shape->width, id, &detail::noop);
+            object.set("isVisible"_qs, shape->visible.get());
             /// \todo cap + join
             serializer.write_object(object);
             write_styler(shape, id);
@@ -186,7 +186,7 @@ private:
             write_transform(object, shape->transform.get(), id, shape->local_bounding_rect(0));
             auto asset_id = object_ids.find(shape->image.get());
             if ( asset_id != object_ids.end() )
-                object.set("assetId", asset_id->second);
+                object.set("assetId"_qs, asset_id->second);
             serializer.write_object(object);
         }
         else if ( auto shape = element->cast<model::PreCompLayer>() )
@@ -207,16 +207,16 @@ private:
     {
         auto object = shape_object(TypeId::Rectangle, shape, parent_id);
         write_position(object, shape->position, id);
-        write_property(object, "width", shape->size, id,
+        write_property(object, "width"_qs, shape->size, id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().width()); }
         );
-        write_property(object, "height", shape->size, id,
+        write_property(object, "height"_qs, shape->size, id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().height()); }
         );
-        write_property(object, "cornerRadiusTL", shape->rounded, id, &detail::noop);
-        write_property(object, "cornerRadiusTR", shape->rounded, id, &detail::noop);
-        write_property(object, "cornerRadiusBL", shape->rounded, id, &detail::noop);
-        write_property(object, "cornerRadiusBR", shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusTL"_qs, shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusTR"_qs, shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusBL"_qs, shape->rounded, id, &detail::noop);
+        write_property(object, "cornerRadiusBR"_qs, shape->rounded, id, &detail::noop);
         serializer.write_object(object);
     }
 
@@ -224,10 +224,10 @@ private:
     {
         auto object = shape_object(TypeId::Ellipse, shape, parent_id);
         write_position(object, shape->position, id);
-        write_property(object, "width", shape->size, id,
+        write_property(object, "width"_qs, shape->size, id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().width()); }
         );
-        write_property(object, "height", shape->size, id,
+        write_property(object, "height"_qs, shape->size, id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toSizeF().height()); }
         );
         serializer.write_object(object);
@@ -240,13 +240,13 @@ private:
         /// \todo cornerRadius
         write_position(object, shape->position, id);
 
-        write_property(object, "points", shape->points, id, &detail::noop);
-        write_property(object, "width", shape->outer_radius, id, &detail::noop);
-        write_property(object, "height", shape->outer_radius, id, &detail::noop);
+        write_property(object, "points"_qs, shape->points, id, &detail::noop);
+        write_property(object, "width"_qs, shape->outer_radius, id, &detail::noop);
+        write_property(object, "height"_qs, shape->outer_radius, id, &detail::noop);
 
         if ( type == TypeId::Star )
         {
-            write_property(object, "innerRadius", shape->inner_radius, id,
+            write_property(object, "innerRadius"_qs, shape->inner_radius, id,
                 [shape](const QVariant& v, model::FrameTime t) {
                     auto outer = shape->outer_radius.get_at(t);
                     return QVariant::fromValue(qFuzzyIsNull(outer) ? 0 : v.toDouble() / outer);
@@ -261,7 +261,7 @@ private:
     {
         auto object = shape_object(TypeId::Rectangle, shape, parent_id);
         write_transform(object, shape->transform.get(), id, shape->local_bounding_rect(0));
-        write_property(object, "opacity", shape->opacity, id, &detail::noop);
+        write_property(object, "opacity"_qs, shape->opacity, id, &detail::noop);
         if ( auto comp = shape->composition.get() )
         {
             Identifier comp_index = 1;
@@ -271,7 +271,7 @@ private:
                     break;
                 comp_index++;
             }
-            object.set("artboardId", comp_index);
+            object.set("artboardId"_qs, comp_index);
         }
 
         serializer.write_object(object);
@@ -280,7 +280,7 @@ private:
     void write_path(model::Path* shape, Identifier id, Identifier parent_id)
     {
         auto object = shape_object(TypeId::PointsPath, shape, parent_id);
-        object.set("isClosed", shape->closed.get());
+        object.set("isClosed"_qs, shape->closed.get());
         serializer.write_object(object);
 
         auto first_point_id = next_artboard_child;
@@ -297,32 +297,32 @@ private:
             ) )
             {
                 pobj = types.object(TypeId::CubicDetachedVertex);
-                pobj.set("outRotation", pto.angle);
-                pobj.set("outDistance", pto.length);
-                pobj.set("inRotation", pti.angle);
-                pobj.set("inDistance", pti.length);
+                pobj.set("outRotation"_qs, pto.angle);
+                pobj.set("outDistance"_qs, pto.length);
+                pobj.set("inRotation"_qs, pti.angle);
+                pobj.set("inDistance"_qs, pti.length);
             }
             else if ( point.type == math::bezier::PointType::Symmetrical)
             {
                 pobj = types.object(TypeId::CubicMirroredVertex);
-                pobj.set("rotation", pto.angle);
-                pobj.set("distance", pto.length);
+                pobj.set("rotation"_qs, pto.angle);
+                pobj.set("distance"_qs, pto.length);
             }
             else if ( point.type == math::bezier::PointType::Smooth )
             {
                 pobj = types.object(TypeId::CubicAsymmetricVertex);
-                pobj.set("rotation", pto.angle);
-                pobj.set("outDistance", pto.length);
-                pobj.set("inDistance", pti.length);
+                pobj.set("rotation"_qs, pto.angle);
+                pobj.set("outDistance"_qs, pto.length);
+                pobj.set("inDistance"_qs, pti.length);
             }
             else
             {
                 pobj = types.object(TypeId::StraightVertex);
             }
 
-            pobj.set("parentId", id);
-            pobj.set("x", point.pos.x());
-            pobj.set("y", point.pos.y());
+            pobj.set("parentId"_qs, id);
+            pobj.set("x"_qs, point.pos.x());
+            pobj.set("y"_qs, point.pos.y());
             serializer.write_object(pobj);
             next_artboard_child++;
         }
@@ -339,12 +339,12 @@ private:
 
             auto kf_type = types.get_type(TypeId::KeyFrameDouble);
             std::array<std::pair<Identifier, std::vector<Object>>, 6> props_template{{
-                {type->property("x")->id, {}},
-                {type->property("y")->id, {}},
-                {type->property("inRotation")->id, {}},
-                {type->property("inDistance")->id, {}},
-                {type->property("outRotation")->id, {}},
-                {type->property("outDistance")->id, {}}
+                {type->property("x"_qs)->id, {}},
+                {type->property("y"_qs)->id, {}},
+                {type->property("inRotation"_qs)->id, {}},
+                {type->property("inDistance"_qs)->id, {}},
+                {type->property("outRotation"_qs)->id, {}},
+                {type->property("outDistance"_qs)->id, {}}
             }};
 
             int point_count = next_artboard_child - first_point_id;
@@ -364,27 +364,27 @@ private:
                     {
                         Object rive_kf(kf_type);
                         /// \todo interpolations
-                        rive_kf.set("interpolationType", 1);
-                        rive_kf.set("frame", kf.time());
+                        rive_kf.set("interpolationType"_qs, 1);
+                        rive_kf.set("frame"_qs, kf.time());
                         prop.second.push_back(std::move(rive_kf));
                     }
 
                     auto point = kf.get()[pt_id];
                     auto pto = point.polar_tan_out();
                     auto pti = point.polar_tan_in();
-                    props[prop_x].second.back().set("value", point.pos.x());
-                    props[prop_y].second.back().set("value", point.pos.y());
-                    props[prop_in_rot].second.back().set("value", pti.angle);
-                    props[prop_in_len].second.back().set("value", pti.length);
-                    props[prop_out_rot].second.back().set("value", pto.angle + math::pi);
-                    props[prop_out_len].second.back().set("value", pto.length);
+                    props[prop_x].second.back().set("value"_qs, point.pos.x());
+                    props[prop_y].second.back().set("value"_qs, point.pos.y());
+                    props[prop_in_rot].second.back().set("value"_qs, pti.angle);
+                    props[prop_in_len].second.back().set("value"_qs, pti.length);
+                    props[prop_out_rot].second.back().set("value"_qs, pto.angle + math::pi);
+                    props[prop_out_len].second.back().set("value"_qs, pto.length);
                 }
 
                 auto& keyed_point = animations[first_point_id + pt_id];
                 for ( const auto& prop : props )
                 {
                     keyed_point.emplace_back(types.get_type(TypeId::KeyedProperty));
-                    keyed_point.back().set("propertyKey", prop.first);
+                    keyed_point.back().set("propertyKey"_qs, prop.first);
                     for ( auto& rkf : prop.second )
                         keyed_point.emplace_back(std::move(rkf));
                 }
@@ -395,14 +395,14 @@ private:
     Object shape_object(TypeId type_id, model::DocumentNode* shape, Identifier parent_id)
     {
         auto object = types.object(type_id);
-        object.set("name", shape->name.get());
-        object.set("parentId", parent_id);
+        object.set("name"_qs, shape->name.get());
+        object.set("parentId"_qs, parent_id);
         return object;
     }
 
     void write_group(Object& object, model::Group* group, Identifier id)
     {
-        write_property(object, "opacity", group->opacity, id, &detail::noop);
+        write_property(object, "opacity"_qs, group->opacity, id, &detail::noop);
         write_transform(object, group->transform.get(), id, group->local_bounding_rect(0));
         serializer.write_object(object);
 
@@ -438,11 +438,11 @@ private:
         {
             case PropertyType::Float:
             case PropertyType::VarUint:
-                attr = "value";
+                attr = "value"_qs;
                 kf_type = types.get_type(TypeId::KeyFrameDouble);
                 break;
             case PropertyType::Color:
-                attr = "colorValue";
+                attr = "colorValue"_qs;
                 kf_type = types.get_type(TypeId::KeyFrameColor);
                 break;
             default:
@@ -464,39 +464,39 @@ private:
         auto& keyed_object = animations[object_id];
 
         auto keyed_prop = types.object(TypeId::KeyedProperty);
-        keyed_prop.set("propertyKey", rive_prop->id);
+        keyed_prop.set("propertyKey"_qs, rive_prop->id);
         keyed_object.emplace_back(std::move(keyed_prop));
 
         for ( const auto& kf : prop )
         {
             Object rive_kf(kf_type);
             /// \todo interpolations
-            rive_kf.set("interpolationType", 1);
+            rive_kf.set("interpolationType"_qs, 1);
             rive_kf.set(attr, transform(kf.value(), kf.time()));
-            rive_kf.set("frame", kf.time());
+            rive_kf.set("frame"_qs, kf.time());
             keyed_object.emplace_back(std::move(rive_kf));
         }
     }
 
     void write_position(Object& object, const model::AnimatedProperty<QPointF>& prop, Identifier object_id)
     {
-        write_property(object, "x", prop, object_id,
+        write_property(object, "x"_qs, prop, object_id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().x()); }
         );
-        write_property(object, "y", prop, object_id,
+        write_property(object, "y"_qs, prop, object_id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().y()); }
         );
     }
 
     void write_transform(Object& object, model::Transform* trans, Identifier object_id, const QRectF& box)
     {
-        if ( object.type().property("originX") )
+        if ( object.type().property("originX"_qs) )
         {
             write_position(object, trans->position, object_id);
 
             if ( box.width() > 0 )
             {
-                write_property(object, "originX", trans->anchor_point, object_id,
+                write_property(object, "originX"_qs, trans->anchor_point, object_id,
                     [&box](const QVariant& v, model::FrameTime) {
                         return QVariant::fromValue(
                             (v.toPointF().x() - box.left()) / box.width()
@@ -507,7 +507,7 @@ private:
 
             if ( box.height() > 0 )
             {
-                write_property(object, "originY", trans->anchor_point, object_id,
+                write_property(object, "originY"_qs, trans->anchor_point, object_id,
                     [&box](const QVariant& v, model::FrameTime) {
                         return QVariant::fromValue(
                             (v.toPointF().y() - box.top()) / box.height()
@@ -520,20 +520,20 @@ private:
         {
             /// \todo Handle animated anchor point
             auto anchor = trans->anchor_point.get();
-            write_property(object, "x", trans->position, object_id,
+            write_property(object, "x"_qs, trans->position, object_id,
                 [anchor](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().x() - anchor.x()); }
             );
-            write_property(object, "y", trans->position, object_id,
+            write_property(object, "y"_qs, trans->position, object_id,
                 [anchor](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.toPointF().y() - anchor.y()); }
             );
         }
 
-        write_property(object, "rotation", trans->rotation, object_id, &detail::noop);
+        write_property(object, "rotation"_qs, trans->rotation, object_id, &detail::noop);
 
-        write_property(object, "scaleX", trans->scale, object_id,
+        write_property(object, "scaleX"_qs, trans->scale, object_id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.value<QVector2D>().x()); }
         );
-        write_property(object, "scaleY", trans->scale, object_id,
+        write_property(object, "scaleY"_qs, trans->scale, object_id,
             [](const QVariant& v, model::FrameTime) { return QVariant::fromValue(v.value<QVector2D>().x()); }
         );
     }
@@ -549,7 +549,7 @@ private:
                 grad->type.get() == model::Gradient::Radial ? TypeId::RadialGradient : TypeId::LinearGradient,
                 grad, object_id
             );
-            write_property(object, "opacity", shape->color, id, &detail::noop);
+            write_property(object, "opacity"_qs, shape->color, id, &detail::noop);
 
             serializer.write_object(object);
             /// \todo finish
@@ -557,13 +557,13 @@ private:
         else if ( auto col = use->cast<model::NamedColor>() )
         {
             auto object = shape_object(TypeId::SolidColor, col, object_id);
-            write_property(object, "colorValue", col->color, id, &detail::noop);
+            write_property(object, "colorValue"_qs, col->color, id, &detail::noop);
             serializer.write_object(object);
         }
         else
         {
             auto object = shape_object(TypeId::SolidColor, shape, object_id);
-            write_property(object, "colorValue", shape->color, id, &detail::noop);
+            write_property(object, "colorValue"_qs, shape->color, id, &detail::noop);
             serializer.write_object(object);
         }
     }

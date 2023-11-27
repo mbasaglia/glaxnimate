@@ -42,7 +42,7 @@ public:
     Plugin(PluginData data, bool user_installed)
         : data_(std::move(data)), user_installed_(user_installed)
         {
-            icon_ = QIcon::fromTheme("libreoffice-extension");
+            icon_ = QIcon::fromTheme("libreoffice-extension"_qs);
             icon_ = make_icon(data_.icon);
             for ( const auto& ps : data_.services )
                 ps->set_plugin(this);
@@ -65,7 +65,7 @@ public:
     {
         if ( !icon.isEmpty() )
         {
-            if ( icon.startsWith("theme:") )
+            if ( icon.startsWith("theme:"_qs) )
                 return QIcon::fromTheme(icon.mid(6));
             if ( data_.dir.exists(icon) )
                 return QIcon(data_.dir.absoluteFilePath(icon));
@@ -126,7 +126,7 @@ public:
 
     app::log::Log logger() const
     {
-        return {"Plugins", data_.name};
+        return {"Plugins"_qs, data_.name};
     }
 
 private:
@@ -178,7 +178,7 @@ private:
     std::vector<std::unique_ptr<Plugin>> plugins_;
     Executor* executor_ = nullptr;
     QMap<QString, int> names;
-    app::log::Log logger{"Plugins"};
+    app::log::Log logger{"Plugins"_qs};
 };
 
 } // namespace glaxnimate::plugin

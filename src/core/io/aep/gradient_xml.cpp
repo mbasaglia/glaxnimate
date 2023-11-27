@@ -12,17 +12,17 @@ using namespace glaxnimate::io::aep;
 
 CosValue aep::xml_value(const QDomElement& element)
 {
-    if ( element.tagName() == "prop.map" )
+    if ( element.tagName() == "prop.map"_qs )
         return xml_value(element.firstChildElement());
-    else if ( element.tagName() == "prop.list" )
+    else if ( element.tagName() == "prop.list"_qs )
         return xml_list(element);
-    else if ( element.tagName() == "array" )
+    else if ( element.tagName() == "array"_qs )
         return xml_array(element);
-    else if ( element.tagName() == "int" )
+    else if ( element.tagName() == "int"_qs )
         return element.text().toDouble();
-    else if ( element.tagName() == "float" )
+    else if ( element.tagName() == "float"_qs )
         return element.text().toDouble();
-    else if ( element.tagName() == "string" )
+    else if ( element.tagName() == "string"_qs )
         return element.text();
     else
         return {};
@@ -34,7 +34,7 @@ CosArray aep::xml_array(const QDomElement& element)
 
     for ( const auto& child : svg::detail::ElementRange(element) )
     {
-        if ( child.tagName() != "array.type" )
+        if ( child.tagName() != "array.type"_qs )
             data->push_back(xml_value(child));
     }
     return data;
@@ -43,13 +43,13 @@ CosArray aep::xml_array(const QDomElement& element)
 CosObject aep::xml_list(const QDomElement& element)
 {
     auto data = std::make_unique<CosObject::element_type>();
-    for ( const auto& pair : svg::detail::ElementRange(element, "prop.pair") )
+    for ( const auto& pair : svg::detail::ElementRange(element, "prop.pair"_qs) )
     {
         QString key;
         CosValue value;
         for ( const auto& ch : svg::detail::ElementRange(pair) )
         {
-            if ( ch.tagName() == "key" )
+            if ( ch.tagName() == "key"_qs )
                 key = ch.text();
             else
                 value = xml_value(ch);
@@ -63,7 +63,7 @@ CosObject aep::xml_list(const QDomElement& element)
 Gradient aep::parse_gradient_xml(const CosValue& value)
 {
     Gradient gradient;
-    auto& data = get(value, "Gradient Color Data");
+    auto& data = get(value, "Gradient Color Data"_qs);
     gradient.color_stops = get_gradient_stops<GradientStopColor>(data);
     gradient.alpha_stops = get_gradient_stops<GradientStopAlpha>(data);
     return gradient;

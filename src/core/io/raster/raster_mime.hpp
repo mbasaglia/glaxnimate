@@ -21,9 +21,9 @@ namespace glaxnimate::io::raster {
 class RasterMime : public io::mime::MimeSerializer
 {
 public:
-    QString slug() const override { return "raster"; }
+    QString slug() const override { return "raster"_qs; }
     QString name() const override { return QObject::tr("Raster Image"); }
-    QStringList mime_types() const override { return {"image/png"}; }
+    QStringList mime_types() const override { return {"image/png"_qs}; }
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {

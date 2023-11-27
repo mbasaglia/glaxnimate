@@ -11,7 +11,7 @@
 
 #define GLAXNIMATE_PROPERTY_REFERENCE(type, name, ...)      \
 public:                                                     \
-    ReferenceProperty<type> name{this, #name, __VA_ARGS__}; \
+    ReferenceProperty<type> name{this, QStringLiteral(#name), __VA_ARGS__}; \
     type* get_##name() const { return name.get(); }         \
     bool set_##name(type* v)                                \
     {                                                       \

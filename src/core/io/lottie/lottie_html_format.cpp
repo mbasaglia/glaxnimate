@@ -10,7 +10,7 @@
 
 QByteArray glaxnimate::io::lottie::LottieHtmlFormat::html_head(ImportExport* ie,  model::Composition* comp, const QString& extra)
 {
-    return QString(
+    return QStringLiteral(
 R"(<!DOCTYPE html>
 <html>
 <head>
@@ -46,7 +46,7 @@ bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QS
 {
     const char* lottie_web_version = "5.12.2";
     file.write(html_head(this, comp,
-        QString("<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/%1/lottie.js'></script>").arg(lottie_web_version)
+        QStringLiteral("<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/%1/lottie.js'></script>").arg(QString::fromLatin1(lottie_web_version))
     ));
     file.write(R"(
 <body>
@@ -54,10 +54,10 @@ bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QS
 
 <script>
     var lottie_json = )");
-    detail::LottieExporterState exp(this, comp, false, false, {{"auto_embed", true}});
+    detail::LottieExporterState exp(this, comp, false, false, {{"auto_embed"_qs, true}});
     file.write(cbor_write_json(exp.to_json(), false));
 
-file.write(QString(R"(
+file.write(QStringLiteral(R"(
     ;
 
     var anim = null;
@@ -80,7 +80,7 @@ file.write(QString(R"(
 </script>
 </body></html>
 )")
-        .arg(settings["renderer"].toString())
+        .arg(settings["renderer"_qs].toString())
         .toUtf8()
     );
 

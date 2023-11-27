@@ -14,9 +14,9 @@ namespace glaxnimate::io::mime {
 class JsonMime : public io::mime::MimeSerializer
 {
 public:
-    QString slug() const override { return "json"; }
+    QString slug() const override { return "json"_qs; }
     QString name() const override { return QObject::tr("JSON"); }
-    QStringList mime_types() const override { return {"application/json", "text/plain"}; }
+    QStringList mime_types() const override { return {"application/json"_qs, "text/plain"_qs}; }
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {

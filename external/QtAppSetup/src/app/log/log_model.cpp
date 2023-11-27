@@ -5,6 +5,7 @@
  */
 
 #include "log_model.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 namespace {
     enum Columns
@@ -58,9 +59,9 @@ QVariant app::log::LogModel::headerData(int section, Qt::Orientation orientation
         {
             switch ( lines[section].severity )
             {
-                case Info: return QIcon::fromTheme("emblem-information");
-                case Warning: return QIcon::fromTheme("emblem-warning");
-                case Error: return QIcon::fromTheme("emblem-error");
+                case Info: return QIcon::fromTheme("emblem-information"_qs);
+                case Warning: return QIcon::fromTheme("emblem-warning"_qs);
+                case Error: return QIcon::fromTheme("emblem-error"_qs);
             }
         }
         else if ( role == Qt::ToolTipRole )

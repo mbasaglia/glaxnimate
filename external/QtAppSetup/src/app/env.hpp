@@ -11,9 +11,9 @@
 #include <QStringList>
 
 #ifdef Q_OS_WIN
-#   define ENV_SEPARATOR ";"
+#   define ENV_SEPARATOR QStringLiteral(";")
 #else
-#   define ENV_SEPARATOR ":"
+#   define ENV_SEPARATOR QStringLiteral(":")
 #endif
 
 namespace app {

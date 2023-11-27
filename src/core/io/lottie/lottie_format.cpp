@@ -14,7 +14,7 @@ glaxnimate::io::Autoreg<glaxnimate::io::lottie::LottieFormat> glaxnimate::io::lo
 bool glaxnimate::io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
                                                    model::Composition* comp, const QVariantMap& setting_values)
 {
-    file.write(cbor_write_json(to_json(comp, setting_values["strip"].toBool(), false, setting_values), !setting_values["pretty"].toBool()));
+    file.write(cbor_write_json(to_json(comp, setting_values["strip"_qs].toBool(), false, setting_values), !setting_values["pretty"_qs].toBool()));
     return true;
 }
 
@@ -56,9 +56,9 @@ bool glaxnimate::io::lottie::LottieFormat::on_open(QIODevice& file, const QStrin
 std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::lottie::LottieFormat::save_settings(model::Composition*) const
 {
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        app::settings::Setting("pretty", tr("Pretty"), tr("Pretty print the JSON"), false),
-        app::settings::Setting("strip", tr("Strip"), tr("Strip unused properties"), false),
-        app::settings::Setting("auto_embed", tr("Embed Images"), tr("Automatically embed non-embedded images"), false),
-        app::settings::Setting("old_kf", tr("Legacy Keyframes"), tr("Compatibility with lottie-web versions prior to 5.0.0"), false),
+        app::settings::Setting("pretty"_qs, tr("Pretty"), tr("Pretty print the JSON"), false),
+        app::settings::Setting("strip"_qs, tr("Strip"), tr("Strip unused properties"), false),
+        app::settings::Setting("auto_embed"_qs, tr("Embed Images"), tr("Automatically embed non-embedded images"), false),
+        app::settings::Setting("old_kf"_qs, tr("Legacy Keyframes"), tr("Compatibility with lottie-web versions prior to 5.0.0"), false),
     });
 }

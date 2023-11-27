@@ -28,7 +28,7 @@ QString app::cli::Argument::get_slug(const QStringList& names)
 
     for ( int i = 0; i < match.size(); i++ )
     {
-        if ( match[i] != '-' )
+        if ( match[i] != '-'_qc )
             return match.mid(i);
     }
 
@@ -46,13 +46,13 @@ QVariant app::cli::Argument::arg_to_value(const QString& v, bool* ok) const
             return v.toInt(ok);
         case Size:
         {
-            if ( !v.contains('x') )
+            if ( !v.contains('x'_qc) )
             {
                 *ok = false;
                 return {};
             }
 
-            auto vec = utils::split_ref(v, 'x');
+            auto vec = utils::split_ref(v, 'x'_qc);
             if ( vec.size() != 2 )
             {
                 *ok = false;
@@ -119,15 +119,15 @@ QString app::cli::Argument::help_text_name() const
 {
     QString option_names;
     for ( const auto& name : names )
-        option_names += name + ", ";
+        option_names += name + ", "_qs;
     if ( !names.isEmpty() )
         option_names.chop(2);
 
     if ( !arg_name.isEmpty() )
-        option_names += " <" + arg_name + ">";
+        option_names += " <"_qs + arg_name + ">"_qs;
 
     if ( nargs > 1 )
-        option_names += "...";
+        option_names += "..."_qs;
 
     return option_names;
 }
@@ -135,7 +135,7 @@ QString app::cli::Argument::help_text_name() const
 
 bool app::cli::Argument::is_positional() const
 {
-    return names.size() == 1 && !names[0].startsWith('-') && nargs > 0;
+    return names.size() == 1 && !names[0].startsWith('-'_qc) && nargs > 0;
 }
 
 
@@ -195,7 +195,7 @@ app::cli::ParsedArguments app::cli::Parser::parse(const QStringList& args, int o
 
     for ( int index = offset; index < args.size(); )
     {
-        if ( args[index].startsWith('-') )
+        if ( args[index].startsWith('-'_qc) )
         {
             if ( auto opt = option_from_arg(args[index]) )
             {
@@ -252,12 +252,12 @@ app::cli::ParsedArguments app::cli::Parser::parse(const QStringList& args, int o
 
 QString app::cli::Parser::version_text() const
 {
-    return QCoreApplication::applicationName() + " " + QCoreApplication::applicationVersion() + "\n";
+    return QCoreApplication::applicationName() + " "_qs + QCoreApplication::applicationVersion() + "\n"_qs;
 }
 
 void app::cli::show_message(const QString& msg, bool error)
 {
-    std::fputs(qUtf8Printable(msg + '\n'), error ? stderr : stdout);
+    std::fputs(qUtf8Printable(msg + '\n'_qc), error ? stderr : stdout);
 }
 
 
@@ -283,7 +283,7 @@ QString app::cli::Parser::help_text() const
 
     for ( const auto& pos : positional )
     {
-        usage += " " + pos.arg_name;
+        usage += " "_qs + pos.arg_name;
         QString name = pos.help_text_name();
         if ( longest_name < name.size() )
             longest_name = name.size();
@@ -292,16 +292,16 @@ QString app::cli::Parser::help_text() const
 
     QString text;
     text += QApplication::tr("Usage: %1").arg(usage);
-    text += '\n';
-    text += '\n';
+    text += '\n'_qc;
+    text += '\n'_qc;
     text += description;
-    text += '\n';
+    text += '\n'_qc;
 
     for ( const auto& grp : groups )
     {
-        text += '\n';
+        text += '\n'_qc;
         text += grp.name;
-        text += ":\n";
+        text += ":\n"_qs;
         for ( const auto& p : grp.args )
         {
             text += wrap_text(
@@ -309,7 +309,7 @@ QString app::cli::Parser::help_text() const
                 longest_name,
                 (p.first == Positional ? positional : options)[p.second].description
             );
-            text += '\n';
+            text += '\n'_qc;
         }
     }
 
@@ -352,7 +352,7 @@ QString app::cli::Parser::wrap_text(const QString& names, int name_max, const QS
             // time to break but found nowhere [-> break here], or end of last line
             breakAt = i + 1;
             nextLineStart = breakAt;
-        } else if (c == '\n') {
+        } else if (c == '\n'_qc) {
             // forced break
             breakAt = i;
             nextLineStart = i + 1;
@@ -362,7 +362,7 @@ QString app::cli::Parser::wrap_text(const QString& names, int name_max, const QS
             const int numChars = breakAt - lineStart;
             text += indentation + nextNameSection().leftJustified(name_max) + QLatin1Char(' ');
             text += utils::mid_ref(description, lineStart, numChars);
-            text += '\n';
+            text += '\n'_qc;
             x = 0;
             lastBreakable = -1;
             lineStart = nextLineStart;
@@ -373,7 +373,7 @@ QString app::cli::Parser::wrap_text(const QString& names, int name_max, const QS
     }
 
     while (nameIndex < names.size()) {
-        text += indentation + nextNameSection() + '\n';
+        text += indentation + nextNameSection() + '\n'_qc;
     }
 
     return text;

@@ -22,10 +22,10 @@ class GlaxnimateFormat : public ImportExport
 public:
     static const int format_version;
 
-    QString slug() const override { return "glaxnimate"; }
+    QString slug() const override { return "glaxnimate"_qs; }
     QString name() const override { return tr("Glaxnimate Animation"); }
     // RAWR = Reasonable Animation at Whatever Resolution
-    QStringList extensions() const override { return {"rawr"}; }
+    QStringList extensions() const override { return {"rawr"_qs}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
 

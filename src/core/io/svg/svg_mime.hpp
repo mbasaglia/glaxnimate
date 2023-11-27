@@ -16,9 +16,9 @@ namespace glaxnimate::io::svg {
 class SvgMime : public io::mime::MimeSerializer
 {
 public:
-    QString slug() const override { return "svg"; }
+    QString slug() const override { return "svg"_qs; }
     QString name() const override { return QObject::tr("SVG"); }
-    QStringList mime_types() const override { return {"image/svg+xml"}; }
+    QStringList mime_types() const override { return {"image/svg+xml"_qs}; }
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {
@@ -38,7 +38,7 @@ public:
             return io::svg::SvgParser(&buffer, deserialize_group_mode, nullptr, on_error)
                 .parse_to_objects();
         } catch ( const io::svg::SvgParseError& err ) {
-            message(err.formatted("Clipboard"));
+            message(err.formatted("Clipboard"_qs));
             return {};
         }
     }

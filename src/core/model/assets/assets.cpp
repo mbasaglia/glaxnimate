@@ -35,29 +35,29 @@ void glaxnimate::model::NamedColorList::on_removed(glaxnimate::model::NamedColor
 
 QIcon glaxnimate::model::NamedColorList::tree_icon() const
 {
-    return QIcon::fromTheme("paint-swatch");
+    return QIcon::fromTheme("paint-swatch"_qs);
 }
 
 
 QIcon glaxnimate::model::GradientColorsList::tree_icon() const
 {
-    return QIcon::fromTheme("paint-gradient-linear");
+    return QIcon::fromTheme("paint-gradient-linear"_qs);
 }
 
 QIcon glaxnimate::model::GradientList::tree_icon() const
 {
-    return QIcon::fromTheme("gradient");
+    return QIcon::fromTheme("gradient"_qs);
 }
 
 
 QIcon glaxnimate::model::BitmapList::tree_icon() const
 {
-    return QIcon::fromTheme("folder-images");
+    return QIcon::fromTheme("folder-images"_qs);
 }
 
 QIcon glaxnimate::model::CompositionList::tree_icon() const
 {
-    return QIcon::fromTheme("folder-videos");
+    return QIcon::fromTheme("folder-videos"_qs);
 }
 
 void glaxnimate::model::CompositionList::on_added(glaxnimate::model::Composition* obj, int position)
@@ -147,7 +147,7 @@ glaxnimate::model::Composition* glaxnimate::model::Assets::add_comp_no_undo()
 
 QIcon glaxnimate::model::Assets::tree_icon() const
 {
-    return QIcon::fromTheme("folder-stash");
+    return QIcon::fromTheme("folder-stash"_qs);
 }
 
 QIcon glaxnimate::model::Assets::instance_icon() const

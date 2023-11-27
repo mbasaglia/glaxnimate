@@ -20,9 +20,9 @@ class RiveFormat : public ImportExport
 public:
     static constexpr const int format_version = 7;
 
-    QString slug() const override { return "rive"; }
+    QString slug() const override { return "rive"_qs; }
     QString name() const override { return tr("Rive Animation"); }
-    QStringList extensions() const override { return {"riv"}; }
+    QStringList extensions() const override { return {"riv"_qs}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
 

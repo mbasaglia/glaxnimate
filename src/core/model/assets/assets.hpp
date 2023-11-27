@@ -31,7 +31,7 @@ protected:
     using Ctor = AssetListBase;
 
 public:
-    ObjectListProperty<T> values{this, "values",
+    ObjectListProperty<T> values{this, QStringLiteral("values"),
         &AssetListBase::on_added,
         &AssetListBase::on_removed,
         &AssetListBase::docnode_child_add_begin,
@@ -160,7 +160,7 @@ class FontList : public AssetListBase<EmbeddedFont, FontList>
     ASSET_LIST_CLASS(EmbeddedFont)
 
 public:
-    QIcon tree_icon() const override { return QIcon::fromTheme("font"); }
+    QIcon tree_icon() const override { return QIcon::fromTheme("font"_qs); }
 
 
 protected:
@@ -190,7 +190,7 @@ public:
 
     Q_INVOKABLE glaxnimate::model::NamedColor* add_color(const QColor& color, const QString& name = {});
     Q_INVOKABLE glaxnimate::model::Bitmap* add_image_file(const QString& filename, bool embed);
-    Q_INVOKABLE glaxnimate::model::Bitmap* add_image(const QImage& image, const QString& store_as = "png");
+    Q_INVOKABLE glaxnimate::model::Bitmap* add_image(const QImage& image, const QString& store_as = "png"_qs);
     Q_INVOKABLE glaxnimate::model::GradientColors* add_gradient_colors(int index = -1);
     Q_INVOKABLE glaxnimate::model::Gradient* add_gradient(int index = -1);
     Q_INVOKABLE glaxnimate::model::EmbeddedFont* add_font(const QByteArray& ttf_data);

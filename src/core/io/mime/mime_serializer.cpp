@@ -55,6 +55,6 @@ bool glaxnimate::io::mime::DeserializedData::empty() const
 
 void glaxnimate::io::mime::DeserializedData::initialize_data()
 {
-    document = std::make_unique<model::Document>("");
+    document = std::make_unique<model::Document>(QString{});
     main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document.get()));
 }

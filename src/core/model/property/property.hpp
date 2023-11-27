@@ -151,13 +151,13 @@ private:                                                    \
 
 #define GLAXNIMATE_PROPERTY(type, name, ...)                \
 public:                                                     \
-    Property<type> name{this, #name, __VA_ARGS__};          \
+    Property<type> name{this, QStringLiteral(#name), __VA_ARGS__}; \
     GLAXNIMATE_PROPERTY_IMPL(type, name)                    \
     // macro end
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
 public:                                                     \
-    Property<type> name{this, #name, default_value, {}, {}, PropertyTraits::ReadOnly}; \
+    Property<type> name{this, QStringLiteral(#name), default_value, {}, {}, PropertyTraits::ReadOnly}; \
     type get_##name() const { return name.get(); }          \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \

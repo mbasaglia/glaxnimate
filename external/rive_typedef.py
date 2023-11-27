@@ -97,6 +97,7 @@ if args.type == "source":
     disclaimer("./external/rive_typedef.py -t source >src/core/io/rive/type_def.cpp")
     print("""
 #include "type_def.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 using namespace glaxnimate::io::rive;
 

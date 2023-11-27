@@ -9,7 +9,7 @@
 #include "app/scripting/python/register_machinery.hpp"
 #include "app/log/log.hpp"
 #include "app/env.hpp"
-
+#include "app/utils/qstring_literal.hpp"
 
 app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine> app::scripting::python::PythonEngine::autoreg;
 
@@ -45,7 +45,7 @@ public:
             this->owner = owner;
             this->signal = signal;
         } catch ( const py::error_already_set& pyexc ) {
-            app::log::Log("Python").stream(app::log::Error)
+            app::log::Log("Python"_qs).stream(app::log::Error)
                 << "Could not initialize stream capture:" << pyexc.what();
         }
     }
@@ -56,7 +56,7 @@ public:
             return;
 
         int from = 0;
-        int to = data.indexOf('\n');
+        int to = data.indexOf('\n'_qc);
         while ( to != -1 )
         {
             QString txt;
@@ -68,7 +68,7 @@ public:
             txt += data.mid(from, to-from);
             (owner->*signal)(txt);
             from = to+1;
-            to = data.indexOf('\n', from);
+            to = data.indexOf('\n'_qc, from);
         }
         buf += data.mid(from);
     }
@@ -145,7 +145,7 @@ void app::scripting::python::PythonContext::expose(const QString& name, const QV
     try {
         d->globals[name.toStdString().c_str()] = obj;
     } catch ( const py::error_already_set& pyexc ) {
-        throw ScriptError(pyexc.what());
+        throw ScriptError(QString::fromUtf8(pyexc.what()));
     }
 }
 
@@ -165,9 +165,9 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
         py::exec(std_code);
         return {};
     } catch ( const py::error_already_set& pyexc ) {
-        throw ScriptError(pyexc.what());
+        throw ScriptError(QString::fromUtf8(pyexc.what()));
     } catch ( const py::builtin_exception& pyexc ) {
-        throw ScriptError(pyexc.what());
+        throw ScriptError(QString::fromUtf8(pyexc.what()));
     }
 }
 
@@ -204,7 +204,7 @@ void app::scripting::python::PythonContext::app_module ( const QString& name )
         d->my_modules.push_back(py::module::import(cname));
         d->globals[cname] = d->my_modules.back();
     } catch ( const py::error_already_set& pyexc ) {
-        log::Log("Python", name).log(pyexc.what(), log::Error);
+        log::Log("Python"_qs, name).log(QString::fromUtf8(pyexc.what()), log::Error);
     }
 }
 
@@ -250,7 +250,7 @@ bool app::scripting::python::PythonContext::run_from_module (
             py_args[i++] = arg;
         exec_module.attr(std_func.c_str())(*py_args);
     } catch ( const py::error_already_set& pyexc ) {
-        throw ScriptError(pyexc.what());
+        throw ScriptError(QString::fromUtf8(pyexc.what()));
     }
 
     return true;

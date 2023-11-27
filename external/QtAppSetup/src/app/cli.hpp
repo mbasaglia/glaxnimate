@@ -13,6 +13,8 @@
 #include <QString>
 #include <QSet>
 
+#include "app/utils/qstring_literal.hpp"
+
 namespace app::cli {
 
 
@@ -23,7 +25,7 @@ public:
 
     QString message() const
     {
-        return QString(what());
+        return QString::fromUtf8(what());
     }
 };
 
@@ -81,7 +83,7 @@ struct Argument
             this->dest = get_slug(names);
 
         // positional
-        if ( names.size() == 1 && !names[0].startsWith('-') )
+        if ( names.size() == 1 && !names[0].startsWith('-'_qc) )
         {
             type = String;
             nargs = 1;

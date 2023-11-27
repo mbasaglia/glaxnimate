@@ -12,6 +12,7 @@
 
 #include <QDomDocument>
 
+#include "app/utils/qstring_literal.hpp"
 
 namespace glaxnimate::io::svg::detail {
 
@@ -20,7 +21,7 @@ class CssSelector
 public:
     void set_tag(const QString& tag)
     {
-        if ( tag != '*' && this->tag.isEmpty() )
+        if ( tag != '*'_qc && this->tag.isEmpty() )
             specificity += 1;
         this->tag = tag;
     }
@@ -40,10 +41,10 @@ public:
 
     bool match(const QDomElement& element, const std::unordered_set<QString>& class_names) const
     {
-        if ( !tag.isEmpty() && tag != "*" && tag != element.tagName() )
+        if ( !tag.isEmpty() && tag != "*"_qs && tag != element.tagName() )
             return false;
 
-        if ( !id.isEmpty() && id != element.attribute("id") )
+        if ( !id.isEmpty() && id != element.attribute("id"_qs) )
             return false;
 
         for ( const auto& class_name : classes )
@@ -166,10 +167,10 @@ private:
         QChar c = next_ch_raw();
 
         // Skip comments
-        if ( c == '/' )
+        if ( c == '/'_qc )
         {
             QChar d = next_ch_raw();
-            if ( d == '*' )
+            if ( d == '*'_qc )
             {
                 while ( true )
                 {
@@ -178,12 +179,12 @@ private:
                     if ( eof() )
                         return {};
 
-                    if ( d == '*' )
+                    if ( d == '*'_qc )
                     {
                         d = next_ch_raw();
                         // Treat comments as spaces
-                        if ( d == '/' )
-                            return ' ';
+                        if ( d == '/'_qc )
+                            return ' '_qc;
                         back();
                     }
                 }
@@ -200,7 +201,7 @@ private:
 
     static bool is_identifier_start(const QChar& ch)
     {
-        return ch.isLetter() || ch == '_' || ch == '-';
+        return ch.isLetter() || ch == '_'_qc || ch == '-'_qc;
     }
 
     static bool is_identifier(const QChar& ch)
@@ -229,13 +230,13 @@ private:
 
     QString lex_at_selector()
     {
-        QString id = "@";
+        QString id = "@"_qs;
         QChar ch;
 
         while ( true )
         {
             ch = next_ch();
-            if ( ch == '{' || ch == ',' )
+            if ( ch == '{'_qc || ch == ','_qc )
                 break;
             else
                 id += ch;
@@ -254,26 +255,26 @@ private:
 
         if ( is_identifier_start(ch) )
             return {TokenType::SelectorTag, ch + lex_identifier()};
-        else if ( ch == '#' )
+        else if ( ch == '#'_qc )
             return {TokenType::SelectorId, lex_identifier()};
-        else if ( ch == '.' )
+        else if ( ch == '.'_qc )
             return {TokenType::SelectorClass, lex_identifier()};
-        else if ( ch == ',' )
+        else if ( ch == ','_qc )
             return {TokenType::SelectorComma, {}};
-        else if ( ch == '{' )
+        else if ( ch == '{'_qc )
             return {TokenType::BlockBegin, {}};
-        else if ( ch == '*' )
+        else if ( ch == '*'_qc )
             return {TokenType::SelectorTag, ch};
-        else if ( ch == '@' )
+        else if ( ch == '@'_qc )
             return {TokenType::SelectorAt, lex_at_selector()};
 
         if ( ch.isSpace() )
         {
             skip_space();
             ch = next_ch();
-            if ( ch == ',' )
+            if ( ch == ','_qc )
                 return {TokenType::SelectorComma, {}};
-            if ( ch == '{' )
+            if ( ch == '{'_qc )
                 return {TokenType::BlockBegin, {}};
             back();
         }
@@ -395,11 +396,11 @@ private:
 
         if ( is_identifier_start(ch) )
             return {TokenType::RuleName, ch + lex_identifier()};
-        else if ( ch == ':' )
+        else if ( ch == ':'_qc )
             return {TokenType::RuleColon, {}};
-        else if ( ch == ';' )
+        else if ( ch == ';'_qc )
             return {TokenType::RuleSemicolon, {}};
-        else if ( ch == '}' )
+        else if ( ch == '}'_qc )
             return {TokenType::BlockEnd, {}};
 
         return {TokenType::RuleArg, ch};
@@ -428,7 +429,7 @@ private:
             if ( ch == terminator )
                 break;
 
-            if ( ch == '\\' )
+            if ( ch == '\\'_qc )
             {
                 ch = next_ch();
                 if ( eof() )
@@ -440,7 +441,7 @@ private:
 
     Token lex_rule_value(QString& value)
     {
-        if ( value == "\"" || value == "'" )
+        if ( value == "\""_qs || value == "'"_qs )
             lex_quoted_string(value, value[0]);
 
         while ( true )
@@ -448,13 +449,13 @@ private:
             QChar ch = next_ch();
             if ( eof() )
                 return {TokenType::Eof, {}};
-            else if ( ch == ';' )
+            else if ( ch == ';'_qc )
                 return {TokenType::RuleSemicolon, {}};
-            else if ( ch == '}' )
+            else if ( ch == '}'_qc )
                 return {TokenType::BlockEnd, {}};
 
             value += ch;
-            if ( ch == '"' || ch == '\'' )
+            if ( ch == '"'_qc || ch == '\''_qc )
             {
                 lex_quoted_string(value, ch);
             }

@@ -30,33 +30,33 @@ bool io::glaxnimate::GlaxnimateFormat::on_save(QIODevice& file, const QString&, 
 QJsonObject io::glaxnimate::GlaxnimateFormat::format_metadata()
 {
     QJsonObject object;
-    object["generator"] = AppInfo::instance().name();
-    object["generator_version"] = AppInfo::instance().version();
-    object["format_version"] = format_version;
+    object["generator"_qs] = AppInfo::instance().name();
+    object["generator_version"_qs] = AppInfo::instance().version();
+    object["format_version"_qs] = format_version;
     return object;
 }
 
 QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* document )
 {
     QJsonObject doc_obj;
-    doc_obj["format"] = format_metadata();
-    doc_obj["metadata"] = QJsonObject::fromVariantMap(document->metadata());
+    doc_obj["format"_qs] = format_metadata();
+    doc_obj["metadata"_qs] = QJsonObject::fromVariantMap(document->metadata());
     QJsonObject info;
-    info["author"] = document->info().author;
-    info["description"] = document->info().description;
+    info["author"_qs] = document->info().author;
+    info["description"_qs] = document->info().description;
     QJsonArray keywords;
     for ( const auto& kw: document->info().keywords )
         keywords.push_back(kw);
-    info["keywords"] = keywords;
-    doc_obj["info"] = info;
-    doc_obj["assets"] = to_json(document->assets());
+    info["keywords"_qs] = keywords;
+    doc_obj["info"_qs] = info;
+    doc_obj["assets"_qs] = to_json(document->assets());
     return QJsonDocument(doc_obj);
 }
 
 QJsonObject io::glaxnimate::GlaxnimateFormat::to_json ( model::Object* object )
 {
     QJsonObject obj;
-    obj["__type__"] = object->type_name();
+    obj["__type__"_qs] = object->type_name();
 
     for ( model::BaseProperty* prop : object->properties() )
         obj[prop->name()] = to_json(prop);
@@ -69,8 +69,8 @@ namespace  {
 QJsonValue point_to_json(const QPointF& v)
 {
     QJsonObject o;
-    o["x"] = v.x();
-    o["y"] = v.y();
+    o["x"_qs] = v.x();
+    o["y"_qs] = v.y();
     return o;
 }
 
@@ -95,7 +95,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
         QJsonObject jso;
         if ( !anim->animated() )
         {
-            jso["value"] = to_json(anim->value(), property->traits());
+            jso["value"_qs] = to_json(anim->value(), property->traits());
         }
         else
         {
@@ -104,25 +104,25 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
             {
                 auto kf = anim->keyframe(i);
                 QJsonObject jkf;
-                jkf["time"] = kf->time();
-                jkf["value"] = to_json(kf->value(), property->traits());
+                jkf["time"_qs] = kf->time();
+                jkf["value"_qs] = to_json(kf->value(), property->traits());
                 if ( !kf->transition().hold() )
                 {
-                    jkf["before"] = to_json(kf->transition().before());
-                    jkf["after"] = to_json(kf->transition().after());
+                    jkf["before"_qs] = to_json(kf->transition().before());
+                    jkf["after"_qs] = to_json(kf->transition().after());
                 }
 
                 if ( position )
                 {
                     auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
-                    jkf["tan_in"] = point_to_json(pkf->point().tan_in);
-                    jkf["tan_out"] = point_to_json(pkf->point().tan_out);
-                    jkf["point_type"] = pkf->point().type;
+                    jkf["tan_in"_qs] = point_to_json(pkf->point().tan_in);
+                    jkf["tan_out"_qs] = point_to_json(pkf->point().tan_out);
+                    jkf["point_type"_qs] = pkf->point().type;
                 }
 
                 keyframes.push_back(jkf);
             }
-            jso["keyframes"] = keyframes;
+            jso["keyframes"_qs] = keyframes;
         }
         return jso;
     }
@@ -148,18 +148,18 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
         {
             math::bezier::Bezier bezier = value.value<math::bezier::Bezier>();
             QJsonObject jsbez;
-            jsbez["closed"] = bezier.closed();
+            jsbez["closed"_qs] = bezier.closed();
             QJsonArray points;
             for ( const auto& p : bezier )
             {
                 QJsonObject jsp;
-                jsp["pos"] = point_to_json(p.pos);
-                jsp["tan_in"] = point_to_json(p.tan_in);
-                jsp["tan_out"] = point_to_json(p.tan_out);
-                jsp["type"] = p.type;
+                jsp["pos"_qs] = point_to_json(p.pos);
+                jsp["tan_in"_qs] = point_to_json(p.tan_in);
+                jsp["tan_out"_qs] = point_to_json(p.tan_out);
+                jsp["type"_qs] = p.type;
                 points.push_back(jsp);
             }
-            jsbez["points"] = points;
+            jsbez["points"_qs] = points;
             return jsbez;
         }
         case model::PropertyTraits::Gradient:
@@ -168,8 +168,8 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
             for ( const auto& stop : value.value<QGradientStops>() )
             {
                 QJsonObject jstop;
-                jstop["offset"] = stop.first;
-                jstop["color"] = to_json(stop.second);
+                jstop["offset"_qs] = stop.first;
+                jstop["color"_qs] = to_json(stop.second);
                 stops.push_back(jstop);
             }
             return stops;
@@ -208,7 +208,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             return QJsonValue::fromVariant(value);
 
         case QMetaType::QByteArray:
-            return QString(value.toByteArray().toBase64());
+            return QString::fromLatin1(value.toByteArray().toBase64());
 
         case QMetaType::UnknownType:
             return {};
@@ -217,32 +217,32 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         {
             auto v = value.toSize();
             QJsonObject o;
-            o["width"] = v.width();
-            o["height"] = v.height();
+            o["width"_qs] = v.width();
+            o["height"_qs] = v.height();
             return o;
         }
         case QMetaType::QSizeF:
         {
             auto v = value.toSizeF();
             QJsonObject o;
-            o["width"] = v.width();
-            o["height"] = v.height();
+            o["width"_qs] = v.width();
+            o["height"_qs] = v.height();
             return o;
         }
         case QMetaType::QPoint:
         {
             auto v = value.toPoint();
             QJsonObject o;
-            o["x"] = v.x();
-            o["y"] = v.y();
+            o["x"_qs] = v.x();
+            o["y"_qs] = v.y();
             return o;
         }
         case QMetaType::QVector2D:
         {
             auto v = value.value<QVector2D>();
             QJsonObject o;
-            o["x"] = v.x();
-            o["y"] = v.y();
+            o["x"_qs] = v.x();
+            o["y"_qs] = v.y();
             return o;
         }
         case QMetaType::QPointF:

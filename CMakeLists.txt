@@ -133,11 +133,6 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
 
-# TODO: The following definitons should be enabled
-remove_definitions(
-    -DQT_NO_CAST_FROM_ASCII
-)
-
 if (NOT DEFINED KF_MAJOR)
   set(KF_MAJOR ${QT_MAJOR_VERSION})
 endif()

@@ -30,7 +30,7 @@ public:
 
     QIcon tree_icon() const override
     {
-        return QIcon::fromTheme("draw-bezier-curves");
+        return QIcon::fromTheme("draw-bezier-curves"_qs);
     }
 
     QString type_name_human() const override

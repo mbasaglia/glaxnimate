@@ -25,8 +25,8 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     auto on_error = [this](const QString& s){warning(s);};
     try
     {
-        QSize forced_size = options["forced_size"].toSize();
-        model::FrameTime default_time = options["default_time"].toFloat();
+        QSize forced_size = options["forced_size"_qs].toSize();
+        model::FrameTime default_time = options["default_time"_qs].toFloat();
 
         auto default_asset_path = QFileInfo(filename).dir();
 
@@ -72,16 +72,16 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::sa
     choices[tr("Ignore")] = int(CssFontType::None);
 
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        app::settings::Setting("font_type", tr("External Fonts"), tr("How to include external font"),
+        app::settings::Setting("font_type"_qs, tr("External Fonts"), tr("How to include external font"),
                                app::settings::Setting::Int, int(qMin(max, CssFontType::FontFace)), choices)
     });
 }
 
 bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Composition* comp, const QVariantMap& options)
 {
-    SvgRenderer rend(SMIL, CssFontType(options["font_type"].toInt()));
+    SvgRenderer rend(SMIL, CssFontType(options["font_type"_qs].toInt()));
     rend.write_main(comp);
-    if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
+    if ( filename.endsWith(".svgz"_qs) || options.value("compressed"_qs, false).toBool() )
     {
         KCompressionDevice compressed(&file, false, KCompressionDevice::GZip);
         compressed.open(QIODevice::WriteOnly);

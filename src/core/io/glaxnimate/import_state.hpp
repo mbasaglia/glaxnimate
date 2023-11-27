@@ -139,41 +139,41 @@ public:
 
     void load_metadata(const QJsonObject& object)
     {
-        document->metadata() = object["metadata"].toObject().toVariantMap();
-        auto info = object["info"];
-        document->info().author = info["author"].toString();
-        document->info().description = info["description"].toString();
-        for ( const auto& kw: info["keywords"].toArray() )
+        document->metadata() = object["metadata"_qs].toObject().toVariantMap();
+        auto info = object["info"_qs];
+        document->info().author = info["author"_qs].toString();
+        document->info().description = info["description"_qs].toString();
+        for ( const auto& kw: info["keywords"_qs].toArray() )
             document->info().keywords.push_back(kw.toString());
     }
 
     void load_document(QJsonObject top_level)
     {
-        auto assets = top_level[document_version < 3 ? "defs" : "assets"].toObject();
+        auto assets = top_level[document_version < 3 ? "defs"_qs : "assets"_qs].toObject();
 
         if ( document_version < 8 )
         {
             QJsonObject precomps;
             QJsonArray values;
-            if ( assets.contains("precompositions") )
+            if ( assets.contains("precompositions"_qs) )
             {
-                precomps = assets["precompositions"].toObject();
-                values = precomps["values"].toArray();
+                precomps = assets["precompositions"_qs].toObject();
+                values = precomps["values"_qs].toArray();
             }
             else
             {
-                precomps["__type__"] = "CompositionList";
+                precomps["__type__"_qs] = "CompositionList"_qs;
             }
 
-            if ( top_level["animation"].isObject() )
+            if ( top_level["animation"_qs].isObject() )
             {
-                QJsonObject main = top_level["animation"].toObject();
-                top_level.remove("animation");
+                QJsonObject main = top_level["animation"_qs].toObject();
+                top_level.remove("animation"_qs);
                 values.push_front(main);
             }
 
-            precomps["values"] = values;
-            assets["precompositions"] = precomps;
+            precomps["values"_qs] = values;
+            assets["precompositions"_qs] = precomps;
         }
 
         load_metadata(top_level);
@@ -191,9 +191,9 @@ private:
     QJsonObject fixed_asset_list(const QString& type, const QJsonValue& values)
     {
         QJsonObject fixed;
-        fixed["__type__"] = type;
-        fixed["values"] = values;
-        fixed["uuid"] = QUuid::createUuid().toString();
+        fixed["__type__"_qs] = type;
+        fixed["values"_qs] = values;
+        fixed["uuid"_qs] = QUuid::createUuid().toString();
         return fixed;
     }
 
@@ -201,43 +201,43 @@ private:
     {
         if ( document_version == 1 )
         {
-            QString type = object["__type__"].toString();
+            QString type = object["__type__"_qs].toString();
             static const auto fix_ac = [](QJsonObject& object){
                 QJsonObject ac;
-                ac["__type__"] = "AnimationContainer";
-                ac["first_frame"] = object["first_frame"];
-                ac["last_frame"] = object["last_frame"];
-                object.remove("first_frame");
-                object.remove("last_frame");
+                ac["__type__"_qs] = "AnimationContainer"_qs;
+                ac["first_frame"_qs] = object["first_frame"_qs];
+                ac["last_frame"_qs] = object["last_frame"_qs];
+                object.remove("first_frame"_qs);
+                object.remove("last_frame"_qs);
             };
 
-            if ( type == "MainComposition" )
+            if ( type == "MainComposition"_qs )
             {
                 fix_ac(object);
-                object["shapes"] = object["layers"];
-                object.remove("layers");
+                object["shapes"_qs] = object["layers"_qs];
+                object.remove("layers"_qs);
             }
-            else if ( type == "ShapeLayer" )
+            else if ( type == "ShapeLayer"_qs )
             {
                 fix_ac(object);
-                object["__type__"] = "Layer";
+                object["__type__"_qs] = "Layer"_qs;
             }
-            else if ( type == "EmptyLayer" )
+            else if ( type == "EmptyLayer"_qs )
             {
                 fix_ac(object);
-                object["__type__"] = "Layer";
-                object["shapes"] = QJsonArray();
+                object["__type__"_qs] = "Layer"_qs;
+                object["shapes"_qs] = QJsonArray();
             }
         }
 
-        if ( document_version < 3 && object["__type__"].toString() == "Defs" )
+        if ( document_version < 3 && object["__type__"_qs].toString() == "Defs"_qs )
         {
             static const std::vector<std::pair<QString, QString>> types = {
-                {"colors", "NamedColorList"},
-                {"gradient_colors", "GradientColorsList"},
-                {"gradients", "GradientList"},
-                {"images", "BitmapList"},
-                {"precompositions", "PrecompositionList"},
+                {"colors"_qs, "NamedColorList"_qs},
+                {"gradient_colors"_qs, "GradientColorsList"_qs},
+                {"gradients"_qs, "GradientList"_qs},
+                {"images"_qs, "BitmapList"_qs},
+                {"precompositions"_qs, "PrecompositionList"_qs},
             };
 
             for ( const auto & pair : types )
@@ -248,70 +248,70 @@ private:
                 }
             }
 
-            object["uuid"] = QUuid::createUuid().toString();
-            object["__type__"] = "Assets";
+            object["uuid"_qs] = QUuid::createUuid().toString();
+            object["__type__"_qs] = "Assets"_qs;
         }
 
-        if ( document_version < 4 && object["__type__"].toString() == "Assets" )
+        if ( document_version < 4 && object["__type__"_qs].toString() == "Assets"_qs )
         {
-            object["fonts"] = fixed_asset_list("FontList", QJsonArray());
+            object["fonts"_qs] = fixed_asset_list("FontList"_qs, QJsonArray());
         }
 
         if ( document_version < 5 )
         {
-            if ( object["__type__"].toString() == "Trim" )
+            if ( object["__type__"_qs].toString() == "Trim"_qs )
             {
                 // values were swapped
-                if ( object["multiple"].toString() == "Individually" )
-                    object["multiple"] = "Simultaneously";
+                if ( object["multiple"_qs].toString() == "Individually"_qs )
+                    object["multiple"_qs] = "Simultaneously"_qs;
                 else
-                    object["multiple"] = "Individually";
+                    object["multiple"_qs] = "Individually"_qs;
             }
         }
 
         if ( document_version < 6 )
         {
-            if ( object["__type__"].toString() == "MaskSettings" )
-                object["mask"] = int(object["mask"].toBool());
+            if ( object["__type__"_qs].toString() == "MaskSettings"_qs )
+                object["mask"_qs] = int(object["mask"_qs].toBool());
         }
 
 
         if ( document_version < 8 )
         {
-            if ( object["__type__"].toString() == "MainComposition" )
+            if ( object["__type__"_qs].toString() == "MainComposition"_qs )
             {
-                object["__type__"] = "Composition";
+                object["__type__"_qs] = "Composition"_qs;
             }
-            else if ( object["__type__"].toString() == "Precomposition" )
+            else if ( object["__type__"_qs].toString() == "Precomposition"_qs )
             {
-                object["__type__"] = "Composition";
+                object["__type__"_qs] = "Composition"_qs;
                 if ( !document->assets()->compositions->values.empty() )
                 {
                     auto main = document->assets()->compositions->values[0];
-                    if ( !object.contains("fps") )
-                        object["fps"] = main->fps.get();
-                    if ( !object.contains("width") )
-                        object["width"] = main->width.get();
-                    if ( !object.contains("height") )
-                        object["height"] = main->height.get();
+                    if ( !object.contains("fps"_qs) )
+                        object["fps"_qs] = main->fps.get();
+                    if ( !object.contains("width"_qs) )
+                        object["width"_qs] = main->width.get();
+                    if ( !object.contains("height"_qs) )
+                        object["height"_qs] = main->height.get();
                 }
             }
-            else if ( object["__type__"].toString() == "PrecompositionList" )
+            else if ( object["__type__"_qs].toString() == "PrecompositionList"_qs )
             {
-                object["__type__"] = "CompositionList";
+                object["__type__"_qs] = "CompositionList"_qs;
             }
-            else if ( object["__type__"].toString() == "Assets" )
+            else if ( object["__type__"_qs].toString() == "Assets"_qs )
             {
-                QJsonObject comps = object["precompositions"].toObject();
-                object.remove("precompositions");
-                object["compositions"] = comps;
+                QJsonObject comps = object["precompositions"_qs].toObject();
+                object.remove("precompositions"_qs);
+                object["compositions"_qs] = comps;
             }
         }
     }
 
     void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )
     {
-        QString type = object["__type__"].toString();
+        QString type = object["__type__"_qs].toString();
 
         if ( type != target->type_name() )
             error(GlaxnimateFormat::tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
@@ -329,7 +329,7 @@ private:
 
         for ( auto it = object.begin(); it != object.end(); ++it )
         {
-            if ( !target->has(it.key()) && it.key() != "__type__" )
+            if ( !target->has(it.key()) && it.key() != "__type__"_qs )
             {
                 if ( !target->set(it.key(), it->toVariant()) )
                     error(GlaxnimateFormat::tr("Could not set property %1").arg(it.key()));
@@ -395,32 +395,32 @@ private:
         else if ( target->traits().flags & model::PropertyTraits::Animated )
         {
             QJsonObject jso = val.toObject();
-            if ( jso.contains("value") )
+            if ( jso.contains("value"_qs) )
             {
-                return target->set_value(load_prop_value(target, jso["value"], true, path));
+                return target->set_value(load_prop_value(target, jso["value"_qs], true, path));
             }
             else
             {
                 model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(target);
                 bool position = anim->traits().type == model::PropertyTraits::Point;
 
-                for ( auto v : jso["keyframes"].toArray() )
+                for ( auto v : jso["keyframes"_qs].toArray() )
                 {
                     QJsonObject kfobj = v.toObject();
-                    if ( !kfobj.contains("time") )
+                    if ( !kfobj.contains("time"_qs) )
                     {
                         error(GlaxnimateFormat::tr("Keyframe must specify a time"));
                         continue;
                     }
-                    if ( !kfobj.contains("value") )
+                    if ( !kfobj.contains("value"_qs) )
                     {
                         error(GlaxnimateFormat::tr("Keyframe must specify a value"));
                         continue;
                     }
 
                     model::KeyframeBase* kf = anim->set_keyframe(
-                        kfobj["time"].toDouble(),
-                        load_prop_value(target, kfobj["value"], false, {})
+                        kfobj["time"_qs].toDouble(),
+                        load_prop_value(target, kfobj["value"_qs], false, {})
                     );
                     if ( !kf )
                     {
@@ -429,7 +429,7 @@ private:
                     }
 
                     QPointF before, after;
-                    if ( load_2d(kfobj["before"], "x", "y", before) && load_2d(kfobj["after"], "x", "y", after) )
+                    if ( load_2d(kfobj["before"_qs], "x"_qs, "y"_qs, before) && load_2d(kfobj["after"_qs], "x"_qs, "y"_qs, after) )
                     {
                         kf->set_transition({before, after});
                     }
@@ -443,11 +443,11 @@ private:
                         auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
                         QPointF tan_in = pkf->get();
                         QPointF tan_out = pkf->get();
-                        bool load_ti = load_2d(kfobj["tan_in"], "x", "y", tan_in);
-                        bool load_to = load_2d(kfobj["tan_out"], "x", "y", tan_out);
+                        bool load_ti = load_2d(kfobj["tan_in"_qs], "x"_qs, "y"_qs, tan_in);
+                        bool load_to = load_2d(kfobj["tan_out"_qs], "x"_qs, "y"_qs, tan_out);
                         if ( load_ti || load_to )
                         {
-                            auto type = math::bezier::PointType(kfobj["point_type"].toInt());
+                            auto type = math::bezier::PointType(kfobj["point_type"_qs].toInt());
                             pkf->set_point({pkf->get(), tan_in, tan_out, type});
                         }
                     }
@@ -487,7 +487,7 @@ private:
     {
         QString name = val.toString();
         // We want #rrggbbaa, qt does #aarrggbb
-        if ( name.startsWith("#") && name.size() == 9 )
+        if ( name.startsWith("#"_qs) && name.size() == 9 )
         {
             int alpha = name.right(2).toInt(nullptr, 16);
             QColor col(name.left(7));
@@ -508,7 +508,7 @@ private:
                     return {};
                 QJsonObject jobj = val.toObject();
                 version_fixup(jobj);
-                model::Object* object = create_object(jobj["__type__"].toString());
+                model::Object* object = create_object(jobj["__type__"_qs].toString());
                 if ( !object )
                     return {};
                 if ( load_objects )
@@ -526,21 +526,21 @@ private:
             case model::PropertyTraits::Point:
             {
                 QPointF p;
-                if ( load_2d(val, "x", "y", p) )
+                if ( load_2d(val, "x"_qs, "y"_qs, p) )
                     return p;
                 return {};
             }
             case model::PropertyTraits::Size:
             {
                 QSizeF p;
-                if ( load_2d(val, "width", "height", p) )
+                if ( load_2d(val, "width"_qs, "height"_qs, p) )
                     return p;
                 return {};
             }
             case model::PropertyTraits::Scale:
             {
                 QVector2D p;
-                if ( load_2d(val, "x", "y", p) )
+                if ( load_2d(val, "x"_qs, "y"_qs, p) )
                     return p;
                 return {};
             }
@@ -551,18 +551,18 @@ private:
 
                 math::bezier::Bezier bezier;
                 QJsonObject obj = val.toObject();
-                bezier.set_closed(obj["closed"].toBool());
+                bezier.set_closed(obj["closed"_qs].toBool());
 
-                for ( auto jspv : obj["points"].toArray() )
+                for ( auto jspv : obj["points"_qs].toArray() )
                 {
                     if ( !jspv.isObject() )
                         continue;
                     QJsonObject jsp = jspv.toObject();
                     math::bezier::Point p{{}, {}, {}};
-                    load_2d(jsp["pos"], "x", "y", p.pos);
-                    load_2d(jsp["tan_in"], "x", "y", p.tan_in);
-                    load_2d(jsp["tan_out"], "x", "y", p.tan_out);
-                    p.type = math::bezier::PointType(jsp["type"].toInt());
+                    load_2d(jsp["pos"_qs], "x"_qs, "y"_qs, p.pos);
+                    load_2d(jsp["tan_in"_qs], "x"_qs, "y"_qs, p.tan_in);
+                    load_2d(jsp["tan_out"_qs], "x"_qs, "y"_qs, p.tan_out);
+                    p.type = math::bezier::PointType(jsp["type"_qs].toInt());
                     bezier.push_back(p);
                 }
                 return QVariant::fromValue(bezier);
@@ -578,7 +578,7 @@ private:
                     if ( !jstopv.isObject() )
                         continue;
                     auto jstop = jstopv.toObject();
-                    stops.push_back({jstop["offset"].toDouble(), load_color(jstop["color"])});
+                    stops.push_back({jstop["offset"_qs].toDouble(), load_color(jstop["color"_qs])});
                 }
 
                 return QVariant::fromValue(stops);

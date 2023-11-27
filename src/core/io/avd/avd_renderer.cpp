@@ -45,7 +45,7 @@ public:
 
         static QString attr(const QString& name)
         {
-            return "android:" + name;
+            return "android:"_qs + name;
         }
 
         qreal frame_to_ms(model::FrameTime f) const
@@ -82,41 +82,41 @@ public:
         /// \todo Option for propertyValuesHolder+keyframe?
         QDomElement render_object_animators() const
         {
-            QDomElement target = parent->dom.createElement("target");
-            target.setAttribute("android:name", name);
-            QDomElement attr = parent->dom.createElement("aapt:attr");
+            QDomElement target = parent->dom.createElement("target"_qs);
+            target.setAttribute("android:name"_qs, name);
+            QDomElement attr = parent->dom.createElement("aapt:attr"_qs);
             target.appendChild(attr);
-            attr.setAttribute("name", "android:animation");
-            QDomElement set = parent->dom.createElement("set");
+            attr.setAttribute("name"_qs, "android:animation"_qs);
+            QDomElement set = parent->dom.createElement("set"_qs);
             attr.appendChild(set);
 
             for ( const auto& prop : keyframes )
             {
                 QString type;
-                if ( prop.first == "pathData" )
-                    type = "pathType";
-                else if ( prop.first.contains("Color") )
-                    type = "colorType";
+                if ( prop.first == "pathData"_qs )
+                    type = "pathType"_qs;
+                else if ( prop.first.contains("Color"_qs) )
+                    type = "colorType"_qs;
                 else
-                    type = "floatType";
+                    type = "floatType"_qs;
 
                 auto iter = prop.second.begin();
 
                 while ( iter != prop.second.end() )
                 {
                     auto start = iter->first;
-                    QDomElement anim = parent->dom.createElement("objectAnimator");
-                    anim.setAttribute("android:propertyName", prop.first);
-                    anim.setAttribute("android:valueType", type);
-                    anim.setAttribute("android:startOffset", QString::number(start));
-                    anim.setAttribute("android:valueFrom", iter->second.value);
+                    QDomElement anim = parent->dom.createElement("objectAnimator"_qs);
+                    anim.setAttribute("android:propertyName"_qs, prop.first);
+                    anim.setAttribute("android:valueType"_qs, type);
+                    anim.setAttribute("android:startOffset"_qs, QString::number(start));
+                    anim.setAttribute("android:valueFrom"_qs, iter->second.value);
 
                     ++iter;
                     if ( iter == prop.second.end() )
                         break;
 
-                    anim.setAttribute("android:valueTo", iter->second.value);
-                    anim.setAttribute("android:duration", QString::number(iter->first - start));
+                    anim.setAttribute("android:valueTo"_qs, iter->second.value);
+                    anim.setAttribute("android:duration"_qs, QString::number(iter->first - start));
                     set.appendChild(anim);
                 }
             }
@@ -128,18 +128,18 @@ public:
     void render(model::Composition* comp)
     {
         fps = comp->fps.get();
-        vector = dom.createElement("vector");
-        vector.setAttribute("android:width", QString("%1dp").arg(comp->width.get()));
-        vector.setAttribute("android:height", QString("%1dp").arg(comp->height.get()));
-        vector.setAttribute("android:viewportWidth", QString::number(comp->width.get()));
-        vector.setAttribute("android:viewportHeight", QString::number(comp->height.get()));
+        vector = dom.createElement("vector"_qs);
+        vector.setAttribute("android:width"_qs, QStringLiteral("%1dp").arg(comp->width.get()));
+        vector.setAttribute("android:height"_qs, QStringLiteral("%1dp").arg(comp->height.get()));
+        vector.setAttribute("android:viewportWidth"_qs, QString::number(comp->width.get()));
+        vector.setAttribute("android:viewportHeight"_qs, QString::number(comp->height.get()));
 
         render_comp(comp, vector);
     }
 
     void render_comp(model::Composition* comp, QDomElement& parent)
     {
-        parent.setAttribute("android:name", unique_name(comp, false));
+        parent.setAttribute("android:name"_qs, unique_name(comp, false));
         for ( const auto& layer : comp->shapes )
             render_element(layer.get(), parent);
     }
@@ -175,7 +175,7 @@ public:
         if ( auto parlay = lay->parent.get() )
         {
             auto p = render_layer_parents(parlay, parent);
-            QDomElement group = dom.createElement("group");
+            QDomElement group = dom.createElement("group"_qs);
             p.appendChild(group);
             render_transform(parlay->transform.get(), group, unique_name(parlay, true) );
             return p;
@@ -200,16 +200,16 @@ public:
     {
         QString base = node->name.get();
         if ( base.isEmpty() )
-            base = "item_" + node->uuid.get().toString(QUuid::Id128);
+            base = "item_"_qs + node->uuid.get().toString(QUuid::Id128);
 
 
         QString name = base;
         if ( is_duplicate )
-            name += "_" + QString::number(unique_id++);
+            name += "_"_qs + QString::number(unique_id++);
 
         while ( names.count(name) )
         {
-            name = base + "_" + QString::number(unique_id++);
+            name = base + "_"_qs + QString::number(unique_id++);
         }
 
         names.insert(name);
@@ -218,7 +218,7 @@ public:
 
     QDomElement render_group(model::Group* group, QDomElement& parent)
     {
-        QDomElement elm = dom.createElement("group");
+        QDomElement elm = dom.createElement("group"_qs);
         parent.appendChild(elm);
         render_transform(group->transform.get(), elm, unique_name(group, false));
 
@@ -298,9 +298,9 @@ public:
         if ( shapes.empty() )
             return;
 
-        auto path = dom.createElement("path");
+        auto path = dom.createElement("path"_qs);
         parent.appendChild(path);
-        path.setAttribute("android:name", name);
+        path.setAttribute("android:name"_qs, name);
         render_shapes_to_path_data(shapes, name, path);
         render_fill(fill, name, path);
         render_stroke(stroke, name, path);
@@ -330,7 +330,7 @@ public:
         auto& anim = animator(name);
         anim.render_properties(elem, paths, [](const std::vector<QVariant>& v) -> PropRet {
             return {
-                {"pathData", paths_to_path_data(v)},
+                {"pathData"_qs, paths_to_path_data(v)},
             };
         });
     }
@@ -362,15 +362,15 @@ public:
         if ( !fill )
             return;
 
-        render_styler_color(fill, name, "fillColor", element);
+        render_styler_color(fill, name, "fillColor"_qs, element);
 
         auto& anim = animator(name);
         anim.render_properties(element, {&fill->opacity}, [](const std::vector<QVariant>& v) -> PropRet {
             return {
-                {"fillAlpha", QString::number(v[0].toDouble())},
+                {"fillAlpha"_qs, QString::number(v[0].toDouble())},
             };
         });
-        element.setAttribute("android:fillType", fill->fill_rule.get() == model::Fill::EvenOdd ? "evenOdd" : "nonZero");
+        element.setAttribute("android:fillType"_qs, fill->fill_rule.get() == model::Fill::EvenOdd ? "evenOdd"_qs : "nonZero"_qs);
 
     }
 
@@ -379,44 +379,44 @@ public:
         if ( !stroke )
             return;
 
-        render_styler_color(stroke, name, "strokeColor", element);
+        render_styler_color(stroke, name, "strokeColor"_qs, element);
 
         auto& anim = animator(name);
         anim.render_properties(element, {&stroke->opacity}, [](const std::vector<QVariant>& v) -> PropRet {
             return {
-                {"strokeAlpha", QString::number(v[0].toDouble())},
+                {"strokeAlpha"_qs, QString::number(v[0].toDouble())},
             };
         });
         anim.render_properties(element, {&stroke->width}, [](const std::vector<QVariant>& v) -> PropRet {
             return {
-                {"strokeWidth", QString::number(v[0].toDouble())},
+                {"strokeWidth"_qs, QString::number(v[0].toDouble())},
             };
         });
 
-        element.setAttribute("android:strokeWidth", QString::number(stroke->width.get()));
-        element.setAttribute("android:strokeMiterLimit", QString::number(stroke->miter_limit.get()));
+        element.setAttribute("android:strokeWidth"_qs, QString::number(stroke->width.get()));
+        element.setAttribute("android:strokeMiterLimit"_qs, QString::number(stroke->miter_limit.get()));
         switch ( stroke->cap.get() )
         {
             case model::Stroke::RoundCap:
-                element.setAttribute("android:strokeLineCap", "round");
+                element.setAttribute("android:strokeLineCap"_qs, "round"_qs);
                 break;
             case model::Stroke::ButtCap:
-                element.setAttribute("android:strokeLineCap", "butt");
+                element.setAttribute("android:strokeLineCap"_qs, "butt"_qs);
                 break;
             case model::Stroke::SquareCap:
-                element.setAttribute("android:strokeLineCap", "square");
+                element.setAttribute("android:strokeLineCap"_qs, "square"_qs);
                 break;
         }
         switch ( stroke->join.get() )
         {
             case model::Stroke::RoundJoin:
-                element.setAttribute("android:strokeLineJoin", "round");
+                element.setAttribute("android:strokeLineJoin"_qs, "round"_qs);
                 break;
             case model::Stroke::MiterJoin:
-                element.setAttribute("android:strokeLineJoin", "miter");
+                element.setAttribute("android:strokeLineJoin"_qs, "miter"_qs);
                 break;
             case model::Stroke::BevelJoin:
-                element.setAttribute("android:strokeLineJoin", "bevel");
+                element.setAttribute("android:strokeLineJoin"_qs, "bevel"_qs);
                 break;
         }
     }
@@ -447,36 +447,36 @@ public:
 
     void render_gradient(const QString& attr_name, model::Gradient* gradient, QDomElement& element)
     {
-        auto attr = dom.createElement("aapt:attr");
-        attr.setAttribute("name", "android:" + attr_name);
+        auto attr = dom.createElement("aapt:attr"_qs);
+        attr.setAttribute("name"_qs, "android:"_qs + attr_name);
         element.appendChild(attr);
-        auto gradel = dom.createElement("gradient");
+        auto gradel = dom.createElement("gradient"_qs);
         attr.appendChild(gradel);
         switch ( gradient->type.get() )
         {
             case model::Gradient::Linear:
-                gradel.setAttribute("android:type", "linear");
+                gradel.setAttribute("android:type"_qs, "linear"_qs);
                 break;
             case model::Gradient::Radial:
-                gradel.setAttribute("android:type", "radial");
+                gradel.setAttribute("android:type"_qs, "radial"_qs);
                 break;
             case model::Gradient::Conical:
-                gradel.setAttribute("android:type", "sweep");
+                gradel.setAttribute("android:type"_qs, "sweep"_qs);
                 break;
         }
 
-        gradel.setAttribute("startX", gradient->start_point.get().x());
-        gradel.setAttribute("startY", gradient->start_point.get().y());
-        gradel.setAttribute("endX", gradient->end_point.get().x());
-        gradel.setAttribute("endY", gradient->end_point.get().y());
+        gradel.setAttribute("startX"_qs, gradient->start_point.get().x());
+        gradel.setAttribute("startY"_qs, gradient->start_point.get().y());
+        gradel.setAttribute("endX"_qs, gradient->end_point.get().x());
+        gradel.setAttribute("endY"_qs, gradient->end_point.get().y());
 
         if ( auto cols = gradient->colors.get() )
         {
             for ( const auto& stop : cols->colors.get() )
             {
-                auto item = dom.createElement("item");
-                item.setAttribute("android:color", render_color(stop.second));
-                item.setAttribute("android:offset", QString::number(stop.first));
+                auto item = dom.createElement("item"_qs);
+                item.setAttribute("android:color"_qs, render_color(stop.second));
+                item.setAttribute("android:offset"_qs, QString::number(stop.first));
             }
         }
     }
@@ -488,21 +488,21 @@ public:
 
         auto& anim = animator(name);
         anim.render_properties(element, {&trim->start}, [](const std::vector<QVariant>& v) -> PropRet { return {
-            {"trimPathStart", QString::number(v[0].toDouble())},
+            {"trimPathStart"_qs, QString::number(v[0].toDouble())},
         };});
         anim.render_properties(element, {&trim->end}, [](const std::vector<QVariant>& v) -> PropRet { return {
-            {"trimPathEnd", QString::number(v[0].toDouble())},
+            {"trimPathEnd"_qs, QString::number(v[0].toDouble())},
         };});
         anim.render_properties(element, {&trim->offset}, [](const std::vector<QVariant>& v) -> PropRet { return {
-            {"trimPathOffset", QString::number(v[0].toDouble())},
+            {"trimPathOffset"_qs, QString::number(v[0].toDouble())},
         };});
     }
 
     QDomElement render_clip_path(model::ShapeElement* element)
     {
-        QDomElement clip = dom.createElement("clip-path");
+        QDomElement clip = dom.createElement("clip-path"_qs);
         QString name = unique_name(element, false);
-        clip.setAttribute("android:name", name);
+        clip.setAttribute("android:name"_qs, name);
 
         if ( auto group = element->cast<model::Group>() )
         {
@@ -524,12 +524,12 @@ public:
 
     static QString color_comp(int comp)
     {
-        return QString::number(comp, 16).rightJustified(2, '0');
+        return QString::number(comp, 16).rightJustified(2, '0'_qc);
     }
 
     static QString render_color(const QColor& color)
     {
-        return "#" + color_comp(color.alpha()) + color_comp(color.red()) + color_comp(color.green()) + color_comp(color.blue());
+        return "#"_qs + color_comp(color.alpha()) + color_comp(color.red()) + color_comp(color.green()) + color_comp(color.blue());
     }
 
     void render_transform(model::Transform* trans, QDomElement& elm, const QString& name)
@@ -539,22 +539,22 @@ public:
             auto ap = v[0].toPointF();
             auto pos = v[1].toPointF() - ap;
             return {
-                {"pivotX", QString::number(ap.x())},
-                {"pivotY", QString::number(ap.y())},
-                {"translateX", QString::number(pos.x())},
-                {"translateY", QString::number(pos.y())},
+                {"pivotX"_qs, QString::number(ap.x())},
+                {"pivotY"_qs, QString::number(ap.y())},
+                {"translateX"_qs, QString::number(pos.x())},
+                {"translateY"_qs, QString::number(pos.y())},
             };
         });
         anim.render_properties(elm, {&trans->scale}, [](const std::vector<QVariant>& v) -> PropRet {
             auto scale = v[0].value<QVector2D>();
             return {
-                {"scaleX", QString::number(scale.x())},
-                {"scaleY", QString::number(scale.y())},
+                {"scaleX"_qs, QString::number(scale.x())},
+                {"scaleY"_qs, QString::number(scale.y())},
             };
         });
         anim.render_properties(elm, {&trans->rotation}, [](const std::vector<QVariant>& v) -> PropRet {
             return {
-                {"rotation", QString::number(v[0].toDouble())},
+                {"rotation"_qs, QString::number(v[0].toDouble())},
             };
         });
     }
@@ -609,18 +609,18 @@ QDomElement glaxnimate::io::avd::AvdRenderer::graphics()
 QDomDocument glaxnimate::io::avd::AvdRenderer::single_file()
 {
     QDomDocument dom;
-    auto av = dom.createElement("animated-vector");
+    auto av = dom.createElement("animated-vector"_qs);
     dom.appendChild(av);
-    av.setAttribute("xmlns", svg::detail::xmlns.at("android"));
+    av.setAttribute("xmlns"_qs, svg::detail::xmlns.at("android"_qs));
     for ( const auto& p : svg::detail::xmlns )
     {
-        if ( p.second.contains("android") )
-            av.setAttribute("xmlns:" + p.first, p.second);
+        if ( p.second.contains("android"_qs) )
+            av.setAttribute("xmlns:"_qs + p.first, p.second);
     }
 
-    auto attr = dom.createElement("aapt:attr");
+    auto attr = dom.createElement("aapt:attr"_qs);
     av.appendChild(attr);
-    attr.setAttribute("name", "android:drawable");
+    attr.setAttribute("name"_qs, "android:drawable"_qs);
     attr.appendChild(graphics());
 
     d->render_anim(av);

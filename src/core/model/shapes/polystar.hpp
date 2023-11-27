@@ -39,8 +39,8 @@ public:
     QIcon tree_icon() const override
     {
         if ( type.get() == Star )
-            return QIcon::fromTheme("draw-star");
-        return QIcon::fromTheme("draw-polygon");
+            return QIcon::fromTheme("draw-star"_qs);
+        return QIcon::fromTheme("draw-polygon"_qs);
     }
 
     QString type_name_human() const override

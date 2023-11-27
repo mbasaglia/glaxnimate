@@ -18,37 +18,37 @@ QString glaxnimate::AppInfo::name() const
 
 QString glaxnimate::AppInfo::slug() const
 {
-    return PROJECT_SLUG;
+    return QStringLiteral(PROJECT_SLUG);
 }
 
 QString glaxnimate::AppInfo::version() const
 {
-    return PROJECT_VERSION;
+    return QStringLiteral(PROJECT_VERSION);
 }
 
 QString glaxnimate::AppInfo::organization() const
 {
-    return PROJECT_SLUG;
+    return QStringLiteral(PROJECT_SLUG);
 }
 
 QUrl glaxnimate::AppInfo::url_docs() const
 {
-    return QUrl(URL_DOCS);
+    return QUrl(QStringLiteral(URL_DOCS));
 }
 
 QUrl glaxnimate::AppInfo::url_issues() const
 {
-    return QUrl(URL_ISSUES);
+    return QUrl(QStringLiteral(URL_ISSUES));
 }
 
 QString glaxnimate::AppInfo::description() const
 {
-    return PROJECT_DESCRIPTION;
+    return QStringLiteral(PROJECT_DESCRIPTION);
 }
 
 QUrl glaxnimate::AppInfo::url_donate() const
 {
-    return QUrl(URL_DONATE);
+    return QUrl(QStringLiteral(URL_DONATE));
 }
 
 void glaxnimate::AppInfo::init_qapplication() const

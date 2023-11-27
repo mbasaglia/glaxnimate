@@ -21,7 +21,7 @@ class RasterFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString slug() const override { return "raster"; }
+    QString slug() const override { return "raster"_qs; }
     QString name() const override { return tr("Raster Image"); }
     QStringList extensions() const override;
     bool can_save() const override { return false; }

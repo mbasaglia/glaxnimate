@@ -134,7 +134,7 @@ protected:
                 return value * mult;
         }
 
-        warning(QString("Unknown length value %1").arg(svg_value));
+        warning(QStringLiteral("Unknown length value %1").arg(svg_value));
         return 0;
     }
 
@@ -142,27 +142,27 @@ protected:
     {
         static const constexpr qreal cmin = 2.54;
 
-        if ( unit == "px" || unit == "" || unit == "dp" || unit == "dip" || unit == "sp" )
+        if ( unit == "px"_qs || unit == ""_qs || unit == "dp"_qs || unit == "dip"_qs || unit == "sp"_qs )
             return 1;
-        else if ( unit == "vw" )
+        else if ( unit == "vw"_qs )
             return size.width() * 0.01;
-        else if ( unit == "vh" )
+        else if ( unit == "vh"_qs )
             return size.height() * 0.01;
-        else if ( unit == "vmin" )
+        else if ( unit == "vmin"_qs )
             return std::min(size.width(), size.height()) * 0.01;
-        else if ( unit == "vmax" )
+        else if ( unit == "vmax"_qs )
             return std::max(size.width(), size.height()) * 0.01;
-        else if ( unit == "in" )
+        else if ( unit == "in"_qs )
             return dpi;
-        else if ( unit == "pc" )
+        else if ( unit == "pc"_qs )
             return dpi / 6;
-        else if ( unit == "pt" )
+        else if ( unit == "pt"_qs )
             return dpi / 72;
-        else if ( unit == "cm" )
+        else if ( unit == "cm"_qs )
             return dpi / cmin;
-        else if ( unit == "mm" )
+        else if ( unit == "mm"_qs )
             return dpi / cmin / 10;
-        else if ( unit == "Q" )
+        else if ( unit == "Q"_qs )
             return dpi / cmin / 40;
 
         return 0;
@@ -220,8 +220,8 @@ protected:
 
     void populate_ids(const QDomElement& elem)
     {
-        if ( elem.hasAttribute("id") )
-            map_ids[elem.attribute("id")] = elem;
+        if ( elem.hasAttribute("id"_qs) )
+            map_ids[elem.attribute("id"_qs)] = elem;
 
         for ( const auto& domnode : ItemCountRange(elem.childNodes()) )
         {
@@ -291,18 +291,18 @@ protected:
     // parse attributes like opacity where it's a value in [0-1] or a percentage
     static double percent_1(const QString& s)
     {
-        if ( s.contains('%') )
+        if ( s.contains('%'_qc) )
             return ::utils::mid_ref(s, 0, s.size()-1).toDouble() / 100;
         return s.toDouble();
     }
 
     static model::Stroke::Cap line_cap(const QString& linecap)
     {
-        if ( linecap == "round" )
+        if ( linecap == "round"_qs )
             return model::Stroke::RoundCap;
-        else if ( linecap == "butt" )
+        else if ( linecap == "butt"_qs )
             return model::Stroke::ButtCap;
-        else if ( linecap == "square" )
+        else if ( linecap == "square"_qs )
             return model::Stroke::SquareCap;
 
         return model::Stroke::ButtCap;
@@ -310,11 +310,11 @@ protected:
 
     static model::Stroke::Join line_join(const QString& linecap)
     {
-        if ( linecap == "round" )
+        if ( linecap == "round"_qs )
             return model::Stroke::RoundJoin;
-        else if ( linecap == "bevel" )
+        else if ( linecap == "bevel"_qs )
             return model::Stroke::BevelJoin;
-        else if ( linecap == "miter" )
+        else if ( linecap == "miter"_qs )
             return model::Stroke::MiterJoin;
 
         return model::Stroke::MiterJoin;

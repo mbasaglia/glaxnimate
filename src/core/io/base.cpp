@@ -11,7 +11,7 @@ QString glaxnimate::io::ImportExport::name_filter() const
     QString ext_str;
     for ( const QString& ext : extensions() )
     {
-        ext_str += "*." + ext + " ";
+        ext_str += "*."_qs + ext + " "_qs;
     }
 
     if ( ext_str.isEmpty() )

@@ -64,12 +64,12 @@ private Q_SLOTS:
     {
         CosLexer l("/foo/bar<<"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, Identifier, String, "foo");
+        COS_TOKEN(token, Identifier, String, "foo"_qs);
         token = l.next_token();
-        COS_TOKEN(token, Identifier, String, "bar");
+        COS_TOKEN(token, Identifier, String, "bar"_qs);
         token = l.next_token();
         QCOMPARE(token.type, CosTokenType::ObjectStart);
-        COS_TOKEN(lex("/foo#62ar"_b), Identifier, String, "foobar");
+        COS_TOKEN(lex("/foo#62ar"_b), Identifier, String, "foobar"_qs);
         QVERIFY_THROWS_EXCEPTION(CosError, lex("/foo#6"));
         QVERIFY_THROWS_EXCEPTION(CosError, lex("/foo#6r"));
     }
@@ -78,11 +78,11 @@ private Q_SLOTS:
     {
         CosLexer l("  \t\n/1\n /2\n% /3 /4\n /5"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, Identifier, String, "1");
+        COS_TOKEN(token, Identifier, String, "1"_qs);
         token = l.next_token();
-        COS_TOKEN(token, Identifier, String, "2");
+        COS_TOKEN(token, Identifier, String, "2"_qs);
         token = l.next_token();
-        COS_TOKEN(token, Identifier, String, "5");
+        COS_TOKEN(token, Identifier, String, "5"_qs);
         token = l.next_token();
         COS_TOKEN_TYPE(token, Eof);
     }
@@ -123,42 +123,42 @@ private Q_SLOTS:
     {
         CosLexer l("(Hello)"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, "Hello");
+        COS_TOKEN(token, String, String, "Hello"_qs);
     }
 
     void test_lex_string_utf8()
     {
         CosLexer l("(H\xe2\x82\xacllo)"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, "H€llo");
+        COS_TOKEN(token, String, String, "H€llo"_qs);
     }
 
     void test_lex_string_utf16le()
     {
         CosLexer l("(\xff\xfeH\0\xac l\0l\0o\0)"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, "H€llo");
+        COS_TOKEN(token, String, String, "H€llo"_qs);
     }
 
     void test_lex_string_utf16be()
     {
         CosLexer l("(\xfe\xff\0H \xac\0l\0l\0o)"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, "H€llo");
+        COS_TOKEN(token, String, String, "H€llo"_qs);
     }
 
     void test_lex_string_escapes()
     {
         CosLexer l(R"((\b\n\f\r\(\)\\\100\41a\41))"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, QString("\b\n\f\r()\\@!a!"));
+        COS_TOKEN(token, String, String, QStringLiteral("\b\n\f\r()\\@!a!"));
     }
 
     void test_lex_string_newlines()
     {
         CosLexer l("(1\n2\n\r3\r4\n\r5)"_b);
         auto token = l.next_token();
-        COS_TOKEN(token, String, String, QString("1\n2\n3\n4\n5"));
+        COS_TOKEN(token, String, String, QStringLiteral("1\n2\n3\n4\n5"));
     }
 
     void test_lex_string_errors()
@@ -211,7 +211,7 @@ private Q_SLOTS:
 
     void test_parse_value()
     {
-        COS_VALUE(parse("(foo)"), String, "foo");
+        COS_VALUE(parse("(foo)"), String, "foo"_qs);
         COS_VALUE(parse("<f00d>"), Bytes, "\xf0\x0d"_b);
         COS_VALUE(parse("null"), Null, nullptr);
         COS_VALUE(parse("true"), Boolean, true);
@@ -223,8 +223,8 @@ private Q_SLOTS:
         auto value = parse("/foo (bar) /bar 123");
         QCOMPARE(value.type(), CosValue::Index::Object);
         auto& obj = value.get<CosValue::Index::Object>();
-        COS_VALUE(obj->at("foo"), String, "bar");
-        COS_VALUE(obj->at("bar"), Number, 123);
+        COS_VALUE(obj->at("foo"_qs), String, "bar"_qs);
+        COS_VALUE(obj->at("bar"_qs), Number, 123);
     }
 
     void test_parse_object()
@@ -232,8 +232,8 @@ private Q_SLOTS:
         auto value = parse("<< /foo (bar) /bar 123 >>");
         QCOMPARE(value.type(), CosValue::Index::Object);
         auto& obj = value.get<CosValue::Index::Object>();
-        COS_VALUE(obj->at("foo"), String, "bar");
-        COS_VALUE(obj->at("bar"), Number, 123);
+        COS_VALUE(obj->at("foo"_qs), String, "bar"_qs);
+        COS_VALUE(obj->at("bar"_qs), Number, 123);
     }
 
     void test_parse_mid_array()
@@ -241,7 +241,7 @@ private Q_SLOTS:
         auto value = parse("(bar) 123");
         QCOMPARE(value.type(), CosValue::Index::Array);
         auto& obj = *value.get<CosValue::Index::Array>();
-        COS_VALUE(obj[0], String, "bar");
+        COS_VALUE(obj[0], String, "bar"_qs);
         COS_VALUE(obj[1], Number, 123);
     }
 
@@ -250,7 +250,7 @@ private Q_SLOTS:
         auto value = parse("[(bar) 123]");
         QCOMPARE(value.type(), CosValue::Index::Array);
         auto& obj = *value.get<CosValue::Index::Array>();
-        COS_VALUE(obj[0], String, "bar");
+        COS_VALUE(obj[0], String, "bar"_qs);
         COS_VALUE(obj[1], Number, 123);
     }
 };

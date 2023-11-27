@@ -26,9 +26,14 @@ namespace detail {
 
 QString naked_type_name(QString class_name);
 
+inline QString naked_type_name(const char* class_name)
+{
+    return naked_type_name(QString::fromLatin1(class_name));
+}
+
 inline QString naked_type_name(const QMetaObject* obj)
 {
-    return naked_type_name(obj->className());
+    return naked_type_name(QString::fromLatin1(obj->className()));
 }
 
 template<class T>

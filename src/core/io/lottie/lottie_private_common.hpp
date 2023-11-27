@@ -166,25 +166,25 @@ struct FieldInfo
     TransformFunc transform;
 
     FieldInfo(const char* lottie, const char* name, TransformFunc transform = {}, bool essential = true)
-        : name(name), lottie(lottie), essential(essential), mode(Auto), transform(std::move(transform))
+        : name(QString::fromUtf8(name)), lottie(QString::fromUtf8(lottie)), essential(essential), mode(Auto), transform(std::move(transform))
     {}
 
     FieldInfo(const char* lottie, FieldMode mode = Ignored)
-        : lottie(lottie), essential(false), mode(mode)
+        : lottie(QString::fromUtf8(lottie)), essential(false), mode(mode)
     {}
 
     FieldInfo(const char* lottie, const char* name, FieldMode mode, bool essential = true)
-        : name(name), lottie(lottie), essential(essential), mode(mode)
+        : name(QString::fromUtf8(name)), lottie(QString::fromUtf8(lottie)), essential(essential), mode(mode)
     {}
 };
 
 // static mapping data
 const QMap<QString, QVector<FieldInfo>> fields = {
-    {"DocumentNode", {
+    {"DocumentNode"_qs, {
         FieldInfo{"nm", "name", {}, false},
         FieldInfo{"mn", "uuid", {}, false},
     }},
-    {"Composition", {
+    {"Composition"_qs, {
         FieldInfo("layers", Custom),
         FieldInfo("id", Custom),
         FieldInfo{"op", Custom},
@@ -206,7 +206,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("slots"),
     }},
     // Layer is converted explicitly
-    {"__Layer__", {
+    {"__Layer__"_qs, {
         FieldInfo{"op", Custom},
         FieldInfo{"ip", Custom},
         FieldInfo("ddd"),
@@ -229,7 +229,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("bounds"), // old, no longer there
         FieldInfo("ct"),
     }},
-    {"Transform", {
+    {"Transform"_qs, {
         FieldInfo{"a", "anchor_point"},
         FieldInfo("px", Custom),
         FieldInfo("py", Custom),
@@ -245,34 +245,34 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("sa"),
         FieldInfo("nm"),
     }},
-    {"ShapeElement", {
+    {"ShapeElement"_qs, {
         FieldInfo{"ty", Custom},
         FieldInfo{"ix"},
         FieldInfo{"cix"},
         FieldInfo{"bm"},
         FieldInfo{"hd", Custom},
     }},
-    {"Shape", {
+    {"Shape"_qs, {
         FieldInfo{"d", "reversed", EnumMap{{
             {1, 3},
             {0, 1},
         }}},
         FieldInfo{"closed", Custom}, // Old attribute
     }},
-    {"Rect", {
+    {"Rect"_qs, {
         FieldInfo{"p", "position"},
         FieldInfo{"s", "size"},
         FieldInfo{"r", "rounded"},
     }},
-    {"Ellipse", {
+    {"Ellipse"_qs, {
         FieldInfo{"p", "position"},
         FieldInfo{"s", "size"},
     }},
-    {"Path", {
+    {"Path"_qs, {
         FieldInfo{"ks", "shape"},
         FieldInfo{"ind"},
     }},
-    {"PolyStar", {
+    {"PolyStar"_qs, {
         FieldInfo{"p", "position"},
         FieldInfo{"or", "outer_radius"},
         FieldInfo{"ir", "inner_radius"},
@@ -282,22 +282,22 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"pt", "points"},
         FieldInfo{"sy", "type"},
     }},
-    {"Group", {
+    {"Group"_qs, {
         FieldInfo{"np"},
         FieldInfo{"it", Custom},
     }},
-    {"Styler", {
+    {"Styler"_qs, {
         FieldInfo{"o", "opacity", FloatMult(100)},
         FieldInfo{"c", Custom},
         FieldInfo{"fillEnabled", Custom},
     }},
-    {"Fill", {
+    {"Fill"_qs, {
         FieldInfo{"r", "fill_rule", EnumMap{{
             {model::Fill::NonZero, 1},
             {model::Fill::EvenOdd, 2},
         }}},
     }},
-    {"Stroke", {
+    {"Stroke"_qs, {
         FieldInfo{"lc", "cap", EnumMap{{
             {model::Stroke::ButtCap,   1},
             {model::Stroke::RoundCap,  2},
@@ -312,7 +312,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"w", "width"},
         FieldInfo{"d"},
     }},
-    {"Bitmap", {
+    {"Bitmap"_qs, {
         FieldInfo{"h", "height"},
         FieldInfo{"w", "width"},
         FieldInfo{"id", Custom},
@@ -320,7 +320,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"u", Custom},
         FieldInfo{"e", Custom},
     }},
-    {"Gradient", {
+    {"Gradient"_qs, {
         FieldInfo{"s", "start_point"},
         FieldInfo{"e", "end_point"},
         FieldInfo{"t", "type"},
@@ -328,31 +328,31 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"a", Custom}, /// \todo
         FieldInfo{"g", Custom},
     }},
-    {"PreCompLayer", {
+    {"PreCompLayer"_qs, {
         FieldInfo{"refId", Custom},
         FieldInfo{"w", Custom},
         FieldInfo{"h", Custom},
         FieldInfo{"tm"},
     }},
-    {"Repeater", {
+    {"Repeater"_qs, {
         FieldInfo{"c", "copies"},
         FieldInfo{"o"},
         FieldInfo{"m"},
         FieldInfo{"tr", Custom},
     }},
-    {"Trim", {
+    {"Trim"_qs, {
         FieldInfo{"s", "start", FloatMult(100)},
         FieldInfo{"e", "end", FloatMult(100)},
         FieldInfo{"o", "offset", FloatMult(360)},
         FieldInfo{"m", "multiple"},
     }},
-    {"InflateDeflate", {
+    {"InflateDeflate"_qs, {
         FieldInfo{"a", "amount", FloatMult(100)},
     }},
-    {"RoundCorners", {
+    {"RoundCorners"_qs, {
         FieldInfo{"r", "radius"},
     }},
-    {"OffsetPath", {
+    {"OffsetPath"_qs, {
         FieldInfo{"a", "amount"},
         FieldInfo{"lj", "join", EnumMap{{
             {model::Stroke::MiterJoin, 1},
@@ -361,42 +361,42 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         }}},
         FieldInfo{"ml", "miter_limit"},
     }},
-    {"ZigZag", {
+    {"ZigZag"_qs, {
         FieldInfo{"s", "amplitude"},
         FieldInfo{"r", "frequency"},
         FieldInfo{"pt", "style", AnimatedToStatic},
     }},
 };
 const QMap<QString, QString> shape_types = {
-    {"Rect", "rc"},
-    {"PolyStar", "sr"},
-    {"Ellipse", "el"},
-    {"Path", "sh"},
-    {"Group", "gr"},
-    {"Layer", "gr"},
-    {"Fill", "fl"},
-    {"Stroke", "st"},
+    {"Rect"_qs, "rc"_qs},
+    {"PolyStar"_qs, "sr"_qs},
+    {"Ellipse"_qs, "el"_qs},
+    {"Path"_qs, "sh"_qs},
+    {"Group"_qs, "gr"_qs},
+    {"Layer"_qs, "gr"_qs},
+    {"Fill"_qs, "fl"_qs},
+    {"Stroke"_qs, "st"_qs},
     // "gf" (Gradient Fill) and "gs" (Gradient Stroke) are handled by fill/stroke
     // "tr" is not a shape but a property of groups
     // "mm" (Merge), "tw" (Twist), are not supported by lottie
-    {"Trim", "tm"},
-    {"Repeater", "rp"},
-    {"RoundCorners", "rd"},
-    {"InflateDeflate", "pb"},
-    {"OffsetPath", "op"},
-    {"ZigZag", "zz"},
+    {"Trim"_qs, "tm"_qs},
+    {"Repeater"_qs, "rp"_qs},
+    {"RoundCorners"_qs, "rd"_qs},
+    {"InflateDeflate"_qs, "pb"_qs},
+    {"OffsetPath"_qs, "op"_qs},
+    {"ZigZag"_qs, "zz"_qs},
 };
 
 const QMap<QString, QString> shape_types_repeat = {
-    {"gf", "Fill"},
-    {"gs", "Stroke"},
+    {"gf"_qs, "Fill"_qs},
+    {"gs"_qs, "Stroke"_qs},
 };
 
 const QMap<int, QString> unsupported_layers = {
-    {6, "Audio"},
-    {7, "Pholder Video"},
-    {8, "Image Sequence"},
-    {9, "Video"},
+    {6, "Audio"_qs},
+    {7, "Pholder Video"_qs},
+    {8, "Image Sequence"_qs},
+    {9, "Video"_qs},
 };
 
 } // namespace glaxnimate::io::lottie::detail

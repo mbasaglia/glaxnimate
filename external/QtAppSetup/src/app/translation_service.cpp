@@ -13,6 +13,7 @@
 
 #include "app/application.hpp"
 #include "app/log/log.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 void app::TranslationService::initialize ( QString default_lang_code )
 {
@@ -23,10 +24,10 @@ void app::TranslationService::initialize ( QString default_lang_code )
             register_translation(name,default_lang_code, QString());
     }
 
-    QDir translations = Application::instance()->data_file("translations");
-    QStringList translation_files = translations.entryList({"*.qm"});
+    QDir translations = Application::instance()->data_file("translations"_qs);
+    QStringList translation_files = translations.entryList({"*.qm"_qs});
 
-    QRegularExpression re("[^_]+_([^.]+)\\.qm");
+    QRegularExpression re("[^_]+_([^.]+)\\.qm"_qs);
     for (auto &file: std::as_const(translation_files))
     {
         auto match = re.match(file);
@@ -39,7 +40,7 @@ void app::TranslationService::initialize ( QString default_lang_code )
         }
         else
         {
-            log::LogStream("Translations") << "Unrecognised translation file name pattern:" << file;
+            log::LogStream("Translations"_qs) << "Unrecognised translation file name pattern:"_qs << file;
         }
     }
 
@@ -52,7 +53,7 @@ QString app::TranslationService::language_name(QString lang_code)
     QString name = lang_loc.nativeLanguageName();
     QString specifier;
 
-    if ( lang_code.contains("_") )
+    if ( lang_code.contains("_"_qs) )
     {
         if ( lang_loc.script() != QLocale::AnyScript )
             specifier = QLocale::scriptToString(lang_loc.script());
@@ -61,14 +62,14 @@ QString app::TranslationService::language_name(QString lang_code)
         if ( lang_loc.territory() != QLocale::AnyTerritory )
         {
             if ( !specifier.isEmpty() )
-                specifier += ", ";
+                specifier += ", "_qs;
             specifier = lang_loc.nativeTerritoryName();
         }
 #else
         if ( lang_loc.country() != QLocale::AnyCountry )
         {
             if ( !specifier.isEmpty() )
-                specifier += ", ";
+                specifier += ", "_qs;
             specifier = lang_loc.nativeCountryName();
         }
 #endif
@@ -78,7 +79,7 @@ QString app::TranslationService::language_name(QString lang_code)
     {
         name[0] = name[0].toUpper();
         if ( !specifier.isEmpty() )
-            name += " (" + specifier + ")";
+            name += " ("_qs + specifier + ")"_qs;
     }
 
     return name;
@@ -93,8 +94,8 @@ void app::TranslationService::register_translation(QString name, QString code, Q
         translators[code] = new QTranslator;
         if ( !translators[code]->load(file) )
         {
-            log::Log("Translations").log(
-                QString("Error on loading translation file %1 for language %2 (%3)")
+            log::Log("Translations"_qs).log(
+                "Error on loading translation file %1 for language %2 (%3)"_qs
                 .arg(file).arg(name).arg(code)
             );
         }
@@ -128,11 +129,11 @@ void app::TranslationService::change_lang_code(QString code)
 
     if ( !translators.contains(code) )
     {
-        QString base_code = code.left(code.lastIndexOf('_')); // en_US -> en
+        QString base_code = code.left(code.lastIndexOf('_'_qc)); // en_US -> en
         bool found = false;
         for (const auto &installed_code: translators.keys())
         {
-            if ( installed_code.left(installed_code.lastIndexOf('_')) == base_code )
+            if ( installed_code.left(installed_code.lastIndexOf('_'_qc)) == base_code )
             {
                 code = installed_code;
                 found = true;
@@ -141,8 +142,8 @@ void app::TranslationService::change_lang_code(QString code)
         }
         if ( !found )
         {
-            log::Log("Translations").log(
-                QString("There is no translation for language %1 (%2)")
+            log::Log("Translations"_qs).log(
+                "There is no translation for language %1 (%2)"_qs
                 .arg(language_name(code))
                 .arg(code)
             );

@@ -62,7 +62,7 @@ template<class... T, class PropT, class Func, std::size_t... Ind, std::size_t N>
 void load_property_impl(Object* rive, PropT& property, const detail::AnimatedProperties& animations,
                     const std::array<const char*, N>& names, T... defvals, const Func& value_func, std::index_sequence<Ind...>)
 {
-    property.set(value_func(rive->get<T>(names[Ind], defvals)...));
+    property.set(value_func(rive->get<T>(QString::fromLatin1(names[Ind]), defvals)...));
 
     for ( const auto& kf : animations.joined(std::vector<QString>(names.begin(), names.end())) )
         property.set_keyframe(kf.time, value_func(load_property_get_keyframe<T>(kf, Ind)...))->set_transition(kf.transition);
@@ -148,8 +148,8 @@ struct LoadCotext
         artboards_id.push_back(artboard);
         artboard->comp = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
         artboard->size = QSizeF(
-            object->get<Float32>("width"),
-            object->get<Float32>("height")
+            object->get<Float32>("width"_qs),
+            object->get<Float32>("height"_qs)
         );
     }
 
@@ -179,7 +179,7 @@ struct LoadCotext
                 format->warning(QObject::tr("Unexpected Keyed Object"));
                 return;
             }
-            auto id = object->get<Identifier>("objectId", artboard->child_count);
+            auto id = object->get<Identifier>("objectId"_qs, artboard->child_count);
             keyed_object = artboard_child(id);
             keyed_property = nullptr;
             if ( !keyed_object )
@@ -196,7 +196,7 @@ struct LoadCotext
                 return;
             }
 
-            auto id = object->get<Identifier>("propertyKey");
+            auto id = object->get<Identifier>("propertyKey"_qs);
             auto prop = keyed_object->type().property(id);
 
             if ( !prop )
@@ -216,7 +216,7 @@ struct LoadCotext
                 return;
             }
 
-            auto duration = object->get<VarUint>("duration");
+            auto duration = object->get<VarUint>("duration"_qs);
             if ( duration > artboard->timeline_duration )
                 artboard->timeline_duration = duration;
         }
@@ -232,7 +232,7 @@ struct LoadCotext
                 return;
             }
 
-            auto data = object->get<QByteArray>("bytes");
+            auto data = object->get<QByteArray>("bytes"_qs);
             if ( data.isEmpty() )
                 return;
 
@@ -254,15 +254,15 @@ struct LoadCotext
                 return;
             }
 
-            auto frame = object->get<VarUint>("duration");
+            auto frame = object->get<VarUint>("duration"_qs);
             if ( frame > artboard->keyframe_timeline_duration )
                 artboard->keyframe_timeline_duration = frame;
 
             keyed_property->keyframes.push_back(object);
         }
-        else if ( object->has("parentId") )
+        else if ( object->has("parentId"_qs) )
         {
-            auto parent_id = object->get<Identifier>("parentId");
+            auto parent_id = object->get<Identifier>("parentId"_qs);
             auto parent = artboard_child(parent_id);
             if ( !parent )
                 format->warning(QObject::tr("Could not find parent with id %1").arg(parent_id));
@@ -283,7 +283,7 @@ struct LoadCotext
     {
         const auto& artboard = artboards.at(object);
 
-        artboard.comp->name.set(object->get<QString>("name"));
+        artboard.comp->name.set(object->get<QString>("name"_qs));
         add_shapes(object, artboard.comp->shapes);
 
         auto precomp_layer = std::make_unique<model::PreCompLayer>(document);
@@ -291,7 +291,7 @@ struct LoadCotext
         precomp_layer->size.set(artboard.size.toSize());
         detail::AnimatedProperties animations = load_animations(object);
         load_transform(object, precomp_layer->transform.get(), animations, QRectF(QPointF(0, 0), artboard.size));
-        precomp_layer->opacity.set(object->get<Float32>("opacity", 1));
+        precomp_layer->opacity.set(object->get<Float32>("opacity"_qs, 1));
         precomp_layer->composition.set(artboard.comp);
 
         float last_frame = artboard.timeline_duration == 0 ? artboard.keyframe_timeline_duration : artboard.timeline_duration;
@@ -344,7 +344,7 @@ struct LoadCotext
     {
         load_property<Float32, Float32>(rive, transform->position, animations, {"x", "y"}, 0, 0, &make_point);
 
-        if ( rive->type().property("originX") )
+        if ( rive->type().property("originX"_qs) )
         {
             load_property<Float32, Float32>(rive, transform->anchor_point, animations, {"originX", "originY"}, 0.5, 0.5,
                 [&bbox](Float32 ox, Float32 oy){
@@ -370,16 +370,16 @@ struct LoadCotext
                 return std::make_tuple(QPointF(x, y) - anchor, anchor);
             }
         );*/
-        load_property<Float32>(rive, transform->rotation, animations, "rotation");
-        load_property<Float32, Float32>(rive, transform->scale, animations, {"scaleX", "scaleX"}, 1, 1, [](Float32 x, Float32 y){
+        load_property<Float32>(rive, transform->rotation, animations, "rotation"_qs);
+        load_property<Float32, Float32>(rive, transform->scale, animations, {"scaleX"_qs, "scaleX"_qs}, 1, 1, [](Float32 x, Float32 y){
             return QVector2D(x, y);
         });
     }
 
     void load_shape_group(Object* shape, model::Group* group, const detail::AnimatedProperties& animations)
     {
-        load_property<Float32>(shape, group->opacity, animations, "opacity", 1);
-        group->name.set(shape->get<QString>("name"));
+        load_property<Float32>(shape, group->opacity, animations, "opacity"_qs, 1);
+        group->name.set(shape->get<QString>("name"_qs));
         add_shapes(shape, group->shapes);
         auto box = group->local_bounding_rect(0);
         load_transform(shape, group->transform.get(), animations, box);
@@ -429,7 +429,7 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Rect>(document);
-        shape->name.set(object->get<QString>("name"));
+        shape->name.set(object->get<QString>("name"_qs));
 
         load_property<Float32, Float32, Float32, Float32>(object, shape->rounded, animations,
             {"cornerRadiusTL", "cornerRadiusBL", "cornerRadiusBR", "cornerRadiusTR"},
@@ -452,7 +452,7 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Ellipse>(document);
-        shape->name.set(object->get<QString>("name"));
+        shape->name.set(object->get<QString>("name"_qs));
 
 
         load_property<Float32, Float32>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float32 x, Float32 y){
@@ -483,8 +483,8 @@ struct LoadCotext
 
     void load_styler(Object* object, model::Styler* shape, const detail::AnimatedProperties& animations)
     {
-        shape->name.set(object->get<QString>("name"));
-        shape->visible.set(object->get<bool>("isVisible", true));
+        shape->name.set(object->get<QString>("name"_qs));
+        shape->visible.set(object->get<bool>("isVisible"_qs, true));
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
 
         for ( const auto& child : object->children() )
@@ -501,12 +501,12 @@ struct LoadCotext
     model::Gradient* load_gradient(Object* object, model::Gradient::GradientType type)
     {
         auto colors = std::make_unique<glaxnimate::model::GradientColors>(document);
-        colors->name.set(object->get<QString>("name"));
+        colors->name.set(object->get<QString>("name"_qs));
         auto colors_ptr = colors.get();
         document->assets()->gradient_colors->values.insert(std::move(colors));
 
         auto gradient = std::make_unique<glaxnimate::model::Gradient>(document);
-        gradient->name.set(object->get<QString>("name"));
+        gradient->name.set(object->get<QString>("name"_qs));
         gradient->colors.set(colors_ptr);
         gradient->type.set(type);
 
@@ -521,8 +521,8 @@ struct LoadCotext
             if ( child->type().id == TypeId::GradientStop )
             {
                 stops.push_back({
-                    child->get<Float32>("position"),
-                    child->get<QColor>("colorValue"),
+                    child->get<Float32>("position"_qs),
+                    child->get<QColor>("colorValue"_qs),
                 });
             }
         }
@@ -545,8 +545,8 @@ struct LoadCotext
             {
                 model::KeyframeTransition transition; /// \todo
                 prop.keyframes.push_back({
-                    kf->get<Float32>("frame", 0),
-                    ValueVariant(kf->get_variant("value")),
+                    kf->get<Float32>("frame"_qs, 0),
+                    ValueVariant(kf->get_variant("value"_qs)),
                     transition
                 });
             }
@@ -560,7 +560,7 @@ struct LoadCotext
         load_shape_group(object, group.get(), animations);
 
         auto shape = std::make_unique<model::PolyStar>(document);
-        shape->name.set(object->get<QString>("name"));
+        shape->name.set(object->get<QString>("name"_qs));
         shape->type.set(type);
         /// \todo cornerRadius
         load_property<VarUint>(object, shape->points, animations, "points", 5);
@@ -587,7 +587,7 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Path>(document);
-        shape->name.set(object->get<QString>("name"));
+        shape->name.set(object->get<QString>("name"_qs));
 
 
         load_property<Float32, Float32>(object, shape->shape, animations, {"width", "height"}, 0, 0, [](Float32 w, Float32 h){
@@ -607,21 +607,21 @@ struct LoadCotext
     std::unique_ptr<model::Path> load_path(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::Path>(document);
-        shape->name.set(object->get<QString>("name"));
-        bool closed = object->get<bool>("isClosed");
+        shape->name.set(object->get<QString>("name"_qs));
+        bool closed = object->get<bool>("isClosed"_qs);
         shape->closed.set(closed);
 
         math::bezier::Bezier bez;
         for ( const auto& child : object->children() )
         {
             math::bezier::Point p;
-            p.pos = QPointF(child->get<Float32>("x", 0), child->get<Float32>("y", 0));
+            p.pos = QPointF(child->get<Float32>("x"_qs, 0), child->get<Float32>("y"_qs, 0));
             if ( child->type().id == TypeId::CubicMirroredVertex )
             {
                 p.type = math::bezier::Symmetrical;
                 auto tangent = math::from_polar<QPointF>(
-                    child->get<Float32>("distance"),
-                    child->get<Float32>("rotation")
+                    child->get<Float32>("distance"_qs),
+                    child->get<Float32>("rotation"_qs)
                 );
                 p.tan_in = p.pos - tangent;
                 p.tan_out = p.pos + tangent;
@@ -630,24 +630,24 @@ struct LoadCotext
             {
                 p.type = math::bezier::Smooth;
                 p.tan_in = p.pos - math::from_polar<QPointF>(
-                    child->get<Float32>("inDistance"),
-                    child->get<Float32>("rotation")
+                    child->get<Float32>("inDistance"_qs),
+                    child->get<Float32>("rotation"_qs)
                 );
                 p.tan_out = p.pos + math::from_polar<QPointF>(
-                    child->get<Float32>("outDistance"),
-                    child->get<Float32>("rotation")
+                    child->get<Float32>("outDistance"_qs),
+                    child->get<Float32>("rotation"_qs)
                 );
             }
             else if ( child->type().id == TypeId::CubicDetachedVertex )
             {
                 p.type = math::bezier::Corner;
                 p.tan_in = p.pos + math::from_polar<QPointF>(
-                    child->get<Float32>("inDistance"),
-                    child->get<Float32>("inRotation")
+                    child->get<Float32>("inDistance"_qs),
+                    child->get<Float32>("inRotation"_qs)
                 );
                 p.tan_out = p.pos + math::from_polar<QPointF>(
-                    child->get<Float32>("outDistance"),
-                    child->get<Float32>("outRotation")
+                    child->get<Float32>("outDistance"_qs),
+                    child->get<Float32>("outRotation"_qs)
                 );
             }
             else if ( child->type().id == TypeId::StraightVertex )
@@ -675,14 +675,14 @@ struct LoadCotext
     std::unique_ptr<model::PreCompLayer> load_precomp(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::PreCompLayer>(document);
-        shape->name.set(object->get<QString>("name"));
+        shape->name.set(object->get<QString>("name"_qs));
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
 
         QRectF box;
 
-        if ( object->has("artboardId") )
+        if ( object->has("artboardId"_qs) )
         {
-            auto id = object->get<VarUint>("artboardId");
+            auto id = object->get<VarUint>("artboardId"_qs);
             shape->size.set(artboards_id[id]->size);
             shape->composition.set(artboards_id[id]->comp);
             box.setSize(artboards_id[id]->size);
@@ -695,9 +695,9 @@ struct LoadCotext
     model::Bitmap* load_image_asset(Object* object)
     {
         auto image = std::make_unique<glaxnimate::model::Bitmap>(document);
-        image->filename.set(object->get<QString>("name"));
-        image->width.set(object->get<Float32>("width"));
-        image->height.set(object->get<Float32>("height"));
+        image->filename.set(object->get<QString>("name"_qs));
+        image->width.set(object->get<Float32>("width"_qs));
+        image->height.set(object->get<Float32>("height"_qs));
         auto ptr = image.get();
         document->assets()->images->values.insert(std::move(image));
         return ptr;
@@ -706,8 +706,8 @@ struct LoadCotext
     std::unique_ptr<model::Image> load_image(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::Image>(document);
-        shape->name.set(object->get<QString>("name"));
-        auto id = object->get<VarUint>("assetId");
+        shape->name.set(object->get<QString>("name"_qs));
+        auto id = object->get<VarUint>("assetId"_qs);
         QSizeF size;
         if ( auto bmp = qobject_cast<model::Bitmap*>(assets[id].asset) )
         {

@@ -54,11 +54,11 @@ public:
             write_gradient(defs, gradient.get());
 
         auto view = element(svg, "sodipodi:namedview");
-        view.setAttribute("inkscape:pagecheckerboard", "true");
-        view.setAttribute("borderlayer", "true");
-        view.setAttribute("bordercolor", "#666666");
-        view.setAttribute("pagecolor", "#ffffff");
-        view.setAttribute("inkscape:document-units", "px");
+        view.setAttribute("inkscape:pagecheckerboard"_qs, "true"_qs);
+        view.setAttribute("borderlayer"_qs, "true"_qs);
+        view.setAttribute("bordercolor"_qs, "#666666"_qs);
+        view.setAttribute("pagecolor"_qs, "#ffffff"_qs);
+        view.setAttribute("inkscape:document-units"_qs, "px"_qs);
 
         add_fonts(comp->document());
 
@@ -69,9 +69,9 @@ public:
     {
         auto rdf = element(element(svg, "metadata"), "rdf:RDF");
         auto work = element(rdf, "cc:Work");
-        element(work, "dc:format").appendChild(dom.createTextNode("image/svg+xml"));
-        QString dc_type = animated ? "MovingImage" : "StillImage";
-        element(work, "dc:type").setAttribute("rdf:resource", "http://purl.org/dc/dcmitype/" + dc_type);
+        element(work, "dc:format").appendChild(dom.createTextNode("image/svg+xml"_qs));
+        QString dc_type = animated ? "MovingImage"_qs : "StillImage"_qs;
+        element(work, "dc:type").setAttribute("rdf:resource"_qs, "http://purl.org/dc/dcmitype/"_qs + dc_type);
         element(work, "dc:title").appendChild(dom.createTextNode(comp->name.get()));
         auto document = comp->document();
 
@@ -105,7 +105,7 @@ public:
     font-weight: %3;
     src: url(%4);
 }
-)";
+)"_qs;
 
         for ( const auto & font : document->assets()->fonts->values )
         {
@@ -119,10 +119,10 @@ public:
             if ( type == CssFontType::Link )
             {
                 auto link = element(svg, "link");
-                link.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-                link.setAttribute("rel", "stylesheet");
-                link.setAttribute("href", font->css_url.get());
-                link.setAttribute("type", "text/css");
+                link.setAttribute("xmlns"_qs, "http://www.w3.org/1999/xhtml"_qs);
+                link.setAttribute("rel"_qs, "stylesheet"_qs);
+                link.setAttribute("href"_qs, font->css_url.get());
+                link.setAttribute("type"_qs, "text/css"_qs);
             }
             else if ( type == CssFontType::FontFace )
             {
@@ -135,14 +135,14 @@ public:
             }
             else if ( type == CssFontType::Embedded )
             {
-                QString base64_encoded = font->data.get().toBase64(QByteArray::Base64UrlEncoding);
-                QString format = model::CustomFontDatabase::font_data_format(font->data.get()) == model::FontFileFormat::OpenType ? "opentype" : "ttf";
+                QString base64_encoded = QString::fromLatin1(font->data.get().toBase64(QByteArray::Base64UrlEncoding));
+                QString format = model::CustomFontDatabase::font_data_format(font->data.get()) == model::FontFileFormat::OpenType ? "opentype"_qs : "ttf"_qs;
 
                 css += font_face
                     .arg(custom.family())
                     .arg(WeightConverter::convert(raw.weight(), WeightConverter::qt, WeightConverter::css))
                     .arg(raw.style() == QFont::StyleNormal ? 0 : 1)
-                    .arg("data:application/x-font-" + format + ";charset=utf-8;base64," + base64_encoded)
+                    .arg("data:application/x-font-"_qs + format + ";charset=utf-8;base64,"_qs + base64_encoded)
                 ;
             }
         }
@@ -153,7 +153,7 @@ public:
 
     QDomElement element(QDomNode parent, const char* tag)
     {
-        QDomElement e = dom.createElement(tag);
+        QDomElement e = dom.createElement(QString::fromLatin1(tag));
         parent.appendChild(e);
         return e;
     }
@@ -167,9 +167,9 @@ public:
     void write_visibility_attributes(QDomElement& parent, model::VisualNode* node)
     {
         if ( !node->visible.get() )
-            parent.setAttribute("display", "none");
+            parent.setAttribute("display"_qs, "none"_qs);
         if ( node->locked.get() )
-            parent.setAttribute("sodipodi:insensitive", "true");
+            parent.setAttribute("sodipodi:insensitive"_qs, "true"_qs);
     }
 
     void write_shapes(QDomElement& parent, const model::ShapeListProperty& shapes, bool has_mask = false)
@@ -189,9 +189,9 @@ public:
     QString styler_to_css(model::Styler* styler)
     {
         if ( styler->use.get() )
-            return "url(#" + non_uuid_ids_map[styler->use.get()] + ")";
+            return "url(#"_qs + non_uuid_ids_map[styler->use.get()] + ")"_qs;
         if ( styler->color.get().alpha() == 0 )
-            return "transparent";
+            return "transparent"_qs;
         return styler->color.get().name();
     }
 
@@ -201,14 +201,14 @@ public:
         {
             write_shape_shape(parent, styler->affected()[0], style);
             write_visibility_attributes(parent, styler);
-            parent.setAttribute("id", id(styler));
+            parent.setAttribute("id"_qs, id(styler));
             return parent;
         }
 
         auto g = start_group(parent, styler);
         write_style(g, style);
         write_visibility_attributes(g, styler);
-        g.setAttribute("id", id(styler));
+        g.setAttribute("id"_qs, id(styler));
 
         for ( model::ShapeElement* subshape : styler->affected() )
         {
@@ -245,7 +245,7 @@ public:
 
         QString key_spline(const model::KeyframeTransition& trans)
         {
-            return QString("%1 %2 %3 %4")
+            return "%1 %2 %3 %4"_qs
                 .arg(trans.before().x(), 0, 'f')
                 .arg(trans.before().y(), 0, 'f')
                 .arg(trans.after().x(), 0, 'f')
@@ -267,15 +267,15 @@ public:
 
             if ( key_times.empty() && time > parent->ip )
             {
-                key_times.push_back("0");
-                key_splines.push_back("0 0 1 1");
+                key_times.push_back("0"_qs);
+                key_splines.push_back("0 0 1 1"_qs);
                 add_values(vals);
             }
             else if ( hold && last + 1 < time )
             {
 
                 key_times.push_back(parent->unlerp_time(time - 1));
-                key_splines.push_back("0 0 1 1");
+                key_splines.push_back("0 0 1 1"_qs);
                 for ( std::size_t i = 0; i != attributes.size(); i++ )
                     attributes[i].values.push_back(attributes[i].values.back());
 
@@ -298,7 +298,7 @@ public:
         {
             if ( last < parent->op && path.isEmpty() )
             {
-                key_times.push_back("1");
+                key_times.push_back("1"_qs);
                 for ( auto& attr : attributes )
                 {
                     if ( !attr.values.empty() )
@@ -310,26 +310,26 @@ public:
                 key_splines.pop_back();
             }
 
-            QString key_times_str = key_times.join("; ");
-            QString key_splines_str = key_splines.join("; ");
+            QString key_times_str = key_times.join("; "_qs);
+            QString key_splines_str = key_splines.join("; "_qs);
             for ( const auto& data : attributes )
             {
                 QDomElement animation = parent->element(element, tag);
-                animation.setAttribute("begin", parent->clock(time_start + time_stretch * parent->ip));
-                animation.setAttribute("dur", parent->clock(time_start + time_stretch * parent->op-parent->ip));
-                animation.setAttribute("attributeName", data.attribute);
-                animation.setAttribute("calcMode", "spline");
+                animation.setAttribute("begin"_qs, parent->clock(time_start + time_stretch * parent->ip));
+                animation.setAttribute("dur"_qs, parent->clock(time_start + time_stretch * parent->op-parent->ip));
+                animation.setAttribute("attributeName"_qs, data.attribute);
+                animation.setAttribute("calcMode"_qs, "spline"_qs);
                 if ( !path.isEmpty() )
                 {
-                    animation.setAttribute("path", path);
+                    animation.setAttribute("path"_qs, path);
                     if ( auto_orient )
-                        animation.setAttribute("rotate", "auto");
+                        animation.setAttribute("rotate"_qs, "auto"_qs);
                 }
-                animation.setAttribute("keyTimes", key_times_str);
-                animation.setAttribute("keySplines", key_splines_str);
-                animation.setAttribute("repeatCount", "indefinite");
+                animation.setAttribute("keyTimes"_qs, key_times_str);
+                animation.setAttribute("keySplines"_qs, key_splines_str);
+                animation.setAttribute("repeatCount"_qs, "indefinite"_qs);
                 if ( !type.isEmpty() )
-                    animation.setAttribute("type", type);
+                    animation.setAttribute("type"_qs, type);
             }
         }
 
@@ -423,7 +423,7 @@ public:
     {
         auto e = element(parent, "rect");
         write_style(e, style);
-        write_properties(e, {&rect->position, &rect->size}, {"x", "y"},
+        write_properties(e, {&rect->position, &rect->size}, {"x"_qs, "y"_qs},
             [](const std::vector<QVariant>& values){
                 QPointF c = values[0].toPointF();
                 QSizeF s = values[1].toSizeF();
@@ -433,7 +433,7 @@ public:
                 };
             }
         );
-        write_properties(e, {&rect->size}, {"width", "height"},
+        write_properties(e, {&rect->size}, {"width"_qs, "height"_qs},
             [](const std::vector<QVariant>& values){
                 QSizeF s = values[0].toSizeF();
                 return std::vector<QString>{
@@ -442,15 +442,15 @@ public:
                 };
             }
         );
-        write_property(e, &rect->rounded, "ry");
+        write_property(e, &rect->rounded, "ry"_qs);
     }
 
     void write_shape_ellipse(QDomElement& parent, model::Ellipse* ellipse, const Style::Map& style)
     {
         auto e = element(parent, "ellipse");
         write_style(e, style);
-        write_properties(e, {&ellipse->position}, {"cx", "cy"}, &Private::callback_point);
-        write_properties(e, {&ellipse->size}, {"rx", "ry"},
+        write_properties(e, {&ellipse->position}, {"cx"_qs, "cy"_qs}, &Private::callback_point);
+        write_properties(e, {&ellipse->size}, {"rx"_qs, "ry"_qs},
             [](const std::vector<QVariant>& values){
                 QSizeF s = values[0].toSizeF();
                 return std::vector<QString>{
@@ -471,21 +471,21 @@ public:
              star->inner_roundness.animated() || !qFuzzyIsNull(star->inner_roundness.get()) )
             return;
 
-        set_attribute(e, "sodipodi:type", "star");
-        set_attribute(e, "inkscape:randomized", "0");
+        set_attribute(e, "sodipodi:type"_qs, "star"_qs);
+        set_attribute(e, "inkscape:randomized"_qs, "0"_qs);
         // inkscape:rounded Works differently than lottie so we leave it as 0
-        set_attribute(e, "inkscape:rounded", "0");
+        set_attribute(e, "inkscape:rounded"_qs, "0"_qs);
         int sides = star->points.get_at(time);
-        set_attribute(e, "sodipodi:sides", sides);
-        set_attribute(e, "inkscape:flatsided", star->type.get() == model::PolyStar::Polygon);
+        set_attribute(e, "sodipodi:sides"_qs, sides);
+        set_attribute(e, "inkscape:flatsided"_qs, star->type.get() == model::PolyStar::Polygon);
         QPointF c = star->position.get_at(time);
-        set_attribute(e, "sodipodi:cx", c.x());
-        set_attribute(e, "sodipodi:cy", c.y());
-        set_attribute(e, "sodipodi:r1", star->outer_radius.get_at(time));
-        set_attribute(e, "sodipodi:r2", star->inner_radius.get_at(time));
+        set_attribute(e, "sodipodi:cx"_qs, c.x());
+        set_attribute(e, "sodipodi:cy"_qs, c.y());
+        set_attribute(e, "sodipodi:r1"_qs, star->outer_radius.get_at(time));
+        set_attribute(e, "sodipodi:r2"_qs, star->inner_radius.get_at(time));
         qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
-        set_attribute(e, "sodipodi:arg1", angle);
-        set_attribute(e, "sodipodi:arg2", angle + math::pi / sides);
+        set_attribute(e, "sodipodi:arg1"_qs, angle);
+        set_attribute(e, "sodipodi:arg2"_qs, angle + math::pi / sides);
     }
 
     void write_shape_text(QDomElement& parent, model::TextShape* text, Style::Map style)
@@ -505,32 +505,32 @@ public:
         // Convert weight
         weight = WeightConverter::convert(weight, WeightConverter::qt, WeightConverter::css);
 
-        style["font-family"] = font_info.family();
-        style["font-size"] = QString("%1pt").arg(font_info.pointSizeF());
-        style["line-height"] = QString("%1px").arg(text->font->line_spacing());
-        style["font-weight"] = QString::number(weight);
+        style["font-family"_qs] = font_info.family();
+        style["font-size"_qs] = QStringLiteral("%1pt").arg(font_info.pointSizeF());
+        style["line-height"_qs] = QStringLiteral("%1px").arg(text->font->line_spacing());
+        style["font-weight"_qs] = QString::number(weight);
         switch ( font_style )
         {
-            case QFont::StyleNormal: style["font-style"] = "normal"; break;
-            case QFont::StyleItalic: style["font-style"] = "italic"; break;
-            case QFont::StyleOblique: style["font-style"] = "oblique"; break;
+            case QFont::StyleNormal: style["font-style"_qs] = "normal"_qs; break;
+            case QFont::StyleItalic: style["font-style"_qs] = "italic"_qs; break;
+            case QFont::StyleOblique: style["font-style"_qs] = "oblique"_qs; break;
         }
 
         auto e = element(parent, "text");
         write_style(e, style);
-        write_properties(e, {&text->position}, {"x", "y"}, &Private::callback_point);
+        write_properties(e, {&text->position}, {"x"_qs, "y"_qs}, &Private::callback_point);
 
         model::Font::CharDataCache cache;
         for ( const auto& line : text->font->layout(text->text.get()) )
         {
             auto tspan = element(e, "tspan");
             tspan.appendChild(dom.createTextNode(line.text));
-            set_attribute(tspan, "sodipodi:role", "line");
+            set_attribute(tspan, "sodipodi:role"_qs, "line"_qs);
 
-            write_properties(tspan, {&text->position}, {"x", "y"}, [base=line.baseline](const std::vector<QVariant>& values){
+            write_properties(tspan, {&text->position}, {"x"_qs, "y"_qs}, [base=line.baseline](const std::vector<QVariant>& values){
                 return callback_point_result(values[0].toPointF() + base);
             });
-            tspan.setAttribute("xml:space", "preserve");
+            tspan.setAttribute("xml:space"_qs, "preserve"_qs);
         }
     }
 
@@ -562,69 +562,69 @@ public:
     {
         if ( styler->use.get() )
         {
-            element.setAttribute(attr, "url(#" + non_uuid_ids_map[styler->use.get()] + ")");
+            element.setAttribute(attr, "url(#"_qs + non_uuid_ids_map[styler->use.get()] + ")"_qs);
             return;
         }
 
         write_property(element, &styler->color, attr);
-        write_property(element, &styler->opacity, attr+"-opacity");
+        write_property(element, &styler->opacity, attr+"-opacity"_qs);
     }
     void write_image(model::Image* img, QDomElement& parent)
     {
         if ( img->image.get() )
         {
             auto e = element(parent, "image");
-            set_attribute(e, "x", 0);
-            set_attribute(e, "y", 0);
-            set_attribute(e, "width", img->image->width.get());
-            set_attribute(e, "height", img->image->height.get());
+            set_attribute(e, "x"_qs, 0);
+            set_attribute(e, "y"_qs, 0);
+            set_attribute(e, "width"_qs, img->image->width.get());
+            set_attribute(e, "height"_qs, img->image->height.get());
             transform_to_attr(e, img->transform.get());
-            set_attribute(e, "xlink:href", img->image->to_url().toString());
+            set_attribute(e, "xlink:href"_qs, img->image->to_url().toString());
         }
     }
 
     void write_stroke(model::Stroke* stroke, QDomElement& parent)
     {
         Style::Map style;
-        style["fill"] = "none";
+        style["fill"_qs] = "none"_qs;
         if ( !animated )
         {
-            style["stroke"] = styler_to_css(stroke);
-            style["stroke-opacity"] = QString::number(stroke->opacity.get());
-            style["stroke-width"] = QString::number(stroke->width.get());
+            style["stroke"_qs] = styler_to_css(stroke);
+            style["stroke-opacity"_qs] = QString::number(stroke->opacity.get());
+            style["stroke-width"_qs] = QString::number(stroke->width.get());
         }
         switch ( stroke->cap.get() )
         {
             case model::Stroke::Cap::ButtCap:
-                style["stroke-linecap"] = "butt";
+                style["stroke-linecap"_qs] = "butt"_qs;
                 break;
             case model::Stroke::Cap::RoundCap:
-                style["stroke-linecap"] = "round";
+                style["stroke-linecap"_qs] = "round"_qs;
                 break;
             case model::Stroke::Cap::SquareCap:
-                style["stroke-linecap"] = "square";
+                style["stroke-linecap"_qs] = "square"_qs;
                 break;
 
         }
         switch ( stroke->join.get() )
         {
             case model::Stroke::Join::BevelJoin:
-                style["stroke-linejoin"] = "bevel";
+                style["stroke-linejoin"_qs] = "bevel"_qs;
                 break;
             case model::Stroke::Join::RoundJoin:
-                style["stroke-linejoin"] = "round";
+                style["stroke-linejoin"_qs] = "round"_qs;
                 break;
             case model::Stroke::Join::MiterJoin:
-                style["stroke-linejoin"] = "miter";
-                style["stroke-miterlimit"] = QString::number(stroke->miter_limit.get());
+                style["stroke-linejoin"_qs] = "miter"_qs;
+                style["stroke-miterlimit"_qs] = QString::number(stroke->miter_limit.get());
                 break;
         }
-        style["stroke-dasharray"] = "none";
+        style["stroke-dasharray"_qs] = "none"_qs;
         QDomElement g = write_styler_shapes(parent, stroke, style);
         if ( animated )
         {
-            write_styler_attrs(g, stroke, "stroke");
-            write_property(g, &stroke->width, "stroke-width");
+            write_styler_attrs(g, stroke, "stroke"_qs);
+            write_property(g, &stroke->width, "stroke-width"_qs);
         }
     }
 
@@ -633,13 +633,13 @@ public:
         Style::Map style;
         if ( !animated )
         {
-            style["fill"] = styler_to_css(fill);
-            style["fill-opacity"] = QString::number(fill->opacity.get());
+            style["fill"_qs] = styler_to_css(fill);
+            style["fill-opacity"_qs] = QString::number(fill->opacity.get());
         }
-        style["stroke"] = "none";
+        style["stroke"_qs] = "none"_qs;
         QDomElement g = write_styler_shapes(parent, fill, style);
         if ( animated )
-            write_styler_attrs(g, fill, "fill");
+            write_styler_attrs(g, fill, "fill"_qs);
     }
 
     void write_precomp_layer(model::PreCompLayer* layer, QDomElement& parent)
@@ -648,17 +648,17 @@ public:
         {
             timing.push_back(layer->timing.get());
             auto clip = element(defs, "clipPath");
-            set_attribute(clip, "id", "clip_" + id(layer));
-            set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
+            set_attribute(clip, "id"_qs, "clip_"_qs + id(layer));
+            set_attribute(clip, "clipPathUnits"_qs, "userSpaceOnUse"_qs);
             auto clip_rect = element(clip, "rect");
-            set_attribute(clip_rect, "x", "0");
-            set_attribute(clip_rect, "y", "0");
-            set_attribute(clip_rect, "width", layer->size.get().width());
-            set_attribute(clip_rect, "height", layer->size.get().height());
+            set_attribute(clip_rect, "x"_qs, "0"_qs);
+            set_attribute(clip_rect, "y"_qs, "0"_qs);
+            set_attribute(clip_rect, "width"_qs, layer->size.get().width());
+            set_attribute(clip_rect, "height"_qs, layer->size.get().height());
 
             auto e = start_layer(parent, layer);
             transform_to_attr(e, layer->transform.get());
-            write_property(e, &layer->opacity, "opacity");
+            write_property(e, &layer->opacity, "opacity"_qs);
             write_visibility_attributes(parent, layer);
             time_stretch = layer->timing->stretch.get();
             time_start = layer->timing->start_time.get();
@@ -671,26 +671,26 @@ public:
 
     void write_repeater_vis(QDomElement& element, model::Repeater* repeater, int index, int n_copies)
     {
-        element.setAttribute("display", index < repeater->copies.get() ? "block" : "none");
+        element.setAttribute("display"_qs, index < repeater->copies.get() ? "block"_qs : "none"_qs);
 
         float alpha_lerp = float(index) / (n_copies == 1 ? 1 : n_copies - 1);
         model::JoinAnimatables opacity({&repeater->start_opacity, &repeater->end_opacity}, model::JoinAnimatables::NoValues);
         auto opacity_func = [&alpha_lerp](float a, float b){
             return math::lerp(a, b, alpha_lerp);
         };
-        set_attribute(element, "opacity", opacity.combine_current_value<float, float>(opacity_func));
+        set_attribute(element, "opacity"_qs, opacity.combine_current_value<float, float>(opacity_func));
 
         if ( animated )
         {
             int kf_count = repeater->copies.keyframe_count();
             if ( kf_count >= 2 )
             {
-                AnimationData anim_display(this, {"display"}, kf_count, time_stretch, time_start);
+                AnimationData anim_display(this, {"display"_qs}, kf_count, time_stretch, time_start);
 
                 for ( int i = 0; i < kf_count; i++ )
                 {
                     auto kf = repeater->copies.keyframe(i);
-                    anim_display.add_keyframe(time_to_global(kf->time()), {index < kf->get() ? "block" : "none"}, kf->transition());
+                    anim_display.add_keyframe(time_to_global(kf->time()), {index < kf->get() ? "block"_qs : "none"_qs}, kf->transition());
                 }
 
                 anim_display.add_dom(element);
@@ -698,7 +698,7 @@ public:
 
             if ( opacity.animated() )
             {
-                AnimationData anim_opacity(this, {"opacity"}, opacity.keyframes().size(), time_stretch, time_start);
+                AnimationData anim_opacity(this, {"opacity"_qs}, opacity.keyframes().size(), time_stretch, time_start);
                 for ( const auto& keyframe : opacity.keyframes() )
                 {
                     anim_opacity.add_keyframe(
@@ -719,9 +719,9 @@ public:
 
         QDomElement container = start_group(parent, repeater);
         QString base_id = id(repeater);
-        QString prev_clone_id = base_id + "_0";
+        QString prev_clone_id = base_id + "_0"_qs;
         QDomElement og = element(container, "g");
-        og.setAttribute("id", prev_clone_id);
+        og.setAttribute("id"_qs, prev_clone_id);
         for ( const auto& sib : repeater->affected() )
             write_shape(og, sib, force_draw);
 
@@ -729,10 +729,10 @@ public:
 
         for ( int i = 1; i < n_copies; i++ )
         {
-            QString clone_id = base_id + "_" + QString::number(i);;
+            QString clone_id = base_id + "_"_qs + QString::number(i);;
             QDomElement use = element(container, "use");
-            use.setAttribute("xlink:href", "#" + prev_clone_id);
-            use.setAttribute("id", clone_id);
+            use.setAttribute("xlink:href"_qs, "#"_qs + prev_clone_id);
+            use.setAttribute("id"_qs, clone_id);
             write_repeater_vis(use, repeater, i, n_copies);
             transform_to_attr(use, repeater->transform.get());
             prev_clone_id = clone_id;
@@ -771,7 +771,7 @@ public:
         {
             write_shape_shape(parent, shape, {});
             write_visibility_attributes(parent, shape);
-            set_attribute(parent, "id", id(shape));
+            set_attribute(parent, "id"_qs, id(shape));
         }
     }
 
@@ -782,8 +782,8 @@ public:
         QString d;
         QString nodetypes;
         std::tie(d, nodetypes) = path_data(shape->shapes(shape->time()));
-        set_attribute(path, "d", d);
-        set_attribute(path, "sodipodi:nodetypes", nodetypes);
+        set_attribute(path, "d"_qs, d);
+        set_attribute(path, "sodipodi:nodetypes"_qs, nodetypes);
 
         if ( animated )
         {
@@ -798,7 +798,7 @@ public:
 
             if ( j.animated() )
             {
-                AnimationData data(this, {"d"}, j.keyframes().size(), time_stretch, time_start);
+                AnimationData data(this, {"d"_qs}, j.keyframes().size(), time_stretch, time_start);
 
                 for ( const auto& kf : j )
                     data.add_keyframe(time_to_global(kf.time), {path_data(shape->shapes(kf.time)).first}, kf.transition());
@@ -818,9 +818,9 @@ public:
     QDomElement start_layer_recurse_parents(const QDomElement& parent, model::Layer* ancestor, model::Layer* descendant)
     {
         QDomElement g = element(parent, "g");
-        g.setAttribute("id", id(descendant) + "_" + id(ancestor));
-        g.setAttribute("inkscape:label", QObject::tr("%1 (%2)").arg(descendant->object_name()).arg(ancestor->object_name()));
-        g.setAttribute("inkscape:groupmode", "layer");
+        g.setAttribute("id"_qs, id(descendant) + "_"_qs + id(ancestor));
+        g.setAttribute("inkscape:label"_qs, QObject::tr("%1 (%2)").arg(descendant->object_name()).arg(ancestor->object_name()));
+        g.setAttribute("inkscape:groupmode"_qs, "layer"_qs);
         transform_to_attr(g, ancestor->transform.get());
         return g;
     }
@@ -862,13 +862,13 @@ public:
                 has_mask = true;
 
                 QDomElement clip = element(defs, "mask");
-                QString mask_id = "clip_" + id(layer);
-                clip.setAttribute("id", mask_id);
-                clip.setAttribute("mask-type", "alpha");
+                QString mask_id = "clip_"_qs + id(layer);
+                clip.setAttribute("id"_qs, mask_id);
+                clip.setAttribute("mask-type"_qs, "alpha"_qs);
                 if ( layer->shapes.size() > 1 )
                     write_shape(clip, layer->shapes[0], false);
 
-                g.setAttribute("mask", "url(#" + mask_id + ")");
+                g.setAttribute("mask"_qs, "url(#"_qs + mask_id + ")"_qs);
             }
 
             if ( animated && layer->visible.get() )
@@ -881,34 +881,34 @@ public:
                 if ( has_start || has_end )
                 {
                     QDomElement animation = element(g, "animate");
-                    animation.setAttribute("begin", clock(ip));
-                    animation.setAttribute("dur", clock(op-ip));
-                    animation.setAttribute("calcMode", "discrete");
-                    animation.setAttribute("attributeName", "display");
-                    animation.setAttribute("repeatCount", "indefinite");
+                    animation.setAttribute("begin"_qs, clock(ip));
+                    animation.setAttribute("dur"_qs, clock(op-ip));
+                    animation.setAttribute("calcMode"_qs, "discrete"_qs);
+                    animation.setAttribute("attributeName"_qs, "display"_qs);
+                    animation.setAttribute("repeatCount"_qs, "indefinite"_qs);
                     QString times;
                     QString vals;
 
-                    times += "0;";
+                    times += "0;"_qs;
 
                     if ( has_start )
                     {
-                        vals += "none;inline;";
-                        times += unlerp_time(lay_range->first_frame.get()) + ";";
+                        vals += "none;inline;"_qs;
+                        times += unlerp_time(lay_range->first_frame.get()) + ";"_qs;
                     }
                     else
                     {
-                        vals += "inline;";
+                        vals += "inline;"_qs;
                     }
 
                     if ( has_end )
                     {
-                        vals += "none;";
-                        times += unlerp_time(lay_range->last_frame.get()) + ";";
+                        vals += "none;"_qs;
+                        times += unlerp_time(lay_range->last_frame.get()) + ";"_qs;
                     }
 
-                    animation.setAttribute("values", vals);
-                    animation.setAttribute("keyTimes", times);
+                    animation.setAttribute("values"_qs, vals);
+                    animation.setAttribute("keyTimes"_qs, times);
                 }
             }
         }
@@ -918,7 +918,7 @@ public:
         }
 
         transform_to_attr(g, group->transform.get(), group->auto_orient.get());
-        write_property(g, &group->opacity, "opacity");
+        write_property(g, &group->opacity, "opacity"_qs);
         write_visibility_attributes(g, group);
         write_shapes(g, group->shapes, has_mask);
     }
@@ -932,31 +932,31 @@ public:
         model::JoinAnimatables j({prop}, model::JoinAnimatables::NoValues);
 
         auto parent = e.parentNode();
-        QDomElement g = dom.createElement("g");
+        QDomElement g = dom.createElement("g"_qs);
         parent.insertBefore(g, e);
         parent.removeChild(e);
         g.appendChild(e);
 
         if ( j.animated() )
         {
-            AnimationData data(this, {"transform"}, j.keyframes().size(), time_stretch, time_start);
+            AnimationData data(this, {"transform"_qs}, j.keyframes().size(), time_stretch, time_start);
 
             if ( !path.isEmpty() )
             {
                 for ( const auto& kf : j )
-                    data.add_keyframe(time_to_global(kf.time), {""}, kf.transition());
-                data.add_dom(g, "animateMotion", "", path, auto_orient);
+                    data.add_keyframe(time_to_global(kf.time), {""_qs}, kf.transition());
+                data.add_dom(g, "animateMotion", ""_qs, path, auto_orient);
             }
             else
             {
 
                 for ( const auto& kf : j )
                     data.add_keyframe(time_to_global(kf.time), {callback(prop->get_at(kf.time))}, kf.transition());
-                data.add_dom(g, "animateTransform", name);
+                data.add_dom(g, "animateTransform", QString::fromUtf8(name));
             }
         }
 
-        g.setAttribute("transform", QString("%1(%2)").arg(name).arg(callback(prop->get())));
+        g.setAttribute("transform"_qs, QStringLiteral("%1(%2)").arg(QString::fromUtf8(name)).arg(callback(prop->get())));
         return g;
     }
 
@@ -966,10 +966,10 @@ public:
         {
             QDomElement subject = parent;
             subject = transform_property(subject, "translate", &transf->anchor_point, [](const QPointF& val){
-                return QString("%1 %2").arg(-val.x()).arg(-val.y());
+                return QStringLiteral("%1 %2").arg(-val.x()).arg(-val.y());
             });
             subject = transform_property(subject, "scale", &transf->scale, [](const QVector2D& val){
-                return QString("%1 %2").arg(val.x()).arg(val.y());
+                return QStringLiteral("%1 %2").arg(val.x()).arg(val.y());
             });
             subject = transform_property(subject, "rotate", &transf->rotation, [](qreal val){
                 return QString::number(val);
@@ -977,13 +977,13 @@ public:
             math::bezier::MultiBezier mb;
             mb.beziers().push_back(transf->position.bezier());
             subject = transform_property(subject, "translate", &transf->position, [](const QPointF& val){
-                return QString("%1 %2").arg(val.x()).arg(val.y());
+                return QStringLiteral("%1 %2").arg(val.x()).arg(val.y());
             }, path_data(mb).first, auto_orient);
         }
         else
         {
             auto matr = transf->transform_matrix(transf->time());
-            parent.setAttribute("transform", QString("matrix(%1, %2, %3, %4, %5, %6)")
+            parent.setAttribute("transform"_qs, QStringLiteral("matrix(%1, %2, %3, %4, %5, %6)")
                 .arg(matr.m11())
                 .arg(matr.m12())
                 .arg(matr.m21())
@@ -1000,31 +1000,31 @@ public:
         for ( auto it : s )
         {
             st.append(it.first);
-            st.append(':');
+            st.append(':'_qc);
             st.append(it.second);
-            st.append(';');
+            st.append(';'_qc);
         }
-        element.setAttribute("style", st);
+        element.setAttribute("style"_qs, st);
     }
 
     QDomElement start_group(QDomElement& parent, model::DocumentNode* node)
     {
         QDomElement g = element(parent, "g");
-        g.setAttribute("id", id(node));
-        g.setAttribute("inkscape:label", node->object_name());
+        g.setAttribute("id"_qs, id(node));
+        g.setAttribute("inkscape:label"_qs, node->object_name());
         return g;
     }
 
     QDomElement start_layer(QDomElement& parent, model::DocumentNode* node)
     {
         auto g = start_group(parent, node);
-        g.setAttribute("inkscape:groupmode", "layer");
+        g.setAttribute("inkscape:groupmode"_qs, "layer"_qs);
         return g;
     }
 
     QString id(model::DocumentNode* node)
     {
-        return node->type_name() + "_" + node->uuid.get().toString(QUuid::Id128);
+        return node->type_name() + "_"_qs + node->uuid.get().toString(QUuid::Id128);
     }
 
     /// Avoid locale nonsense by defining these functions (on ASCII chars) manually
@@ -1045,14 +1045,14 @@ public:
     void write_named_color(QDomElement& parent, model::NamedColor* color)
     {
         auto gradient = element(parent, "linearGradient");
-        gradient.setAttribute("osb:paint", "solid");
+        gradient.setAttribute("osb:paint"_qs, "solid"_qs);
         QString id = pretty_id(color->name.get(), color);
         non_uuid_ids_map[color] = id;
-        gradient.setAttribute("id", id);
+        gradient.setAttribute("id"_qs, id);
 
         auto stop = element(gradient, "stop");
-        stop.setAttribute("offset", "0");
-        write_property(stop, &color->color, "stop-color");
+        stop.setAttribute("offset"_qs, "0"_qs);
+        write_property(stop, &color->color, "stop-color"_qs);
     }
 
     QString pretty_id(const QString& s, model::DocumentNode* node)
@@ -1063,14 +1063,14 @@ public:
         QByteArray str = s.toLatin1();
         QString id_attempt;
         if ( !valid_id_start(str[0]) )
-            id_attempt.push_back('_');
+            id_attempt.push_back('_'_qc);
 
         for ( char c : str )
         {
             if ( c == ' ' )
-                id_attempt.push_back('_');
+                id_attempt.push_back('_'_qc);
             else if ( valid_id(c) )
-                id_attempt.push_back(c);
+                id_attempt.push_back(QChar::fromLatin1(c));
         }
 
         if ( id_attempt.isEmpty() )
@@ -1094,12 +1094,12 @@ public:
 
     void set_attribute(QDomElement& e, const QString& name, bool val)
     {
-        e.setAttribute(name, val ? "true" : "false");
+        e.setAttribute(name, val ? "true"_qs : "false"_qs);
     }
 
     void set_attribute(QDomElement& e, const QString& name, const char* val)
     {
-        e.setAttribute(name, val);
+        e.setAttribute(name, QString::fromUtf8(val));
     }
 
     void set_attribute(QDomElement& e, const QString& name, const QString& val)
@@ -1113,7 +1113,7 @@ public:
         auto e = element(parent, "linearGradient");
         QString id = pretty_id(gradient->name.get(), gradient);
         non_uuid_ids_map[gradient] = id;
-        e.setAttribute("id", id);
+        e.setAttribute("id"_qs, id);
 
         if ( animated && gradient->colors.keyframe_count() > 1 )
         {
@@ -1125,7 +1125,7 @@ public:
             auto stops = gradient->colors.get();
             for ( int i = 0; i < n_stops; i++ )
             {
-                AnimationData data(this, {"offset", "stop-color"}, gradient->colors.keyframe_count(), time_stretch, time_start);
+                AnimationData data(this, {"offset"_qs, "stop-color"_qs}, gradient->colors.keyframe_count(), time_stretch, time_start);
                 for ( const auto& kf : gradient->colors )
                 {
                     auto stop = kf.get()[i];
@@ -1137,9 +1137,9 @@ public:
                 }
 
                 auto s = element(e, "stop");
-                s.setAttribute("stop-opacity", "1");
-                set_attribute(s, "offset", stops[i].first);
-                s.setAttribute("stop-color", stops[i].second.name());
+                s.setAttribute("stop-opacity"_qs, "1"_qs);
+                set_attribute(s, "offset"_qs, stops[i].first);
+                s.setAttribute("stop-color"_qs, stops[i].second.name());
                 data.add_dom(s);
             }
         }
@@ -1148,9 +1148,9 @@ public:
             for ( const auto& stop : gradient->colors.get() )
             {
                 auto s = element(e, "stop");
-                s.setAttribute("stop-opacity", "1");
-                set_attribute(s, "offset", stop.first);
-                s.setAttribute("stop-color", stop.second.name());
+                s.setAttribute("stop-opacity"_qs, "1"_qs);
+                set_attribute(s, "offset"_qs, stop.first);
+                s.setAttribute("stop-color"_qs, stop.second.name());
             }
         }
     }
@@ -1161,10 +1161,10 @@ public:
         if ( gradient->type.get() == model::Gradient::Radial || gradient->type.get() == model::Gradient::Conical )
         {
             e = element(parent, "radialGradient");
-            write_properties(e, {&gradient->start_point}, {"cx", "cy"}, &Private::callback_point);
-            write_properties(e, {&gradient->highlight}, {"fx", "fy"}, &Private::callback_point);
+            write_properties(e, {&gradient->start_point}, {"cx"_qs, "cy"_qs}, &Private::callback_point);
+            write_properties(e, {&gradient->highlight}, {"fx"_qs, "fy"_qs}, &Private::callback_point);
 
-            write_properties(e, {&gradient->start_point, &gradient->end_point}, {"r"},
+            write_properties(e, {&gradient->start_point, &gradient->end_point}, {"r"_qs},
                 [](const std::vector<QVariant>& values) -> std::vector<QString> {
                     return { QString::number(
                         math::length(values[1].toPointF() - values[0].toPointF())
@@ -1174,18 +1174,18 @@ public:
         else
         {
             e = element(parent, "linearGradient");
-            write_properties(e, {&gradient->start_point}, {"x1", "y1"}, &Private::callback_point);
-            write_properties(e, {&gradient->end_point}, {"x2", "y2"}, &Private::callback_point);
+            write_properties(e, {&gradient->start_point}, {"x1"_qs, "y1"_qs}, &Private::callback_point);
+            write_properties(e, {&gradient->end_point}, {"x2"_qs, "y2"_qs}, &Private::callback_point);
         }
 
         QString id = pretty_id(gradient->name.get(), gradient);
         non_uuid_ids_map[gradient] = id;
-        e.setAttribute("id", id);
-        e.setAttribute("gradientUnits", "userSpaceOnUse");
+        e.setAttribute("id"_qs, id);
+        e.setAttribute("gradientUnits"_qs, "userSpaceOnUse"_qs);
 
         auto it = non_uuid_ids_map.find(gradient->colors.get());
         if ( it != non_uuid_ids_map.end() )
-            e.setAttribute("xlink:href", "#" + it->second);
+            e.setAttribute("xlink:href"_qs, "#"_qs + it->second);
     }
 
     QString clock(model::FrameTime time)
@@ -1215,22 +1215,22 @@ io::svg::SvgRenderer::SvgRenderer(AnimationType animated, CssFontType font_type)
 {
     d->animated = animated;
     d->font_type = font_type;
-    d->svg = d->dom.createElement("svg");
+    d->svg = d->dom.createElement("svg"_qs);
     d->dom.appendChild(d->svg);
-    d->svg.setAttribute("xmlns", detail::xmlns.at("svg"));
+    d->svg.setAttribute("xmlns"_qs, detail::xmlns.at("svg"_qs));
     for ( const auto& p : detail::xmlns )
     {
-        if ( !p.second.contains("android") )
-            d->svg.setAttribute("xmlns:" + p.first, p.second);
+        if ( !p.second.contains("android"_qs) )
+            d->svg.setAttribute("xmlns:"_qs + p.first, p.second);
     }
 
     d->write_style(d->svg, {
-        {"fill", "none"},
-        {"stroke", "none"}
+        {"fill"_qs, "none"_qs},
+        {"stroke"_qs, "none"_qs}
     });
-    d->svg.setAttribute("inkscape:export-xdpi", "96");
-    d->svg.setAttribute("inkscape:export-ydpi", "96");
-    d->svg.setAttribute("version", "1.1");
+    d->svg.setAttribute("inkscape:export-xdpi"_qs, "96"_qs);
+    d->svg.setAttribute("inkscape:export-ydpi"_qs, "96"_qs);
+    d->svg.setAttribute("version"_qs, "1.1"_qs);
 }
 
 io::svg::SvgRenderer::~SvgRenderer()
@@ -1251,10 +1251,10 @@ void io::svg::SvgRenderer::write_main(model::Composition* comp)
     {
         QString w  = QString::number(comp->width.get());
         QString h = QString::number(comp->height.get());
-        d->svg.setAttribute("width", w);
-        d->svg.setAttribute("height", h);
-        d->svg.setAttribute("viewBox", QString("0 0 %1 %2").arg(w).arg(h));
-        d->svg.appendChild(d->dom.createElement("title")).appendChild(d->dom.createTextNode(comp->name.get()));
+        d->svg.setAttribute("width"_qs, w);
+        d->svg.setAttribute("height"_qs, h);
+        d->svg.setAttribute("viewBox"_qs, QStringLiteral("0 0 %1 %2").arg(w).arg(h));
+        d->svg.appendChild(d->dom.createElement("title"_qs)).appendChild(d->dom.createTextNode(comp->name.get()));
         write_composition(comp);
     }
     else
@@ -1321,27 +1321,27 @@ std::pair<QString, QString> glaxnimate::io::svg::path_data(const math::bezier::M
         if ( b.empty() )
             continue;
 
-        d += QString("M %1,%2 C").arg(b[0].pos.x()).arg(b[0].pos.y());
-        nodetypes += bezier_node_type(b[0]);
+        d += QStringLiteral("M %1,%2 C").arg(b[0].pos.x()).arg(b[0].pos.y());
+        nodetypes += QChar::fromLatin1(bezier_node_type(b[0]));
 
         for ( int i = 1; i < b.size(); i++ )
         {
-            d += QString(" %1,%2 %3,%4 %5,%6")
+            d += QStringLiteral(" %1,%2 %3,%4 %5,%6")
                 .arg(b[i-1].tan_out.x()).arg(b[i-1].tan_out.y())
                 .arg(b[i].tan_in.x()).arg(b[i].tan_in.y())
                 .arg(b[i].pos.x()).arg(b[i].pos.y())
             ;
-            nodetypes += bezier_node_type(b[i]);
+            nodetypes += QChar::fromLatin1(bezier_node_type(b[i]));
         }
 
         if ( b.closed() )
         {
-            d += QString(" %1,%2 %3,%4 %5,%6")
+            d += QStringLiteral(" %1,%2 %3,%4 %5,%6")
                 .arg(b.back().tan_out.x()).arg(b.back().tan_out.y())
                 .arg(b[0].tan_in.x()).arg(b[0].tan_in.y())
                 .arg(b[0].pos.x()).arg(b[0].pos.y())
             ;
-            d += " Z";
+            d += " Z"_qs;
         }
     }
     return {d, nodetypes};

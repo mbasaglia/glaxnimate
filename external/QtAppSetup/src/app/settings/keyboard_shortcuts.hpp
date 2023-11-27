@@ -41,9 +41,9 @@ class ShortcutSettings : public QObject, public CustomSettingsGroupBase
     Q_OBJECT
 
 public:
-    QString slug() const override { return "shortcuts"; }
+    QString slug() const override { return QStringLiteral("shortcuts"); }
     QString label() const override { return QObject::tr("Keyboard Shortcuts"); }
-    QIcon icon() const override { return QIcon::fromTheme("input-keyboard"); }
+    QIcon icon() const override { return QIcon::fromTheme(QStringLiteral("input-keyboard")); }
     QWidget * make_widget(QWidget * parent) override;
 
     void load(QSettings & settings) override;

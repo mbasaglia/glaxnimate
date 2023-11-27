@@ -318,7 +318,7 @@ public:
     };
 
     JoinedAnimatable(std::vector<const model::AnimatableBase*> properties, ConversionFunction converter, int flags = Normal)
-        : AnimatableBase(nullptr, "", {}),
+        : AnimatableBase(nullptr, {}, {}),
           JoinAnimatables(std::move(properties), flags),
           converter(std::move(converter))
 

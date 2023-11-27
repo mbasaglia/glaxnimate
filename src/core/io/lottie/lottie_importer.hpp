@@ -38,10 +38,10 @@ public:
     void load(const QJsonObject& json)
     {
         load_version(json);
-        load_meta(json["meta"]);
+        load_meta(json["meta"_qs]);
         main = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
-        auto comps = load_assets(json["assets"].toArray());
-        load_fonts(json["fonts"]["list"].toArray());
+        auto comps = load_assets(json["assets"_qs].toArray());
+        load_fonts(json["fonts"_qs]["list"_qs].toArray());
         load_composition(json, main);
         load_comps(comps);
     }
@@ -49,9 +49,9 @@ public:
 private:
     void load_version(const QJsonObject& json)
     {
-        if ( json.contains("v") )
+        if ( json.contains("v"_qs) )
         {
-            auto parts = json["v"].toString().split(".");
+            auto parts = json["v"_qs].toString().split("."_qs);
             if ( parts.size() == 3 )
             {
                 for ( int i = 0; i < 3; i++ )
@@ -62,14 +62,14 @@ private:
 
     bool animated(const QJsonObject& obj)
     {
-        if ( obj.contains("a") )
-            return obj["a"].toInt();
+        if ( obj.contains("a"_qs) )
+            return obj["a"_qs].toInt();
 
-        if ( !obj["k"].isArray() )
+        if ( !obj["k"_qs].isArray() )
             return 0;
 
-        auto karr = obj["k"].toArray();
-        return karr.size() > 0 && karr[0].isObject() && karr[0].toObject().contains("s");
+        auto karr = obj["k"_qs].toArray();
+        return karr.size() > 0 && karr[0].isObject() && karr[0].toObject().contains("s"_qs);
     }
 
     template<class T>
@@ -82,21 +82,21 @@ private:
 
     void warning(QString str, const QJsonObject& json)
     {
-        if ( json.contains("nm") )
-            str = json["nm"].toString() + ": " + str;
+        if ( json.contains("nm"_qs) )
+            str = json["nm"_qs].toString() + ": "_qs + str;
         Q_EMIT format->warning(str);
     }
 
     void load_stretchable_animation_container(const QJsonObject& json, model::StretchableTime* animation)
     {
-        animation->start_time.set(json["st"].toDouble());
-        animation->stretch.set(json["sr"].toDouble(1));
+        animation->start_time.set(json["st"_qs].toDouble());
+        animation->stretch.set(json["sr"_qs].toDouble(1));
     }
 
     void load_animation_container(const QJsonObject& json, model::AnimationContainer* animation)
     {
-        animation->first_frame.set(json["ip"].toDouble());
-        animation->last_frame.set(json["op"].toDouble());
+        animation->first_frame.set(json["ip"_qs].toDouble());
+        animation->last_frame.set(json["op"_qs].toDouble());
     }
 
     void load_composition(const QJsonObject& json, model::Composition* composition)
@@ -115,12 +115,12 @@ private:
             composition->animation->last_frame.set(main->animation->last_frame.get());
         }
 
-        if ( json.contains("fr") )
-            composition->fps.set(json["fr"].toDouble());
-        if ( json.contains("w") )
-            composition->width.set(json["w"].toInt());
-        if ( json.contains("h") )
-            composition->height.set(json["h"].toInt());
+        if ( json.contains("fr"_qs) )
+            composition->fps.set(json["fr"_qs].toDouble());
+        if ( json.contains("w"_qs) )
+            composition->width.set(json["w"_qs].toInt());
+        if ( json.contains("h"_qs) )
+            composition->height.set(json["h"_qs].toInt());
 
         load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
@@ -128,17 +128,17 @@ private:
         {
             std::set<int> referenced;
             std::vector<QJsonObject> layer_jsons;
-            auto layer_array = json["layers"].toArray();
+            auto layer_array = json["layers"_qs].toArray();
             layer_jsons.reserve(layer_array.size());
             for ( auto val : layer_array )
             {
                 QJsonObject obj = val.toObject();
-                if ( obj.contains("parent") )
-                    referenced.insert(obj["parent"].toInt());
+                if ( obj.contains("parent"_qs) )
+                    referenced.insert(obj["parent"_qs].toInt());
                 layer_array.push_back(obj);
             }
 
-            for ( auto layer : json["layers"].toArray() )
+            for ( auto layer : json["layers"_qs].toArray() )
                 create_layer(layer.toObject(), referenced);
         }
 
@@ -150,24 +150,24 @@ private:
 
     void load_visibility(model::VisualNode* node, const QJsonObject& json)
     {
-        if ( json.contains("hd") && json["hd"].toBool() )
+        if ( json.contains("hd"_qs) && json["hd"_qs].toBool() )
             node->visible.set(false);
     }
 
     void create_layer(const QJsonObject& json, std::set<int>& referenced)
     {
-        int index = json["ind"].toInt();
-        if ( !json.contains("ty") || !json["ty"].isDouble() )
+        int index = json["ind"_qs].toInt();
+        if ( !json.contains("ty"_qs) || !json["ty"_qs].isDouble() )
         {
             warning(QObject::tr("Missing layer type for %1").arg(index), json);
             invalid_indices.insert(index);
             return;
         }
 
-        int ty = json["ty"].toInt();
+        int ty = json["ty"_qs].toInt();
 
         std::unique_ptr<model::ShapeElement> inner_shape;
-        bool start_mask = json["td"].toInt();
+        bool start_mask = json["td"_qs].toInt();
         start_mask = false;
 
         if ( ty == 0 )
@@ -175,8 +175,8 @@ private:
             inner_shape = load_precomp_layer(json);
 
             auto op = this->composition->animation->last_frame.get();
-            if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 ||
-                json["op"].toDouble(op) != op || start_mask
+            if ( json.contains("parent"_qs) || referenced.count(index) || json["ip"_qs].toDouble() != 0 ||
+                json["op"_qs].toDouble(op) != op || start_mask
             )
             {
                 auto layer = make_node<model::Layer>(document);
@@ -199,13 +199,13 @@ private:
         {
             auto layer = std::make_unique<model::Layer>(document);
             mask = layer.get();
-            layer->name.set(json["nm"].toString());
+            layer->name.set(json["nm"_qs].toString());
             layer->shapes.insert(std::move(inner_shape), 0);
             composition->shapes.insert(std::move(layer), 0);
         }
         else
         {
-            auto tt = json["tt"].toInt();
+            auto tt = json["tt"_qs].toInt();
 
             if ( mask && tt )
             {
@@ -231,7 +231,7 @@ private:
 
         load_stretchable_animation_container(json, precomp->timing.get());
 
-        for ( const FieldInfo& field : fields["__Layer__"] )
+        for ( const FieldInfo& field : fields["__Layer__"_qs] )
             props.erase(field.lottie);
 
         for ( const QMetaObject* mo = precomp->metaObject(); mo; mo = mo->superClass() )
@@ -242,21 +242,21 @@ private:
                 props
             );
 
-        auto comp = precomp_ids[json["refId"].toString()];
+        auto comp = precomp_ids[json["refId"_qs].toString()];
         if ( comp )
         {
             precomp->composition.set(comp);
-            if ( !json.contains("nm") )
+            if ( !json.contains("nm"_qs) )
                 precomp->name.set(comp->name.get());
         }
-        props.erase("w");
-        props.erase("h");
+        props.erase("w"_qs);
+        props.erase("h"_qs);
         precomp->size.set(QSize(
-            json["w"].toInt(),
-            json["h"].toInt()
+            json["w"_qs].toInt(),
+            json["h"_qs].toInt()
         ));
 
-        load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
+        load_transform(json["ks"_qs].toObject(), precomp->transform.get(), &precomp->opacity);
 
         return precomp;
     }
@@ -266,23 +266,23 @@ private:
         auto fill = make_node<model::Fill>(document);
         fill->color.set(QColor(255, 255, 255));
         document->set_best_name(fill.get());
-        load_animated(&fill->opacity, json["o"], {});
+        load_animated(&fill->opacity, json["o"_qs], {});
         group->shapes.insert(std::move(fill));
 
-        auto j_stroke = json["x"].toObject();
-        if ( animated(j_stroke) || j_stroke["k"].toDouble() != 0 )
+        auto j_stroke = json["x"_qs].toObject();
+        if ( animated(j_stroke) || j_stroke["k"_qs].toDouble() != 0 )
         {
             auto stroke = make_node<model::Stroke>(document);
             stroke->color.set(QColor(255, 255, 255));
-            load_animated(&stroke->opacity, json["o"], {});
+            load_animated(&stroke->opacity, json["o"_qs], {});
             document->set_best_name(stroke.get());
-            load_animated(&stroke->width, json["x"], {});
+            load_animated(&stroke->width, json["x"_qs], {});
             group->shapes.insert(std::move(stroke));
         }
 
         auto path = make_node<model::Path>(document);
         document->set_best_name(path.get());
-        load_animated(&path->shape, json["pt"], {});
+        load_animated(&path->shape, json["pt"_qs], {});
         group->shapes.insert(std::move(path));
     }
 
@@ -290,9 +290,9 @@ private:
     {
         current_node = current_layer = layer;
 
-        if ( json.contains("parent") )
+        if ( json.contains("parent"_qs) )
         {
-            int parent_index = json["parent"].toInt();
+            int parent_index = json["parent"_qs].toInt();
             if ( invalid_indices.count(parent_index) )
             {
                 warning(
@@ -323,7 +323,7 @@ private:
             }
         }
 
-        if ( !json.contains("ip") && !json.contains("op") )
+        if ( !json.contains("ip"_qs) && !json.contains("op"_qs) )
         {
             auto comp = layer->owner_composition();
             layer->animation->first_frame.set(comp->animation->first_frame.get());
@@ -338,20 +338,20 @@ private:
             return;
 
         auto props = load_basic_setup(json);
-        props.erase("ind");
+        props.erase("ind"_qs);
 
-        load_properties(layer, fields["DocumentNode"], json, props);
-        load_properties(layer, fields["__Layer__"], json, props);
+        load_properties(layer, fields["DocumentNode"_qs], json, props);
+        load_properties(layer, fields["__Layer__"_qs], json, props);
 
-        load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
+        load_transform(json["ks"_qs].toObject(), layer->transform.get(), &layer->opacity);
         load_visibility(layer, json);
 
         model::Layer* target = layer;
-        props.erase("hasMask");
-        props.erase("masksProperties");
-        if ( json.contains("masksProperties") )
+        props.erase("hasMask"_qs);
+        props.erase("masksProperties"_qs);
+        if ( json.contains("masksProperties"_qs) )
         {
-            auto masks = json["masksProperties"].toArray();
+            auto masks = json["masksProperties"_qs].toArray();
             if ( !masks.empty() )
             {
                 layer->mask->mask.set(model::MaskSettings::Alpha);
@@ -385,24 +385,24 @@ private:
             }
         }
 
-        switch ( json["ty"].toInt(-1) )
+        switch ( json["ty"_qs].toInt(-1) )
         {
             case 0: // precomp
                 break;
             case 1: // solid color
             {
-                props.erase("sw");
-                props.erase("sh");
-                props.erase("sc");
+                props.erase("sw"_qs);
+                props.erase("sh"_qs);
+                props.erase("sc"_qs);
 
-                auto color_name = json["sc"].toString();
+                auto color_name = json["sc"_qs].toString();
                 auto fill = std::make_unique<model::Fill>(document);
                 fill->color.set(svg::parse_color(color_name));
                 target->shapes.insert(std::move(fill));
 
                 auto rect = std::make_unique<model::Rect>(document);
-                auto w = json["sw"].toDouble();
-                auto h = json["sh"].toDouble();
+                auto w = json["sw"_qs].toDouble();
+                auto h = json["sh"_qs].toDouble();
                 rect->size.set(QSizeF(w, h));
                 rect->position.set(QPointF(w/2, h/2));
                 target->shapes.insert(std::move(rect));
@@ -412,25 +412,25 @@ private:
             case 2: // image layer
             {
                 auto image = make_node<model::Image>(document);
-                image->image.set(bitmap_ids[json["refId"].toString()]);
+                image->image.set(bitmap_ids[json["refId"_qs].toString()]);
                 target->shapes.insert(std::move(image));
-                props.erase("refId");
+                props.erase("refId"_qs);
                 break;
             }
             case 3: // empty
                 break;
             case 4: // shape
-                props.erase("shapes");
-                load_shapes(target->shapes, json["shapes"].toArray());
+                props.erase("shapes"_qs);
+                load_shapes(target->shapes, json["shapes"_qs].toArray());
                 break;
             case 5: // text
-                props.erase("t");
-                load_text_layer(target->shapes, json["t"].toObject());
+                props.erase("t"_qs);
+                load_text_layer(target->shapes, json["t"_qs].toObject());
                 break;
             default:
             {
-                QString type = json["ty"].toVariant().toString();
-                auto it = unsupported_layers.find(json["ty"].toInt());
+                QString type = json["ty"_qs].toVariant().toString();
+                auto it = unsupported_layers.find(json["ty"_qs].toInt());
                 if ( it != unsupported_layers.end() )
                     type = *it;
                 warning(QObject::tr("Unsupported layer of type %1").arg(type), json);
@@ -456,13 +456,13 @@ private:
 
     void create_shape(const QJsonObject& json, model::ShapeListProperty& shapes)
     {
-        if ( !json.contains("ty") || !json["ty"].isString() )
+        if ( !json.contains("ty"_qs) || !json["ty"_qs].isString() )
         {
             warning(QObject::tr("Missing shape type"), json);
             return;
         }
 
-        QString base_type = json["ty"].toString();
+        QString base_type = json["ty"_qs].toString();
         QString type = shape_types.key(base_type);
         if ( type.isEmpty() )
         {
@@ -470,8 +470,8 @@ private:
             if ( type.isEmpty() )
             {
                 // "mm" is marked as unsupported by lottie and it appears in several animations so we ignore the warning
-                if ( base_type != "mm" )
-                    warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()), json);
+                if ( base_type != "mm"_qs )
+                    warning(QObject::tr("Unsupported shape type %1").arg(json["ty"_qs].toString()), json);
                 return;
             }
         }
@@ -481,7 +481,7 @@ private:
         );
         if ( !shape )
         {
-            warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()), json);
+            warning(QObject::tr("Unsupported shape type %1").arg(json["ty"_qs].toString()), json);
             return;
         }
 
@@ -536,20 +536,20 @@ private:
     void load_transform(const QJsonObject& transform, model::Transform* tf, model::AnimatableBase* opacity)
     {
         load_basic(transform, tf);
-        if ( transform.contains("o") && opacity )
-            load_animated(opacity, transform["o"], FloatMult(100));
+        if ( transform.contains("o"_qs) && opacity )
+            load_animated(opacity, transform["o"_qs], FloatMult(100));
 
-        if ( transform.contains("p") )
+        if ( transform.contains("p"_qs) )
         {
-            auto pos = transform["p"].toObject();
-            if ( pos.contains("x") && pos.contains("y") )
+            auto pos = transform["p"_qs].toObject();
+            if ( pos.contains("x"_qs) && pos.contains("y"_qs) )
             {
-                model::Document dummydoc("");
+                model::Document dummydoc(""_qs);
                 model::Object dummy(&dummydoc);
-                model::AnimatedProperty<float> px(&dummy, "", 0);
-                model::AnimatedProperty<float> py(&dummy, "", 0);
-                load_animated(&px, pos["x"], {});
-                load_animated(&py, pos["y"], {});
+                model::AnimatedProperty<float> px(&dummy, ""_qs, 0);
+                model::AnimatedProperty<float> py(&dummy, ""_qs, 0);
+                load_animated(&px, pos["x"_qs], {});
+                load_animated(&py, pos["y"_qs], {});
 
                 model::JoinAnimatables join({&px, &py});
                 join.apply_to(&tf->position, [](float x, float y) -> QPointF {
@@ -558,7 +558,7 @@ private:
             }
             else
             {
-                load_animated(&tf->position, transform["p"], {});
+                load_animated(&tf->position, transform["p"_qs], {});
             }
         }
     }
@@ -576,27 +576,27 @@ private:
                 props
             );
 
-        if ( json_obj.contains("fillEnabled") )
-            styler->visible.set(json_obj["fillEnabled"].toBool());
+        if ( json_obj.contains("fillEnabled"_qs) )
+            styler->visible.set(json_obj["fillEnabled"_qs].toBool());
 
-        if ( json_obj["ty"].toString().startsWith('g') )
+        if ( json_obj["ty"_qs].toString().startsWith('g'_qc) )
         {
             auto gradient = document->assets()->gradients->values.insert(std::make_unique<model::Gradient>(document));
             styler->use.set(gradient);
             auto colors = document->assets()->gradient_colors->values.insert(std::make_unique<model::GradientColors>(document));
             gradient->colors.set(colors);
-            load_properties(gradient, fields["Gradient"], json_obj, props);
+            load_properties(gradient, fields["Gradient"_qs], json_obj, props);
 
-            if ( json_obj.contains("h") || json_obj.contains("a") )
+            if ( json_obj.contains("h"_qs) || json_obj.contains("a"_qs) )
             {
-                model::Document dummydoc("");
+                model::Document dummydoc(""_qs);
                 model::Object dummy(&dummydoc);
-                model::AnimatedProperty<float> length(&dummy, "", 0);
-                model::AnimatedProperty<float> angle(&dummy, "", 0);
-                if ( json_obj.contains("h") )
-                    load_animated(&length, json_obj["h"], {});
-                if ( json_obj.contains("a") )
-                    load_animated(&angle, json_obj["a"], {});
+                model::AnimatedProperty<float> length(&dummy, ""_qs, 0);
+                model::AnimatedProperty<float> angle(&dummy, ""_qs, 0);
+                if ( json_obj.contains("h"_qs) )
+                    load_animated(&length, json_obj["h"_qs], {});
+                if ( json_obj.contains("a"_qs) )
+                    load_animated(&angle, json_obj["a"_qs], {});
 
                 glaxnimate::model::JoinAnimatables join({&gradient->start_point, &gradient->end_point, &length, &angle});
                 join.apply_to(&gradient->highlight, [](const QPointF& p, const QPointF& e, float length, float angle) -> QPointF {
@@ -610,12 +610,12 @@ private:
                 gradient->highlight.set(gradient->start_point.get());
             }
 
-            auto jcolors = json_obj["g"].toObject();
-            load_animated(&colors->colors, jcolors["k"], GradientLoad{jcolors["p"].toInt()});
+            auto jcolors = json_obj["g"_qs].toObject();
+            load_animated(&colors->colors, jcolors["k"_qs], GradientLoad{jcolors["p"_qs].toInt()});
         }
         else
         {
-            load_animated(&styler->color, json_obj["c"], {});
+            load_animated(&styler->color, json_obj["c"_qs], {});
         }
 
         if ( styler->name.get().isEmpty() )
@@ -635,19 +635,19 @@ private:
         load_visibility(shape, json);
 
         QString type_name = shape->type_name();
-        if ( type_name == "Group" )
+        if ( type_name == "Group"_qs )
         {
             auto gr = static_cast<model::Group*>(shape);
-            QJsonArray shapes = json["it"].toArray();
+            QJsonArray shapes = json["it"_qs].toArray();
             QJsonObject transform;
 
             for ( int i = shapes.size() - 1; i >= 0; i-- )
             {
                 QJsonObject shi = shapes[i].toObject();
-                if ( shi["ty"] == "tr" )
+                if ( shi["ty"_qs] == "tr"_qs )
                 {
                     transform = shi;
-                    transform.remove("ty");
+                    transform.remove("ty"_qs);
                     shapes.erase(shapes.begin() + i);
                     break;
                 }
@@ -657,21 +657,21 @@ private:
 
             load_shapes(gr->shapes, shapes);
         }
-        else if ( type_name == "Repeater" )
+        else if ( type_name == "Repeater"_qs )
         {
             auto repeater = static_cast<model::Repeater*>(shape);
-            QJsonObject transform = json["tr"].toObject();
-            load_animated(&repeater->start_opacity, transform["so"], FloatMult(100));
-            load_animated(&repeater->end_opacity, transform["eo"], FloatMult(100));
-            transform.remove("so");
-            transform.remove("eo");
-            transform.remove("ty");
+            QJsonObject transform = json["tr"_qs].toObject();
+            load_animated(&repeater->start_opacity, transform["so"_qs], FloatMult(100));
+            load_animated(&repeater->end_opacity, transform["eo"_qs], FloatMult(100));
+            transform.remove("so"_qs);
+            transform.remove("eo"_qs);
+            transform.remove("ty"_qs);
             load_transform(transform, repeater->transform.get(), nullptr);
         }
-        else if ( version[0] < 5 && type_name == "Path" && json.contains("closed") )
+        else if ( version[0] < 5 && type_name == "Path"_qs && json.contains("closed"_qs) )
         {
             auto path = static_cast<model::Path*>(shape);
-            path->shape.set_closed(json["closed"].toBool());
+            path->shape.set_closed(json["closed"_qs].toBool());
         }
     }
 
@@ -691,7 +691,7 @@ private:
             model::BaseProperty * prop = obj->get_property(field.name);
             if ( !prop )
             {
-                logger.stream() << field.name << "is not a property";
+                logger.stream() << field.name << "is not a property"_qs;
                 continue;
             }
 
@@ -814,10 +814,10 @@ private:
             {
                 QJsonObject jsbez = val.toObject();
                 math::bezier::Bezier bezier;
-                bezier.set_closed(jsbez["c"].toBool());
-                QJsonArray pos = jsbez["v"].toArray();
-                QJsonArray tan_in = jsbez["i"].toArray();
-                QJsonArray tan_out = jsbez["o"].toArray();
+                bezier.set_closed(jsbez["c"_qs].toBool());
+                QJsonArray pos = jsbez["v"_qs].toArray();
+                QJsonArray tan_in = jsbez["i"_qs].toArray();
+                QJsonArray tan_out = jsbez["o"_qs].toArray();
                 int sz = std::min(pos.size(), std::min(tan_in.size(), tan_out.size()));
                 for ( int i = 0; i < sz; i++ )
                 {
@@ -851,10 +851,10 @@ private:
     {
         QString str;
         if ( current_layer && current_node != current_layer )
-            str = "(" + current_layer->object_name() + ") ";
+            str = "("_qs + current_layer->object_name() + ") "_qs;
 
         if ( current_node && current_node != ignore )
-            str += current_node->object_name() + ".";
+            str += current_node->object_name() + "."_qs;
 
         return str;
 
@@ -863,7 +863,7 @@ private:
     QString property_error_string(model::BaseProperty * prop)
     {
         QString str = object_error_string(prop->object());
-        str += prop->object()->object_name() + "." + prop->name();
+        str += prop->object()->object_name() + "."_qs + prop->name();
 
         return str;
     }
@@ -880,9 +880,9 @@ private:
         if ( val.isObject() )
         {
             QJsonObject obj = val.toObject();
-            if ( obj.contains("k") )
+            if ( obj.contains("k"_qs) )
             {
-                load_value(prop, obj["k"], trans);
+                load_value(prop, obj["k"_qs], trans);
                 return;
             }
         }
@@ -899,7 +899,7 @@ private:
         }
 
         QJsonObject obj = val.toObject();
-        if ( !obj.contains("k") )
+        if ( !obj.contains("k"_qs) )
         {
             Q_EMIT format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
             return;
@@ -907,7 +907,7 @@ private:
 
         if ( animated(obj) )
         {
-            if ( !obj["k"].isArray() )
+            if ( !obj["k"_qs].isArray() )
             {
                 Q_EMIT format->warning(QObject::tr("Invalid keyframes for %1").arg(property_error_string(prop)));
                 return;
@@ -915,14 +915,14 @@ private:
 
             bool position = prop->traits().type == model::PropertyTraits::Point;
 
-            auto karr = obj["k"].toArray();
+            auto karr = obj["k"_qs].toArray();
             for ( int i = 0; i < karr.size(); i++ )
             {
                 QJsonValue jkf = karr[i];
-                model::FrameTime time = jkf["t"].toDouble();
-                QJsonValue s = jkf["s"];
+                model::FrameTime time = jkf["t"_qs].toDouble();
+                QJsonValue s = jkf["s"_qs];
                 if ( s.isUndefined() && i == karr.size() - 1 && i > 0 )
-                    s = karr[i-1].toObject()["e"];
+                    s = karr[i-1].toObject()["e"_qs];
                 if ( s.isArray() && is_scalar(prop) )
                     s = s.toArray()[0];
 
@@ -934,21 +934,21 @@ private:
                 if ( kf )
                 {
                     kf->set_transition({
-                        keyframe_bezier_handle(jkf["o"]),
-                        keyframe_bezier_handle(jkf["i"]),
-                        bool(jkf["h"].toInt())
+                        keyframe_bezier_handle(jkf["o"_qs]),
+                        keyframe_bezier_handle(jkf["i"_qs]),
+                        bool(jkf["h"_qs].toInt())
                     });
 
                     if ( position )
                     {
                         auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
                         QPointF tan_out;
-                        compound_value_2d_raw(jkf["to"], tan_out);
+                        compound_value_2d_raw(jkf["to"_qs], tan_out);
                         tan_out += pkf->get();
 
                         QPointF tan_in;
                         if ( i > 0 )
-                            compound_value_2d_raw(karr[i-1].toObject()["ti"], tan_in);
+                            compound_value_2d_raw(karr[i-1].toObject()["ti"_qs], tan_in);
                         tan_in += pkf->get();
 
                         pkf->set_point({pkf->get(), tan_in, tan_out});
@@ -964,13 +964,13 @@ private:
                     else
                     {
                         value = v->toString();
-                        if ( value == "" )
+                        if ( value == ""_qs )
                             value = QObject::tr("(empty)");
-                        value += " ";
+                        value += " "_qs;
 #if QT_VERSION_MAJOR >= 6
-                        value += QMetaType(v->userType()).name();
+                        value += QString::fromLatin1(QMetaType(v->userType()).name());
 #else
-                        value += QMetaType::typeName(v->userType());
+                        value += QString::fromLatin1(QMetaType::typeName(v->userType()));
 #endif
                     }
                     Q_EMIT format->warning(QObject::tr("Cannot load keyframe at %1 for %2 with value %3")
@@ -981,7 +981,7 @@ private:
         }
         else
         {
-            load_value(prop, obj["k"], trans);
+            load_value(prop, obj["k"_qs], trans);
         }
     }
 
@@ -994,7 +994,7 @@ private:
 
     QPointF keyframe_bezier_handle(const QJsonValue& val)
     {
-        return {keyframe_bezier_handle_comp(val["x"]), keyframe_bezier_handle_comp(val["y"])};
+        return {keyframe_bezier_handle_comp(val["x"_qs]), keyframe_bezier_handle_comp(val["y"_qs])};
     }
 
     std::vector<std::pair<QJsonObject, model::Composition*>> load_assets(const QJsonArray& assets)
@@ -1004,9 +1004,9 @@ private:
         for ( const auto& assetv : assets )
         {
             QJsonObject asset = assetv.toObject();
-            if ( asset.contains("e") && asset.contains("p") && asset.contains("w") )
+            if ( asset.contains("e"_qs) && asset.contains("p"_qs) && asset.contains("w"_qs) )
                 load_asset_bitmap(asset);
-            else if ( asset.contains("layers") )
+            else if ( asset.contains("layers"_qs) )
                 comps.emplace_back(asset, load_asset_precomp(asset));
         }
 
@@ -1023,30 +1023,30 @@ private:
     {
         auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
 
-        QString id = asset["id"].toString();
+        QString id = asset["id"_qs].toString();
         if ( bitmap_ids.count(id) )
             format->warning(io::lottie::LottieFormat::tr("Duplicate Bitmap ID: %1").arg(id));
         bitmap_ids[id] = bmp;
 
-        if ( asset.contains("nm") )
-            bmp->name.set(asset["nm"].toString());
+        if ( asset.contains("nm"_qs) )
+            bmp->name.set(asset["nm"_qs].toString());
 
-        if ( asset["e"].toInt() )
+        if ( asset["e"_qs].toInt() )
         {
-            bmp->from_url(QUrl(asset["p"].toString()));
+            bmp->from_url(QUrl(asset["p"_qs].toString()));
         }
         else
         {
-            QString path = asset["u"].toString();
-            if ( path.contains("://") )
+            QString path = asset["u"_qs].toString();
+            if ( path.contains("://"_qs) )
             {
-                path += asset["p"].toString();
+                path += asset["p"_qs].toString();
                 bmp->from_url(QUrl(path));
             }
             else
             {
                 QDir dir(path);
-                bmp->from_file(dir.filePath(asset["p"].toString()));
+                bmp->from_file(dir.filePath(asset["p"_qs].toString()));
             }
         }
     }
@@ -1055,7 +1055,7 @@ private:
     {
         auto comp = document->assets()->compositions->values.insert(std::make_unique<model::Composition>(document));
 
-        QString id = asset["id"].toString();
+        QString id = asset["id"_qs].toString();
         if ( precomp_ids.count(id) )
             format->warning(io::lottie::LottieFormat::tr("Duplicate Composition ID: %1").arg(id));
         precomp_ids[id] = comp;
@@ -1078,20 +1078,20 @@ private:
         {
             QJsonObject font = fontv.toObject();
             FontInfo info;
-            info.family = font["fFamily"].toString();
-            info.name = font["fName"].toString();
-            info.style = font["fStyle"].toString();
+            info.family = font["fFamily"_qs].toString();
+            info.name = font["fName"_qs].toString();
+            info.style = font["fStyle"_qs].toString();
             fonts[info.name] = info;
 
             FontOrigin font_origin = FontOrigin::System;
-            if ( font.contains("origin") )
+            if ( font.contains("origin"_qs) )
             {
-                font_origin = FontOrigin(font["origin"].toInt());
+                font_origin = FontOrigin(font["origin"_qs].toInt());
             }
-            else if ( font.contains("fOrigin") )
+            else if ( font.contains("fOrigin"_qs) )
             {
-                QString fOrigin = font["fOrigin"].toString();
-                fOrigin.append(" ");
+                QString fOrigin = font["fOrigin"_qs].toString();
+                fOrigin.append(" "_qs);
                 switch ( fOrigin[0].toLatin1() )
                 {
                     case 'n': font_origin = FontOrigin::System; break;
@@ -1109,7 +1109,7 @@ private:
                 case FontOrigin::CssUrl:
                 case FontOrigin::FontUrl:
                     // Queue dynamic font loading
-                    document->add_pending_asset(info.family, QUrl(font["fPath"].toString()));
+                    document->add_pending_asset(info.family, QUrl(font["fPath"_qs].toString()));
                     break;
                 case FontOrigin::ScriptUrl:
                     // idk how these work
@@ -1123,7 +1123,7 @@ private:
         auto it = fonts.find(name);
         if ( it != fonts.end() )
             return *it;
-        return {"", name, "Regular"};
+        return {""_qs, name, "Regular"_qs};
     }
 
     void load_text_layer(model::ShapeListProperty& shapes, const QJsonObject& text)
@@ -1133,11 +1133,11 @@ private:
         model::Group* prev = nullptr;
         model::KeyframeTransition jump({}, {}, true);
 
-        for ( const auto& v : text["d"].toObject()["k"].toArray() )
+        for ( const auto& v : text["d"_qs].toObject()["k"_qs].toArray() )
         {
             auto keyframe = v.toObject();
-            qreal time = keyframe["t"].toDouble();
-            auto text_document = keyframe["s"].toObject();
+            qreal time = keyframe["t"_qs].toDouble();
+            auto text_document = keyframe["s"_qs].toObject();
 
             auto group = std::make_unique<model::Group>(document);
             if ( time > 0 )
@@ -1149,16 +1149,16 @@ private:
 
             auto fill = std::make_unique<model::Fill>(document);
             QColor color;
-            compound_value_color(text_document["fc"], color);
+            compound_value_color(text_document["fc"_qs], color);
             fill->color.set(color);
             group->shapes.insert(std::move(fill));
 
             auto shape = make_node<model::TextShape>(document);
-            auto font = get_font(text_document["f"].toString());
+            auto font = get_font(text_document["f"_qs].toString());
             shape->font->family.set(font.family);
             shape->font->style.set(font.style);
-            shape->font->size.set(text_document["s"].toDouble());
-            shape->text.set(text_document["t"].toString().replace('\r', '\n'));
+            shape->font->size.set(text_document["s"_qs].toDouble());
+            shape->text.set(text_document["t"_qs].toString().replace('\r'_qc, '\n'_qc));
             group->shapes.insert(std::move(shape));
 
             shapes.insert(std::move(group), shapes.size());
@@ -1170,9 +1170,9 @@ private:
         if ( !meta.isObject() )
             return;
 
-        document->info().author = meta["a"].toString();
-        document->info().description = meta["d"].toString();
-        for ( const auto& kw : meta["k"].toArray() )
+        document->info().author = meta["a"_qs].toString();
+        document->info().description = meta["d"_qs].toString();
+        for ( const auto& kw : meta["k"_qs].toArray() )
             document->info().keywords.push_back(kw.toString());
     }
 
@@ -1182,7 +1182,7 @@ private:
     std::set<int> invalid_indices;
     std::vector<std::pair<model::Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;
-    app::log::Log logger{"Lottie Import"};
+    app::log::Log logger{"Lottie Import"_qs};
     QMap<QString, model::Bitmap*> bitmap_ids;
     QMap<QString, model::Composition*> precomp_ids;
     QMap<QString, FontInfo> fonts;

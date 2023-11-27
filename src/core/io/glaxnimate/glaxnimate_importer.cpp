@@ -30,7 +30,7 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     QJsonObject top_level = jdoc.object();
 
-    int document_version = top_level["format"].toObject()["format_version"].toInt(0);
+    int document_version = top_level["format"_qs].toObject()["format_version"_qs].toInt(0);
     if ( document_version > format_version )
         warning(tr("Opening a file from a newer version of Glaxnimate"));
 

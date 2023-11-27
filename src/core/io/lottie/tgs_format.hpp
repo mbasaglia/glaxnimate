@@ -15,9 +15,9 @@ class TgsFormat : public LottieFormat
     Q_OBJECT
 
 public:
-    QString slug() const override { return "tgs"; }
+    QString slug() const override { return "tgs"_qs; }
     QString name() const override { return tr("Telegram Animated Sticker"); }
-    QStringList extensions() const override { return {"tgs"}; }
+    QStringList extensions() const override { return {"tgs"_qs}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
     std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Composition*) const override { return {}; }

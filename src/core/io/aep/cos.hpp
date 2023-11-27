@@ -15,6 +15,7 @@
 #include <QString>
 
 #include "string_decoder.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 namespace glaxnimate::io::aep {
 
@@ -82,7 +83,7 @@ struct CosValue
     const auto& get() const
     {
         if ( Ind != type() )
-            throw CosError("Invalid COS value type");
+            throw CosError("Invalid COS value type"_qs);
         return std::get<int(Ind)>(value);
     }
 
@@ -133,11 +134,11 @@ public:
             if ( ch == '<' )
                 return {CosTokenType::ObjectStart};
             else if ( ch == -1 )
-                throw_lex("<");
+                throw_lex("<"_qs);
             else if ( std::isxdigit(ch) )
                 return lex_hex_string(ch);
             else
-                throw_lex(QString("<") + QChar(ch));
+                throw_lex(QStringLiteral("<") + QChar(ch));
         }
 
         // >>
@@ -149,7 +150,7 @@ public:
                 QString tok{QChar(ch)};
                 if ( d != -1 )
                     tok += QChar(d);
-                throw_lex(tok, ">>");
+                throw_lex(tok, ">>"_qs);
             }
             return {CosTokenType::ObjectEnd};
         }
@@ -185,11 +186,11 @@ public:
 
     [[noreturn]] void throw_lex(const QString& token, const QString& exp = {})
     {
-        QString msg = "Unknown COS token %1";
+        QString msg = "Unknown COS token %1"_qs;
         msg = msg.arg(token);
         if ( !exp.isEmpty() )
         {
-            msg += ", expected ";
+            msg += ", expected "_qs;
             msg += exp;
         }
 
@@ -210,7 +211,7 @@ public:
     {
         offset -= 1;
         if ( offset < 0 )
-            throw CosError("Buffer underflow");
+            throw CosError("Buffer underflow"_qs);
     }
 
     void lex_comment()
@@ -230,7 +231,7 @@ public:
         else if ( ch == '+' || ch == '-' )
             return lex_number_int(get_char(), QChar(ch));
         else
-            return lex_number_int(ch, '+');
+            return lex_number_int(ch, '+'_qc);
     }
 
     CosToken lex_number_int(int ch, QChar sign)
@@ -288,7 +289,7 @@ public:
 
     CosToken lex_keyword(char start)
     {
-        QString kw(start);
+        QString kw(QChar::fromLatin1(start));
 
         while ( true )
         {
@@ -299,7 +300,7 @@ public:
             }
             else if ( std::isalpha(ch) )
             {
-                kw += QChar(ch);
+                kw += QChar::fromLatin1(ch);
             }
             else
             {
@@ -308,14 +309,14 @@ public:
             }
         }
 
-        if ( kw == "true" )
+        if ( kw == "true"_qs )
                 return {CosTokenType::Boolean, true};
-        if ( kw == "false" )
+        if ( kw == "false"_qs )
                 return {CosTokenType::Boolean, false};
-        if ( kw == "null")
+        if ( kw == "null"_qs )
                 return {CosTokenType::Null};
 
-        throw CosError("Unknown keyword " + kw);
+        throw CosError("Unknown keyword "_qs + kw);
     }
 
     CosToken lex_string()
@@ -338,7 +339,7 @@ public:
     {
         auto ch = get_char();
         if ( ch == -1 )
-            throw CosError("Unterminated String");
+            throw CosError("Unterminated String"_qs);
 
         if ( ch == ')' )
             return -1;
@@ -371,7 +372,7 @@ public:
     {
         auto ch = get_char();
         if ( ch == -1 )
-            throw CosError("Unterminated string");
+            throw CosError("Unterminated string"_qs);
 
         switch ( ch )
         {
@@ -410,7 +411,7 @@ public:
             return octal.toInt(nullptr, 8);
         }
 
-        throw CosError("Invalid escape sequence");
+        throw CosError("Invalid escape sequence"_qs);
     }
 
     CosToken lex_hex_string(char head)
@@ -422,7 +423,7 @@ public:
             auto ch = get_char();
             if ( ch == -1 )
             {
-                throw CosError("Unterminated hex string");
+                throw CosError("Unterminated hex string"_qs);
             }
             else if ( std::isxdigit(ch) )
             {
@@ -436,7 +437,7 @@ public:
             }
             else if ( !std::isspace(ch) )
             {
-                throw CosError(QString("Invalid character in hex string: ") + QChar(ch));
+                throw CosError(QStringLiteral("Invalid character in hex string: ") + QChar(ch));
             }
         }
 
@@ -445,8 +446,8 @@ public:
 
     CosToken lex_identifier()
     {
-        QString ident = "";
-        const QString special = "()[]<>/%";
+        QString ident;
+        const QString special = "()[]<>/%"_qs;
         while ( true )
         {
             auto ch = get_char();
@@ -465,7 +466,7 @@ public:
                 {
                     ch = get_char();
                     if ( ch == -1 || !std::isxdigit(ch) )
-                        throw CosError("Invalid Identifier");
+                        throw CosError("Invalid Identifier"_qs);
                     hexstr += std::uint8_t(ch);
                 }
                 ident += QChar(hexstr.toInt(nullptr, 16));
@@ -541,7 +542,7 @@ private:
     void expect(CosTokenType token_type)
     {
         if ( lookahead.type != token_type )
-            throw CosError(QString("Expected token %1, got %2").arg(int(token_type)).arg(int(lookahead.type)));
+            throw CosError(QStringLiteral("Expected token %1, got %2").arg(int(token_type)).arg(int(lookahead.type)));
     }
 
     CosArray parse_array_content()
@@ -586,7 +587,7 @@ private:
                 lex();
                 return val;
             default:
-                throw CosError(QString("Expected token COS value, got %1").arg(int(lookahead.type)));
+                throw CosError(QStringLiteral("Expected token COS value, got %1").arg(int(lookahead.type)));
         }
     }
 };

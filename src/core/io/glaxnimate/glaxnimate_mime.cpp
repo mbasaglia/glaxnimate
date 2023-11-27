@@ -31,7 +31,7 @@ public:
     {
         for ( auto property : node->properties() )
         {
-            if ( property->traits().type == model::PropertyTraits::ObjectReference && property->name() != "parent" )
+            if ( property->traits().type == model::PropertyTraits::ObjectReference && property->name() != "parent"_qs )
             {
                 auto ptr = static_cast<model::ReferencePropertyBase*>(property)->get_ref();
                 if ( !ptr || skip.count(ptr))
@@ -53,7 +53,7 @@ public:
 
 QStringList io::glaxnimate::GlaxnimateMime::mime_types() const
 {
-    return {"application/vnd.glaxnimate.rawr+json"};
+    return {"application/vnd.glaxnimate.rawr+json"_qs};
 }
 
 QJsonDocument io::glaxnimate::GlaxnimateMime::serialize_json(const std::vector<model::DocumentNode *>& objects)
@@ -108,7 +108,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
             continue;
 
         QJsonObject json_object = json_val.toObject();
-        auto obj = model::Factory::instance().build(json_object["__type__"].toString(), output.document.get());
+        auto obj = model::Factory::instance().build(json_object["__type__"_qs].toString(), output.document.get());
         if ( !obj )
             continue;
 
@@ -139,7 +139,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
         }
         else
         {
-            app::log::Log("I/O").stream() << "Could not deserialize " << obj->type_name();
+            app::log::Log("I/O"_qs).stream() << "Could not deserialize " << obj->type_name();
             delete obj;
             continue;
         }

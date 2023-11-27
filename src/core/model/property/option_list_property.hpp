@@ -11,7 +11,7 @@
 
 #define GLAXNIMATE_PROPERTY_OPTIONS(type, name, defval, container, ...)         \
 public:                                                                         \
-    OptionListProperty<type, container> name{this, #name, defval, __VA_ARGS__}; \
+    OptionListProperty<type, container> name{this, QStringLiteral(#name), defval, __VA_ARGS__}; \
     GLAXNIMATE_PROPERTY_IMPL(type, name)                                        \
     Q_PROPERTY(QVariantList name##_options READ name##_options)                 \
     QVariantList name##_options() const { return name.value_options(); }        \

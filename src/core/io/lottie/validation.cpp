@@ -38,7 +38,7 @@ void glaxnimate::io::lottie::ValidationVisitor::on_visit_document(model::Documen
             for ( auto f : allowed_fps )
                 allowed.push_back(QString::number(f));
 
-            fmt->error(LottieFormat::tr("Invalid fps: %1, should be %2").arg(fps).arg(allowed.join(" or ")));
+            fmt->error(LottieFormat::tr("Invalid fps: %1, should be %2").arg(fps).arg(allowed.join(" or "_qs)));
         }
     }
 

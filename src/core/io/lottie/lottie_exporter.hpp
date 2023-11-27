@@ -41,8 +41,8 @@ public:
         document(comp->document()),
         strip(strip),
         strip_raster( strip_raster ),
-        auto_embed(settings["auto_embed"].toBool()),
-        old_kf(settings["old_kf"].toBool())
+        auto_embed(settings["auto_embed"_qs].toBool()),
+        old_kf(settings["old_kf"_qs].toBool())
     {}
 
     QCborMap to_json()
@@ -70,7 +70,7 @@ public:
     {
         layer_indices.clear();
         QCborMap json;
-        json["v"_l] = version;
+        json["v"_l] = QString::fromLatin1(version);
         convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
         json["assets"_l] = convert_assets(animation);
@@ -83,7 +83,7 @@ public:
     void convert_meta(QCborMap& json)
     {
         QCborMap meta;
-        meta["g"_l] = QString("%1 %2").arg(AppInfo::instance().name(), AppInfo::instance().version());
+        meta["g"_l] = QStringLiteral("%1 %2").arg(AppInfo::instance().name(), AppInfo::instance().version());
 
         if ( !document->info().description.isEmpty() )
             meta["d"_l] = document->info().description;
@@ -188,8 +188,8 @@ public:
             json["hd"_l] = true;
 
         convert_animation_container(layer->animation.get(), json);
-        convert_object_properties(layer, fields["DocumentNode"], json);
-        convert_object_properties(layer, fields["__Layer__"], json);
+        convert_object_properties(layer, fields["DocumentNode"_qs], json);
+        convert_object_properties(layer, fields["__Layer__"_qs], json);
 
         QCborMap transform;
         convert_transform(layer->transform.get(), &layer->opacity, transform);
@@ -521,10 +521,10 @@ public:
 
         convert_object_basic(gradient, jsh);
 
-        if ( shape->type_name() == "Fill" )
-            jsh["ty"_l] = "gf";
+        if ( shape->type_name() == "Fill"_qs )
+            jsh["ty"_l] = "gf"_qs;
         else
-            jsh["ty"_l] = "gs";
+            jsh["ty"_l] = "gs"_qs;
 
         /// \todo highlight
         jsh["h"_l] = fake_animated(0);
@@ -561,7 +561,7 @@ public:
                 format->information(io::lottie::LottieFormat::tr("Lottie only supports auto-orient layers in the top level"));
             auto shapes = convert_shapes(gr->shapes, force_hidden || !gr->visible.get());
             QCborMap transform;
-            transform["ty"_l] = "tr";
+            transform["ty"_l] = "tr"_qs;
             convert_transform(gr->transform.get(), &gr->opacity, transform);
             shapes.push_back(transform);
             jsh["it"_l] = shapes;
@@ -654,7 +654,7 @@ public:
         out["e"_l] = int(bmp->embedded());
         if ( bmp->embedded() )
         {
-            out["u"_l] = "";
+            out["u"_l] = QString();
             out["p"_l] = bmp->to_url().toString();
         }
         else
@@ -743,7 +743,7 @@ public:
     model::Document* document;
     bool strip;
     QMap<QUuid, int> layer_indices;
-    app::log::Log logger{"Lottie Export"};
+    app::log::Log logger{"Lottie Export"_qs};
     model::Layer* mask = nullptr;
     bool strip_raster;
     bool auto_embed;

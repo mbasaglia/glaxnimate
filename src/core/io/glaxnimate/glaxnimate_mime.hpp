@@ -17,7 +17,7 @@ namespace glaxnimate::io::glaxnimate {
 class GlaxnimateMime : public io::mime::MimeSerializer
 {
 public:
-    QString slug() const override { return "glaxnimate"; }
+    QString slug() const override { return "glaxnimate"_qs; }
     QString name() const override { return GlaxnimateFormat::tr("Glaxnimate Animation"); }
     QStringList mime_types() const override;
     QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const override;

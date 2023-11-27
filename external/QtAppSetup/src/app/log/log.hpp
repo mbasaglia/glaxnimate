@@ -15,7 +15,7 @@ namespace app::log {
 class LogStream
 {
 public:
-    LogStream(const QString& source, const QString& detail = "", Severity severity = Warning)
+    LogStream(const QString& source, const QString& detail = {}, Severity severity = Warning)
         : source(source), detail(detail), severity(severity)
     {}
 
@@ -45,7 +45,7 @@ private:
 class Log
 {
 public:
-    Log(const QString& source, const QString& detail="")
+    Log(const QString& source, const QString& detail = {})
     : source(source), detail(detail)
     {}
 

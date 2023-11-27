@@ -24,6 +24,7 @@
 
 #include <QEvent>
 #include "app/settings/settings_group.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 namespace app::settings {
 
@@ -50,8 +51,8 @@ public:
             wid->setParent(parent);
             wid->setToolTip(opt.description);
             wid->setWhatsThis(opt.description);
-            wid->setObjectName(object_name("widget", name_infix, opt.slug));
-            label->setObjectName(object_name("label", name_infix, opt.slug));
+            wid->setObjectName(object_name("widget"_qs, name_infix, opt.slug));
+            label->setObjectName(object_name("label"_qs, name_infix, opt.slug));
             layout->addRow(label, wid);
         }
     }
@@ -63,13 +64,13 @@ public:
             if ( opt.type == Setting::Internal )
                 continue;
 
-            if ( QWidget* wid = parent->findChild<QWidget*>(object_name("widget", name_infix, opt.slug)) )
+            if ( QWidget* wid = parent->findChild<QWidget*>(object_name("widget"_qs, name_infix, opt.slug)) )
             {
                 wid->setToolTip(opt.description);
                 wid->setWhatsThis(opt.description);
             }
 
-            if ( QLabel* label = parent->findChild<QLabel*>(object_name("label", name_infix, opt.slug)) )
+            if ( QLabel* label = parent->findChild<QLabel*>(object_name("label"_qs, name_infix, opt.slug)) )
             {
                 label->setToolTip(opt.description);
                 label->setText(opt.label);
@@ -102,7 +103,7 @@ public:
 private:
     QString object_name(const QString& labwid, const QString& name_infix, const QString& slug) const
     {
-        return QString("__settings_%1__%2%3").arg(labwid).arg(name_infix).arg(slug);
+        return "__settings_%1__%2%3"_qs.arg(labwid).arg(name_infix).arg(slug);
     }
 
     QWidget* make_setting_widget(const Setting& opt, QVariantMap& target) const
@@ -220,7 +221,7 @@ public:
     {
         QFormLayout* lay = new QFormLayout(this);
         this->setLayout(lay);
-        bob.add_widgets(group->settings(), this, lay, group->values(), group->slug() + "__");
+        bob.add_widgets(group->settings(), this, lay, group->values(), group->slug() + "__"_qs);
     }
 
     void changeEvent(QEvent *e) override
@@ -229,7 +230,7 @@ public:
 
         if ( e->type() == QEvent::LanguageChange)
         {
-            bob.translate_widgets(group->settings(), this, group->slug() + "__");
+            bob.translate_widgets(group->settings(), this, group->slug() + "__"_qs);
         }
     }
 

@@ -86,7 +86,7 @@ inline PropertyIterator PropertyBase::end() const { return {}; }
 struct PropertyGroup : PropertyBase
 {
     bool visible = true;
-    QString name = "";
+    QString name = {};
     std::vector<PropertyPair> properties;
 
     Type class_type() const noexcept override { return PropertyBase::PropertyGroup; }
@@ -297,7 +297,7 @@ struct Marker
     model::FrameTime duration = 0;
     LabelColors label_color = LabelColors::None;
     bool is_protected = false;
-    QString name = "";
+    QString name = {};
 };
 
 struct Font
@@ -528,7 +528,7 @@ struct Layer
     bool continuously_rasterize = false;
     Id asset_id = 0;
     LabelColors label_color = LabelColors::None;
-    QString name = "";
+    QString name = {};
     LayerType type = LayerType::ShapeLayer;
     Id parent_id = 0;
     TrackMatteType matte_mode = TrackMatteType::None;
@@ -554,8 +554,8 @@ enum class EffectParameterType
 
 struct EffectParameter
 {
-    QString match_name = "";
-    QString name = "";
+    QString match_name = {};
+    QString name = {};
     EffectParameterType type = EffectParameterType::Unknown;
     PropertyValue default_value;
     PropertyValue last_value;
@@ -608,7 +608,7 @@ struct FolderItem
 {
     enum Type { Composition, Folder, Asset, Solid };
     Id id;
-    QString name = "";
+    QString name = {};
     LabelColors label_color = LabelColors::None;
 
     virtual ~FolderItem() noexcept = default;

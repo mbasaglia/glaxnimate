@@ -20,7 +20,7 @@ public:
     void enable() override;
     void disable() override;
 
-    QIcon service_icon() const override { return QIcon::fromTheme("document-save"); }
+    QIcon service_icon() const override { return QIcon::fromTheme("document-save"_qs); }
 
     QString slug;
     QString label;

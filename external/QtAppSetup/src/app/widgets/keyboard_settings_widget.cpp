@@ -56,7 +56,7 @@ void KeyboardSettingsWidget::changeEvent ( QEvent* e )
 
 void KeyboardSettingsWidget::clear_filter()
 {
-    d->ui.filter->setText("");
+    d->ui.filter->setText({});
 }
 
 void KeyboardSettingsWidget::filter(const QString& text)

@@ -40,7 +40,7 @@ public:
 
     static QIcon static_tree_icon()
     {
-        return QIcon::fromTheme("format-fill-color");
+        return QIcon::fromTheme("format-fill-color"_qs);
     }
 
     static QString static_type_name_human()

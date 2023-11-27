@@ -34,7 +34,7 @@ public:
 
     static QIcon static_tree_icon()
     {
-        return QIcon::fromTheme("object-group");
+        return QIcon::fromTheme("object-group"_qs);
     }
 
     static QString static_type_name_human()

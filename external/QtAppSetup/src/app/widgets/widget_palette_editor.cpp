@@ -223,7 +223,7 @@ void WidgetPaletteEditor::apply_palette()
 {
     if ( d->use_default() )
     {
-        d->settings->set_selected("");
+        d->settings->set_selected({});
     }
     else
     {

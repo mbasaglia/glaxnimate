@@ -12,1035 +12,1036 @@
 
 
 #include "type_def.hpp"
+#include "app/utils/qstring_literal.hpp"
 
 using namespace glaxnimate::io::rive;
 
 std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects = {
     {
         TypeId::Artboard, {
-            "Artboard", TypeId::Artboard,
+            "Artboard"_qs, TypeId::Artboard,
             TypeId::WorldTransformComponent, {
-                {"clip", 196, PropertyType::Bool},
-                {"width", 7, PropertyType::Float},
-                {"height", 8, PropertyType::Float},
-                {"x", 9, PropertyType::Float},
-                {"y", 10, PropertyType::Float},
-                {"originX", 11, PropertyType::Float},
-                {"originY", 12, PropertyType::Float},
-                {"defaultStateMachineId", 236, PropertyType::VarUint},
+                {"clip"_qs, 196, PropertyType::Bool},
+                {"width"_qs, 7, PropertyType::Float},
+                {"height"_qs, 8, PropertyType::Float},
+                {"x"_qs, 9, PropertyType::Float},
+                {"y"_qs, 10, PropertyType::Float},
+                {"originX"_qs, 11, PropertyType::Float},
+                {"originY"_qs, 12, PropertyType::Float},
+                {"defaultStateMachineId"_qs, 236, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Node, {
-            "Node", TypeId::Node,
+            "Node"_qs, TypeId::Node,
             TypeId::TransformComponent, {
-                {"x", 13, PropertyType::Float},
-                {"y", 14, PropertyType::Float},
+                {"x"_qs, 13, PropertyType::Float},
+                {"y"_qs, 14, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Shape, {
-            "Shape", TypeId::Shape,
+            "Shape"_qs, TypeId::Shape,
             TypeId::Drawable, {
             }
         }
     },
     {
         TypeId::Ellipse, {
-            "Ellipse", TypeId::Ellipse,
+            "Ellipse"_qs, TypeId::Ellipse,
             TypeId::ParametricPath, {
             }
         }
     },
     {
         TypeId::StraightVertex, {
-            "StraightVertex", TypeId::StraightVertex,
+            "StraightVertex"_qs, TypeId::StraightVertex,
             TypeId::PathVertex, {
-                {"radius", 26, PropertyType::Float},
+                {"radius"_qs, 26, PropertyType::Float},
             }
         }
     },
     {
         TypeId::CubicDetachedVertex, {
-            "CubicDetachedVertex", TypeId::CubicDetachedVertex,
+            "CubicDetachedVertex"_qs, TypeId::CubicDetachedVertex,
             TypeId::CubicVertex, {
-                {"inRotation", 84, PropertyType::Float},
-                {"inDistance", 85, PropertyType::Float},
-                {"outRotation", 86, PropertyType::Float},
-                {"outDistance", 87, PropertyType::Float},
+                {"inRotation"_qs, 84, PropertyType::Float},
+                {"inDistance"_qs, 85, PropertyType::Float},
+                {"outRotation"_qs, 86, PropertyType::Float},
+                {"outDistance"_qs, 87, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Rectangle, {
-            "Rectangle", TypeId::Rectangle,
+            "Rectangle"_qs, TypeId::Rectangle,
             TypeId::ParametricPath, {
-                {"linkCornerRadius", 164, PropertyType::Bool},
-                {"cornerRadiusTL", 31, PropertyType::Float},
-                {"cornerRadiusTR", 161, PropertyType::Float},
-                {"cornerRadiusBL", 162, PropertyType::Float},
-                {"cornerRadiusBR", 163, PropertyType::Float},
+                {"linkCornerRadius"_qs, 164, PropertyType::Bool},
+                {"cornerRadiusTL"_qs, 31, PropertyType::Float},
+                {"cornerRadiusTR"_qs, 161, PropertyType::Float},
+                {"cornerRadiusBL"_qs, 162, PropertyType::Float},
+                {"cornerRadiusBR"_qs, 163, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Triangle, {
-            "Triangle", TypeId::Triangle,
+            "Triangle"_qs, TypeId::Triangle,
             TypeId::ParametricPath, {
             }
         }
     },
     {
         TypeId::Component, {
-            "Component", TypeId::Component,
+            "Component"_qs, TypeId::Component,
             TypeId::NoType, {
-                {"name", 4, PropertyType::String},
-                {"parentId", 5, PropertyType::VarUint},
+                {"name"_qs, 4, PropertyType::String},
+                {"parentId"_qs, 5, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::ContainerComponent, {
-            "ContainerComponent", TypeId::ContainerComponent,
+            "ContainerComponent"_qs, TypeId::ContainerComponent,
             TypeId::Component, {
             }
         }
     },
     {
         TypeId::Path, {
-            "Path", TypeId::Path,
+            "Path"_qs, TypeId::Path,
             TypeId::Node, {
-                {"pathFlags", 128, PropertyType::VarUint},
+                {"pathFlags"_qs, 128, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Drawable, {
-            "Drawable", TypeId::Drawable,
+            "Drawable"_qs, TypeId::Drawable,
             TypeId::Node, {
-                {"blendModeValue", 23, PropertyType::VarUint},
-                {"drawableFlags", 129, PropertyType::VarUint},
+                {"blendModeValue"_qs, 23, PropertyType::VarUint},
+                {"drawableFlags"_qs, 129, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::PathVertex, {
-            "PathVertex", TypeId::PathVertex,
+            "PathVertex"_qs, TypeId::PathVertex,
             TypeId::Vertex, {
             }
         }
     },
     {
         TypeId::ParametricPath, {
-            "ParametricPath", TypeId::ParametricPath,
+            "ParametricPath"_qs, TypeId::ParametricPath,
             TypeId::Path, {
-                {"width", 20, PropertyType::Float},
-                {"height", 21, PropertyType::Float},
-                {"originX", 123, PropertyType::Float},
-                {"originY", 124, PropertyType::Float},
+                {"width"_qs, 20, PropertyType::Float},
+                {"height"_qs, 21, PropertyType::Float},
+                {"originX"_qs, 123, PropertyType::Float},
+                {"originY"_qs, 124, PropertyType::Float},
             }
         }
     },
     {
         TypeId::PointsPath, {
-            "PointsPath", TypeId::PointsPath,
+            "PointsPath"_qs, TypeId::PointsPath,
             TypeId::Path, {
-                {"isClosed", 32, PropertyType::Bool},
+                {"isClosed"_qs, 32, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::RadialGradient, {
-            "RadialGradient", TypeId::RadialGradient,
+            "RadialGradient"_qs, TypeId::RadialGradient,
             TypeId::LinearGradient, {
             }
         }
     },
     {
         TypeId::SolidColor, {
-            "SolidColor", TypeId::SolidColor,
+            "SolidColor"_qs, TypeId::SolidColor,
             TypeId::Component, {
-                {"colorValue", 37, PropertyType::Color},
+                {"colorValue"_qs, 37, PropertyType::Color},
             }
         }
     },
     {
         TypeId::GradientStop, {
-            "GradientStop", TypeId::GradientStop,
+            "GradientStop"_qs, TypeId::GradientStop,
             TypeId::Component, {
-                {"colorValue", 38, PropertyType::Color},
-                {"position", 39, PropertyType::Float},
+                {"colorValue"_qs, 38, PropertyType::Color},
+                {"position"_qs, 39, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Fill, {
-            "Fill", TypeId::Fill,
+            "Fill"_qs, TypeId::Fill,
             TypeId::ShapePaint, {
-                {"fillRule", 40, PropertyType::VarUint},
+                {"fillRule"_qs, 40, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::ShapePaint, {
-            "ShapePaint", TypeId::ShapePaint,
+            "ShapePaint"_qs, TypeId::ShapePaint,
             TypeId::ContainerComponent, {
-                {"isVisible", 41, PropertyType::Bool},
+                {"isVisible"_qs, 41, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::LinearGradient, {
-            "LinearGradient", TypeId::LinearGradient,
+            "LinearGradient"_qs, TypeId::LinearGradient,
             TypeId::ContainerComponent, {
-                {"startX", 42, PropertyType::Float},
-                {"startY", 33, PropertyType::Float},
-                {"endX", 34, PropertyType::Float},
-                {"endY", 35, PropertyType::Float},
-                {"opacity", 46, PropertyType::Float},
+                {"startX"_qs, 42, PropertyType::Float},
+                {"startY"_qs, 33, PropertyType::Float},
+                {"endX"_qs, 34, PropertyType::Float},
+                {"endY"_qs, 35, PropertyType::Float},
+                {"opacity"_qs, 46, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Backboard, {
-            "Backboard", TypeId::Backboard,
+            "Backboard"_qs, TypeId::Backboard,
             TypeId::NoType, {
             }
         }
     },
     {
         TypeId::Stroke, {
-            "Stroke", TypeId::Stroke,
+            "Stroke"_qs, TypeId::Stroke,
             TypeId::ShapePaint, {
-                {"thickness", 47, PropertyType::Float},
-                {"cap", 48, PropertyType::VarUint},
-                {"join", 49, PropertyType::VarUint},
-                {"transformAffectsStroke", 50, PropertyType::Bool},
+                {"thickness"_qs, 47, PropertyType::Float},
+                {"cap"_qs, 48, PropertyType::VarUint},
+                {"join"_qs, 49, PropertyType::VarUint},
+                {"transformAffectsStroke"_qs, 50, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::KeyedObject, {
-            "KeyedObject", TypeId::KeyedObject,
+            "KeyedObject"_qs, TypeId::KeyedObject,
             TypeId::NoType, {
-                {"objectId", 51, PropertyType::VarUint},
+                {"objectId"_qs, 51, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::KeyedProperty, {
-            "KeyedProperty", TypeId::KeyedProperty,
+            "KeyedProperty"_qs, TypeId::KeyedProperty,
             TypeId::NoType, {
-                {"propertyKey", 53, PropertyType::VarUint},
+                {"propertyKey"_qs, 53, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Animation, {
-            "Animation", TypeId::Animation,
+            "Animation"_qs, TypeId::Animation,
             TypeId::NoType, {
-                {"name", 55, PropertyType::String},
+                {"name"_qs, 55, PropertyType::String},
             }
         }
     },
     {
         TypeId::CubicInterpolator, {
-            "CubicInterpolator", TypeId::CubicInterpolator,
+            "CubicInterpolator"_qs, TypeId::CubicInterpolator,
             TypeId::NoType, {
-                {"x1", 63, PropertyType::Float},
-                {"y1", 64, PropertyType::Float},
-                {"x2", 65, PropertyType::Float},
-                {"y2", 66, PropertyType::Float},
+                {"x1"_qs, 63, PropertyType::Float},
+                {"y1"_qs, 64, PropertyType::Float},
+                {"x2"_qs, 65, PropertyType::Float},
+                {"y2"_qs, 66, PropertyType::Float},
             }
         }
     },
     {
         TypeId::KeyFrame, {
-            "KeyFrame", TypeId::KeyFrame,
+            "KeyFrame"_qs, TypeId::KeyFrame,
             TypeId::NoType, {
-                {"frame", 67, PropertyType::VarUint},
-                {"interpolationType", 68, PropertyType::VarUint},
-                {"interpolatorId", 69, PropertyType::VarUint},
+                {"frame"_qs, 67, PropertyType::VarUint},
+                {"interpolationType"_qs, 68, PropertyType::VarUint},
+                {"interpolatorId"_qs, 69, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::KeyFrameDouble, {
-            "KeyFrameDouble", TypeId::KeyFrameDouble,
+            "KeyFrameDouble"_qs, TypeId::KeyFrameDouble,
             TypeId::KeyFrame, {
-                {"value", 70, PropertyType::Float},
+                {"value"_qs, 70, PropertyType::Float},
             }
         }
     },
     {
         TypeId::LinearAnimation, {
-            "LinearAnimation", TypeId::LinearAnimation,
+            "LinearAnimation"_qs, TypeId::LinearAnimation,
             TypeId::Animation, {
-                {"fps", 56, PropertyType::VarUint},
-                {"duration", 57, PropertyType::VarUint},
-                {"speed", 58, PropertyType::Float},
-                {"loopValue", 59, PropertyType::VarUint},
-                {"workStart", 60, PropertyType::VarUint},
-                {"workEnd", 61, PropertyType::VarUint},
-                {"enableWorkArea", 62, PropertyType::Bool},
+                {"fps"_qs, 56, PropertyType::VarUint},
+                {"duration"_qs, 57, PropertyType::VarUint},
+                {"speed"_qs, 58, PropertyType::Float},
+                {"loopValue"_qs, 59, PropertyType::VarUint},
+                {"workStart"_qs, 60, PropertyType::VarUint},
+                {"workEnd"_qs, 61, PropertyType::VarUint},
+                {"enableWorkArea"_qs, 62, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::CubicAsymmetricVertex, {
-            "CubicAsymmetricVertex", TypeId::CubicAsymmetricVertex,
+            "CubicAsymmetricVertex"_qs, TypeId::CubicAsymmetricVertex,
             TypeId::CubicVertex, {
-                {"rotation", 79, PropertyType::Float},
-                {"inDistance", 80, PropertyType::Float},
-                {"outDistance", 81, PropertyType::Float},
+                {"rotation"_qs, 79, PropertyType::Float},
+                {"inDistance"_qs, 80, PropertyType::Float},
+                {"outDistance"_qs, 81, PropertyType::Float},
             }
         }
     },
     {
         TypeId::CubicMirroredVertex, {
-            "CubicMirroredVertex", TypeId::CubicMirroredVertex,
+            "CubicMirroredVertex"_qs, TypeId::CubicMirroredVertex,
             TypeId::CubicVertex, {
-                {"rotation", 82, PropertyType::Float},
-                {"distance", 83, PropertyType::Float},
+                {"rotation"_qs, 82, PropertyType::Float},
+                {"distance"_qs, 83, PropertyType::Float},
             }
         }
     },
     {
         TypeId::CubicVertex, {
-            "CubicVertex", TypeId::CubicVertex,
+            "CubicVertex"_qs, TypeId::CubicVertex,
             TypeId::PathVertex, {
             }
         }
     },
     {
         TypeId::KeyFrameColor, {
-            "KeyFrameColor", TypeId::KeyFrameColor,
+            "KeyFrameColor"_qs, TypeId::KeyFrameColor,
             TypeId::KeyFrame, {
-                {"value", 88, PropertyType::Color},
+                {"value"_qs, 88, PropertyType::Color},
             }
         }
     },
     {
         TypeId::TransformComponent, {
-            "TransformComponent", TypeId::TransformComponent,
+            "TransformComponent"_qs, TypeId::TransformComponent,
             TypeId::WorldTransformComponent, {
-                {"rotation", 15, PropertyType::Float},
-                {"scaleX", 16, PropertyType::Float},
-                {"scaleY", 17, PropertyType::Float},
+                {"rotation"_qs, 15, PropertyType::Float},
+                {"scaleX"_qs, 16, PropertyType::Float},
+                {"scaleY"_qs, 17, PropertyType::Float},
             }
         }
     },
     {
         TypeId::SkeletalComponent, {
-            "SkeletalComponent", TypeId::SkeletalComponent,
+            "SkeletalComponent"_qs, TypeId::SkeletalComponent,
             TypeId::TransformComponent, {
             }
         }
     },
     {
         TypeId::Bone, {
-            "Bone", TypeId::Bone,
+            "Bone"_qs, TypeId::Bone,
             TypeId::SkeletalComponent, {
-                {"length", 89, PropertyType::Float},
+                {"length"_qs, 89, PropertyType::Float},
             }
         }
     },
     {
         TypeId::RootBone, {
-            "RootBone", TypeId::RootBone,
+            "RootBone"_qs, TypeId::RootBone,
             TypeId::Bone, {
-                {"x", 90, PropertyType::Float},
-                {"y", 91, PropertyType::Float},
+                {"x"_qs, 90, PropertyType::Float},
+                {"y"_qs, 91, PropertyType::Float},
             }
         }
     },
     {
         TypeId::ClippingShape, {
-            "ClippingShape", TypeId::ClippingShape,
+            "ClippingShape"_qs, TypeId::ClippingShape,
             TypeId::Component, {
-                {"sourceId", 92, PropertyType::VarUint},
-                {"fillRule", 93, PropertyType::VarUint},
-                {"isVisible", 94, PropertyType::Bool},
+                {"sourceId"_qs, 92, PropertyType::VarUint},
+                {"fillRule"_qs, 93, PropertyType::VarUint},
+                {"isVisible"_qs, 94, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::Skin, {
-            "Skin", TypeId::Skin,
+            "Skin"_qs, TypeId::Skin,
             TypeId::ContainerComponent, {
-                {"xx", 104, PropertyType::Float},
-                {"yx", 105, PropertyType::Float},
-                {"xy", 106, PropertyType::Float},
-                {"yy", 107, PropertyType::Float},
-                {"tx", 108, PropertyType::Float},
-                {"ty", 109, PropertyType::Float},
+                {"xx"_qs, 104, PropertyType::Float},
+                {"yx"_qs, 105, PropertyType::Float},
+                {"xy"_qs, 106, PropertyType::Float},
+                {"yy"_qs, 107, PropertyType::Float},
+                {"tx"_qs, 108, PropertyType::Float},
+                {"ty"_qs, 109, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Tendon, {
-            "Tendon", TypeId::Tendon,
+            "Tendon"_qs, TypeId::Tendon,
             TypeId::Component, {
-                {"boneId", 95, PropertyType::VarUint},
-                {"xx", 96, PropertyType::Float},
-                {"yx", 97, PropertyType::Float},
-                {"xy", 98, PropertyType::Float},
-                {"yy", 99, PropertyType::Float},
-                {"tx", 100, PropertyType::Float},
-                {"ty", 101, PropertyType::Float},
+                {"boneId"_qs, 95, PropertyType::VarUint},
+                {"xx"_qs, 96, PropertyType::Float},
+                {"yx"_qs, 97, PropertyType::Float},
+                {"xy"_qs, 98, PropertyType::Float},
+                {"yy"_qs, 99, PropertyType::Float},
+                {"tx"_qs, 100, PropertyType::Float},
+                {"ty"_qs, 101, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Weight, {
-            "Weight", TypeId::Weight,
+            "Weight"_qs, TypeId::Weight,
             TypeId::Component, {
-                {"values", 102, PropertyType::VarUint},
-                {"indices", 103, PropertyType::VarUint},
+                {"values"_qs, 102, PropertyType::VarUint},
+                {"indices"_qs, 103, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::CubicWeight, {
-            "CubicWeight", TypeId::CubicWeight,
+            "CubicWeight"_qs, TypeId::CubicWeight,
             TypeId::Weight, {
-                {"inValues", 110, PropertyType::VarUint},
-                {"inIndices", 111, PropertyType::VarUint},
-                {"outValues", 112, PropertyType::VarUint},
-                {"outIndices", 113, PropertyType::VarUint},
+                {"inValues"_qs, 110, PropertyType::VarUint},
+                {"inIndices"_qs, 111, PropertyType::VarUint},
+                {"outValues"_qs, 112, PropertyType::VarUint},
+                {"outIndices"_qs, 113, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::TrimPath, {
-            "TrimPath", TypeId::TrimPath,
+            "TrimPath"_qs, TypeId::TrimPath,
             TypeId::Component, {
-                {"start", 114, PropertyType::Float},
-                {"end", 115, PropertyType::Float},
-                {"offset", 116, PropertyType::Float},
-                {"modeValue", 117, PropertyType::VarUint},
+                {"start"_qs, 114, PropertyType::Float},
+                {"end"_qs, 115, PropertyType::Float},
+                {"offset"_qs, 116, PropertyType::Float},
+                {"modeValue"_qs, 117, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::DrawTarget, {
-            "DrawTarget", TypeId::DrawTarget,
+            "DrawTarget"_qs, TypeId::DrawTarget,
             TypeId::Component, {
-                {"drawableId", 119, PropertyType::VarUint},
-                {"placementValue", 120, PropertyType::VarUint},
+                {"drawableId"_qs, 119, PropertyType::VarUint},
+                {"placementValue"_qs, 120, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::DrawRules, {
-            "DrawRules", TypeId::DrawRules,
+            "DrawRules"_qs, TypeId::DrawRules,
             TypeId::ContainerComponent, {
-                {"drawTargetId", 121, PropertyType::VarUint},
+                {"drawTargetId"_qs, 121, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::KeyFrameId, {
-            "KeyFrameId", TypeId::KeyFrameId,
+            "KeyFrameId"_qs, TypeId::KeyFrameId,
             TypeId::KeyFrame, {
-                {"value", 122, PropertyType::VarUint},
+                {"value"_qs, 122, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Polygon, {
-            "Polygon", TypeId::Polygon,
+            "Polygon"_qs, TypeId::Polygon,
             TypeId::ParametricPath, {
-                {"points", 125, PropertyType::VarUint},
-                {"cornerRadius", 126, PropertyType::Float},
+                {"points"_qs, 125, PropertyType::VarUint},
+                {"cornerRadius"_qs, 126, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Star, {
-            "Star", TypeId::Star,
+            "Star"_qs, TypeId::Star,
             TypeId::Polygon, {
-                {"innerRadius", 127, PropertyType::Float},
+                {"innerRadius"_qs, 127, PropertyType::Float},
             }
         }
     },
     {
         TypeId::StateMachine, {
-            "StateMachine", TypeId::StateMachine,
+            "StateMachine"_qs, TypeId::StateMachine,
             TypeId::Animation, {
             }
         }
     },
     {
         TypeId::StateMachineComponent, {
-            "StateMachineComponent", TypeId::StateMachineComponent,
+            "StateMachineComponent"_qs, TypeId::StateMachineComponent,
             TypeId::NoType, {
-                {"name", 138, PropertyType::String},
+                {"name"_qs, 138, PropertyType::String},
             }
         }
     },
     {
         TypeId::StateMachineInput, {
-            "StateMachineInput", TypeId::StateMachineInput,
+            "StateMachineInput"_qs, TypeId::StateMachineInput,
             TypeId::StateMachineComponent, {
             }
         }
     },
     {
         TypeId::StateMachineNumber, {
-            "StateMachineNumber", TypeId::StateMachineNumber,
+            "StateMachineNumber"_qs, TypeId::StateMachineNumber,
             TypeId::StateMachineInput, {
-                {"value", 140, PropertyType::Float},
+                {"value"_qs, 140, PropertyType::Float},
             }
         }
     },
     {
         TypeId::StateMachineLayer, {
-            "StateMachineLayer", TypeId::StateMachineLayer,
+            "StateMachineLayer"_qs, TypeId::StateMachineLayer,
             TypeId::StateMachineComponent, {
             }
         }
     },
     {
         TypeId::StateMachineTrigger, {
-            "StateMachineTrigger", TypeId::StateMachineTrigger,
+            "StateMachineTrigger"_qs, TypeId::StateMachineTrigger,
             TypeId::StateMachineInput, {
             }
         }
     },
     {
         TypeId::StateMachineBool, {
-            "StateMachineBool", TypeId::StateMachineBool,
+            "StateMachineBool"_qs, TypeId::StateMachineBool,
             TypeId::StateMachineInput, {
-                {"value", 141, PropertyType::Bool},
+                {"value"_qs, 141, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::LayerState, {
-            "LayerState", TypeId::LayerState,
+            "LayerState"_qs, TypeId::LayerState,
             TypeId::StateMachineLayerComponent, {
             }
         }
     },
     {
         TypeId::AnimationState, {
-            "AnimationState", TypeId::AnimationState,
+            "AnimationState"_qs, TypeId::AnimationState,
             TypeId::LayerState, {
-                {"animationId", 149, PropertyType::VarUint},
+                {"animationId"_qs, 149, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::AnyState, {
-            "AnyState", TypeId::AnyState,
+            "AnyState"_qs, TypeId::AnyState,
             TypeId::LayerState, {
             }
         }
     },
     {
         TypeId::EntryState, {
-            "EntryState", TypeId::EntryState,
+            "EntryState"_qs, TypeId::EntryState,
             TypeId::LayerState, {
             }
         }
     },
     {
         TypeId::ExitState, {
-            "ExitState", TypeId::ExitState,
+            "ExitState"_qs, TypeId::ExitState,
             TypeId::LayerState, {
             }
         }
     },
     {
         TypeId::StateTransition, {
-            "StateTransition", TypeId::StateTransition,
+            "StateTransition"_qs, TypeId::StateTransition,
             TypeId::StateMachineLayerComponent, {
-                {"stateToId", 151, PropertyType::VarUint},
-                {"flags", 152, PropertyType::VarUint},
-                {"duration", 158, PropertyType::VarUint},
-                {"exitTime", 160, PropertyType::VarUint},
+                {"stateToId"_qs, 151, PropertyType::VarUint},
+                {"flags"_qs, 152, PropertyType::VarUint},
+                {"duration"_qs, 158, PropertyType::VarUint},
+                {"exitTime"_qs, 160, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::StateMachineLayerComponent, {
-            "StateMachineLayerComponent", TypeId::StateMachineLayerComponent,
+            "StateMachineLayerComponent"_qs, TypeId::StateMachineLayerComponent,
             TypeId::NoType, {
             }
         }
     },
     {
         TypeId::TransitionCondition, {
-            "TransitionCondition", TypeId::TransitionCondition,
+            "TransitionCondition"_qs, TypeId::TransitionCondition,
             TypeId::NoType, {
-                {"inputId", 155, PropertyType::VarUint},
+                {"inputId"_qs, 155, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::TransitionTriggerCondition, {
-            "TransitionTriggerCondition", TypeId::TransitionTriggerCondition,
+            "TransitionTriggerCondition"_qs, TypeId::TransitionTriggerCondition,
             TypeId::TransitionCondition, {
             }
         }
     },
     {
         TypeId::TransitionValueCondition, {
-            "TransitionValueCondition", TypeId::TransitionValueCondition,
+            "TransitionValueCondition"_qs, TypeId::TransitionValueCondition,
             TypeId::TransitionCondition, {
-                {"opValue", 156, PropertyType::VarUint},
+                {"opValue"_qs, 156, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::TransitionNumberCondition, {
-            "TransitionNumberCondition", TypeId::TransitionNumberCondition,
+            "TransitionNumberCondition"_qs, TypeId::TransitionNumberCondition,
             TypeId::TransitionValueCondition, {
-                {"value", 157, PropertyType::Float},
+                {"value"_qs, 157, PropertyType::Float},
             }
         }
     },
     {
         TypeId::TransitionBoolCondition, {
-            "TransitionBoolCondition", TypeId::TransitionBoolCondition,
+            "TransitionBoolCondition"_qs, TypeId::TransitionBoolCondition,
             TypeId::TransitionValueCondition, {
             }
         }
     },
     {
         TypeId::BlendState, {
-            "BlendState", TypeId::BlendState,
+            "BlendState"_qs, TypeId::BlendState,
             TypeId::LayerState, {
             }
         }
     },
     {
         TypeId::BlendStateDirect, {
-            "BlendStateDirect", TypeId::BlendStateDirect,
+            "BlendStateDirect"_qs, TypeId::BlendStateDirect,
             TypeId::BlendState, {
             }
         }
     },
     {
         TypeId::BlendAnimation, {
-            "BlendAnimation", TypeId::BlendAnimation,
+            "BlendAnimation"_qs, TypeId::BlendAnimation,
             TypeId::NoType, {
-                {"animationId", 165, PropertyType::VarUint},
+                {"animationId"_qs, 165, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::BlendAnimation1D, {
-            "BlendAnimation1D", TypeId::BlendAnimation1D,
+            "BlendAnimation1D"_qs, TypeId::BlendAnimation1D,
             TypeId::BlendAnimation, {
-                {"value", 166, PropertyType::Float},
+                {"value"_qs, 166, PropertyType::Float},
             }
         }
     },
     {
         TypeId::BlendState1D, {
-            "BlendState1D", TypeId::BlendState1D,
+            "BlendState1D"_qs, TypeId::BlendState1D,
             TypeId::BlendState, {
-                {"inputId", 167, PropertyType::VarUint},
+                {"inputId"_qs, 167, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::BlendAnimationDirect, {
-            "BlendAnimationDirect", TypeId::BlendAnimationDirect,
+            "BlendAnimationDirect"_qs, TypeId::BlendAnimationDirect,
             TypeId::BlendAnimation, {
-                {"inputId", 168, PropertyType::VarUint},
+                {"inputId"_qs, 168, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::BlendStateTransition, {
-            "BlendStateTransition", TypeId::BlendStateTransition,
+            "BlendStateTransition"_qs, TypeId::BlendStateTransition,
             TypeId::StateTransition, {
-                {"exitBlendAnimationId", 171, PropertyType::VarUint},
+                {"exitBlendAnimationId"_qs, 171, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Constraint, {
-            "Constraint", TypeId::Constraint,
+            "Constraint"_qs, TypeId::Constraint,
             TypeId::Component, {
-                {"strength", 172, PropertyType::Float},
+                {"strength"_qs, 172, PropertyType::Float},
             }
         }
     },
     {
         TypeId::TargetedConstraint, {
-            "TargetedConstraint", TypeId::TargetedConstraint,
+            "TargetedConstraint"_qs, TypeId::TargetedConstraint,
             TypeId::Constraint, {
-                {"targetId", 173, PropertyType::VarUint},
+                {"targetId"_qs, 173, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::IKConstraint, {
-            "IKConstraint", TypeId::IKConstraint,
+            "IKConstraint"_qs, TypeId::IKConstraint,
             TypeId::TargetedConstraint, {
-                {"invertDirection", 174, PropertyType::Bool},
-                {"parentBoneCount", 175, PropertyType::VarUint},
+                {"invertDirection"_qs, 174, PropertyType::Bool},
+                {"parentBoneCount"_qs, 175, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::DistanceConstraint, {
-            "DistanceConstraint", TypeId::DistanceConstraint,
+            "DistanceConstraint"_qs, TypeId::DistanceConstraint,
             TypeId::TargetedConstraint, {
-                {"distance", 177, PropertyType::Float},
-                {"modeValue", 178, PropertyType::VarUint},
+                {"distance"_qs, 177, PropertyType::Float},
+                {"modeValue"_qs, 178, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::TransformConstraint, {
-            "TransformConstraint", TypeId::TransformConstraint,
+            "TransformConstraint"_qs, TypeId::TransformConstraint,
             TypeId::TransformSpaceConstraint, {
             }
         }
     },
     {
         TypeId::KeyFrameBool, {
-            "KeyFrameBool", TypeId::KeyFrameBool,
+            "KeyFrameBool"_qs, TypeId::KeyFrameBool,
             TypeId::KeyFrame, {
-                {"value", 181, PropertyType::Bool},
+                {"value"_qs, 181, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::TransformComponentConstraint, {
-            "TransformComponentConstraint", TypeId::TransformComponentConstraint,
+            "TransformComponentConstraint"_qs, TypeId::TransformComponentConstraint,
             TypeId::TransformSpaceConstraint, {
-                {"minMaxSpaceValue", 195, PropertyType::VarUint},
-                {"copyFactor", 182, PropertyType::Float},
-                {"minValue", 183, PropertyType::Float},
-                {"maxValue", 184, PropertyType::Float},
-                {"offset", 188, PropertyType::Bool},
-                {"doesCopy", 189, PropertyType::Bool},
-                {"min", 190, PropertyType::Bool},
-                {"max", 191, PropertyType::Bool},
+                {"minMaxSpaceValue"_qs, 195, PropertyType::VarUint},
+                {"copyFactor"_qs, 182, PropertyType::Float},
+                {"minValue"_qs, 183, PropertyType::Float},
+                {"maxValue"_qs, 184, PropertyType::Float},
+                {"offset"_qs, 188, PropertyType::Bool},
+                {"doesCopy"_qs, 189, PropertyType::Bool},
+                {"min"_qs, 190, PropertyType::Bool},
+                {"max"_qs, 191, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::TransformComponentConstraintY, {
-            "TransformComponentConstraintY", TypeId::TransformComponentConstraintY,
+            "TransformComponentConstraintY"_qs, TypeId::TransformComponentConstraintY,
             TypeId::TransformComponentConstraint, {
-                {"copyFactorY", 185, PropertyType::Float},
-                {"minValueY", 186, PropertyType::Float},
-                {"maxValueY", 187, PropertyType::Float},
-                {"doesCopyY", 192, PropertyType::Bool},
-                {"minY", 193, PropertyType::Bool},
-                {"maxY", 194, PropertyType::Bool},
+                {"copyFactorY"_qs, 185, PropertyType::Float},
+                {"minValueY"_qs, 186, PropertyType::Float},
+                {"maxValueY"_qs, 187, PropertyType::Float},
+                {"doesCopyY"_qs, 192, PropertyType::Bool},
+                {"minY"_qs, 193, PropertyType::Bool},
+                {"maxY"_qs, 194, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::TranslationConstraint, {
-            "TranslationConstraint", TypeId::TranslationConstraint,
+            "TranslationConstraint"_qs, TypeId::TranslationConstraint,
             TypeId::TransformComponentConstraintY, {
             }
         }
     },
     {
         TypeId::ScaleConstraint, {
-            "ScaleConstraint", TypeId::ScaleConstraint,
+            "ScaleConstraint"_qs, TypeId::ScaleConstraint,
             TypeId::TransformComponentConstraintY, {
             }
         }
     },
     {
         TypeId::RotationConstraint, {
-            "RotationConstraint", TypeId::RotationConstraint,
+            "RotationConstraint"_qs, TypeId::RotationConstraint,
             TypeId::TransformComponentConstraint, {
             }
         }
     },
     {
         TypeId::TransformSpaceConstraint, {
-            "TransformSpaceConstraint", TypeId::TransformSpaceConstraint,
+            "TransformSpaceConstraint"_qs, TypeId::TransformSpaceConstraint,
             TypeId::TargetedConstraint, {
-                {"sourceSpaceValue", 179, PropertyType::VarUint},
-                {"destSpaceValue", 180, PropertyType::VarUint},
+                {"sourceSpaceValue"_qs, 179, PropertyType::VarUint},
+                {"destSpaceValue"_qs, 180, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::WorldTransformComponent, {
-            "WorldTransformComponent", TypeId::WorldTransformComponent,
+            "WorldTransformComponent"_qs, TypeId::WorldTransformComponent,
             TypeId::ContainerComponent, {
-                {"opacity", 18, PropertyType::Float},
+                {"opacity"_qs, 18, PropertyType::Float},
             }
         }
     },
     {
         TypeId::NestedArtboard, {
-            "NestedArtboard", TypeId::NestedArtboard,
+            "NestedArtboard"_qs, TypeId::NestedArtboard,
             TypeId::Drawable, {
-                {"artboardId", 197, PropertyType::VarUint},
+                {"artboardId"_qs, 197, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::NestedAnimation, {
-            "NestedAnimation", TypeId::NestedAnimation,
+            "NestedAnimation"_qs, TypeId::NestedAnimation,
             TypeId::ContainerComponent, {
-                {"animationId", 198, PropertyType::VarUint},
+                {"animationId"_qs, 198, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::NestedStateMachine, {
-            "NestedStateMachine", TypeId::NestedStateMachine,
+            "NestedStateMachine"_qs, TypeId::NestedStateMachine,
             TypeId::NestedAnimation, {
             }
         }
     },
     {
         TypeId::NestedSimpleAnimation, {
-            "NestedSimpleAnimation", TypeId::NestedSimpleAnimation,
+            "NestedSimpleAnimation"_qs, TypeId::NestedSimpleAnimation,
             TypeId::NestedLinearAnimation, {
-                {"speed", 199, PropertyType::Float},
-                {"isPlaying", 201, PropertyType::Bool},
+                {"speed"_qs, 199, PropertyType::Float},
+                {"isPlaying"_qs, 201, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::NestedLinearAnimation, {
-            "NestedLinearAnimation", TypeId::NestedLinearAnimation,
+            "NestedLinearAnimation"_qs, TypeId::NestedLinearAnimation,
             TypeId::NestedAnimation, {
-                {"mix", 200, PropertyType::Float},
+                {"mix"_qs, 200, PropertyType::Float},
             }
         }
     },
     {
         TypeId::NestedRemapAnimation, {
-            "NestedRemapAnimation", TypeId::NestedRemapAnimation,
+            "NestedRemapAnimation"_qs, TypeId::NestedRemapAnimation,
             TypeId::NestedLinearAnimation, {
-                {"time", 202, PropertyType::Float},
+                {"time"_qs, 202, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Asset, {
-            "Asset", TypeId::Asset,
+            "Asset"_qs, TypeId::Asset,
             TypeId::NoType, {
-                {"name", 203, PropertyType::String},
+                {"name"_qs, 203, PropertyType::String},
             }
         }
     },
     {
         TypeId::Image, {
-            "Image", TypeId::Image,
+            "Image"_qs, TypeId::Image,
             TypeId::Drawable, {
-                {"assetId", 206, PropertyType::VarUint},
+                {"assetId"_qs, 206, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::Folder, {
-            "Folder", TypeId::Folder,
+            "Folder"_qs, TypeId::Folder,
             TypeId::Asset, {
             }
         }
     },
     {
         TypeId::FileAsset, {
-            "FileAsset", TypeId::FileAsset,
+            "FileAsset"_qs, TypeId::FileAsset,
             TypeId::Asset, {
-                {"assetId", 204, PropertyType::VarUint},
+                {"assetId"_qs, 204, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::DrawableAsset, {
-            "DrawableAsset", TypeId::DrawableAsset,
+            "DrawableAsset"_qs, TypeId::DrawableAsset,
             TypeId::FileAsset, {
-                {"height", 207, PropertyType::Float},
-                {"width", 208, PropertyType::Float},
+                {"height"_qs, 207, PropertyType::Float},
+                {"width"_qs, 208, PropertyType::Float},
             }
         }
     },
     {
         TypeId::ImageAsset, {
-            "ImageAsset", TypeId::ImageAsset,
+            "ImageAsset"_qs, TypeId::ImageAsset,
             TypeId::DrawableAsset, {
             }
         }
     },
     {
         TypeId::FileAssetContents, {
-            "FileAssetContents", TypeId::FileAssetContents,
+            "FileAssetContents"_qs, TypeId::FileAssetContents,
             TypeId::NoType, {
-                {"bytes", 212, PropertyType::Bytes},
+                {"bytes"_qs, 212, PropertyType::Bytes},
             }
         }
     },
     {
         TypeId::Vertex, {
-            "Vertex", TypeId::Vertex,
+            "Vertex"_qs, TypeId::Vertex,
             TypeId::ContainerComponent, {
-                {"x", 24, PropertyType::Float},
-                {"y", 25, PropertyType::Float},
+                {"x"_qs, 24, PropertyType::Float},
+                {"y"_qs, 25, PropertyType::Float},
             }
         }
     },
     {
         TypeId::MeshVertex, {
-            "MeshVertex", TypeId::MeshVertex,
+            "MeshVertex"_qs, TypeId::MeshVertex,
             TypeId::Vertex, {
-                {"u", 215, PropertyType::Float},
-                {"v", 216, PropertyType::Float},
+                {"u"_qs, 215, PropertyType::Float},
+                {"v"_qs, 216, PropertyType::Float},
             }
         }
     },
     {
         TypeId::Mesh, {
-            "Mesh", TypeId::Mesh,
+            "Mesh"_qs, TypeId::Mesh,
             TypeId::ContainerComponent, {
-                {"triangleIndexBytes", 223, PropertyType::Bytes},
+                {"triangleIndexBytes"_qs, 223, PropertyType::Bytes},
             }
         }
     },
     {
         TypeId::Text, {
-            "Text", TypeId::Text,
+            "Text"_qs, TypeId::Text,
             TypeId::Node, {
-                {"value", 218, PropertyType::String},
+                {"value"_qs, 218, PropertyType::String},
             }
         }
     },
     {
         TypeId::ContourMeshVertex, {
-            "ContourMeshVertex", TypeId::ContourMeshVertex,
+            "ContourMeshVertex"_qs, TypeId::ContourMeshVertex,
             TypeId::MeshVertex, {
             }
         }
     },
     {
         TypeId::ForcedEdge, {
-            "ForcedEdge", TypeId::ForcedEdge,
+            "ForcedEdge"_qs, TypeId::ForcedEdge,
             TypeId::Component, {
-                {"fromId", 219, PropertyType::VarUint},
-                {"toId", 220, PropertyType::VarUint},
+                {"fromId"_qs, 219, PropertyType::VarUint},
+                {"toId"_qs, 220, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::TextRun, {
-            "TextRun", TypeId::TextRun,
+            "TextRun"_qs, TypeId::TextRun,
             TypeId::Drawable, {
-                {"pointSize", 221, PropertyType::Float},
-                {"textLength", 222, PropertyType::VarUint},
+                {"pointSize"_qs, 221, PropertyType::Float},
+                {"textLength"_qs, 222, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::StateMachineListener, {
-            "StateMachineListener", TypeId::StateMachineListener,
+            "StateMachineListener"_qs, TypeId::StateMachineListener,
             TypeId::StateMachineComponent, {
-                {"targetId", 224, PropertyType::VarUint},
-                {"listenerTypeValue", 225, PropertyType::VarUint},
+                {"targetId"_qs, 224, PropertyType::VarUint},
+                {"listenerTypeValue"_qs, 225, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::ListenerTriggerChange, {
-            "ListenerTriggerChange", TypeId::ListenerTriggerChange,
+            "ListenerTriggerChange"_qs, TypeId::ListenerTriggerChange,
             TypeId::ListenerInputChange, {
             }
         }
     },
     {
         TypeId::ListenerInputChange, {
-            "ListenerInputChange", TypeId::ListenerInputChange,
+            "ListenerInputChange"_qs, TypeId::ListenerInputChange,
             TypeId::ListenerAction, {
-                {"inputId", 227, PropertyType::VarUint},
+                {"inputId"_qs, 227, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::ListenerBoolChange, {
-            "ListenerBoolChange", TypeId::ListenerBoolChange,
+            "ListenerBoolChange"_qs, TypeId::ListenerBoolChange,
             TypeId::ListenerInputChange, {
-                {"value", 228, PropertyType::VarUint},
+                {"value"_qs, 228, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::ListenerNumberChange, {
-            "ListenerNumberChange", TypeId::ListenerNumberChange,
+            "ListenerNumberChange"_qs, TypeId::ListenerNumberChange,
             TypeId::ListenerInputChange, {
-                {"value", 229, PropertyType::Float},
+                {"value"_qs, 229, PropertyType::Float},
             }
         }
     },
     {
         TypeId::LayeredAsset, {
-            "LayeredAsset", TypeId::LayeredAsset,
+            "LayeredAsset"_qs, TypeId::LayeredAsset,
             TypeId::DrawableAsset, {
             }
         }
     },
     {
         TypeId::LayerImageAsset, {
-            "LayerImageAsset", TypeId::LayerImageAsset,
+            "LayerImageAsset"_qs, TypeId::LayerImageAsset,
             TypeId::ImageAsset, {
-                {"layer", 233, PropertyType::VarUint},
-                {"x", 234, PropertyType::Float},
-                {"y", 235, PropertyType::Float},
+                {"layer"_qs, 233, PropertyType::VarUint},
+                {"x"_qs, 234, PropertyType::Float},
+                {"y"_qs, 235, PropertyType::Float},
             }
         }
     },
     {
         TypeId::NestedInput, {
-            "NestedInput", TypeId::NestedInput,
+            "NestedInput"_qs, TypeId::NestedInput,
             TypeId::Component, {
-                {"inputId", 237, PropertyType::VarUint},
+                {"inputId"_qs, 237, PropertyType::VarUint},
             }
         }
     },
     {
         TypeId::NestedTrigger, {
-            "NestedTrigger", TypeId::NestedTrigger,
+            "NestedTrigger"_qs, TypeId::NestedTrigger,
             TypeId::NestedInput, {
             }
         }
     },
     {
         TypeId::NestedBool, {
-            "NestedBool", TypeId::NestedBool,
+            "NestedBool"_qs, TypeId::NestedBool,
             TypeId::NestedInput, {
-                {"nestedValue", 238, PropertyType::Bool},
+                {"nestedValue"_qs, 238, PropertyType::Bool},
             }
         }
     },
     {
         TypeId::NestedNumber, {
-            "NestedNumber", TypeId::NestedNumber,
+            "NestedNumber"_qs, TypeId::NestedNumber,
             TypeId::NestedInput, {
-                {"nestedValue", 239, PropertyType::Float},
+                {"nestedValue"_qs, 239, PropertyType::Float},
             }
         }
     },
     {
         TypeId::ListenerAction, {
-            "ListenerAction", TypeId::ListenerAction,
+            "ListenerAction"_qs, TypeId::ListenerAction,
             TypeId::NoType, {
             }
         }
     },
     {
         TypeId::ListenerAlignTarget, {
-            "ListenerAlignTarget", TypeId::ListenerAlignTarget,
+            "ListenerAlignTarget"_qs, TypeId::ListenerAlignTarget,
             TypeId::ListenerAction, {
-                {"targetId", 240, PropertyType::VarUint},
+                {"targetId"_qs, 240, PropertyType::VarUint},
             }
         }
     },
